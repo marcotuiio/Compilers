@@ -37,11 +37,14 @@ int main() {
     // printTokens(tokens, finalStates);
 
     char input[100];
+    int limitIndex;
     while (fgets(input, 100, stdin) != NULL) {
-        int currentState = 1;  // initial state
-        int index = 0;         // index of the char in the input
+        int currentState = 1;         // initial state
+        int index = 0;                // index of the char in the input
+        int backupIndex = 0;          // index to handle non terminal states
+        bool allowPrint = true;       // if the current state is a final state
         bool acceptedAsFinal = true;  // if the current state is a final state
-        int end = -1;          // end state
+        int end = -1;                 // end state
 
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
@@ -63,26 +66,46 @@ int main() {
             }
 
             int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
-            // printf(" |%d %d %d| ", currentState, input[index], end);
-            
             // if the transition is not valid
             if (nextState == 0) {
-                // if (currentState == end) // if the current state is not the end state, token cant be printed 
+                if (currentState == end) {
+                    for (int i = backupIndex; i < limitIndex; i++) {
+                        printf("%c", input[i]);  // prints the chars that were read
+                    }
+                    allowPrint = true;
+                } else {
+                    index = backupIndex;  // if the current state is not the end state, the index is updated
+                }
                 printf(" %s\n", tokens[end - 1]);
                 end = -1;
                 currentState = 1;
                 continue;
             }
 
-            currentState = nextState;  // updates the current state
-            acceptedAsFinal = isFinal(finalStates, currentState);             // checks if the current state is a final state
-            if (input[index] != 10)
+            currentState = nextState;                              // updates the current state
+            
+            acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
+
+            // if the current state is a final state, the end state is updated
+            if (acceptedAsFinal) {
+                end = currentState;
+                allowPrint = true;
+            } else {
+                allowPrint = false;  // if the current state is a final state, the index is updated
+            }
+
+            if (input[index] != 10 && allowPrint)
                 printf("%c", input[index]);
             index++;
+            limitIndex = index;
 
-            if (acceptedAsFinal) {  // if the current state is a final state, the end state is updated ans goes to the next iteration
-                end = currentState;
+            // if the current state is a final state and the next char is not a new line, the backup index is updated
+            // leaving a non final state to a final state, so i need to keep the first index because this string is accepted
+            // i would like to make this general, because here i know zn is what make me leave the non final state
+            if (acceptedAsFinal && input[index - 1] != 10) {
+                backupIndex = index;
             }
+            // printf("  <%d %d %d %d %d>  ", currentState, end, backupIndex, limitIndex, index);
 
             // cleaning buffer
             if (input[index] == '\n' && currentState != 10) {
@@ -91,7 +114,11 @@ int main() {
         }
 
         // Check classification for the last token
-        if (end != -1 && currentState != 1) {
+        if (end == currentState) {
+            for (int i = backupIndex; i < limitIndex; i++) {
+                if (input[i] != 10)
+                    printf("%c", input[i]);  // prints the chars that were read
+            }
             printf(" %s\n", tokens[end - 1]);
         }
     }
