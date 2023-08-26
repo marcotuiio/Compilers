@@ -1,0 +1,11 @@
+chuchu ID
+  WHITE SPACE
+666 NUM
+abobrinha ID
+@ ERROR
+--blabla COMMENT
+0.0 REAL
+  WHITE SPACE
+- ERROR
+  WHITE SPACE
+5332. REAL
