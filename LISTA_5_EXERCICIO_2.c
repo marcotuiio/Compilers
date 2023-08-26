@@ -5,6 +5,7 @@
 
 int getChar(char *reads, char input);
 bool isFinal(int *finals, int current);
+bool isLetter(char input);
 void printTokens(char *tokens[], int *finalStates);
 
 #define SIGMA 40
@@ -37,21 +38,24 @@ int main() {
 
     char input[100];
     while (fgets(input, 100, stdin) != NULL) {
-        int currentState = 1;
-        int index = 0;
-        bool accepted = true;
-        int end = -1;
+        int currentState = 1;  // initial state
+        int index = 0;         // index of the char in the input
+        bool accepted = true;  // if the current state is a final state
+        int end = -1;          // end state
 
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
 
-            if (currentCharIndex == -1) {  // if the char is not in the array, ERROR is printed
-                if (end != -1) {           // if the end state is not -1, it is printed the token
+            // special block only to handle errors and other symbols not in the array
+            if (currentCharIndex == -1) {
+                if (end != -1) {  // if the end state is not -1, token is printed
                     printf(" %s\n", tokens[end - 1]);
                 }
-                end = -1;  // the end state is updated to start again
+                // update variables to start again
+                end = -1;
                 currentState = 1;
                 index++;
+
                 if (input[index - 1] == 10) continue;
                 printf("%c", input[index - 1]);  // prints the char that is not in the array
                 printf(" %s\n", tokens[12]);     // prints the ERROR token
@@ -64,24 +68,38 @@ int main() {
 
             // printf(" |%d| ", currentState);
 
-            if (accepted) {  // if the current state is a final state, the end state is updated
+            if (accepted) {  // if the current state is a final state, the end state is updated ans goes to the next iteration
                 end = currentState;
                 if (input[index - 1] == 10) continue;
                 printf("%c", input[index - 1]);
 
-            } else {                                   // if the current state is not a final state, the end state is printed and the current state is updated so we can start again
-                if (currentState == 10 && end == 9) {  // special block only to handle comments
-                    printf("%c", input[index - 1]);
-                    continue;                    
+            } else {  // else the current state is not a final state so the end state is updated to print the token
+
+                // special block only to handle comments
+                if (currentState == 10 && end == 9) {                             // if the current state is 10 and the end state is 9,
+                    printf("%c", input[index - 1]);                               // the char is printed
+                    if (!isLetter(input[index]) && isLetter(input[index - 1])) {  // if the next char is not a letter, the comment is finished
+                        end = 11;                                                 // and the end state is updated to print token and then start again
+                        printf(" %s\n", tokens[end - 1]);
+                        end = -1;
+                        currentState = 1;
+                        continue;
+                    }
+                    continue;
                 }
-                currentState = 1;
-                index--;          // the index is decremented so we can read the char again
-                if (end != -1) {  // if the end state is not -1, it is printed
+
+                if (end != -1) {  // if the end state is not -1, token is printed
                     printf(" %s\n", tokens[end - 1]);
                 }
-                end = -1;  // the end state is updated to start again
+
+                // update variables to start again
+                // the index needs to be decremented because the current char is not a final state but its the start of a new token
+                currentState = 1;
+                index--;
+                end = -1;
             }
 
+            // cleaning buffer
             if (input[index] == '\n' && end != 11) {
                 input[strcspn(input, "\n")] = 0;
             }
@@ -112,6 +130,13 @@ bool isFinal(int *finals, int current) {
         if (finals[i] == current) {
             return true;
         }
+    }
+    return false;
+}
+
+bool isLetter(char input) {
+    if (input >= 97 && input <= 122) {  // a-z
+        return true;
     }
     return false;
 }
