@@ -40,7 +40,7 @@ int main() {
     while (fgets(input, 100, stdin) != NULL) {
         int currentState = 1;  // initial state
         int index = 0;         // index of the char in the input
-        bool accepted = true;  // if the current state is a final state
+        bool acceptedAsFinal = true;  // if the current state is a final state
         int end = -1;          // end state
 
         while (input[index] != '\0') {
@@ -62,45 +62,30 @@ int main() {
                 continue;                        // goes to the next iteration
             }
 
-            currentState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
-            accepted = isFinal(finalStates, currentState);             // checks if the current state is a final state
+            int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
+            // printf(" |%d %d %d| ", currentState, input[index], end);
+            
+            // if the transition is not valid
+            if (nextState == 0) {
+                // if (currentState == end) // if the current state is not the end state, token cant be printed 
+                printf(" %s\n", tokens[end - 1]);
+                end = -1;
+                currentState = 1;
+                continue;
+            }
+
+            currentState = nextState;  // updates the current state
+            acceptedAsFinal = isFinal(finalStates, currentState);             // checks if the current state is a final state
+            if (input[index] != 10)
+                printf("%c", input[index]);
             index++;
 
-            // printf(" |%d| ", currentState);
-
-            if (accepted) {  // if the current state is a final state, the end state is updated ans goes to the next iteration
+            if (acceptedAsFinal) {  // if the current state is a final state, the end state is updated ans goes to the next iteration
                 end = currentState;
-                if (input[index - 1] == 10) continue;
-                printf("%c", input[index - 1]);
-
-            } else {  // else the current state is not a final state so the end state is updated to print the token
-
-                // special block only to handle comments
-                if (currentState == 10 && end == 9) {                             // if the current state is 10 and the end state is 9,
-                    printf("%c", input[index - 1]);                               // the char is printed
-                    if (!isLetter(input[index]) && isLetter(input[index - 1])) {  // if the next char is not a letter, the comment is finished
-                        end = 11;                                                 // and the end state is updated to print token and then start again
-                        printf(" %s\n", tokens[end - 1]);
-                        end = -1;
-                        currentState = 1;
-                        continue;
-                    }
-                    continue;
-                }
-
-                if (end != -1) {  // if the end state is not -1, token is printed
-                    printf(" %s\n", tokens[end - 1]);
-                }
-
-                // update variables to start again
-                // the index needs to be decremented because the current char is not a final state but its the start of a new token
-                currentState = 1;
-                index--;
-                end = -1;
             }
 
             // cleaning buffer
-            if (input[index] == '\n' && end != 11) {
+            if (input[index] == '\n' && currentState != 10) {
                 input[strcspn(input, "\n")] = 0;
             }
         }
@@ -130,13 +115,6 @@ bool isFinal(int *finals, int current) {
         if (finals[i] == current) {
             return true;
         }
-    }
-    return false;
-}
-
-bool isLetter(char input) {
-    if (input >= 97 && input <= 122) {  // a-z
-        return true;
     }
     return false;
 }
