@@ -52,27 +52,28 @@ int main() {
                 end = -1;  // the end state is updated to start again
                 currentState = 1;
                 index++;
+                if (input[index - 1] == 10) continue;
                 printf("%c", input[index - 1]);  // prints the char that is not in the array
                 printf(" %s\n", tokens[12]);     // prints the ERROR token
                 continue;                        // goes to the next iteration
             }
+
             currentState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
             accepted = isFinal(finalStates, currentState);             // checks if the current state is a final state
             index++;
 
             // printf(" |%d| ", currentState);
-            if (end == 9 && currentState == 10) {  // special block only to handle comments
-                printf("%c", input[index - 1]);
-                continue;
-            }
 
             if (accepted) {  // if the current state is a final state, the end state is updated
                 end = currentState;
-                if (input[index - 1] != 10) {
-                    printf("%c", input[index - 1]);
-                }
+                if (input[index - 1] == 10) continue;
+                printf("%c", input[index - 1]);
 
-            } else {  // if the current state is not a final state, the end state is printed and the current state is updated so we can start again
+            } else {                                   // if the current state is not a final state, the end state is printed and the current state is updated so we can start again
+                if (currentState == 10 && end == 9) {  // special block only to handle comments
+                    printf("%c", input[index - 1]);
+                    continue;                    
+                }
                 currentState = 1;
                 index--;          // the index is decremented so we can read the char again
                 if (end != -1) {  // if the end state is not -1, it is printed
@@ -98,6 +99,7 @@ int main() {
 int getChar(char *reads, char input) {
     for (int i = 0; i < SIGMA; i++) {
         if (reads[i] == input) {
+            // printf("%c - %d \n", input, input);
             return i;
         }
     }

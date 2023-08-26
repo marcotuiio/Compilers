@@ -9,3 +9,5 @@ abobrinha ID
 - ERROR
   WHITE SPACE
 5332. REAL
+  WHITE SPACE
+-- ERROR
