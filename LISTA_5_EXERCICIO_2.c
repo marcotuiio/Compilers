@@ -6,10 +6,11 @@
 int getChar(char *reads, char input);
 bool isFinal(int *finals, int current);
 bool isLetter(char input);
-void printTokens(char *tokens[], int *finalStates);
+bool isSpecialTransition(char *transitions, char at);
 
 #define SIGMA 40
 #define QNTD_FINAL 11
+#define QNTD_SPECIAL 1
 
 int main() {
     char reads[SIGMA] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -32,9 +33,9 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},                             // state 13
     };
 
-    int finalStates[] = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13};
+    char specialTransitions[QNTD_SPECIAL] = {'\n'}; // what is read so a intermediate non final goes to a final state
+    int finalStates[QNTD_FINAL] = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13};
     char *tokens[] = {"nda", "ID", "IF", "ID", "ERROR", "REAL", "NUM", "REAL", "ERROR", "nda", "COMMENT", "WHITE SPACE", "ERROR"};
-    // printTokens(tokens, finalStates);
 
     char input[100];
     int limitIndex;
@@ -66,24 +67,26 @@ int main() {
             }
 
             int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
+
             // if the transition is not valid
             if (nextState == 0) {
-                if (currentState == end) {
+                if (currentState == end) {  // in case the latest string read reached a final state its the biggest token possible
                     for (int i = backupIndex; i < limitIndex; i++) {
                         printf("%c", input[i]);  // prints the chars that were read
                     }
                     allowPrint = true;
                 } else {
-                    index = backupIndex;  // if the current state is not the end state, the index is updated
+                    index = backupIndex;  // if the current state is not the end state, the index is updated to find the next token
                 }
+
                 printf(" %s\n", tokens[end - 1]);
                 end = -1;
                 currentState = 1;
                 continue;
             }
 
-            currentState = nextState;                              // updates the current state
-            
+            currentState = nextState;  // updates the current state
+
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
 
             // if the current state is a final state, the end state is updated
@@ -91,7 +94,7 @@ int main() {
                 end = currentState;
                 allowPrint = true;
             } else {
-                allowPrint = false;  // if the current state is a final state, the index is updated
+                allowPrint = false;  // if the current isnt a final state, disable print to check biggest token
             }
 
             if (input[index] != 10 && allowPrint)
@@ -99,10 +102,9 @@ int main() {
             index++;
             limitIndex = index;
 
-            // if the current state is a final state and the next char is not a new line, the backup index is updated
-            // leaving a non final state to a final state, so i need to keep the first index because this string is accepted
-            // i would like to make this general, because here i know zn is what make me leave the non final state
-            if (acceptedAsFinal && input[index - 1] != 10) {
+            // getting to a final state after leaving a intermediate non final state wont update the backupIndex
+            // the intention is to save the index of what was the final state before going in the non final one
+            if (acceptedAsFinal && !isSpecialTransition(specialTransitions, input[index - 1])) {
                 backupIndex = index;
             }
             // printf("  <%d %d %d %d %d>  ", currentState, end, backupIndex, limitIndex, index);
@@ -146,10 +148,12 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
-void printTokens(char *tokens[], int *finalStates) {
-    printf("TOKENS:\n");
-    for (int i = 0; i < QNTD_FINAL; i++) {
-        printf("%d\t%s\n", finalStates[i], tokens[finalStates[i] - 1]);
+// Function to check if a input can make a intermediate non final state go to a final state
+bool isSpecialTransition(char *transitions, char at) {
+    for (int i = 0; i < QNTD_SPECIAL; i++) {
+        if (transitions[i] == at) {
+            return true;
+        }
     }
-    printf("\n");
+    return false;
 }

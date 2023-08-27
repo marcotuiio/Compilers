@@ -3,6 +3,5 @@ chuchu ID
 666 NUM
 abobrinha ID
 @ ERROR
-- ERROR
 --blabla COMMENT
 0.0 REAL
