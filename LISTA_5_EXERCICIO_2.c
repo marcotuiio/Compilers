@@ -6,7 +6,7 @@
 int getChar(char *reads, char input);
 bool isFinal(int *finals, int current);
 bool isLetter(char input);
-bool isSpecialTransition(char *transitions, char at);
+bool isSpecialTransition(int *states, char *transitions, int st, char in);
 
 #define SIGMA 40
 #define QNTD_FINAL 11
@@ -33,7 +33,9 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},                             // state 13
     };
 
-    char specialTransitions[QNTD_SPECIAL] = {'\n'}; // what is read so a intermediate non final goes to a final state
+    char specialTransitions[QNTD_SPECIAL] = {'\n'};  // what is read so a intermediate non final goes to a final state
+    int specialTransitionStates[] = {11};            // after reading special char in index i of specialTransitions goes to state in index i of this array
+
     int finalStates[QNTD_FINAL] = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13};
     char *tokens[] = {"nda", "ID", "IF", "ID", "ERROR", "REAL", "NUM", "REAL", "ERROR", "nda", "COMMENT", "WHITE SPACE", "ERROR"};
 
@@ -104,7 +106,7 @@ int main() {
 
             // getting to a final state after leaving a intermediate non final state wont update the backupIndex
             // the intention is to save the index of what was the final state before going in the non final one
-            if (acceptedAsFinal && !isSpecialTransition(specialTransitions, input[index - 1])) {
+            if (acceptedAsFinal && !isSpecialTransition(specialTransitionStates, specialTransitions, currentState, input[index - 1])) {
                 backupIndex = index;
             }
             // printf("  <%d %d %d %d %d>  ", currentState, end, backupIndex, limitIndex, index);
@@ -148,10 +150,10 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
-// Function to check if a input can make a intermediate non final state go to a final state
-bool isSpecialTransition(char *transitions, char at) {
+// Function to check if a input in can make a intermediate non final state go to the final state st
+bool isSpecialTransition(int *states, char *transitions, int st, char in) {
     for (int i = 0; i < QNTD_SPECIAL; i++) {
-        if (transitions[i] == at) {
+        if (transitions[i] == in && states[i] == st) {
             return true;
         }
     }
