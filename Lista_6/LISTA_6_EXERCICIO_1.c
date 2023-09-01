@@ -52,6 +52,7 @@ int main() {
     char input[200];
     char output[200];
     int outputIndex = 0;
+    int printIndex = 0;
     int limitIndex = 0;
     while (fgets(input, 200, stdin) != NULL) {
         int currentState = 1;         // initial state
@@ -63,6 +64,7 @@ int main() {
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
 
+            // printf("|%d %c %d %d| ", currentState, input[index], backupIndex, edges[currentState - 1][currentCharIndex]);
             // special block only to handle errors and other symbols not in the array
             if (currentCharIndex == -1) {
                 if (end == -1) {
@@ -74,18 +76,27 @@ int main() {
                     if (textBefore) {
                         printf("\n");
                     }
+                    clearOutput(output, strlen(output));
+                    outputIndex = 0;
                     printf("ERRO");
                     textBefore = true;
                     continue;
                 }
 
+                if (end != currentState) {
+                    // printf("<aqui pfv %d %d %c %d>", end, currentState, input[index - 1], backupIndex);
+                    index = backupIndex + 1;
+                    backupIndex = index;
+                }
+
                 if (end != -1) {  // if the end state is not -1, token is printed
                     printf("%s", tokens[end - 1]);
                     if (end == 22 || end == 19) {
-                        printSession(output, outputIndex);
+                        printSession(output, printIndex);
                     }
                     textBefore = true;
                 }
+
                 // update variables to start again
                 end = -1;
                 currentState = 1;
@@ -93,6 +104,7 @@ int main() {
                 outputIndex = 0;
                 index++;
                 backupIndex = index;
+
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;
 
                 if (textBefore) {
@@ -112,6 +124,8 @@ int main() {
                         printf("\n");
                     }
                     printf("ERRO");
+                    clearOutput(output, strlen(output));
+                    outputIndex = 0;
                     index = backupIndex + 1;
                     backupIndex = index;
                     textBefore = true;
@@ -120,16 +134,20 @@ int main() {
                     continue;
                 }
 
-                if (currentState != end) {  // in case the latest string read reached a final state its the biggest token possible
-                    index = backupIndex;    // if the current state is not the end state, the index is updated to find the next token
-                }
+                // printf("<%d %d %d>", currentState, end, backupIndex);
 
                 if (end != -1) {
                     printf("%s", tokens[end - 1]);
                     backupIndex = index;
                 }
-                if (end == 22 || end == 19) {
-                    printSession(output, outputIndex);
+                if (currentState == end) {
+                    if (end == 22 || end == 19) {
+                        printSession(output, printIndex);
+                    }
+                } else {
+                    printf("<aqui pfv %d %d %c %d>", end, currentState, input[index - 1], backupIndex);
+                    index = backupIndex - 1;
+                    backupIndex = index;
                 }
                 clearOutput(output, strlen(output));
                 outputIndex = 0;
@@ -139,15 +157,15 @@ int main() {
                 continue;
             }
 
-            currentState = nextState;  // updates the current state
-
+            currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
 
             // if the current state is a final state, the end state is updated
             if (acceptedAsFinal) {
                 end = currentState;
+                printIndex = outputIndex + 1;
             } else {
-                
+                backupIndex = index - 1;
             }
 
             if (input[index] != 10 && input[index] != 32) {
@@ -174,17 +192,18 @@ int main() {
         }
 
         // Check classification for the last token
+        // printf("(%d %d %d)", currentState, backupIndex, index);
         if (end == currentState) {
             printf("%s", tokens[end - 1]);
             backupIndex = index;
             if (end == 22 || end == 19) {
-                printSession(output, outputIndex);
+                printSession(output, printIndex);
             }
             clearOutput(output, strlen(output));
             outputIndex = 0;
             textBefore = true;
         }
-        }
+    }
     return 0;
 }
 
