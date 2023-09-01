@@ -5,7 +5,6 @@
 
 int getChar(char *reads, char input);
 bool isFinal(int *finals, int current);
-bool isLetter(char input);
 bool isSpecialTransition(int *states, char *transitions, int st, char in);
 
 #define SIGMA 40
@@ -37,9 +36,10 @@ int main() {
     int specialTransitionStates[] = {11};            // after reading special char in index i of specialTransitions goes to state in index i of this array
 
     int finalStates[QNTD_FINAL] = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13};
-    char *tokens[] = {"nda", "ID", "IF", "ID", "ERROR", "REAL", "NUM", "REAL", "ERROR", "nda", "COMMENT", "WHITE SPACE", "ERROR"};
+    char *tokens[] = {"nda", "ID", "IF", "ID", "ERROR", "REAL", "NUM", "REAL", "ERROR", "nda", "comment", "white space", "ERROR"};
 
-    char input[100];
+    bool textBefore = false;
+    char input[200];
     int limitIndex;
     while (fgets(input, 100, stdin) != NULL) {
         int currentState = 1;         // initial state
@@ -55,7 +55,12 @@ int main() {
             // special block only to handle errors and other symbols not in the array
             if (currentCharIndex == -1) {
                 if (end != -1) {  // if the end state is not -1, token is printed
-                    printf(" %s\n", tokens[end - 1]);
+                    if (input[index - 1] == 32) {
+                        printf("%s", tokens[11]);
+                    } else {
+                        printf(" %s", tokens[end - 1]);
+                    }
+                    textBefore = true;
                 }
                 // update variables to start again
                 end = -1;
@@ -63,9 +68,19 @@ int main() {
                 index++;
 
                 if (input[index - 1] == 10) continue;
-                printf("%c", input[index - 1]);  // prints the char that is not in the array
-                printf(" %s\n", tokens[12]);     // prints the ERROR token
-                continue;                        // goes to the next iteration
+                if (input[index - 1] == 32) {
+                    printf("%s", tokens[11]);
+                    continue;
+                } else {
+                    if (textBefore) {
+                        printf("\n");
+                        textBefore = false;
+                    }
+                    printf("%c", input[index - 1]);  // prints the char that is not in the array
+                    printf(" %s", tokens[12]);       // prints the ERROR token
+                    textBefore = true;
+                }
+                continue;  // goes to the next iteration
             }
 
             int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
@@ -74,6 +89,10 @@ int main() {
             if (nextState == 0) {
                 if (currentState == end) {  // in case the latest string read reached a final state its the biggest token possible
                     for (int i = backupIndex; i < limitIndex; i++) {
+                        if (textBefore) {
+                            printf("\n");
+                            textBefore = false;
+                        }
                         printf("%c", input[i]);  // prints the chars that were read
                     }
                     allowPrint = true;
@@ -81,7 +100,14 @@ int main() {
                     index = backupIndex;  // if the current state is not the end state, the index is updated to find the next token
                 }
 
-                printf(" %s\n", tokens[end - 1]);
+                if (input[index - 1] == 32) {
+                    printf("\n%s", tokens[11]);
+                    textBefore = true;
+                } else {
+                    printf(" %s", tokens[end - 1]);
+                    textBefore = true;
+                }
+
                 end = -1;
                 currentState = 1;
                 continue;
@@ -99,8 +125,13 @@ int main() {
                 allowPrint = false;  // if the current isnt a final state, disable print to check biggest token
             }
 
-            if (input[index] != 10 && allowPrint)
+            if (input[index] != 10 && input[index] != 32 && allowPrint) {
+                if (textBefore) {
+                    printf("\n");
+                    textBefore = false;
+                }
                 printf("%c", input[index]);
+            }
             index++;
             limitIndex = index;
 
@@ -120,10 +151,16 @@ int main() {
         // Check classification for the last token
         if (end == currentState) {
             for (int i = backupIndex; i < limitIndex; i++) {
-                if (input[i] != 10)
+                if (input[i] != 10) {
+                    if (textBefore) {
+                        printf("\n");
+                        textBefore = false;
+                    }
                     printf("%c", input[i]);  // prints the chars that were read
+                }
             }
-            printf(" %s\n", tokens[end - 1]);
+            printf(" %s", tokens[end - 1]);
+            textBefore = true;
         }
     }
     return 0;

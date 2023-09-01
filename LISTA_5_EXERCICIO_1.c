@@ -26,8 +26,8 @@ int main() {
     };
 
     int finalStates[] = {2, 3, 4, 5, 8};
-
-    char input[100];
+    bool textBefore = false;
+    char input[200];
     while (fgets(input, 100, stdin) != NULL) {
         input[strcspn(input, "\n")] = 0;  // removes the \n from the input
 
@@ -41,12 +41,12 @@ int main() {
 
             if (currentCharIndex == -1) {  // if the char is not in the array, ERROR is printed
                 if (end != -1) {
-                    printf("\n");
+                    textBefore = true;
                 }
                 end = -1;
                 currentState = 1;
                 index++;
-                printf("ERROR\n");
+                printf("\nERROR");
                 continue;  // goes to the next iteration
             }
 
@@ -56,22 +56,26 @@ int main() {
 
             if (accepted) {  // if the current state is a final state, the end state is updated
                 end = currentState;
+                if (textBefore) {
+                    printf("\n");
+                    textBefore = false;
+                }
                 printf("%c", input[index - 1]);
 
             } else {  // if the current state is not a final state, the end state is printed and the current state is updated so we can start again
                 currentState = 1;
                 index--;          // the index is decremented so we can read the char again
                 if (end != -1) {  // if the end state is not -1, it is printed
-                    printf("\n");
+                    textBefore = true;
                 }
                 end = -1;  // the end state is updated to start again
             }
             if (input[index] == '\n') {
                 input[strcspn(input, "\n")] = 0;
-            } 
+            }
         }
         if (end != -1) {
-            printf("\n");
+            textBefore = true;
         }
     }
     return 0;
