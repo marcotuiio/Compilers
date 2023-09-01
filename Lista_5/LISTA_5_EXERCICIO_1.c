@@ -28,7 +28,7 @@ int main() {
     int finalStates[] = {2, 3, 4, 5, 8};
     bool textBefore = false;
     char input[200];
-    while (fgets(input, 100, stdin) != NULL) {
+    while (fgets(input, 200, stdin) != NULL) {
         input[strcspn(input, "\n")] = 0;  // removes the \n from the input
 
         int currentState = 1;

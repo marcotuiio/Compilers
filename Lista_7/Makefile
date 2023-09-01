@@ -1,8 +1,8 @@
 FLEX=flex
 CC=gcc
 
-PROGRAMA = l7e3
-LEXICO = flex_7_3.l
+PROGRAMA = l7e2
+LEXICO = flex_7_2.l
 
 $(PROGRAMA): $(LEXICO)
 	$(FLEX) $(LEXICO)
@@ -10,5 +10,4 @@ $(PROGRAMA): $(LEXICO)
 
 clear:
 	rm -f lex.yy.c
-	rm -f lexico.exe lexico
 	rm -f $(PROGRAMA)

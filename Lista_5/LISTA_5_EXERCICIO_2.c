@@ -41,7 +41,7 @@ int main() {
     bool textBefore = false;
     char input[200];
     int limitIndex;
-    while (fgets(input, 100, stdin) != NULL) {
+    while (fgets(input, 200, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -74,7 +74,6 @@ int main() {
                 } else {
                     if (textBefore) {
                         printf("\n");
-                        textBefore = false;
                     }
                     printf("%c", input[index - 1]);  // prints the char that is not in the array
                     printf(" %s", tokens[12]);       // prints the ERROR token
@@ -102,12 +101,11 @@ int main() {
 
                 if (input[index - 1] == 32) {
                     printf("\n%s", tokens[11]);
-                    textBefore = true;
                 } else {
                     printf(" %s", tokens[end - 1]);
-                    textBefore = true;
                 }
 
+                textBefore = true;
                 end = -1;
                 currentState = 1;
                 continue;

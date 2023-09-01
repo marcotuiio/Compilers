@@ -32,8 +32,8 @@ int textBefore = 0;
     printf("%s", yytext); 
     textBefore = 1;
 }
-\n|\r\n? { continue; }
-<<EOF>> {printf("socror"); return 0; }
+"\n"|("\r\n")? { continue; }
+<<EOF>> { return 0; }
 . { 
     if (textBefore) {
         printf("\n");
