@@ -1,0 +1,6 @@
+void int char return break switch case default
+do while for @ if else typedef struct + - * / % ++ --
+@& | ~ ^ ! && || == != < > << >> = += -= ; , : (){}[]
+? # -> printf scanf define exit 
+_teste AAA677 louc _AAddd33 a
+_xabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr
