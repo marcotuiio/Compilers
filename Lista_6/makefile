@@ -1,0 +1,14 @@
+EXEC = gcc
+CFLAGS = -fstack-protector-all -g -Wall
+PROJECT_NAME = l6e1
+OBJETCS = LISTA_6_EXERCICIO_1.o
+
+clear: 
+	rm -f *.o
+	rm -f $(PROJECT_NAME)
+
+$(PROJECT_NAME): $(OBJETCS)
+	$(EXEC) $(CFLAGS) $(OBJETCS) -o $(PROJECT_NAME) -lm
+
+LISTA_6_EXERCICIO_1.o: LISTA_6_EXERCICIO_1.c LISTA_6_EXERCICIO_1.h
+	$(EXEC) $(CFLAGS) -c LISTA_6_EXERCICIO_1.c

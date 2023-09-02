@@ -4,38 +4,47 @@ int textBefore = 0;
 
 %%
 
-(aba)+ { 
+[a-z]+[a-z0-9]* { 
     if (textBefore) {
         printf("\n");
     } 
-    printf("%s action 1", yytext); 
+    printf("%s", yytext); 
     textBefore = 1;
 }
-ab*a {
+[0-9]+ { 
+    if (textBefore) {
+        printf("\n");
+    }
+    printf("%s", yytext); 
+    textBefore = 1;
+}
+[0-9]+e[+|-]?[0-9]+ { 
     if (textBefore) {
         printf("\n");
     } 
-    printf("%s action 2", yytext); 
+    printf("%s", yytext); 
     textBefore = 1;
 }
-[a|b] {
+[+|-] { 
     if (textBefore) {
         printf("\n");
     } 
-    printf("%s action 3", yytext); 
+    printf("%s", yytext); 
     textBefore = 1;
 }
+\n {}
+<<EOF>> { return 0; }
 . { 
     if (textBefore) {
         printf("\n");
     } 
-    printf("%s error", yytext); 
+    printf("ERRO"); 
     textBefore = 1;
 }
 
 %%
 
-int yywrap() {return 0;}
+int yywrap() {}
 
 int main() {
     yylex();

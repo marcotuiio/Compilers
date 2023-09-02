@@ -1,17 +1,4 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int getChar(char *reads, char input);
-bool isFinal(int *finals, int current);
-bool isSpecialTransition(int *states, char *transitions, int st, char in);
-void printSession(char *output, int size);
-void clearOutput(char *output, int size);
-
-#define SIGMA 20
-#define QNTD_FINAL 12
-#define QNTD_SPECIAL 11
+#include "LISTA_6_EXERCICIO_1.h"
 
 int main() {
     char reads[SIGMA] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -49,11 +36,11 @@ int main() {
                       "nda", "nda", "GATO", "CARRO", "GATOS", "CARROS", "MAIS", "MENOS", "INTEIRO", "nda", "nda", "REAL"};
 
     bool textBefore = false;
-    char input[1024];
-    char output[1024];
+    char input[4096];
+    char output[4096];
     int outputIndex = 0;
     int printIndex = 0;
-    while (fgets(input, 1024, stdin) != NULL) {
+    while (fgets(input, 4096, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -62,8 +49,7 @@ int main() {
 
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
-            // printf("(0 index: %d)", index);
-            // printf("|%d %c %d %d| ", currentState, input[index], backupIndex, edges[currentState - 1][currentCharIndex]);
+
             // special block only to handle errors and other symbols not in the array
             if (currentCharIndex == -1) {
                 if (end == -1) {
@@ -86,7 +72,7 @@ int main() {
                         currentState = 1;
                         continue;
                     }
-                    // printf("pre (%d %d %c) ", index, backupIndex, input[index]);
+
                     index = backupIndex + 1;
                     backupIndex = index;
                     end = -1;
@@ -99,12 +85,10 @@ int main() {
                     outputIndex = 0;
                     printf("ERRO");
                     textBefore = true;
-                    // printf(" after (%d %d)", index, backupIndex);
                     continue;
                 }
-                // printf("(1- %d %d %d)\n", index, backupIndex, currentState);
+
                 if (end != currentState) {
-                    // printf("<aqui pfv %d %d %c %d>", end, currentState, input[index - 1], backupIndex);
                     index = backupIndex;
                     backupIndex = index;
                 }
@@ -124,7 +108,6 @@ int main() {
                 outputIndex = 0;
                 index++;
                 backupIndex = index;
-                // printf("(1.5 %d)\n", index);
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;
 
                 if (textBefore) {
@@ -132,12 +115,11 @@ int main() {
                 }
                 printf("ERRO");
                 textBefore = true;
-                // printf("2\n");
                 continue;  // goes to the next iteration
             }
 
             int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
-            // printf("(3 index %d %c %d %d)\n", index, input[index], currentState, nextState);
+
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {
@@ -155,8 +137,6 @@ int main() {
                     continue;
                 }
 
-                // printf("<%d %d %d>", currentState, end, backupIndex);
-
                 if (end != -1) {
                     printf("%s", tokens[end - 1]);
                     backupIndex = index;
@@ -166,8 +146,6 @@ int main() {
                         printSession(output, printIndex);
                     }
                 } else {
-                    // printf("(sla %d %d %d)", currentState, end, index);
-                    // printf("<aqui pfv %d %d %c %d>", end, currentState, input[index - 1], backupIndex);
                     index = backupIndex - 1;
                     backupIndex = index;
                 }
@@ -176,13 +154,12 @@ int main() {
                 textBefore = true;
                 end = -1;
                 currentState = 1;
-                // printf("4\n");
                 continue;
             }
 
             currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
-            // printf("(5 index %d)\n", index);
+
             // if the current state is a final state, the end state is updated
             if (acceptedAsFinal) {
                 end = currentState;
@@ -197,36 +174,31 @@ int main() {
                 output[outputIndex] = input[index];
                 outputIndex++;
             }
-            // printf("{6 index %d %d}\n", index, backupIndex);
             index++;
-            // printf("6 \n");
+
             // getting to a final state after leaving a intermediate non final state wont update the backupIndex
             // the intention is to save the index of what was the final state before going in the non final one
             if (acceptedAsFinal && !isSpecialTransition(specialTransitionStates, specialTransitions, currentState, input[index - 1])) {
                 backupIndex = index;
-            } 
+            }
 
             // cleaning buffer
             if (input[index] == '\n') {
                 input[strcspn(input, "\n")] = 0;
             }
-            // printf("6,5 %d %d\n", index, backupIndex);
         }
-        // printf("7 printIndex %d\n", printIndex);
+
         // Check classification for the last token
-        // printf("(%d %d %d)", currentState, backupIndex, index);
         if (end == currentState) {
             backupIndex = index;
             printf("%s", tokens[end - 1]);
             if (end == 22 || end == 19) {
                 printSession(output, printIndex);
             }
-            clearOutput(output, strlen(output));
-            outputIndex = 0;
+
             textBefore = true;
-        
+
         } else {  // this is the last token of the line, and its and error
-            // printf("(8 %d %d %d)", currentState, backupIndex, index);
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
             if (textBefore) {
                 printf("\n");
@@ -236,6 +208,8 @@ int main() {
             index = backupIndex + 1;
             backupIndex = index;
         }
+        clearOutput(output, strlen(output));
+        outputIndex = 0;
     }
     return 0;
 }
@@ -272,7 +246,6 @@ bool isSpecialTransition(int *states, char *transitions, int st, char in) {
 
 void printSession(char *output, int size) {
     printf(" ");
-    int i = 0;
     for (int i = 0; i < size; i++) {
         printf("%c", output[i]);  // prints the chars that were read
     }

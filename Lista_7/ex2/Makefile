@@ -2,7 +2,7 @@ FLEX=flex
 CC=gcc
 
 PROGRAMA = l7e2
-LEXICO = flex_7_2.l
+LEXICO = LISTA_7_EXERCICIO_2.l
 
 $(PROGRAMA): $(LEXICO)
 	$(FLEX) $(LEXICO)
