@@ -4,9 +4,14 @@ int blankLines = 0;
 int linesComment = 0;
 int noBlankNoCommentLines = 0;
 int semiColons = 0;
-int prepocDirectives = 0; 
+int prepocDirectives = 0;
+int totalLines = 0;
+int totalBlankLines = 0;
+int totalLinesComment = 0;
+int totalNoBlankNoCommentLines = 0;
+int totalSemiColons = 0; 
 int totalDirectives = 0;
-int is_blank_line = 0;
+int isBlankLine = 0;
 %}
 
 %%
@@ -14,13 +19,12 @@ int is_blank_line = 0;
 ";" { semiColons++; }
 "//". { linesComment++; }
 "\n" {
-    if (is_blank_line) {
+    if (isBlankLine) {
         blankLines++;
     }
-    is_blank_line = 1;
+    isBlankLine = 1;
 }
-. { is_blank_line = 0; }
-[ \t]+ {}
+. { isBlankLine = 0; }
 "#"("include"|"define") { prepocDirectives++; }
 
 %%
@@ -34,6 +38,10 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    printf("total  blank  lines w/  nb, nc  semi-  preproc.  file\n");
+    printf("lines  lines  comments  lines  colons  direct.  \n");
+    printf("------+-------+-------+-------+-------+-------+-------");
+
     for (int i = 1; i < argc; i++) {
         FILE *f = fopen(argv[i], "r");
         if(!f) {
@@ -45,14 +53,22 @@ int main(int argc, char *argv[]) {
         yylex();
         fclose(f);
         noBlankNoCommentLines = yylineno - blankLines - linesComment;
-        printf("\n\n (%s) totalLines %d blankLines %d linesComment %d noBlankNoCommentLines %d semiColons %d prepocDirectives %d\n", argv[i], yylineno, blankLines, linesComment, noBlankNoCommentLines, semiColons, prepocDirectives);
+        printf("\n%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%s", yylineno, blankLines, linesComment, noBlankNoCommentLines, semiColons, prepocDirectives, argv[i]);
+       
+        totalLines += yylineno;
+        totalBlankLines += blankLines;
+        totalLinesComment += linesComment;
+        totalNoBlankNoCommentLines += noBlankNoCommentLines;
+        totalSemiColons += semiColons;
+        totalDirectives += prepocDirectives;
+
         yylineno = 1;
         blankLines = 0;
         linesComment = 0;
         noBlankNoCommentLines = 0;
         semiColons = 0;
         prepocDirectives = 0; 
-        totalDirectives += prepocDirectives;
     }
+    printf("\n%4d\t%4d\t%4d\t%4d\t%4d\t%4d\ttotal", totalLines, totalBlankLines, totalLinesComment, totalNoBlankNoCommentLines, totalSemiColons, totalDirectives);
     return 0;
 }
