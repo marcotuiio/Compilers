@@ -49,11 +49,11 @@ int main() {
                       "nda", "nda", "GATO", "CARRO", "GATOS", "CARROS", "MAIS", "MENOS", "INTEIRO", "nda", "nda", "REAL"};
 
     bool textBefore = false;
-    char input[200];
-    char output[200];
+    char input[1024];
+    char output[1024];
     int outputIndex = 0;
     int printIndex = 0;
-    while (fgets(input, 200, stdin) != NULL) {
+    while (fgets(input, 1024, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -62,11 +62,30 @@ int main() {
 
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
-            // printf("(0index: %d)", index);
+            // printf("(0 index: %d)", index);
             // printf("|%d %c %d %d| ", currentState, input[index], backupIndex, edges[currentState - 1][currentCharIndex]);
             // special block only to handle errors and other symbols not in the array
             if (currentCharIndex == -1) {
                 if (end == -1) {
+                    if (index == 0) {
+                        if (input[index] == 10 || input[index] == 32) {
+                            index++;
+                            backupIndex = index;
+                            currentState = 1;
+                            end = -1;
+                            continue;
+                        }
+                        if (textBefore) {
+                            printf("\n");
+                        }
+                        printf("ERRO");
+                        textBefore = true;
+                        index++;
+                        backupIndex = index;
+                        end = -1;
+                        currentState = 1;
+                        continue;
+                    }
                     // printf("pre (%d %d %c) ", index, backupIndex, input[index]);
                     index = backupIndex + 1;
                     backupIndex = index;
@@ -118,7 +137,7 @@ int main() {
             }
 
             int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
-            // printf("3 index %d\n", index);
+            // printf("(3 index %d %c %d %d)\n", index, input[index], currentState, nextState);
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {
@@ -206,7 +225,9 @@ int main() {
             outputIndex = 0;
             textBefore = true;
         
-        } else {
+        } else {  // this is the last token of the line, and its and error
+            // printf("(8 %d %d %d)", currentState, backupIndex, index);
+            if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
             if (textBefore) {
                 printf("\n");
             }
