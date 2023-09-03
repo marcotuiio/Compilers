@@ -1,4 +1,5 @@
 %option yylineno
+%x COMMENT
 %{
 int textBefore = 0;
 int yycolumn = 1;
@@ -6,6 +7,15 @@ int yycolumn = 1;
 
 %%
 
+"/*" { BEGIN(COMMENT); }
+<COMMENT>"*/" { BEGIN(INITIAL); }
+<COMMENT>.|\n { /* ignorar conteúdo do comentário */ }
+<COMMENT><<EOF>> { 
+    if (textBefore) printf("\n");
+    printf("error:lexical:%d:%d: unterminated comment", yylineno, yycolumn); exit(1); 
+}
+
+"//".*\n { /*ignore */ }
 "void" { 
     if (textBefore) printf("\n");
     printf("VOID");
@@ -342,11 +352,47 @@ int yycolumn = 1;
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
+\"([^\\\"]|\\.)*\" { /* (\".*\") */
+    if (textBefore) printf("\n");
+    printf("STRING(%s)", yytext); 
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
 " " { yycolumn++; }
 \n { yycolumn = 1; }
+(_?[a-zA-Z][a-zA-Z0-9]{254,}) {
+    if (textBefore) printf("\n");
+    printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
 (_?[a-zA-Z][a-zA-Z0-9]{0,253}) {
     if (textBefore) printf("\n");
     printf("IDENTIFIER(%s)", yytext); 
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
+"'"(\\.|[^\\']){1}"'" {
+    if (textBefore) printf("\n");
+    printf("CHARACTER(%s)", yytext); 
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
+(0x[0-9a-f]+)|(0X[0-9A-F]+) {
+    if (textBefore) printf("\n");
+    printf("NUM_HEX(%s)", yytext);
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
+0[1-7][0-7]* {
+    if (textBefore) printf("\n");
+    printf("NUM_OCTAL(%s)", yytext);
+    textBefore = 1;
+    yycolumn += strlen(yytext);
+}
+[0-9]+ {
+    if (textBefore) printf("\n");
+    printf("NUM_INTEGER(%s)", yytext);
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
@@ -365,3 +411,12 @@ int main(int argc, char *argv[]) {
     yylex();
     return 0;
 }
+
+/*
+
+TO DO 
+- WARNING verificar se existe /* dentro de um comentario de multiplas linhas
+- tratar caracteres de barra invertida (ex: \n, \t, \r, \b, \f, \a, \v, \0, \', \", \\)
+- testar e ajustar
+
+*/
