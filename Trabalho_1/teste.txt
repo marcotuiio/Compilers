@@ -7,3 +7,28 @@ _xabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxhi
 
  '\a' '\b' '\f' '\n' '\r' '\t' '\v' '\\' '\'' '\"' '\?' '\0' 
  aaa 'a' 'zxx'
+
+ /*
+
+/* comentario // comentario
+
+// comentario 
+
+     /*  /*  /*
+     /*
+     
+     
+
+if(a>b)
+{
+    identificador = a > b;
+    i = 666;
+}
+
+   /* comentario
+//
+  //*/
+
+  /*  
+
+socorrr

@@ -3,20 +3,30 @@
 %{
 int textBefore = 0;
 int yycolumn = 1;
+int columnStart;
 %}
 
 %%
 
-"/*" { BEGIN(COMMENT); yycolumn += strlen(yytext); }
+"/*" { BEGIN(COMMENT); columnStart = yycolumn; yycolumn += strlen(yytext); }
 <COMMENT>"*/" { BEGIN(INITIAL); yycolumn += strlen(yytext); } // end comment
-<COMMENT>.|\n { yycolumn += strlen(yytext); }
+<COMMENT>. { yycolumn += strlen(yytext); }
+<COMMENT>\n { yycolumn = 1; }
 <COMMENT>"/*" {  // nested comment
-    if (textBefore) printf("\n");
-    printf("warning:%d:%d: '%s' within block comment", yylineno, yycolumn, yytext); 
+    char next = input();
+    if (next == '/') { 
+        BEGIN(INITIAL); 
+        yycolumn += strlen(yytext); 
+    } else { 
+        
+        if (textBefore) printf("\n");
+        printf("warning:lexical:%d:%d: within block comment", yylineno, yycolumn); 
+        yycolumn += strlen(yytext);
+    }
 }
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
-    printf("error:lexical:%d:%d: unterminated comment", yylineno, yycolumn); exit(1); 
+    printf("error:lexical:%d:%d: unterminated comment", yylineno, columnStart); exit(1); 
 }
 
 "//".*\n { /*ignore */ }
@@ -404,7 +414,7 @@ int yycolumn = 1;
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: %s", yylineno, yycolumn, yytext);
     textBefore = 1;
-    yycolumn++;
+    yycolumn += strlen(yytext);
 }
 
 %%
