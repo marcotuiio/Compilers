@@ -47,7 +47,7 @@ L_CURLY_BRACKET
 R_CURLY_BRACKET
 L_SQUARE_BRACKET
 R_SQUARE_BRACKET
-TERNARY_CONDITION
+TERNARY_CONDITIONAL
 NUMBER_SIGN
 POINTER
 PRINTF
@@ -60,23 +60,20 @@ IDENTIFIER(louc)
 IDENTIFIER(_AAddd33)
 IDENTIFIER(a)
 IDENTIFIER(_xabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxhijklmnopqr999999stuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr)
-IDENTIFIER(wqduwj)
-NUM_INTEGER(0022)
-IDENTIFIER(r5678)
-IDENTIFIER(a)
-CHARACTER('b')
-CHARACTER('c')
-CHARACTER('@')
-CHARACTER('[')
-NUM_OCTAL(07)
-NUM_INTEGER(007)
-NUM_HEX(0xa)
-NUM_HEX(0XA)
-NUM_INTEGER(091)
-NUM_OCTAL(071)
-NUM_HEX(0xa78)
-STRING("teste de string")
-STRING(" ")
-STRING("29e29")
-STRING("-09876jklç q|!!#R")
-error:lexical:29:1: unterminated comment
+CHARACTER(\a)
+CHARACTER(\b)
+CHARACTER(\f)
+CHARACTER(\n)
+CHARACTER(\r)
+CHARACTER(\t)
+CHARACTER(\v)
+CHARACTER(\\)
+CHARACTER(\')
+CHARACTER(\")
+CHARACTER(\?)
+CHARACTER(\0)
+IDENTIFIER(aaa)
+CHARACTER(a)
+error:lexical:9:10: '
+IDENTIFIER(zxx)
+error:lexical:9:14: '

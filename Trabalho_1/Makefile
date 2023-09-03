@@ -11,3 +11,4 @@ $(PROGRAMA): $(LEXICO)
 clear:
 	rm -f lex.yy.c
 	rm -f $(PROGRAMA)
+	rm -f diff.txt

@@ -2,15 +2,16 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/Lista_6/entradas'
-BSD = '/home/marcotuiio/Compilers/Lista_6/o'
-OFICIAL = '/home/marcotuiio/Compilers/Lista_6/saidas'
-src = '/home/marcotuiio/Compilers/Lista_6'
+BED = '/home/marcotuiio/Compilers/Trabalho_1/entradas'
+BSD = '/home/marcotuiio/Compilers/Trabalho_1/saida'
+OFICIAL = '/home/marcotuiio/Compilers/Trabalho_1/saidas_padrao'
+src = '/home/marcotuiio/Compilers/Trabalho_1'
 ini = datetime.datetime.now()
 
 os.chdir(src)
 subprocess.call(["make", "clear"])
-subprocess.call(["make", "l6e1"])
+subprocess.call(["make", "lexico"])
+# subprocess.call(["rm", "-rf", src, "/saida/*"])
 print("\n")
 
 inputs = []
@@ -25,7 +26,7 @@ for f in inputs:
     output_file = os.path.join(BSD, f'output_{f}')
     
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
-        subprocess.Popen(["./l6e1"], stdin=stdin, stdout=stdout).wait()
+        subprocess.Popen(["./lexico"], stdin=stdin, stdout=stdout).wait()
 
 print("Iniciando comparação de resutados...\n")
 
@@ -46,7 +47,7 @@ my_outputs.sort()
 for index in range(len(outputs)):
     correct_output = os.path.join(OFICIAL, outputs[index])
     my_output = os.path.join(BSD, f'{my_outputs[index]}')
-    print(f"Comparando {correct_output} com {my_output}")
+    print(f"diff {correct_output} {my_output}")
 
     with open(os.path.join(src, "diff.txt"), 'a') as stdout:
         subprocess.Popen(["diff", correct_output, my_output], stdout=stdout).wait()

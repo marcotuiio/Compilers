@@ -5,25 +5,5 @@ do while for @ if else typedef struct + - * / % ++ --
 _teste AAA677 louc _AAddd33 a //lol
 _xabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxhijklmnopqr999999stuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr
 
-// comentario de linha unica
-/* comentario
-de duas linhas */
-wqduwj 0022 r5678
-a 'b' 'c' '@' '['
-
-07
-007
-0xa
-0XA
-091
-071
-0xa78
-
-"teste de string"
-" "
-"29e29"
-"-09876jklç q|!!#R"
-
-/* ewdc ;>< >>[] [
-
-]
+ '\a' '\b' '\f' '\n' '\r' '\t' '\v' '\\' '\'' '\"' '\?' '\0' 
+ aaa 'a' 'zxx'

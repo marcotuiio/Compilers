@@ -7,9 +7,13 @@ int yycolumn = 1;
 
 %%
 
-"/*" { BEGIN(COMMENT); }
-<COMMENT>"*/" { BEGIN(INITIAL); }
-<COMMENT>.|\n { /* ignorar conteúdo do comentário */ }
+"/*" { BEGIN(COMMENT); yycolumn += strlen(yytext); }
+<COMMENT>"*/" { BEGIN(INITIAL); yycolumn += strlen(yytext); } // end comment
+<COMMENT>.|\n { yycolumn += strlen(yytext); }
+<COMMENT>"/*" {  // nested comment
+    if (textBefore) printf("\n");
+    printf("warning:%d:%d: '%s' within block comment", yylineno, yycolumn, yytext); 
+}
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: unterminated comment", yylineno, yycolumn); exit(1); 
@@ -312,7 +316,7 @@ int yycolumn = 1;
 }
 "?" {
     if (textBefore) printf("\n");
-    printf("TERNARY_CONDITION"); 
+    printf("TERNARY_CONDITIONAL"); 
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
@@ -354,19 +358,19 @@ int yycolumn = 1;
 }
 \"([^\\\"]|\\.)*\" { /* (\".*\") */
     if (textBefore) printf("\n");
-    printf("STRING(%s)", yytext); 
+    printf("STRING(%.*s)", (int)(strlen(yytext) - 2), yytext + 1); 
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
 " " { yycolumn++; }
 \n { yycolumn = 1; }
-(_?[a-zA-Z][a-zA-Z0-9]{254,}) {
+(_*[a-zA-Z][a-zA-Z0-9_]{254,})|([a-zA-Z][a-zA-Z0-9_]{255}) {
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
-(_?[a-zA-Z][a-zA-Z0-9]{0,253}) {
+(_*[a-zA-Z][a-zA-Z0-9_]{0,253})|([a-zA-Z][a-zA-Z0-9_]{0,254}) {
     if (textBefore) printf("\n");
     printf("IDENTIFIER(%s)", yytext); 
     textBefore = 1;
@@ -374,13 +378,13 @@ int yycolumn = 1;
 }
 "'"(\\.|[^\\']){1}"'" {
     if (textBefore) printf("\n");
-    printf("CHARACTER(%s)", yytext); 
+    printf("CHARACTER(%.*s)", (int)(strlen(yytext) - 2), yytext + 1); 
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
 (0x[0-9a-f]+)|(0X[0-9A-F]+) {
     if (textBefore) printf("\n");
-    printf("NUM_HEX(%s)", yytext);
+    printf("NUM_HEXA(%s)", yytext);
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
@@ -415,8 +419,7 @@ int main(int argc, char *argv[]) {
 /*
 
 TO DO 
-- WARNING verificar se existe /* dentro de um comentario de multiplas linhas
-- tratar caracteres de barra invertida (ex: \n, \t, \r, \b, \f, \a, \v, \0, \', \", \\)
+- arrumar identificadores
 - testar e ajustar
 
 */
