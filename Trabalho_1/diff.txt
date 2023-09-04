@@ -12,10 +12,6 @@
 > warning:lexical:48:12: within block comment
 > warning:lexical:49:19: within block comment
 > warning:lexical:58:4: within block comment
-190c190
-< IDENTIFIER(Nome_De_Variavel_2_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
----
-> error:lexical:67:1: identifier too long
 379c379
 < error:lexical:127:11: unterminated comment
 \ No newline at end of file

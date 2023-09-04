@@ -16,7 +16,7 @@ int columnStart;
     char next = input();
     if (next == '/') { 
         BEGIN(INITIAL); 
-        yycolumn += strlen(yytext); 
+        yycolumn += strlen(yytext) + 1;; 
     } else { 
         
         if (textBefore) printf("\n");
@@ -28,7 +28,6 @@ int columnStart;
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: unterminated comment", yylineno, columnStart); exit(1); 
 }
-
 "//".*\n { /*ignore */ }
 "void" { 
     if (textBefore) printf("\n");
@@ -374,15 +373,13 @@ int columnStart;
 }
 " " { yycolumn++; }
 \n { yycolumn = 1; }
-(_*[a-zA-Z][a-zA-Z0-9_]{254,})|([a-zA-Z][a-zA-Z0-9_]{255}) {
+(_*[a-zA-Z][a-zA-Z0-9_]*) {
     if (textBefore) printf("\n");
-    printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
-    textBefore = 1;
-    yycolumn += strlen(yytext);
-}
-(_*[a-zA-Z][a-zA-Z0-9_]{0,253})|([a-zA-Z][a-zA-Z0-9_]{0,254}) {
-    if (textBefore) printf("\n");
-    printf("IDENTIFIER(%s)", yytext); 
+    if (strlen(yytext) > 255) {
+        printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
+    } else {
+        printf("IDENTIFIER(%s)", yytext);  
+    }
     textBefore = 1;
     yycolumn += strlen(yytext);
 }
@@ -429,7 +426,7 @@ int main(int argc, char *argv[]) {
 /*
 
 TO DO 
-- arrumar identificadores
+- arrumar bloco dos comentarios
 - testar e ajustar
 
 */

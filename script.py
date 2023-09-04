@@ -11,7 +11,6 @@ ini = datetime.datetime.now()
 os.chdir(src)
 subprocess.call(["make", "clear"])
 subprocess.call(["make", "lexico"])
-# subprocess.call(["rm", "-rf", src, "/saida/*"])
 print("\n")
 
 inputs = []
