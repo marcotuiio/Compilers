@@ -77,10 +77,10 @@ CHARACTER(a)
 error:lexical:9:10: '
 IDENTIFIER(zxx)
 error:lexical:9:14: '
-warning:lexical:13:1: within block comment
-warning:lexical:17:6: within block comment
-warning:lexical:17:9: within block comment
-warning:lexical:18:12: within block comment
-warning:lexical:19:19: within block comment
-warning:lexical:28:4: within block comment
-error:lexical:34:3: unterminated comment
+warning:13:1: '/*' within block comment
+warning:17:6: '/*' within block comment
+warning:17:10: '/*' within block comment
+warning:17:14: '/*' within block comment
+warning:18:6: '/*' within block comment
+warning:28:4: '/*' within block comment
+error:lexical:32:3: unterminated comment

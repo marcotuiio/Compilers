@@ -1,32 +1,47 @@
+%option noyywrap
 %option yylineno
 %x COMMENT
 %{
 int textBefore = 0;
 int yycolumn = 1;
+int lineStart;
 int columnStart;
 %}
 
 %%
 
-"/*" { BEGIN(COMMENT); columnStart = yycolumn; yycolumn += strlen(yytext); }
-<COMMENT>"*/" { BEGIN(INITIAL); yycolumn += strlen(yytext); } // end comment
-<COMMENT>. { yycolumn += strlen(yytext); }
-<COMMENT>\n { yycolumn = 1; }
+"/*" { 
+    BEGIN(COMMENT); 
+    lineStart = yylineno;
+    columnStart = yycolumn; 
+    yycolumn += strlen(yytext); 
+}
+<COMMENT>"*/" { // end comment
+    BEGIN(INITIAL); 
+    yycolumn += strlen(yytext); 
+} 
 <COMMENT>"/*" {  // nested comment
     char next = input();
+    // problema esta aqui. quando next == \n esta somando +1 no contador de linha
+    if (next == '\n') yylineno--;
     if (next == '/') { 
         BEGIN(INITIAL); 
-        yycolumn += strlen(yytext) + 1;; 
-    } else { 
-        
+        yycolumn += strlen(yytext) + 1; 
+    } else {
         if (textBefore) printf("\n");
-        printf("warning:lexical:%d:%d: within block comment", yylineno, yycolumn); 
+        printf("warning:%d:%d: '%s' within block comment", yylineno, yycolumn, yytext); 
         yycolumn += strlen(yytext);
+        if (next == '\n') yylineno++;
+        unput(next);
     }
+    textBefore = 1;
 }
+<COMMENT>. { yycolumn += strlen(yytext); }
+<COMMENT>\n { yycolumn = 1; }
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
-    printf("error:lexical:%d:%d: unterminated comment", yylineno, columnStart); exit(1); 
+    printf("error:lexical:%d:%d: unterminated comment", lineStart, columnStart); 
+    exit(1); 
 }
 "//".*\n { /*ignore */ }
 "void" { 
@@ -415,8 +430,6 @@ int columnStart;
 }
 
 %%
-
-int yywrap() {}
 
 int main(int argc, char *argv[]) {
     yylex();
