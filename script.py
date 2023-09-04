@@ -11,7 +11,6 @@ ini = datetime.datetime.now()
 os.chdir(src)
 subprocess.call(["make", "clear"])
 subprocess.call(["make", "lexico"])
-print("\n")
 
 inputs = []
 for (dirpath, dirnames, filenames) in os.walk(BED):
@@ -27,7 +26,7 @@ for f in inputs:
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
         subprocess.Popen(["./lexico"], stdin=stdin, stdout=stdout).wait()
 
-print("Iniciando comparação de resutados...\n")
+print("\nIniciando comparação de resutados...")
 
 
 outputs = []
@@ -43,14 +42,14 @@ for (dirpath, dirnames, filenames) in os.walk(BSD):
 outputs.sort()
 my_outputs.sort()
 
+# print();
 for index in range(len(outputs)):
     correct_output = os.path.join(OFICIAL, outputs[index])
     my_output = os.path.join(BSD, f'{my_outputs[index]}')
-    print(f"diff {correct_output} {my_output}")
+    # print(f"diff {correct_output} {my_output}")
 
     with open(os.path.join(src, "diff.txt"), 'a') as stdout:
         subprocess.Popen(["diff", correct_output, my_output], stdout=stdout).wait()
 
-print("\n")
 fin = datetime.datetime.now()
-print(f"Tempo para rodar:\n{str(fin - ini)}")
+print(f"\nTempo rodando:\n{str(fin - ini)}")

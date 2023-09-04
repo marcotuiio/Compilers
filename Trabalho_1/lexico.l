@@ -22,7 +22,6 @@ int columnStart;
 } 
 <COMMENT>"/*" {  // nested comment
     char next = input();
-    // problema esta aqui. quando next == \n esta somando +1 no contador de linha
     if (next == '\n') yylineno--;
     if (next == '/') { 
         BEGIN(INITIAL); 
