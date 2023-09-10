@@ -1,7 +1,0 @@
-total  blank  lines w/  nb, nc  semi-  preproc.  file
-lines  lines  comments  lines  colons  direct.  
-------+-------+-------+-------+-------+-------+-------
-  80	   9	   5	  66	  44	   4	via.c
- 374	  58	  49	 267	 191	   5	graph.c
-1072	 211	 104	 757	 659	   9	qry.c
-1526	 278	 158	1090	 894	  18	total

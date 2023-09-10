@@ -1,15 +1,4 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int getChar(char *reads, char input);
-bool isFinal(int *finals, int current);
-bool isSpecialTransition(int *states, char *transitions, int st, char in);
-
-#define SIGMA 40
-#define QNTD_FINAL 11
-#define QNTD_SPECIAL 1
+#include "LISTA_5_EXERCICIO_2.h"
 
 int main() {
     char reads[SIGMA] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

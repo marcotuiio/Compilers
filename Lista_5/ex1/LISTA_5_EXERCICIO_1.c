@@ -1,13 +1,4 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int getChar(char *reads, char input);
-bool isFinal(int *finals, int current);
-
-#define SIGMA 38
-#define QNTD_FINAL 5
+#include "LISTA_5_EXERCICIO_1.h"
 
 int main() {
     char reads[SIGMA] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -46,7 +37,7 @@ int main() {
                 end = -1;
                 currentState = 1;
                 index++;
-                printf("\nERROR");
+                printf("\nERRO");
                 continue;  // goes to the next iteration
             }
 
