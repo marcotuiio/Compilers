@@ -2,7 +2,7 @@
 %x COMMENT
 %{
 int hasBlank = 1;
-int blankLines = 1;
+int blankLines = 0;
 int linesComment = 0;
 int noBlankNoCommentLines = 0;
 int semiColons = 0;
@@ -30,7 +30,18 @@ int startMultiLineComment = 0;
  }
 <COMMENT>";" { semiColons++; }
 <COMMENT>. { isBlankLine = 0; }
-<COMMENT>"*/" { BEGIN(INITIAL); linesComment += yylineno - startMultiLineComment; linesComment++; }
+<COMMENT>"*/" { 
+    BEGIN(INITIAL); 
+    linesComment += yylineno - startMultiLineComment; 
+    linesComment++; 
+    int c = input(); // Leitura do próximo caractere
+    if (c == '\n') {
+        blankLines++;
+    } else {
+        // Caso contrário, a próxima linha não é em branco, então reverta a leitura
+        unput(c);
+    }
+}
 "//".*\n { linesComment++; }
 "\n" {
     if (isBlankLine) {
@@ -82,7 +93,7 @@ int main(int argc, char *argv[]) {
         totalDirectives += prepocDirectives;
 
         yylineno = 1;
-        blankLines = 1;
+        blankLines = 0;
         linesComment = 0;
         noBlankNoCommentLines = 0;
         semiColons = 0;
