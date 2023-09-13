@@ -1,6 +1,8 @@
 %option yylineno
+%x COMMENT
 %{
-int blankLines = 0;
+int hasBlank = 1;
+int blankLines = 1;
 int linesComment = 0;
 int noBlankNoCommentLines = 0;
 int semiColons = 0;
@@ -12,15 +14,28 @@ int totalNoBlankNoCommentLines = 0;
 int totalSemiColons = 0; 
 int totalDirectives = 0;
 int isBlankLine = 0;
+int startMultiLineComment = 0;
 %}
 
 %%
 
 ";" { semiColons++; }
-"//". { linesComment++; }
+"/*" { BEGIN(COMMENT); startMultiLineComment = yylineno; }
+<COMMENT>"\n" { 
+    if (isBlankLine) {
+        blankLines++;
+        hasBlank = 0;
+    }
+    isBlankLine = 1;
+ }
+<COMMENT>";" { semiColons++; }
+<COMMENT>. { isBlankLine = 0; }
+<COMMENT>"*/" { BEGIN(INITIAL); linesComment += yylineno - startMultiLineComment; linesComment++; }
+"//".*\n { linesComment++; }
 "\n" {
     if (isBlankLine) {
         blankLines++;
+        hasBlank = 0;
     }
     isBlankLine = 1;
 }
@@ -52,9 +67,13 @@ int main(int argc, char *argv[]) {
         yyrestart(f);
         yylex();
         fclose(f);
+        if (hasBlank) { // there are no blank lines in the file
+            blankLines = 0;
+        }
         noBlankNoCommentLines = yylineno - blankLines - linesComment;
         printf("\n%4d\t%4d\t%4d\t%4d\t%4d\t%4d\t%s", yylineno, blankLines, linesComment, noBlankNoCommentLines, semiColons, prepocDirectives, argv[i]);
        
+
         totalLines += yylineno;
         totalBlankLines += blankLines;
         totalLinesComment += linesComment;
@@ -63,11 +82,12 @@ int main(int argc, char *argv[]) {
         totalDirectives += prepocDirectives;
 
         yylineno = 1;
-        blankLines = 0;
+        blankLines = 1;
         linesComment = 0;
         noBlankNoCommentLines = 0;
         semiColons = 0;
         prepocDirectives = 0; 
+        hasBlank = 1;
     }
     printf("\n%4d\t%4d\t%4d\t%4d\t%4d\t%4d\ttotal", totalLines, totalBlankLines, totalLinesComment, totalNoBlankNoCommentLines, totalSemiColons, totalDirectives);
     return 0;
