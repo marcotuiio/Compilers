@@ -8,7 +8,6 @@
 
 #define SIGMA 20
 #define QNTD_FINAL 12
-#define QNTD_SPECIAL 11
 
 // Returns the index of the char in the array, or -1 if it's not in the array
 // Basicaally gets the column of the matrix (the state it goes to) that corresponds to the char read
