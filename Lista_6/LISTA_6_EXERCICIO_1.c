@@ -28,9 +28,6 @@ int main() {
         {22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},     // state 22
     };
 
-    char specialTransitions[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 's'};  // what is read so a intermediate non final goes to a final state
-    int specialTransitionStates[] = {22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 10};         // after reading special char in index i of specialTransitions goes to state in index i of this array
-
     int finalStates[] = {3, 6, 8, 10, 13, 14, 15, 16, 17, 18, 19, 22};
     char *tokens[] = {"nda", "nda", "ELE", "nda", "nda", "ELA", "nda", "DELE", "nda", "DELA",
                       "nda", "nda", "GATO", "CARRO", "GATOS", "CARROS", "MAIS", "MENOS", "INTEIRO", "nda", "nda", "REAL"};
@@ -50,113 +47,79 @@ int main() {
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
 
-            // special block only to handle errors and other symbols not in the array
+            // special block only to handle cases when the char read is not in the alphabet
             if (currentCharIndex == -1) {
                 if (end == -1) {
                     if (index == 0) {
                         if (input[index] == 10 || input[index] == 32) {
-                            index++;
-                            backupIndex = index;
-                            currentState = 1;
-                            end = -1;
+                            resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                             continue;
                         }
-                        if (textBefore) {
-                            printf("\n");
-                        }
-                        printf("ERRO");
-                        textBefore = true;
-                        index++;
-                        backupIndex = index;
-                        end = -1;
-                        currentState = 1;
+                        printToken(&textBefore, "ERRO");
+                        resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
 
-                    index = backupIndex + 1;
-                    backupIndex = index;
-                    end = -1;
-                    currentState = 1;
+                    resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-                    if (textBefore) {
-                        printf("\n");
-                    }
-                    clearOutput(output, strlen(output));
-                    outputIndex = 0;
-                    printf("ERRO");
-                    textBefore = true;
+                    printToken(&textBefore, "ERRO");
+                    clearOutput(output, strlen(output), &outputIndex);
                     continue;
                 }
 
-                if (end != currentState) {
+                if (end != currentState) {  // current char isnt on alphabet and the current state is not a final state
                     index = backupIndex;
                     backupIndex = index;
                 }
 
-                if (end != -1) {  // if the end state is not -1, token is printed
+                if (end != -1) {  // if the end state is not -1, token is printed because at some point it went to a final state
                     printf("%s", tokens[end - 1]);
-                    if (end == 22 || end == 19) {
+                    if (end == 22 || end == 19) {  // print numbers
                         printSession(output, printIndex);
                     }
                     textBefore = true;
                 }
 
                 // update variables to start again
-                end = -1;
-                currentState = 1;
-                clearOutput(output, strlen(output));
-                outputIndex = 0;
-                index++;
-                backupIndex = index;
-                if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-
-                if (textBefore) {
-                    printf("\n");
-                }
-                printf("ERRO");
-                textBefore = true;
-                continue;  // goes to the next iteration
+                clearOutput(output, strlen(output), &outputIndex);
+                resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
+                if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
+                printToken(&textBefore, "ERRO");
+                continue;
             }
 
-            int nextState = edges[currentState - 1][currentCharIndex];  // gets the next state, given a current state and a char read
+            // if the char is in the alphabet, the next state is calculated
+            int nextState = edges[currentState - 1][currentCharIndex];
 
             // if the transition is not valid
             if (nextState == 0) {
-                if (end == -1) {
-                    if (textBefore) {
-                        printf("\n");
-                    }
-                    printf("ERRO");
-                    clearOutput(output, strlen(output));
-                    outputIndex = 0;
-                    index = backupIndex + 1;
-                    backupIndex = index;
-                    textBefore = true;
-                    end = -1;
-                    currentState = 1;
+                if (end == -1) {  // the transition doesnt exist and no state in the token is final
+                    printToken(&textBefore, "ERRO");
+                    clearOutput(output, strlen(output), &outputIndex);
+                    resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
 
-                if (end != -1) {
+                if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
                     printf("%s", tokens[end - 1]);
                     backupIndex = index;
                 }
-                if (currentState == end) {
+                if (currentState == end) {  // if the current state is a final state, it means that the token is valid
                     if (end == 22 || end == 19) {
                         printSession(output, printIndex);
                     }
-                } else {
+                } else {  // transition invalid, current state isnt final, need to go back to the last final state
                     index = backupIndex - 1;
                     backupIndex = index;
                 }
-                clearOutput(output, strlen(output));
-                outputIndex = 0;
+                clearOutput(output, strlen(output), &outputIndex);
                 textBefore = true;
                 end = -1;
                 currentState = 1;
                 continue;
             }
 
+            // the transition is valid
             currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
 
@@ -166,7 +129,7 @@ int main() {
                 printIndex = outputIndex + 1;
             }
 
-            if (input[index] != 10 && input[index] != 32) {
+            if (input[index] != 10 && input[index] != 32) {  // skiping spaces and new lines
                 if (textBefore) {
                     printf("\n");
                     textBefore = false;
@@ -178,13 +141,8 @@ int main() {
 
             // getting to a final state after leaving a intermediate non final state wont update the backupIndex
             // the intention is to save the index of what was the final state before going in the non final one
-            if (acceptedAsFinal && !isSpecialTransition(specialTransitionStates, specialTransitions, currentState, input[index - 1])) {
+            if (acceptedAsFinal) {
                 backupIndex = index;
-            }
-
-            // cleaning buffer
-            if (input[index] == '\n') {
-                input[strcspn(input, "\n")] = 0;
             }
         }
 
@@ -195,26 +153,18 @@ int main() {
             if (end == 22 || end == 19) {
                 printSession(output, printIndex);
             }
-
             textBefore = true;
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
-            if (textBefore) {
-                printf("\n");
-            }
-            printf("ERRO");
-            textBefore = true;
-            index = backupIndex + 1;
-            backupIndex = index;
+            printToken(&textBefore, "ERRO");
+            resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
-        clearOutput(output, strlen(output));
-        outputIndex = 0;
+        clearOutput(output, strlen(output), &outputIndex);
     }
     return 0;
 }
 
-// Function that returns the index of the char in the array so we can know what symbols was read in the input
 int getChar(char *reads, char input) {
     for (int i = 0; i < SIGMA; i++) {
         if (reads[i] == input) {
@@ -224,7 +174,6 @@ int getChar(char *reads, char input) {
     return -1;  // error
 }
 
-// Function that returns the final state if the current state is a final state or the end state if it is not
 bool isFinal(int *finals, int current) {
     for (int i = 0; i < QNTD_FINAL; i++) {
         if (finals[i] == current) {
@@ -234,14 +183,12 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
-// Function to check if a input in can make a intermediate non final state go to the final state st
-bool isSpecialTransition(int *states, char *transitions, int st, char in) {
-    for (int i = 0; i < QNTD_SPECIAL; i++) {
-        if (transitions[i] == in && states[i] == st) {
-            return true;
-        }
+void printToken(bool *textBefore, char *toPrint) {
+    if (*textBefore) {
+        printf("\n");
     }
-    return false;
+    printf("%s", toPrint);
+    *textBefore = true;
 }
 
 void printSession(char *output, int size) {
@@ -251,8 +198,16 @@ void printSession(char *output, int size) {
     }
 }
 
-void clearOutput(char *output, int size) {
+void clearOutput(char *output, int size, int *outputIndex) {
     for (int i = 0; i < size; i++) {
         output[i] = '\0';  // clears the output buffer
     }
+    *outputIndex = 0;
+}
+
+void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState) {
+    *index = indexToSet;
+    *backupIndex = *index;
+    *end = -1;
+    *currentState = 1;
 }

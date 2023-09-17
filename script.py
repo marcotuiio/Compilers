@@ -46,7 +46,7 @@ my_outputs.sort()
 for index in range(len(outputs)):
     correct_output = os.path.join(OFICIAL, outputs[index])
     my_output = os.path.join(BSD, f'{my_outputs[index]}')
-    # print(f"diff {correct_output} {my_output}")
+    print(f"diff {correct_output} {my_output}")
 
     with open(os.path.join(src, "diff.txt"), 'a') as stdout:
         subprocess.Popen(["diff", correct_output, my_output], stdout=stdout).wait()
