@@ -6,6 +6,13 @@ int textBefore = 0;
 int yycolumn = 1;
 int lineStart;
 int columnStart;
+
+void printToken(char *token, int *textBefore) {
+    if (*textBefore) printf("\n");
+    printf("%s", token);
+    *textBefore = 1;
+}
+
 %}
 
 %%
@@ -43,340 +50,228 @@ int columnStart;
     exit(1); 
 }
 "//".*\n { /*ignore */ }
-"void" { 
-    if (textBefore) printf("\n");
-    printf("VOID");
-    textBefore = 1;
+"void" {
+    printToken("VOID", &textBefore);
     yycolumn += strlen(yytext); 
 }
 "int" { 
-    if (textBefore) printf("\n");
-    printf("INT");
-    textBefore = 1;
+    printToken("INT", &textBefore);
     yycolumn += strlen(yytext); 
 }
 "char" {
-    if (textBefore) printf("\n");
-    printf("CHAR"); 
-    textBefore = 1;
+    printToken("CHAR", &textBefore);
     yycolumn += strlen(yytext);
 }
 "return" {
-    if (textBefore) printf("\n");
-    printf("RETURN"); 
-    textBefore = 1;
+    printToken("RETURN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "break" {
-    if (textBefore) printf("\n");
-    printf("BREAK");
-    textBefore = 1;
+    printToken("BREAK", &textBefore);
     yycolumn += strlen(yytext); 
 }
 "switch" {
-    if (textBefore) printf("\n");
-    printf("SWITCH"); 
-    textBefore = 1;
+    printToken("SWITCH", &textBefore);
     yycolumn += strlen(yytext);
 }
 "case" {
-    if (textBefore) printf("\n");
-    printf("CASE"); 
-    textBefore = 1;
+    printToken("CASE", &textBefore);
     yycolumn += strlen(yytext);
 }
 "default" {
-    if (textBefore) printf("\n");
-    printf("DEFAULT"); 
-    textBefore = 1;
+    printToken("DEFAULT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "do" {
-    if (textBefore) printf("\n");
-    printf("DO"); 
-    textBefore = 1;
+    printToken("DO", &textBefore);
     yycolumn += strlen(yytext);
 }
 "while" {
-    if (textBefore) printf("\n");
-    printf("WHILE"); 
-    textBefore = 1;
+    printToken("WHILE", &textBefore);
     yycolumn += strlen(yytext);
 }
 "for" {
-    if (textBefore) printf("\n");
-    printf("FOR"); 
-    textBefore = 1;
+    printToken("FOR", &textBefore);
     yycolumn += strlen(yytext);
 }
 "if" {
-    if (textBefore) printf("\n");
-    printf("IF"); 
-    textBefore = 1;
+    printToken("IF", &textBefore);
     yycolumn += strlen(yytext);
 }
 "else" {
-    if (textBefore) printf("\n");
-    printf("ELSE"); 
-    textBefore = 1;
+    printToken("ELSE", &textBefore);
     yycolumn += strlen(yytext);
 }
 "typedef" {
-    if (textBefore) printf("\n");
-    printf("TYPEDEF"); 
-    textBefore = 1;
+    printToken("TYPEDEF", &textBefore);
     yycolumn += strlen(yytext);
 }
 "struct" {
-    if (textBefore) printf("\n");
-    printf("STRUCT"); 
-    textBefore = 1;
+    printToken("STRUCT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "+" {
-    if (textBefore) printf("\n");
-    printf("PLUS"); 
-    textBefore = 1;
+    printToken("PLUS", &textBefore);
     yycolumn += strlen(yytext);
 }
 "-" {
-    if (textBefore) printf("\n");
-    printf("MINUS"); 
-    textBefore = 1;
+    printToken("MINUS", &textBefore);
     yycolumn += strlen(yytext);
 }
 "*" {
-    if (textBefore) printf("\n");
-    printf("MULTIPLY"); 
-    textBefore = 1;
+    printToken("MULTIPLY", &textBefore);
     yycolumn += strlen(yytext);
 }
 "/" {
-    if (textBefore) printf("\n");
-    printf("DIV"); 
-    textBefore = 1;
+    printToken("DIV", &textBefore);
     yycolumn += strlen(yytext);
 }
 "%" {
-    if (textBefore) printf("\n");
-    printf("REMAINDER"); 
-    textBefore = 1;
+    printToken("REMAINDER", &textBefore);
     yycolumn += strlen(yytext);
 }
 "++" {
-    if (textBefore) printf("\n");
-    printf("INC"); 
-    textBefore = 1;
+    printToken("INC", &textBefore);
     yycolumn += strlen(yytext);
 }
 "--" {
-    if (textBefore) printf("\n");
-    printf("DEC"); 
-    textBefore = 1;
+    printToken("DEC", &textBefore);
     yycolumn += strlen(yytext);
 }
 "&" {
-    if (textBefore) printf("\n");
-    printf("BITWISE_AND"); 
-    textBefore = 1;
+    printToken("BITWISE_AND", &textBefore);
     yycolumn += strlen(yytext);
 }
 "|" {
-    if (textBefore) printf("\n");
-    printf("BITWISE_OR"); 
-    textBefore = 1;
+    printToken("BITWISE_OR", &textBefore);
     yycolumn += strlen(yytext);
 }
 "~" {
-    if (textBefore) printf("\n");
-    printf("BITWISE_NOT"); 
-    textBefore = 1;
+    printToken("BITWISE_NOT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "^" {
-    if (textBefore) printf("\n");
-    printf("BITWISE_XOR"); 
-    textBefore = 1;
+    printToken("BITWISE_XOR", &textBefore);
     yycolumn += strlen(yytext);
 }
 "!" {
-    if (textBefore) printf("\n");
-    printf("NOT"); 
-    textBefore = 1;
+    printToken("NOT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "&&" {
-    if (textBefore) printf("\n");
-    printf("LOGICAL_AND"); 
-    textBefore = 1;
+    printToken("LOGICAL_AND", &textBefore);
     yycolumn += strlen(yytext);
 }
 "||" {
-    if (textBefore) printf("\n");
-    printf("LOGICAL_OR"); 
-    textBefore = 1;
+    printToken("LOGICAL_OR", &textBefore);
     yycolumn += strlen(yytext);
 }
 "==" {
-    if (textBefore) printf("\n");
-    printf("EQUAL"); 
-    textBefore = 1;
+    printToken("EQUAL", &textBefore);
     yycolumn += strlen(yytext);
 }
 "!=" {
-    if (textBefore) printf("\n");
-    printf("NOT_EQUAL"); 
-    textBefore = 1;
+    printToken("NOT_EQUAL", &textBefore);
     yycolumn += strlen(yytext);
 }
 "<" {
-    if (textBefore) printf("\n");
-    printf("LESS_THAN"); 
-    textBefore = 1;
+    printToken("LESS_THAN", &textBefore);
     yycolumn += strlen(yytext);
 }
 ">" {
-    if (textBefore) printf("\n");
-    printf("GREATER_THAN"); 
-    textBefore = 1;
+    printToken("GREATER_THAN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "<=" {
-    if (textBefore) printf("\n");
-    printf("LESS_EQUAL"); 
-    textBefore = 1;
+    printToken("LESS_EQUAL", &textBefore);
     yycolumn += strlen(yytext);
 }
 ">=" {
-    if (textBefore) printf("\n");
-    printf("GREATER_EQUAL"); 
-    textBefore = 1;
+    printToken("GREATER_EQUAL", &textBefore);
     yycolumn += strlen(yytext);
 }
 ">>" {
-    if (textBefore) printf("\n");
-    printf("R_SHIFT"); 
-    textBefore = 1;
+    printToken("R_SHIFT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "<<" {
-    if (textBefore) printf("\n");
-    printf("L_SHIFT"); 
-    textBefore = 1;
+    printToken("L_SHIFT", &textBefore);
     yycolumn += strlen(yytext);
 }
 "=" {
-    if (textBefore) printf("\n");
-    printf("ASSIGN"); 
-    textBefore = 1;
+    printToken("ASSIGN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "+=" {
-    if (textBefore) printf("\n");
-    printf("ADD_ASSIGN"); 
-    textBefore = 1;
+    printToken("ADD_ASSIGN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "-=" {
-    if (textBefore) printf("\n");
-    printf("MINUS_ASSIGN"); 
-    textBefore = 1;
+    printToken("MINUS_ASSIGN", &textBefore);
     yycolumn += strlen(yytext);
 }
 ";" {
-    if (textBefore) printf("\n");
-    printf("SEMICOLON"); 
-    textBefore = 1;
+    printToken("SEMICOLON", &textBefore);
     yycolumn += strlen(yytext);
 }
 "," {
-    if (textBefore) printf("\n");
-    printf("COMMA"); 
-    textBefore = 1;
+    printToken("COMMA", &textBefore);
     yycolumn += strlen(yytext);
 }
 ":" {
-    if (textBefore) printf("\n");
-    printf("COLON"); 
-    textBefore = 1;
+    printToken("COLON", &textBefore);
     yycolumn += strlen(yytext);
 }
 "(" {
-    if (textBefore) printf("\n");
-    printf("L_PAREN"); 
-    textBefore = 1;
+    printToken("L_PAREN", &textBefore);
     yycolumn += strlen(yytext);
 }
 ")" {
-    if (textBefore) printf("\n");
-    printf("R_PAREN"); 
-    textBefore = 1;
+    printToken("R_PAREN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "{" {
-    if (textBefore) printf("\n");
-    printf("L_CURLY_BRACKET"); 
-    textBefore = 1;
+    printToken("L_CURLY_BRACKET", &textBefore);
     yycolumn += strlen(yytext);
 }
 "}" {
-    if (textBefore) printf("\n");
-    printf("R_CURLY_BRACKET"); 
-    textBefore = 1;
+    printToken("R_CURLY_BRACKET", &textBefore);
     yycolumn += strlen(yytext);
 }
 "[" {
-    if (textBefore) printf("\n");
-    printf("L_SQUARE_BRACKET"); 
-    textBefore = 1;
+    printToken("L_SQUARE_BRACKET", &textBefore);
     yycolumn += strlen(yytext);
 }
 "]" {
-    if (textBefore) printf("\n");
-    printf("R_SQUARE_BRACKET"); 
-    textBefore = 1;
+    printToken("R_SQUARE_BRACKET", &textBefore);
     yycolumn += strlen(yytext);
 }
 "?" {
-    if (textBefore) printf("\n");
-    printf("TERNARY_CONDITIONAL"); 
-    textBefore = 1;
+    printToken("TERNARY_CONDITIONAL", &textBefore);
     yycolumn += strlen(yytext);
 }
 "#" {
-    if (textBefore) printf("\n");
-    printf("NUMBER_SIGN"); 
-    textBefore = 1;
+    printToken("NUMBER_SIGN", &textBefore);
     yycolumn += strlen(yytext);
 }
 "->" {
-    if (textBefore) printf("\n");
-    printf("POINTER"); 
-    textBefore = 1;
+    printToken("POINTER", &textBefore);
     yycolumn += strlen(yytext);
 }
 "printf" {
-    if (textBefore) printf("\n");
-    printf("PRINTF"); 
-    textBefore = 1;
+    printToken("PRINTF", &textBefore);
     yycolumn += strlen(yytext);
 }
 "scanf" {
-    if (textBefore) printf("\n");
-    printf("SCANF"); 
-    textBefore = 1;
+    printToken("SCANF", &textBefore);
     yycolumn += strlen(yytext);
 }
 "define" {
-    if (textBefore) printf("\n");
-    printf("DEFINE"); 
-    textBefore = 1;
+    printToken("DEFINE", &textBefore);
     yycolumn += strlen(yytext);
 }
 "exit" {
-    if (textBefore) printf("\n");
-    printf("EXIT"); 
-    textBefore = 1;
+    printToken("EXIT", &textBefore);
     yycolumn += strlen(yytext);
 }
 \"([^\\\"]|\\.)*\" { /* (\".*\") */
@@ -434,11 +329,3 @@ int main(int argc, char *argv[]) {
     yylex();
     return 0;
 }
-
-/*
-
-TO DO 
-- arrumar bloco dos comentarios
-- testar e ajustar
-
-*/
