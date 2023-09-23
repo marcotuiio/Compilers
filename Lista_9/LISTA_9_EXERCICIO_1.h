@@ -23,7 +23,7 @@
 #define END 27
 
 // Returns the index of the char in the array, or -1 if it's not in the array
-// Basicaally gets the column of the matrix (the state it goes to) that corresponds to the char read
+// Basically gets the column of the matrix (the state it goes to) that corresponds to the char read
 int getChar(char *reads, char input);
 
 // Return true if the current state is a final state, false otherwise
