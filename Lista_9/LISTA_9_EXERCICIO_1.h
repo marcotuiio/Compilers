@@ -44,9 +44,6 @@ void processSyntax(void *cadeia, bool *textBefore);
 // If they are different, then prints an error message
 void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore);
 
-// Prints syntax error message
-void printResult(char *result, bool *textBefore);
-
 // Productions of non terminal S in the defined grammar
 // Checks and process current token within the productions
 void S(void *cadeia, int *tokenGlobal, bool *textBefore);
@@ -58,5 +55,17 @@ void L(void *cadeia, int *tokenGlobal, bool *textBefore);
 // Productions of non terminal E in the defined grammar
 // Checks and process current token within the productions
 void E(void *cadeia, int *tokenGlobal, bool *textBefore);
+
+// Prints syntax error message
+void printResult(char *result, bool *textBefore);
+
+// Returns the error message to be printed, analyzing the current token and the expected token
+char *defineErro(int tokenGlobal, int tokenAnalisado);
+
+// Checks if string is over when it shouldn't be
+void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore);
+
+// See what token its receiving and writes it to a string
+void switchTokens(char *text, int token);
 
 #endif

@@ -1,2 +1,1 @@
-ifthenelsebeginendprint;=+-
-24+99-666end
+print else = 9053

@@ -1,5 +1,7 @@
 #include "LISTA_9_EXERCICIO_1.h"
 
+bool errorFlag = false;
+
 int main() {
     char reads[SIGMA] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                          'i', 'f', 'e', 'l', 's', 'n', 'd', 't', 'h', 'b',
@@ -52,7 +54,6 @@ int main() {
             cadeia = createList();
             firstLine = false;
         } else {
-            // printList(cadeia);
             processSyntax(cadeia, &textBefore);
             freeList(cadeia);
             cadeia = createList();
@@ -149,7 +150,6 @@ int main() {
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
 
-        // printList(cadeia);
         processSyntax(cadeia, &textBefore);
         freeList(cadeia);
     }
@@ -186,12 +186,13 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
 void processSyntax(void *cadeia, bool *textBefore) {
     int tokenGlobal = getNode(cadeia);
     if (tokenGlobal == -1) {
-        printResult("ERRO SINTATICO", textBefore);
+        printResult("ERRO LISTA VAZIA", textBefore);
         exit(0);
     }
+    errorFlag = false;
     S(cadeia, &tokenGlobal, textBefore);  // S is the initial symbol
 
-    if (getNode(cadeia) == -1) {
+    if (!errorFlag && getNode(cadeia) == -1) {
         printResult("CADEIA ACEITA", textBefore);
     }
 }
@@ -201,8 +202,112 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
         removeNode(cadeia);
         *tokenGlobal = getNode(cadeia);
     } else {
-        printResult("ERRO SINTATICO", textBefore);
+        char *text = defineErro(*tokenGlobal, tokenAnalisado);
+        printResult(text, textBefore);
+        free(text);
+        errorFlag = true;
     }
+}
+
+void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    switch (*tokenGlobal) {
+        case IF:
+            // if (errorFlag) return;
+            eatToken(cadeia, IF, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            E(cadeia, tokenGlobal, textBefore);
+            eatToken(cadeia, THEN, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return; 
+
+            S(cadeia, tokenGlobal, textBefore);
+            eatToken(cadeia, ELSE, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            S(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case BEGIN:
+            // if (errorFlag) return;
+            eatToken(cadeia, BEGIN, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            S(cadeia, tokenGlobal, textBefore);
+            L(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case PRINT:
+            // if (errorFlag) return;
+            eatToken(cadeia, PRINT, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            E(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        default:
+            if (!errorFlag) {
+                char *text = defineErro(*tokenGlobal, -1);
+                strcat(text, "if, begin, print");
+                printResult(text, textBefore);
+                free(text);
+                errorFlag = true;
+            }
+            break;
+    }
+}
+
+void L(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    switch (*tokenGlobal) {
+        case END:
+            // if (errorFlag) return;
+            eatToken(cadeia, END, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            break;
+
+        case SEMICOLON:
+            // if (errorFlag) return;
+            eatToken(cadeia, SEMICOLON, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            S(cadeia, tokenGlobal, textBefore);
+            L(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        default:
+            if (!errorFlag) {
+                char *text = defineErro(*tokenGlobal, -1);
+                strcat(text, "end, ;");
+                printResult(text, textBefore);
+                free(text);
+                errorFlag = true;
+            }
+            break;
+    }
+}
+
+void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    // if (errorFlag) return;
+    eatToken(cadeia, NUM, tokenGlobal, textBefore);
+    incompleteString(cadeia, tokenGlobal, textBefore);
+    if (errorFlag) return;
+
+    eatToken(cadeia, EQUAL, tokenGlobal, textBefore);
+    incompleteString(cadeia, tokenGlobal, textBefore);
+    if (errorFlag) return;
+
+    eatToken(cadeia, NUM, tokenGlobal, textBefore);
+    if (errorFlag) return;
 }
 
 void printResult(char *result, bool *textBefore) {
@@ -213,54 +318,54 @@ void printResult(char *result, bool *textBefore) {
     *textBefore = true;
 }
 
-void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
-    switch (*tokenGlobal) {
-        case IF:
-            eatToken(cadeia, IF, tokenGlobal, textBefore);
-            E(cadeia, tokenGlobal, textBefore);
-            eatToken(cadeia, THEN, tokenGlobal, textBefore);
-            S(cadeia, tokenGlobal, textBefore);
-            eatToken(cadeia, ELSE, tokenGlobal, textBefore);
-            S(cadeia, tokenGlobal, textBefore);
-            break;
+char *defineErro(int tokenGlobal, int tokenAnalisado) {
+    char *text = calloc(200, sizeof(char));
+    strcat(text, "ERRO SINTATICO EM: ");
+    switchTokens(text, tokenGlobal);
+    strcat(text, " ESPERADO: ");
+    if (tokenAnalisado != -1) {
+        switchTokens(text, tokenAnalisado);
+    }
+    return text;
+}
 
-        case BEGIN:
-            eatToken(cadeia, BEGIN, tokenGlobal, textBefore);
-            S(cadeia, tokenGlobal, textBefore);
-            L(cadeia, tokenGlobal, textBefore);
-            break;
-
-        case PRINT:
-            eatToken(cadeia, PRINT, tokenGlobal, textBefore);
-            E(cadeia, tokenGlobal, textBefore);
-            break;
-
-        default:
-            printResult("ERRO SINTATICO", textBefore);
-            break;
+void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    if (getNode(cadeia) == -1) {
+        printResult("ERRO SINTATICO: CADEIA INCOMPLETA", textBefore);
+        errorFlag = true;
     }
 }
 
-void L(void *cadeia, int *tokenGlobal, bool *textBefore) {
-    switch (*tokenGlobal) {
-        case END:
-            eatToken(cadeia, END, tokenGlobal, textBefore);
-            break;
-
+void switchTokens(char *text, int token) {
+    switch (token) {
         case SEMICOLON:
-            eatToken(cadeia, SEMICOLON, tokenGlobal, textBefore);
-            S(cadeia, tokenGlobal, textBefore);
-            L(cadeia, tokenGlobal, textBefore);
+            strcat(text, ";");
             break;
-
+        case EQUAL:
+            strcat(text, "=");
+            break;
+        case NUM:
+            strcat(text, "num");
+            break;
+        case IF:
+            strcat(text, "if");
+            break;
+        case THEN:
+            strcat(text, "then");
+            break;
+        case BEGIN:
+            strcat(text, "begin");
+            break;
+        case PRINT:
+            strcat(text, "print");
+            break;
+        case ELSE:
+            strcat(text, "else");
+            break;
+        case END:
+            strcat(text, "end");
+            break;
         default:
-            printResult("ERRO SINTATICO", textBefore);
             break;
     }
-}
-
-void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
-    eatToken(cadeia, NUM, tokenGlobal, textBefore);
-    eatToken(cadeia, EQUAL, tokenGlobal, textBefore);
-    eatToken(cadeia, NUM, tokenGlobal, textBefore);
 }
