@@ -40,9 +40,9 @@ int main() {
     int finalStates[] = {2, 3, 5, 7, 11, 16, 21, 25, 27};
 
     bool textBefore = false;
-    char input[131072];
+    char input[MAX_INPUT];
     bool firstLine = true;
-    while (fgets(input, 131072, stdin) != NULL) {
+    while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -181,7 +181,15 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
     *currentState = 1;
 }
 
-// -----------> Syntax Analyzer <-----------
+/*
+    -----------> Syntax Analyzer <-----------
+    S -> if E then S else S
+    S -> begin S L
+    S -> print E
+    L -> end
+    L -> ; S L
+    E -> num = num
+*/
 
 void processSyntax(void *cadeia, bool *textBefore) {
     int tokenGlobal = getNode(cadeia);
@@ -198,7 +206,7 @@ void processSyntax(void *cadeia, bool *textBefore) {
 }
 
 void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore) {
-    if (tokenAnalisado == *tokenGlobal) {  // means that the token was accepted
+    if (tokenAnalisado == *tokenGlobal) {  // means that the token was accepted and can be removed from the list
         removeNode(cadeia);
         *tokenGlobal = getNode(cadeia);
     } else {
@@ -220,7 +228,7 @@ void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
             if (errorFlag) return;
             eatToken(cadeia, THEN, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
-            if (errorFlag) return; 
+            if (errorFlag) return;
 
             S(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;

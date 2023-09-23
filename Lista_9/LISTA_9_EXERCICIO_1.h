@@ -9,6 +9,7 @@
 
 #define SIGMA 27
 #define QNTD_FINAL 9
+#define MAX_INPUT 131072
 
 // ENUM of Final States to be processed by syntax analyzer
 #define SEMICOLON 2
