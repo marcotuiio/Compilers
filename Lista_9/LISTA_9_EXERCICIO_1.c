@@ -311,6 +311,7 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
 }
 
 void printResult(char *result, bool *textBefore) {
+    if (!result) return;
     if (*textBefore) {
         printf("\n");
     }
@@ -319,6 +320,7 @@ void printResult(char *result, bool *textBefore) {
 }
 
 char *defineErro(int tokenGlobal, int tokenAnalisado) {
+    if (tokenGlobal == -1) return NULL;
     char *text = calloc(200, sizeof(char));
     strcat(text, "ERRO SINTATICO EM: ");
     switchTokens(text, tokenGlobal);
