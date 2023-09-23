@@ -40,9 +40,9 @@ int main() {
     int finalStates[] = {2, 3, 5, 7, 11, 16, 21, 25, 27};
 
     bool textBefore = false;
-    char input[32768];
+    char input[131072];
     bool firstLine = true;
-    while (fgets(input, 32768, stdin) != NULL) {
+    while (fgets(input, 131072, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -212,17 +212,18 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case IF:
-            // if (errorFlag) return;
             eatToken(cadeia, IF, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
 
             E(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
             eatToken(cadeia, THEN, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return; 
 
             S(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
             eatToken(cadeia, ELSE, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
@@ -232,18 +233,17 @@ void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
             break;
 
         case BEGIN:
-            // if (errorFlag) return;
             eatToken(cadeia, BEGIN, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
 
             S(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
             L(cadeia, tokenGlobal, textBefore);
 
             break;
 
         case PRINT:
-            // if (errorFlag) return;
             eatToken(cadeia, PRINT, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
@@ -267,19 +267,18 @@ void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
 void L(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case END:
-            // if (errorFlag) return;
             eatToken(cadeia, END, tokenGlobal, textBefore);
             if (errorFlag) return;
 
             break;
 
         case SEMICOLON:
-            // if (errorFlag) return;
             eatToken(cadeia, SEMICOLON, tokenGlobal, textBefore);
             incompleteString(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
 
             S(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
             L(cadeia, tokenGlobal, textBefore);
 
             break;
@@ -297,7 +296,6 @@ void L(void *cadeia, int *tokenGlobal, bool *textBefore) {
 }
 
 void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
-    // if (errorFlag) return;
     eatToken(cadeia, NUM, tokenGlobal, textBefore);
     incompleteString(cadeia, tokenGlobal, textBefore);
     if (errorFlag) return;
@@ -312,9 +310,7 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void printResult(char *result, bool *textBefore) {
     if (!result) return;
-    if (*textBefore) {
-        printf("\n");
-    }
+    if (*textBefore) printf("\n");
     printf("%s", result);
     *textBefore = true;
 }
