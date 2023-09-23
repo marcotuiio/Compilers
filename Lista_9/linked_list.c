@@ -21,16 +21,21 @@ void insertNode(listHeader *list, int value) { // sempre insere no final
     }
 }
 
-int removeNode(listHeader *list) { // sempre remove do inicio
+void removeNode(listHeader *list) { // sempre remove do inicio
     if (list->head == NULL) {
-        return -1;
+        return;
     } else {
         nodeList *aux = list->head;
         list->head = aux->next;
-        int v = aux->value;
         free(aux);
-        return v;
     }
+}
+
+int getNode(listHeader *list) {
+    if (list->head == NULL) {
+        return -1;
+    }
+    return list->head->value;
 }
 
 void printList(listHeader *list) {

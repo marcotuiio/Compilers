@@ -31,8 +31,32 @@ bool isFinal(int *finals, int current);
 // Prints the token, and if there was text before it, prints a new line before printing the token
 void printToken(bool *textBefore, char *toPrint);
 
-
 // Resets the variables that are used in the main loop, so the automata can start reading the next token
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState);
+
+// -----------> Syntax Analyzer <-----------
+
+// Receives the list of all tokens of the sentece, and starts to processes it
+void processSyntax(void *cadeia, bool *textBefore);
+
+// Receives the current token and expected token
+// If current and expected are the same, then removes it from the list and gets the next token to be processed
+// If they are different, then prints an error message
+void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore);
+
+// Prints syntax error message
+void printResult(char *result, bool *textBefore);
+
+// Productions of non terminal S in the defined grammar
+// Checks and process current token within the productions
+void S(void *cadeia, int *tokenGlobal, bool *textBefore);
+
+// Productions of non terminal L in the defined grammar
+// Checks and process current token within the productions
+void L(void *cadeia, int *tokenGlobal, bool *textBefore);
+
+// Productions of non terminal E in the defined grammar
+// Checks and process current token within the productions
+void E(void *cadeia, int *tokenGlobal, bool *textBefore);
 
 #endif

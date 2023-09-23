@@ -15,7 +15,8 @@ typedef struct list {
 
 void *createList();
 void insertNode(listHeader *list, int value);
-int removeNode(listHeader *list);
+void removeNode(listHeader *list);
+int getNode(listHeader *list);
 void printList(listHeader *list);
 void freeList(listHeader *list);
 

@@ -36,13 +36,11 @@ int main() {
     };
 
     int finalStates[] = {2, 3, 5, 7, 11, 16, 21, 25, 27};
-    // char *tokens[] = {"nda", ";", "=", "nda", "num", "nda", "if", "nda", "nda", "nda", "then", "nda", "nda", "nda",
-    //                   "nda", "begin", "nda", "nda", "nda", "nda", "print", "nda", "nda", "nda", "else", "nda", "end"};
 
-    // bool textBefore = false;
-    char input[4096];
+    bool textBefore = false;
+    char input[32768];
     bool firstLine = true;
-    while (fgets(input, 4096, stdin) != NULL) {
+    while (fgets(input, 32768, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
         int backupIndex = 0;          // index to handle non terminal states
@@ -54,11 +52,11 @@ int main() {
             cadeia = createList();
             firstLine = false;
         } else {
-            printList(cadeia);
+            // printList(cadeia);
+            processSyntax(cadeia, &textBefore);
             freeList(cadeia);
+            cadeia = createList();
         }
-        
-        cadeia = createList();
 
         while (input[index] != '\0') {
             int currentCharIndex = getChar(reads, input[index]);  // gets the index of the char in the array
@@ -71,14 +69,14 @@ int main() {
                             resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                             continue;
                         }
-                        // printToken(&textBefore, "ERRO LEXICO");
+                        // printResult("ERRO LEXICO", &textBefore);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
 
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-                    // printToken(&textBefore, "ERRO LEXICO");
+                    // printResult("ERRO LEXICO", &textBefore);
                     continue;
                 }
 
@@ -89,13 +87,12 @@ int main() {
 
                 if (end != -1) {  // if the end state is not -1, token is printed because at some point it went to a final state
                     insertNode(cadeia, end);
-                    // textBefore = true;
                 }
 
                 // update variables to start again
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
-                // printToken(&textBefore, "ERRO LEXICO");
+                // printResult("ERRO LEXICO", &textBefore);
                 continue;
             }
 
@@ -105,7 +102,7 @@ int main() {
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    // printToken(&textBefore, "ERRO LEXICO");
+                    // printResult("ERRO LEXICO", &textBefore);
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
@@ -132,13 +129,6 @@ int main() {
             if (acceptedAsFinal) {
                 end = currentState;
             }
-
-            // if (input[index] != 10 && input[index] != 32) {  // skiping spaces and new lines
-            //     if (textBefore) {
-            //         printf("\n");
-            //         textBefore = false;
-            //     }
-            // }
             index++;
 
             // getting to a final state after leaving a intermediate non final state wont update the backupIndex
@@ -151,17 +141,16 @@ int main() {
         // Check classification for the last token
         if (end == currentState) {
             backupIndex = index;
-            // printf("%s", tokens[end - 1]);
             insertNode(cadeia, end);
-            // textBefore = true;
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
-            // printToken(&textBefore, "ERRO LEXICO");
+            // printResult("ERRO LEXICO", &textBefore);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
 
-        printList(cadeia);
+        // printList(cadeia);
+        processSyntax(cadeia, &textBefore);
         freeList(cadeia);
     }
     return 0;
@@ -185,14 +174,6 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
-// void printToken(bool *textBefore, char *toPrint) {
-//     if (*textBefore) {
-//         printf("\n");
-//     }
-//     printf("%s", toPrint);
-//     *textBefore = true;
-// }
-
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState) {
     *index = indexToSet;
     *backupIndex = *index;
@@ -200,73 +181,86 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
     *currentState = 1;
 }
 
-// Syntax Analyzer
+// -----------> Syntax Analyzer <-----------
 
-void processSyntax(void *cadeia) {
-    int token = getNode(cadeia);
-    S(token);  // S is the initial symbol
-}
-
-void eatToken(int token) {
-    // void eatToken(int token, void *cadeia, int *currentToken) {
-    if (token == -1) {
-        printf("ERRO LISTA VAZIA ?\n");
+void processSyntax(void *cadeia, bool *textBefore) {
+    int tokenGlobal = getNode(cadeia);
+    if (tokenGlobal == -1) {
+        printResult("ERRO SINTATICO", textBefore);
         exit(0);
     }
+    S(cadeia, &tokenGlobal, textBefore);  // S is the initial symbol
 
-    // if (token == *currentToken) {
-    //     int currentToken = removeNode(cadeia);
-    // }
+    if (getNode(cadeia) == -1) {
+        printResult("CADEIA ACEITA", textBefore);
+    }
 }
 
-void S(int token) {
-    switch (token) {
+void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore) {
+    if (tokenAnalisado == *tokenGlobal) {  // means that the token was accepted
+        removeNode(cadeia);
+        *tokenGlobal = getNode(cadeia);
+    } else {
+        printResult("ERRO SINTATICO", textBefore);
+    }
+}
+
+void printResult(char *result, bool *textBefore) {
+    if (*textBefore) {
+        printf("\n");
+    }
+    printf("%s", result);
+    *textBefore = true;
+}
+
+void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    switch (*tokenGlobal) {
         case IF:
-            eatToken(token);
-            E(token);
-            eatToken(THEN);
-            S(token);
-            eatToken(ELSE);
-            S(token);
+            eatToken(cadeia, IF, tokenGlobal, textBefore);
+            E(cadeia, tokenGlobal, textBefore);
+            eatToken(cadeia, THEN, tokenGlobal, textBefore);
+            S(cadeia, tokenGlobal, textBefore);
+            eatToken(cadeia, ELSE, tokenGlobal, textBefore);
+            S(cadeia, tokenGlobal, textBefore);
             break;
 
         case BEGIN:
-            eatToken(token);
-            S(token);
-            L(END);
+            eatToken(cadeia, BEGIN, tokenGlobal, textBefore);
+            S(cadeia, tokenGlobal, textBefore);
+            L(cadeia, tokenGlobal, textBefore);
             break;
 
         case PRINT:
-            eatToken(token);
-            E(token);
+            eatToken(cadeia, PRINT, tokenGlobal, textBefore);
+            E(cadeia, tokenGlobal, textBefore);
             break;
 
         default:
-            printErro();
+            printResult("ERRO SINTATICO", textBefore);
             break;
     }
 }
 
-void L(int token) {
-    switch(token) {
+void L(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    switch (*tokenGlobal) {
         case END:
-            eatToken(token);
+            eatToken(cadeia, END, tokenGlobal, textBefore);
             break;
 
         case SEMICOLON:
-            eatToken(token);
-            S(token);
-            L(token);
+            eatToken(cadeia, SEMICOLON, tokenGlobal, textBefore);
+            S(cadeia, tokenGlobal, textBefore);
+            L(cadeia, tokenGlobal, textBefore);
             break;
 
         default:
-            printErro();
+            printResult("ERRO SINTATICO", textBefore);
             break;
     }
 }
 
-void E(int token) {
-    eatToken(token);
-    eatToken(token);
-    eatToken(token);
+void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    eatToken(cadeia, NUM, tokenGlobal, textBefore);
+    eatToken(cadeia, EQUAL, tokenGlobal, textBefore);
+    eatToken(cadeia, NUM, tokenGlobal, textBefore);
 }
