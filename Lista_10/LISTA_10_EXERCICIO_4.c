@@ -8,14 +8,14 @@ int main() {
                          'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                          'u', 'v', 'w', 'x', 'y', 'z', '+', '*', '(', ')', '$'};
     int edges[][SIGMA] = {
-    //   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  +  *  (  )  $
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 2, 3, 4, 5, 6}, // state 1
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 2 +
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 3 *
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 4 (
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 5 )
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 6 $
-        {7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0}, // state 7 id
+        //   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  +  *  (  )  $
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 2, 3, 4, 5, 6},  // state 1
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // state 2 +
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // state 3 *
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // state 4 (
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // state 5 )
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // state 6 $
+        {7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0},  // state 7 id
     };
 
     int finalStates[] = {2, 3, 4, 5, 6, 7};
@@ -204,17 +204,10 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case ID:
-            E(cadeia, tokenGlobal, textBefore);
-            if (errorFlag) return;
-            
-            eatToken(cadeia, EOL, tokenGlobal, textBefore);
-
-            break;
-
         case L_PAREN:
             E(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             eatToken(cadeia, EOL, tokenGlobal, textBefore);
 
             break;
@@ -222,7 +215,7 @@ void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "id, (");
+                strcat(text, " id, (");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -234,17 +227,10 @@ void S(void *cadeia, int *tokenGlobal, bool *textBefore) {
 void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case ID:
-            T(cadeia, tokenGlobal, textBefore);
-            if (errorFlag) return;
-            
-            E_Prime(cadeia, tokenGlobal, textBefore);
-
-            break;
-
         case L_PAREN:
             T(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             E_Prime(cadeia, tokenGlobal, textBefore);
 
             break;
@@ -252,7 +238,7 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "id, (");
+                strcat(text, " id, (");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -265,21 +251,17 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case PLUS:
             eatToken(cadeia, PLUS, tokenGlobal, textBefore);
-            incompleteString(cadeia, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
             if (errorFlag) return;
 
             T(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             E_Prime(cadeia, tokenGlobal, textBefore);
 
             break;
 
         case R_PAREN:
-            // so tira E'
-
-            break;
-
         case EOL:
             // so tira E'
 
@@ -288,7 +270,7 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "+, ), $");
+                strcat(text, " +, ), $");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -300,17 +282,10 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
 void T(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case ID:
-            F(cadeia, tokenGlobal, textBefore);
-            if (errorFlag) return;
-            
-            T_Prime(cadeia, tokenGlobal, textBefore);
-            
-            break;
-
         case L_PAREN:
             F(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             T_Prime(cadeia, tokenGlobal, textBefore);
 
             break;
@@ -318,7 +293,7 @@ void T(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "id, (");
+                strcat(text, " id, (");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -330,36 +305,28 @@ void T(void *cadeia, int *tokenGlobal, bool *textBefore) {
 void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case PLUS:
+        case R_PAREN:
+        case EOL:
             // so remove T'
 
             break;
 
         case TIMES:
             eatToken(cadeia, TIMES, tokenGlobal, textBefore);
-            incompleteString(cadeia, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
             if (errorFlag) return;
 
             F(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             T_Prime(cadeia, tokenGlobal, textBefore);
-
-            break;
-
-        case R_PAREN:
-            // so tira T'
-
-            break;
-
-        case EOL:
-            // so tira E'
 
             break;
 
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "+, ), $");
+                strcat(text, " +, *, ), $");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -377,12 +344,12 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
         case L_PAREN:
             eatToken(cadeia, L_PAREN, tokenGlobal, textBefore);
-            incompleteString(cadeia, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
             if (errorFlag) return;
 
             E(cadeia, tokenGlobal, textBefore);
             if (errorFlag) return;
-            
+
             eatToken(cadeia, R_PAREN, tokenGlobal, textBefore);
 
             break;
@@ -390,7 +357,7 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, "id, (");
+                strcat(text, " id, (");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -407,19 +374,18 @@ void printResult(char *result, bool *textBefore) {
 }
 
 char *defineErro(int tokenGlobal, int tokenAnalisado) {
-    if (tokenGlobal == -1) return NULL;
     char *text = calloc(200, sizeof(char));
-    strcat(text, "ERRO SINTATICO EM: ");
+    strcat(text, "ERRO SINTATICO EM:");
     switchTokens(text, tokenGlobal);
-    strcat(text, " ESPERADO: ");
+    strcat(text, " ESPERADO:");
     if (tokenAnalisado != -1) {
         switchTokens(text, tokenAnalisado);
     }
     return text;
 }
 
-void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore) {
-    if (getNode(cadeia) == -1) {
+void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver) {
+    if (getNode(cadeia) == -1 && couldBeOver) {
         printResult("ERRO SINTATICO: CADEIA INCOMPLETA", textBefore);
         errorFlag = true;
     }
@@ -427,23 +393,26 @@ void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void switchTokens(char *text, int token) {
     switch (token) {
+        case -1:
+            // strcat(text, "");
+            break;
         case PLUS:
-            strcat(text, "+");
+            strcat(text, " +");
             break;
         case TIMES:
-            strcat(text, "*");
+            strcat(text, " *");
             break;
         case L_PAREN:
-            strcat(text, "(");
+            strcat(text, " (");
             break;
         case R_PAREN:
-            strcat(text, ")");
+            strcat(text, " )");
             break;
         case EOL:
-            strcat(text, "$");
-            break;    
+            strcat(text, " $");
+            break;
         case ID:
-            strcat(text, "id");
+            strcat(text, " id");
             break;
         default:
             break;

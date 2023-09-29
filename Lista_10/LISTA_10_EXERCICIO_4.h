@@ -73,7 +73,7 @@ void printResult(char *result, bool *textBefore);
 char *defineErro(int tokenGlobal, int tokenAnalisado);
 
 // Checks if string is over when it shouldn't be
-void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore);
+void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver);
 
 // See what token its receiving and writes it to a string
 void switchTokens(char *text, int token);
