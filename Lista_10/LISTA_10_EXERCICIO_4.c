@@ -23,6 +23,8 @@ int main() {
     bool textBefore = false;
     char input[MAX_INPUT];
     bool firstLine = true;
+    // char erroLexico[15] = "ERRO LEXICO:  ";
+    bool flagLexico = false;
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState = 1;         // initial state
         int index = 0;                // index of the char in the input
@@ -35,7 +37,10 @@ int main() {
             cadeia = createList();
             firstLine = false;
         } else {
-            processSyntax(cadeia, &textBefore);
+            if (!flagLexico) {
+                processSyntax(cadeia, &textBefore);
+            }
+            flagLexico = false;
             freeList(cadeia);
             cadeia = createList();
         }
@@ -51,14 +56,20 @@ int main() {
                             resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                             continue;
                         }
-                        // printResult("ERRO LEXICO", &textBefore);
+                        // erroLexico[14] = input[index-1];
+                        // printResult(erroLexico, &textBefore);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
+                        while (input[index] != '\n' && input[index] != '\0') index++;
+                        flagLexico = true;
                         continue;
                     }
 
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-                    // printResult("ERRO LEXICO", &textBefore);
+                    // erroLexico[14] = input[index-1];
+                    // printResult(erroLexico, &textBefore);
+                    while (input[index] != '\n' && input[index] != '\0') index++;
+                    flagLexico = true;
                     continue;
                 }
 
@@ -74,7 +85,10 @@ int main() {
                 // update variables to start again
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
-                // printResult("ERRO LEXICO", &textBefore);
+                // erroLexico[14] = input[index-1];
+                // printResult(erroLexico, &textBefore);
+                while (input[index] != '\n' && input[index] != '\0') index++;
+                flagLexico = true;
                 continue;
             }
 
@@ -84,8 +98,11 @@ int main() {
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    // printResult("ERRO LEXICO", &textBefore);
+                    // erroLexico[14] = input[index-1];
+                    // printResult(erroLexico, &textBefore);
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
+                    while (input[index] != '\n' && input[index] != '\0') index++;
+                    flagLexico = true;
                     continue;
                 }
 
@@ -127,11 +144,16 @@ int main() {
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
-            // printResult("ERRO LEXICO", &textBefore);
+            // erroLexico[14] = input[backupIndex];
+            // printResult(erroLexico, &textBefore);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
+            while (input[index] != '\n' && input[index] != '\0') index++;
+            flagLexico = true;
         }
-
-        processSyntax(cadeia, &textBefore);
+        if (!flagLexico) {
+            processSyntax(cadeia, &textBefore);
+        }
+        flagLexico = false;
         freeList(cadeia);
     }
     return 0;
