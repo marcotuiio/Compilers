@@ -58,18 +58,11 @@
 #define PROCEDIMENTO 165
 #define COMENT_LINHA 166
 #define STRING 168
+#define COMENT_BLOCO 170
 
 /*
     -----------> Syntax Analyzer <-----------
-    S -> E$
-    E -> TE'
-    E' -> +TE'
-    E' ->
-    T -> FT'
-    T' -> *FT'
-    T' ->
-    F -> (E)
-    F -> id
+
 */
 
 // Receives the list of all tokens of the sentece, and starts to processes it

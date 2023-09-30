@@ -9,7 +9,7 @@ void processSyntax(void *cadeia, bool *textBefore) {
         exit(0);
     }
     errorFlag = false;
-    S(cadeia, &tokenGlobal, textBefore);  // S is the initial symbol
+    // S(cadeia, &tokenGlobal, textBefore);  // S is the initial symbol
 
     if (!errorFlag && getNode(cadeia) == -1) {
         printResult("CADEIA ACEITA", textBefore);
@@ -378,6 +378,15 @@ void switchTokens(char *text, int token) {
             break;
         case PROCEDIMENTO:
             strcat(text, " procedimento");
+            break;
+        case COMENT_LINHA:
+            strcat(text, " comentario de linha");
+            break;
+        case STRING:
+            strcat(text, " string");
+            break;
+        case COMENT_BLOCO:
+            strcat(text, " comentario de bloco");
             break;
         default:
             break;
