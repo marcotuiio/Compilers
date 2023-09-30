@@ -223,9 +223,6 @@ void switchTokens(char *text, int token) {
         case -1:
             // strcat(text, "");
             break;
-        case ID:
-            strcat(text, " identificador");
-            break;
         case NUM_INT:
             strcat(text, " numero inteiro");
             break;
@@ -389,6 +386,10 @@ void switchTokens(char *text, int token) {
             strcat(text, " comentario de bloco");
             break;
         default:
+            if (token != -1 && token != 1 && token != 167 && token != 169)
+                strcat(text, " identificador");
+            else 
+                strcat(text, " nao identificado");
             break;
     }
 }

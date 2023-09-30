@@ -1,53 +1,53 @@
-166 3 
+ comentario de linha 
 
-2 
+ comentario de bloco 
 
-28 3 5 
-69 
-86 7 6 2 6 5 
-2 7 6 5 
-86 7 2 6 2 5 
-2 7 6 2 5 
-86 7 2 5 
-2 7 6 96 2 5 
-123 138 2 13 138 9 3 7 3 6 3 7 3 10 2 5 
-90 7 6 5 
-147 7 6 5 
-123 73 2 13 73 9 3 7 3 10 86 5 
-73 2 7 5 
-138 2 7 5 
+ algoritmo  identificador  ; 
+ variaveis 
+ inteiro  :  identificador  ,  identificador  ,  identificador  ; 
+ identificador  :  identificador  ,  identificador  ; 
+ inteiro  :  identificador  ,  identificador  ; 
+ identificador  :  identificador  ,  identificador  ; 
+ inteiro  :  identificador  ; 
+ identificador  :  identificador  ,  identificador  ; 
+ tipo  identificador  =  matriz  [  numero inteiro  :  numero inteiro  ,  numero inteiro  :  numero inteiro  ]  identificador  ; 
+ identificador  :  identificador  ,  identificador  ; 
+ caractere  :  identificador  ,  identificador  ; 
+ tipo  identificador  =  vetor  [  numero inteiro  :  numero inteiro  ]  inteiro  ; 
+ identificador  :  identificador  ; 
+ identificador  :  identificador  ; 
 
-40 
-34 3 5 
-2 34 3 5 
-34 60 5 
-34 60 5 
-2 34 81 5 
-34 4 5 
-34 2 5 
-34 168 5 
-96 3 104 
-151 112 3 30 3 154 3 57 
-151 2 112 60 30 81 57 
-110 3 31 11 81 116 60 12 57 
-9 10 34 3 5 
-
-46 11 12 5 
-127 11 2 12 5 
-127 11 96 2 12 5 
-96 11 9 6 2 10 13 81 12 116 11 9 6 2 10 13 60 12 104 
-9 6 2 10 34 96 2 5 
-49 96 5 
-30 13 2 5 
-151 112 3 30 57 
-34 114 5 
-49 151 5 
-49 110 5 
-49 151 5 
-49 151 5 
-99 
-151 112 3 30 3 57 
-9 10 34 3 5 
-49 151 5 
-2 96 5 
-2 8 
+ inicio 
+ identificador  <-  numero inteiro  ; 
+ identificador  <-  numero inteiro  ; 
+ identificador  <-  falso  ; 
+ identificador  <-  falso  ; 
+ identificador  <-  verdadeiro  ; 
+ identificador  <-  numero real  ; 
+ identificador  <-  identificador  identificador  ; 
+ identificador  <-  string  ; 
+ se  numero inteiro  entao 
+ para  identificador  de  numero inteiro  ate  numero inteiro  passo  numero inteiro  faca 
+ para  identificador  de  falso  ate  verdadeiro  faca 
+ enquanto  numero inteiro  <>  (  verdadeiro  ou  falso  )  faca 
+ identificador  [  identificador  ]  <-  numero inteiro  ; 
+ identificador 
+ imprima  (  identificador  )  ; 
+ leia  (  identificador  )  ; 
+ leia  (  identificador  )  ; 
+ se  (  identificador  [  identificador  ,  identificador  ]  =  verdadeiro  )  ou  (  identificador  [  identificador  ,  identificador  ]  =  falso  )  entao 
+ identificador  [  identificador  ,  identificador  ]  <-  identificador  ; 
+ fim  se  ; 
+ ate  identificador  =  identificador  ; 
+ para  identificador  de  numero inteiro  ate  identificador  faca 
+ identificador  <-  identificador  div  identificador  ; 
+ fim  para  ; 
+ fim  enquanto  ; 
+ fim  para  ; 
+ fim  para  ; 
+ senao 
+ para  identificador  de  numero inteiro  ate  numero inteiro  faca 
+ identificador  [  identificador  ]  <-  numero inteiro  ; 
+ fim  para  ; 
+ identificador  se  ; 
+ identificador  . 

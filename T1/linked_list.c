@@ -1,5 +1,5 @@
 #include "linked_list.h"
-
+#include "PORTUGOL_SINTATICO.h"
 void *createList() {
     listHeader *l = calloc(1, sizeof(listHeader));
     return l;
@@ -41,8 +41,11 @@ int getNode(listHeader *list) {
 void printList(listHeader *list) {
     nodeList *aux = list->head;
     while (aux != NULL) {
-        printf("%d ", aux->value);
+        char *callocAux = calloc(30, sizeof(char));
+        switchTokens(callocAux, aux->value);
+        printf("%s ", callocAux);
         aux = aux->next;
+        free(callocAux);
     }
     printf("\n");
 }

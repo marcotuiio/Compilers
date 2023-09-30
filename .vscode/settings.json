@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "istream": "cpp",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "portugol_lexico.h": "c"
     }
 }
