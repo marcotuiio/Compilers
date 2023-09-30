@@ -223,17 +223,161 @@ void switchTokens(char *text, int token) {
         case -1:
             // strcat(text, "");
             break;
-        case PLUS:
-            strcat(text, " +");
+        case ID:
+            strcat(text, " identificador");
             break;
-        case TIMES:
-            strcat(text, " *");
+        case NUM_INT:
+            strcat(text, " numero inteiro");
             break;
-        case L_PAREN:
+        case NUM_REAL:
+            strcat(text, " numero real");
+            break;
+        case PONTO_VIRGULA:
+            strcat(text, " ;");
+            break;
+        case VIRGULA:
+            strcat(text, " ,");
+            break;
+        case DOIS_PONTOS:
+            strcat(text, " :");
+            break;
+        case PONTO:
+            strcat(text, " .");
+            break;
+        case ABRE_COLCHETE:
+            strcat(text, " [");
+            break;
+        case FECHA_COLCHETE:
+            strcat(text, " ]");
+            break;
+        case ABRE_PARENTESES:
             strcat(text, " (");
             break;
-        case R_PAREN:
+        case FECHA_PARENTESES:
             strcat(text, " )");
+            break;
+        case IGUAL:
+            strcat(text, " =");
+            break;
+        case MAIOR:
+            strcat(text, " >");
+            break;
+        case MENOR:
+            strcat(text, " <");
+            break;
+        case MAIS:
+            strcat(text, " +");
+            break;
+        case MENOS:
+            strcat(text, " -");
+            break;
+        case VEZES:
+            strcat(text, " *");
+            break;
+        case DIVISAO:
+            strcat(text, " /");
+            break;
+        case ALGORITMO:
+            strcat(text, " algoritmo");
+            break;
+        case ATE:
+            strcat(text, " ate");
+            break;
+        case DIFERENTE:
+            strcat(text, " <>");
+            break;
+        case MAIOR_IGUAL:
+            strcat(text, " >=");
+            break;
+        case MENOR_IGUAL:
+            strcat(text, " <=");
+            break;
+        case ATRIBUICAO:
+            strcat(text, " <-");
+            break;
+        case INICIO:
+            strcat(text, " inicio");
+            break;
+        case IMPRIMA:
+            strcat(text, " imprima");
+            break;
+        case FIM:
+            strcat(text, " fim");
+            break;
+        case FUNCAO:
+            strcat(text, " funcao");
+            break;
+        case FACA:
+            strcat(text, " faca");
+            break;
+        case FALSO:
+            strcat(text, " falso");
+            break;
+        case VARIAVEIS:
+            strcat(text, " variaveis");
+            break;
+        case VETOR:
+            strcat(text, " vetor");
+            break;
+        case VERDADEIRO:
+            strcat(text, " verdadeiro");
+            break;
+        case INTEIRO:
+            strcat(text, " inteiro");
+            break;
+        case REAL:
+            strcat(text, " real");
+            break;
+        case REPITA:
+            strcat(text, " repita");
+            break;
+        case SE:
+            strcat(text, " se");
+            break;
+        case SENAO:
+            strcat(text, " senao");
+            break;
+        case ENTAO:
+            strcat(text, " entao");
+            break;
+        case ENQUANTO:
+            strcat(text, " enquanto");
+            break;
+        case DE:
+            strcat(text, " de");
+            break;
+        case DIV:
+            strcat(text, " div");
+            break;
+        case OU:
+            strcat(text, " ou");
+            break;
+        case NAO:
+            strcat(text, " nao");
+            break;
+        case TIPO:
+            strcat(text, " tipo");
+            break;
+        case LEIA:
+            strcat(text, " leia");
+            break;
+        case LOGICO:
+            strcat(text, " logico");
+            break;
+        case MATRIZ:
+            strcat(text, " matriz");
+            break;
+        case CARACTERE:
+            strcat(text, " caractere");
+            break;
+        case PARA:
+            strcat(text, " para");
+            break;
+        case PASSO:
+            strcat(text, " passo");
+            break;
+        case PROCEDIMENTO:
+            strcat(text, " procedimento");
             break;
         default:
             break;

@@ -7,27 +7,27 @@
 #define ID 2
 #define NUM_INT 3
 #define NUM_REAL 4
-#define SEMICOLON 5
-#define COMMA 6
-#define COLON 7
-#define DOT 8
-#define L_SBRACKET 9 
-#define R_SBRACKET 10
-#define L_PAREN 11
-#define R_PAREN 12
-#define EQUAL 13
-#define GREATER 14
-#define LESS 15
-#define PLUS 16
-#define MINUS 17
-#define TIMES 18
-#define DIV 19
+#define PONTO_VIRGULA 5
+#define VIRGULA 6
+#define DOIS_PONTOS 7
+#define PONTO 8
+#define ABRE_COLCHETE 9 
+#define FECHA_COLCHETE 10
+#define ABRE_PARENTESES 11
+#define FECHA_PARENTESES 12
+#define IGUAL 13
+#define MAIOR 14
+#define MENOR 15
+#define MAIS 16
+#define MENOS 17
+#define VEZES 18
+#define DIVISAO 19
 #define ALGORITMO 28
 #define ATE 30
-#define DIFFERENT 31
-#define GREATER_EQUAL 32
-#define LESS_EQUAL 33
-#define ATRIB 34
+#define DIFERENTE 31
+#define MAIOR_IGUAL 32
+#define MENOR_IGUAL 33
+#define ATRIBUICAO 34
 #define INICIO 40
 #define IMPRIMA 46
 #define FIM 49
@@ -56,6 +56,8 @@
 #define PARA 151
 #define PASSO 154
 #define PROCEDIMENTO 165
+#define COMENT_LINHA 166
+#define STRING 168
 
 /*
     -----------> Syntax Analyzer <-----------
