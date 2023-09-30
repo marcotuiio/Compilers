@@ -8,7 +8,7 @@
 #include "linked_list.h"
 
 #define SIGMA 78
-#define QNTD_FINAL 6
+#define QNTD_FINAL 52
 #define MAX_INPUT 131072
 
 // Returns the index of the char in the array, or -1 if it's not in the array

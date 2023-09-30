@@ -28,6 +28,34 @@
 #define GREATER_EQUAL 32
 #define LESS_EQUAL 33
 #define ATRIB 34
+#define INICIO 40
+#define IMPRIMA 46
+#define FIM 49
+#define FUNCAO 54
+#define FACA 57
+#define FALSO 60
+#define VARIAVEIS 69
+#define VETOR 73
+#define VERDADEIRO 81
+#define INTEIRO 86
+#define REAL 87
+#define REPITA 94
+#define SE 96
+#define SENAO 99
+#define ENTAO 104
+#define ENQUANTO 110
+#define DE 112
+#define DIV 114
+#define OU 116
+#define NAO 119
+#define TIPO 123
+#define LEIA 127
+#define LOGICO 132
+#define MATRIZ 138
+#define CARACTERE 147
+#define PARA 151
+#define PASSO 154
+#define PROCEDIMENTO 165
 
 /*
     -----------> Syntax Analyzer <-----------
