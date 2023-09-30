@@ -1,0 +1,10 @@
+101c101,105
+< CADEIA ACEITA
+\ No newline at end of file
+---
+> CADEIA ACEITA
+> ERRO LEXICO EM: 6
+> ERRO LEXICO EM: 5
+> ERRO LEXICO EM: 3
+> ERRO LEXICO EM: #
+\ No newline at end of file

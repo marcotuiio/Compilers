@@ -23,7 +23,6 @@ int main() {
     bool textBefore = false;
     char input[MAX_INPUT];
     bool firstLine = true;
-    // char erroLexico[15] = "ERRO LEXICO:  ";
     bool flagLexico = false;
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState = 1;         // initial state
@@ -56,20 +55,15 @@ int main() {
                             resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                             continue;
                         }
-                        // erroLexico[14] = input[index-1];
-                        // printResult(erroLexico, &textBefore);
+                        printErroLexico(input[index], &textBefore, &flagLexico);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                        while (input[index] != '\n' && input[index] != '\0') index++;
-                        flagLexico = true;
+                        // while (input[index] != '\n' && input[index] != '\0') index++;
                         continue;
                     }
 
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-                    // erroLexico[14] = input[index-1];
-                    // printResult(erroLexico, &textBefore);
-                    while (input[index] != '\n' && input[index] != '\0') index++;
-                    flagLexico = true;
+                    printErroLexico(input[index - 2], &textBefore, &flagLexico);
                     continue;
                 }
 
@@ -85,10 +79,7 @@ int main() {
                 // update variables to start again
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
-                // erroLexico[14] = input[index-1];
-                // printResult(erroLexico, &textBefore);
-                while (input[index] != '\n' && input[index] != '\0') index++;
-                flagLexico = true;
+                printErroLexico(input[index - 2], &textBefore, &flagLexico);
                 continue;
             }
 
@@ -98,11 +89,8 @@ int main() {
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    // erroLexico[14] = input[index-1];
-                    // printResult(erroLexico, &textBefore);
+                    printErroLexico(input[index], &textBefore, &flagLexico);
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
-                    while (input[index] != '\n' && input[index] != '\0') index++;
-                    flagLexico = true;
                     continue;
                 }
 
@@ -144,11 +132,8 @@ int main() {
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
-            // erroLexico[14] = input[backupIndex];
-            // printResult(erroLexico, &textBefore);
+            printErroLexico(input[backupIndex], &textBefore, &flagLexico);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
-            while (input[index] != '\n' && input[index] != '\0') index++;
-            flagLexico = true;
         }
         if (!flagLexico) {
             processSyntax(cadeia, &textBefore);
@@ -177,11 +162,19 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
+
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState) {
     *index = indexToSet;
     *backupIndex = *index;
     *end = -1;
     *currentState = 1;
+}
+
+void printErroLexico(char errado, bool *textBefore, bool *flagLexico) {
+    if (*textBefore) printf("\n");
+    printf("ERRO LEXICO EM: %c", errado);
+    *textBefore = true;
+    *flagLexico = true;
 }
 
 /*

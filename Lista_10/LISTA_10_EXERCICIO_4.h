@@ -26,11 +26,11 @@ int getChar(char *reads, char input);
 // Return true if the current state is a final state, false otherwise
 bool isFinal(int *finals, int current);
 
-// Prints the token, and if there was text before it, prints a new line before printing the token
-void printToken(bool *textBefore, char *toPrint);
-
 // Resets the variables that are used in the main loop, so the automata can start reading the next token
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState);
+
+// Prints the char that caused the error (first occurrence in the line)
+void printErroLexico(char errado, bool *textBefore, bool *flagLexico);
 
 // -----------> Syntax Analyzer <-----------
 
