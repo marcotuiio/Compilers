@@ -57,7 +57,6 @@ int main() {
                         }
                         printErroLexico(input[index], &textBefore, &flagLexico);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                        // while (input[index] != '\n' && input[index] != '\0') index++;
                         continue;
                     }
 
@@ -171,6 +170,7 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
 }
 
 void printErroLexico(char errado, bool *textBefore, bool *flagLexico) {
+    if (*flagLexico) return;
     if (*textBefore) printf("\n");
     printf("ERRO LEXICO EM: %c", errado);
     *textBefore = true;
