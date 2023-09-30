@@ -4,6 +4,10 @@
 #include "PORTUGOL_LEXICO.h"
 
 // ENUM of Final States to be processed by syntax analyzer]
+    // Todos os outros tokens 
+    // (excluindo 1, 167 e 169)
+    // são considerados ID
+
 #define NUM_INT 3
 #define NUM_REAL 4
 #define PONTO_VIRGULA 5
@@ -37,7 +41,7 @@
 #define VETOR 73
 #define VERDADEIRO 81
 #define INTEIRO 86
-#define REAL 87
+#define REAL 90 
 #define REPITA 94
 #define SE 96
 #define SENAO 99
@@ -48,20 +52,16 @@
 #define OU 116
 #define NAO 119
 #define TIPO 123
-#define LEIA 127
-#define LOGICO 132
+#define LEIA 127 
+#define LOGICO 132  // CORRIGIR
 #define MATRIZ 138
 #define CARACTERE 147
 #define PARA 151
 #define PASSO 154
-#define PROCEDIMENTO 165
+#define PROCEDIMENTO 165 
 #define COMENT_LINHA 166
 #define STRING 168
 #define COMENT_BLOCO 170
-
-// Todos os outros tokens 
-// (excluindo 1, 167 e 169)
-// são considerados ID
 
 /*
     -----------> Syntax Analyzer <-----------
