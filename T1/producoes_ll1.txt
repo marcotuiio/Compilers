@@ -1,72 +1,72 @@
-Start -> E$
-Prog -> algoritmo id ; BV PF BC .
-PF -> DProc PF
+START -> E$
+PROG -> algoritmo id ; BV PF BC .
+PF -> DPROC PF
 PF -> DF PF
-PF ->
-Dproc -> procedimento id Param ; DParam BV BC ;
-DF -> funcao id : TB ; DParam BV BC ;
-Param -> ( DI )
-Param ->
-DParam -> DS
-DParam ->
+PF -> "
+DPROC -> procedimento id PARAM ; DPARAM BV BC ;
+DF -> funcao id : TB ; DPARAM BV BC ;
+PARAM -> ( DI )
+PARAM -> "
+DPARAM -> DS
+DPARAM -> "
 BV -> variaveis DS
-BV ->
-DS -> DV DS_Prime
-DS -> DT DS_Prime
-DS_Prime -> DS
-DS_Prime ->
+BV -> "
+DS -> DV DS_PRIME
+DS -> DT DS_PRIME
+DS_PRIME -> DS
+DS_PRIME -> "
 DT -> tipo id = VM [ Dimen ] TB ;
 DV -> TB : DI ;
-DI -> id DI_Prime
-DI_Prime -> , DI
-DI_Prime ->
+DI -> id DI_PRIME
+DI_PRIME -> , DI
+DI_PRIME -> "
 VM -> vetor
 VM -> matriz
-Dimen -> num_int : num_int Dimen_Prime
-Dimen_Prime -> , Dimen
-Dimen ->
+DIMEN -> num_int : num_int DIMEN_PRIME
+DIMEN_PRIME -> , DIMEN
+DIMEN -> "
 TB -> inteiro
 TB -> real
 TB -> logico
 TB -> id
-LC -> C ; LC_Prime
-LC_Prime -> LC
-LC_Prime ->
-C -> id C_Prime1
-C_Prime1 -> ( EI )
-C_Prime1 ->
+LC -> C ; LC_PRIME
+LC_PRIME -> LC
+LC_PRIME ->
+C -> id C_PRIME1
+C_PRIME1 -> ( EI )
+C_PRIME1 -> "
 C -> V <- E
-C -> se E entao LC C_Prime2
-C_Prime2 -> fim se
-C_Prime2 -> senao LC fim se
+C -> se E entao LC C_PRIME2
+C_PRIME2 -> fim se
+C_PRIME2 -> senao LC fim se
 C -> enquanto E faca LC fim enquanto
-C -> para id de E ate E C_Prime3
-C_Prime3 -> faca LC fim para
-C_Prime3 -> passo E faca LC fim para
+C -> para id de E ate E C_PRIME3
+C_PRIME3 -> faca LC fim para
+C_PRIME3 -> passo E faca LC fim para
 C -> repita LC ate E
 C -> leia ( V )
 C -> imprima ( EI )
-E -> ES E_Prime
-E_Prime -> = ES E_Prime
-E_Prime -> <> ES E_Prime
-E_Prime -> < ES E_Prime
-E_Prime -> > ES E_Prime
-E_Prime -> <= ES E_Prime
-E_Prime -> >= ES E_Prime
-E_Prime ->
-ES -> T ES_Prime
-ES -> + T ES_Prime
-ES -> - T ES_Prime
-ES_Prime -> + T ES_Prime
-ES_Prime -> - T ES_Prime
-ES_Prime -> ou T ES_Prime
-E_Prime ->
-T -> F T_Prime
-T_Prime -> * F T_Prime
-T_Prime -> / F T_Prime
-T_Prime -> div F T_Prime
-T_Prime -> e F T_Prime
-T_Prime ->
+E -> ES E_PRIME
+E_PRIME -> = ES E_PRIME
+E_PRIME -> <> ES E_PRIME
+E_PRIME -> < ES E_PRIME
+E_PRIME -> > ES E_PRIME
+E_PRIME -> <= ES E_PRIME
+E_PRIME -> >= ES E_PRIME
+E_PRIME -> "
+ES -> T ES_PRIME
+ES -> + T ES_PRIME
+ES -> - T ES_PRIME
+ES_PRIME -> + T ES_PRIME
+ES_PRIME -> - T ES_PRIME
+ES_PRIME -> ou T ES_PRIME
+E_PRIME -> "
+T -> F T_PRIME
+T_PRIME -> * F T_PRIME
+T_PRIME -> / F T_PRIME
+T_PRIME -> div F T_PRIME
+T_PRIME -> e F T_PRIME
+T_PRIME -> "
 F -> nao F
 F -> num_int
 F -> num_real
@@ -76,9 +76,9 @@ F -> string
 F -> id ( EI )
 F -> ( E )
 F -> V
-V -> id V_Prime
-V_Prime -> ( EI )
-V_Prime ->
-EI -> E EI_Prime
-EI_Prime -> , EI
-EI_Prime ->
+V -> id V_PRIME
+V_PRIME -> ( EI )
+V_PRIME -> "
+EI -> E EI_PRIME
+EI_PRIME -> , EI
+EI_PRIME -> "
