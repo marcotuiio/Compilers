@@ -385,6 +385,9 @@ void switchTokens(char *text, int token) {
         case COMENT_BLOCO:
             strcat(text, " comentario de bloco");
             break;
+        case EOF_TOKEN:
+            strcat(text, " fim de arquivo");
+            break;
         default:
             if (token != -1 && token != 1 && token != 167 && token != 169)
                 strcat(text, " identificador");

@@ -53,7 +53,7 @@
 #define NAO 119
 #define TIPO 123
 #define LEIA 127 
-#define LOGICO 132  // CORRIGIR
+#define LOGICO 132
 #define MATRIZ 138
 #define CARACTERE 147
 #define PARA 151
@@ -62,6 +62,7 @@
 #define COMENT_LINHA 166
 #define STRING 168
 #define COMENT_BLOCO 170
+#define EOF_TOKEN 666
 
 /*
     -----------> Syntax Analyzer <-----------

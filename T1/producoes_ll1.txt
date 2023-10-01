@@ -1,0 +1,84 @@
+Start -> E$
+Prog -> algoritmo id ; BV PF BC .
+PF -> DProc PF
+PF -> DF PF
+PF ->
+Dproc -> procedimento id Param ; DParam BV BC ;
+DF -> funcao id : TB ; DParam BV BC ;
+Param -> ( DI )
+Param ->
+DParam -> DS
+DParam ->
+BV -> variaveis DS
+BV ->
+DS -> DV DS_Prime
+DS -> DT DS_Prime
+DS_Prime -> DS
+DS_Prime ->
+DT -> tipo id = VM [ Dimen ] TB ;
+DV -> TB : DI ;
+DI -> id DI_Prime
+DI_Prime -> , DI
+DI_Prime ->
+VM -> vetor
+VM -> matriz
+Dimen -> num_int : num_int Dimen_Prime
+Dimen_Prime -> , Dimen
+Dimen ->
+TB -> inteiro
+TB -> real
+TB -> logico
+TB -> id
+LC -> C ; LC_Prime
+LC_Prime -> LC
+LC_Prime ->
+C -> id C_Prime1
+C_Prime1 -> ( EI )
+C_Prime1 ->
+C -> V <- E
+C -> se E entao LC C_Prime2
+C_Prime2 -> fim se
+C_Prime2 -> senao LC fim se
+C -> enquanto E faca LC fim enquanto
+C -> para id de E ate E C_Prime3
+C_Prime3 -> faca LC fim para
+C_Prime3 -> passo E faca LC fim para
+C -> repita LC ate E
+C -> leia ( V )
+C -> imprima ( EI )
+E -> ES E_Prime
+E_Prime -> = ES E_Prime
+E_Prime -> <> ES E_Prime
+E_Prime -> < ES E_Prime
+E_Prime -> > ES E_Prime
+E_Prime -> <= ES E_Prime
+E_Prime -> >= ES E_Prime
+E_Prime ->
+ES -> T ES_Prime
+ES -> + T ES_Prime
+ES -> - T ES_Prime
+ES_Prime -> + T ES_Prime
+ES_Prime -> - T ES_Prime
+ES_Prime -> ou T ES_Prime
+E_Prime ->
+T -> F T_Prime
+T_Prime -> * F T_Prime
+T_Prime -> / F T_Prime
+T_Prime -> div F T_Prime
+T_Prime -> e F T_Prime
+T_Prime ->
+F -> nao F
+F -> num_int
+F -> num_real
+F -> verdadeiro
+F -> falso
+F -> string
+F -> id ( EI )
+F -> ( E )
+F -> V
+V -> id V_Prime
+V_Prime -> ( EI )
+V_Prime ->
+EI -> E EI_Prime
+EI_Prime -> , EI
+EI_Prime ->
