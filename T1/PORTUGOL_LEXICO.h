@@ -22,6 +22,6 @@ bool isFinal(int *finals, int current);
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState);
 
 // Prints the char that caused the error (first occurrence in the line)
-void printErroLexico(char errado, int line, int column, bool *textBefore, bool *flagLexico);
+void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico);
 
 #endif

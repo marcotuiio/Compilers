@@ -258,13 +258,13 @@ int main() {
 
                 if (end == -1) {
                     if (index == 0) {
-                        printErroLexico(input[index], lineno, index, &textBefore, &flagLexico);
+                        printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
                     
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
-                    printErroLexico(input[index - 1], lineno, index - 1, &textBefore, &flagLexico);
+                    printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico);
                     continue;
                 }
 
@@ -280,7 +280,7 @@ int main() {
 
                 // update variables to start again
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                printErroLexico(input[index - 1], lineno, index - 1, &textBefore, &flagLexico);
+                printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico);
                 continue;
             }
 
@@ -290,7 +290,7 @@ int main() {
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    printErroLexico(input[index], lineno, index, &textBefore, &flagLexico); // erro lexico de espaço e \n, sendo igonorados na função
+                    printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico); // erro lexico de espaço e \n, sendo igonorados na função
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
@@ -336,7 +336,7 @@ int main() {
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 0) continue;
-            printErroLexico(input[backupIndex], lineno, backupIndex, &textBefore, &flagLexico);
+            printErroLexico(cadeia, input, lineno, backupIndex, &textBefore, &flagLexico);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
         if (!inMultiLineComment) {
@@ -385,11 +385,13 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
     *currentState = 1;
 }
 
-void printErroLexico(char errado, int line, int column, bool *textBefore, bool *flagLexico) {
+void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico) {
     if (*flagLexico) return;
-    if (errado == 10 || errado == 32) return;  // blank spaces and \n must be ignored without error
+    if (input[column] == 10 || input[column] == 32) return;  // blank spaces and \n must be ignored without error
     if (*textBefore) printf("\n");
-    printf("ERRO LEXICO. Linha: %d Coluna: %d -> '%c'", line, column+1, errado);
+    printf("ERRO LEXICO. Linha: %d Coluna: %d -> '%c'", line, column+1, input[column]);
+    freeList(cadeia);
+    free(input);
     exit(-1); // lexical error found so the program must stop
     *textBefore = true;
     *flagLexico = true;
