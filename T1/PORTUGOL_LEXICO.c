@@ -10,7 +10,7 @@ int main() {
                          'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
                          'U', 'V', 'W', 'X', 'Y', 'Z',
                          ';', ',', ':', '.', '[', ']', '(', ')', '=', '>',
-                         '<', '+', '-', '*', '/', '_', '\"', '{', '}', '\n', ' '};  // colocar ' ' e \n e descobrir como tratar individualmente esses caso
+                         '<', '+', '-', '*', '/', '_', '\"', '{', '}', 10, 32};  // 10 = \n, 32 = ' '
 
     int edges[][SIGMA] = {
 //       0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    q    r    s    t    u    v    w    x    y    z    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    ;    ,    :    .    [    ]    (    )    =    >    <    +    -    *    /    _    "    {    }    \n   ' ' 
@@ -201,25 +201,26 @@ int main() {
         154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 168, 170
     };
 
-    // bool textBefore = false;
-    char input[MAX_INPUT];
+    bool textBefore = false;
+    char *input = calloc(MAX_INPUT, sizeof(char));
     bool firstLine = true;
     bool flagLexico = false;
     bool inMultiLineComment = false;
+    int lineno = 0;
+    void *cadeia;
 
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState;
-        int index;
+        int index = 0;
         int backupIndex;
         int end;
         bool acceptedAsFinal;
-        void *cadeia;
+        lineno++;
 
         if (!inMultiLineComment) {
             currentState = 1;         // initial state
-            index = 0;                // index of the char in the input
             backupIndex = 0;          // index to handle non terminal states
-            acceptedAsFinal = true;  // if the current state is a final state
+            acceptedAsFinal = true;   // if the current state is a final state
             end = -1;                 // end state
 
             if (firstLine) {
@@ -234,6 +235,20 @@ int main() {
                 freeList(cadeia);
                 cadeia = createList();
             }
+            char *isThereComment = strchr(input, '{');
+            if (isThereComment) inMultiLineComment = true;
+        }
+
+        if (input[strlen(input)-1] == 10 && inMultiLineComment) {
+            input[strlen(input)-1] = '\0';
+        }
+
+        if (inMultiLineComment) {
+            char *isThereComment = strchr(input, '}');
+            if (isThereComment) { 
+                insertNode(cadeia, 170);
+                inMultiLineComment = false;
+            }
         }
 
         while (input[index] != '\0') {
@@ -241,21 +256,20 @@ int main() {
 
             // special block only to handle cases when the char read is not in the alphabet
             if (currentCharIndex == -1) {
-                if (inMultiLineComment) continue;
+                
                 if (end == -1) {
                     if (index == 0) {
-                        if (input[index] == 10 || input[index] == 32) {
-                            resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                            continue;
-                        }
-                        // printErroLexico(input[index], &textBefore, &flagLexico);
+                        // if (input[index] == 10 || input[index] == 32) {
+                        //     resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
+                        //     continue;
+                        // }
+                        printErroLexico(input[index], lineno, index, &textBefore, &flagLexico);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
-
+                    
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
-                    if (input[index - 1] == 10 || input[index - 1] == 32) continue;
-                    // printErroLexico(input[index - 2], &textBefore, &flagLexico);
+                    printErroLexico(input[index - 2], lineno, index - 2, &textBefore, &flagLexico);
                     continue;
                 }
 
@@ -270,10 +284,8 @@ int main() {
                 }
 
                 // update variables to start again
-                if (inMultiLineComment) continue;
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
-                // printErroLexico(input[index - 2], &textBefore, &flagLexico);
+                printErroLexico(input[index - 2], lineno, index - 2, &textBefore, &flagLexico);
                 continue;
             }
 
@@ -282,8 +294,7 @@ int main() {
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    // printErroLexico(input[index], &textBefore, &flagLexico);
-                    if (inMultiLineComment) continue;
+                    printErroLexico(input[index], lineno, index, &textBefore, &flagLexico);
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
@@ -302,9 +313,7 @@ int main() {
                 currentState = 1;
                 continue;
             }
-
-            if (currentState == 1 && nextState == 169) inMultiLineComment = true;
-            if (currentState == 169 && nextState == 170) inMultiLineComment = false;
+            
             // the transition is valid
             currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
@@ -321,17 +330,17 @@ int main() {
                 backupIndex = index;
             }
         }
-    
+
         // Check classification for the last token
+        if (input[index] == 0) continue;
         if (end == currentState) {
             backupIndex = index;
             insertNode(cadeia, end);
             inMultiLineComment = false;
 
         } else {  // this is the last token of the line, and its and error
-            if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
-            // printErroLexico(input[backupIndex], &textBefore, &flagLexico);
-            if (inMultiLineComment) continue;
+            if (input[backupIndex] == 0) continue;
+            printErroLexico(input[backupIndex], lineno, backupIndex, &textBefore, &flagLexico);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
         if (!inMultiLineComment) {
@@ -343,6 +352,17 @@ int main() {
             freeList(cadeia);
         }
     }
+
+    // Last line
+    if (!inMultiLineComment) {
+        if (!flagLexico) {
+            printList(cadeia);
+            // processSyntax(cadeia, &textBefore);
+        }
+        flagLexico = false;
+        freeList(cadeia);
+    }
+    free(input);
     return 0;
 }
 
@@ -371,8 +391,9 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
     *currentState = 1;
 }
 
-void printErroLexico(char errado, bool *textBefore, bool *flagLexico) {
+void printErroLexico(char errado, int line, int column, bool *textBefore, bool *flagLexico) {
     if (*flagLexico) return;
+    if (errado == 10 || errado == 32) return;
     if (*textBefore) printf("\n");
     printf("ERRO LEXICO EM: %c", errado);
     *textBefore = true;

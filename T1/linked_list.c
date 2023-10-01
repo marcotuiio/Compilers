@@ -9,7 +9,7 @@ void *createList() {
 void insertNode(listHeader *list, int value) { // sempre insere no final
     nodeList *node = calloc(1, sizeof(nodeList));
     node->value = value;
-
+    // printf("value: %d\n", value);
     if (list->head == NULL) {
         list->head = node;
         

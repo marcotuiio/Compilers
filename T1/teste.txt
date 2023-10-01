@@ -1,3 +1,11 @@
+
+" esta string esta ok"
+
+{ Programa de teste do mini compilador portugol.
+  Este codigo esta correto e nao deve apresentar
+  problema.
+}
+
 // comentario de linhaaaa
 { comentario de bloco tem q arrumar}
 "loucuras >>> do meu12 - + mundiNHO cor de rosa"
@@ -14,7 +22,7 @@
 4<>5
 5>=4
 1<=2
-a <- 3
+a <- 666.6
 algoritmo
 ate 
 iNiCio

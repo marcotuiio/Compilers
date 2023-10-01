@@ -1,3 +1,8 @@
+
+ string 
+
+ comentario de bloco 
+
  comentario de linha 
  comentario de bloco 
  string 
@@ -14,7 +19,7 @@
  numero inteiro  <>  numero inteiro 
  numero inteiro  >=  numero inteiro 
  numero inteiro  <=  numero inteiro 
- identificador  <-  numero inteiro 
+ identificador  <-  numero real 
  algoritmo 
  ate 
  inicio 
