@@ -29,6 +29,7 @@ TB -> inteiro
 TB -> real
 TB -> logico
 TB -> id
+BC -> inicio LC fim
 LC -> C ; LC_PRIME
 LC_PRIME -> LC
 LC_PRIME ->
