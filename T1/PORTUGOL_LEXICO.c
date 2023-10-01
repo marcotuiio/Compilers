@@ -201,30 +201,39 @@ int main() {
         154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 168, 170
     };
 
-    bool textBefore = false;
+    // bool textBefore = false;
     char input[MAX_INPUT];
     bool firstLine = true;
     bool flagLexico = false;
-    // bool inMultiLineComment = false;
-    while (fgets(input, MAX_INPUT, stdin) != NULL) {
-        int currentState = 1;         // initial state
-        int index = 0;                // index of the char in the input
-        int backupIndex = 0;          // index to handle non terminal states
-        bool acceptedAsFinal = true;  // if the current state is a final state
-        int end = -1;                 // end state
+    bool inMultiLineComment = false;
 
+    while (fgets(input, MAX_INPUT, stdin) != NULL) {
+        int currentState;
+        int index;
+        int backupIndex;
+        int end;
+        bool acceptedAsFinal;
         void *cadeia;
-        if (firstLine) {
-            cadeia = createList();
-            firstLine = false;
-        } else {
-            if (!flagLexico) {
-                printList(cadeia);
-                // processSyntax(cadeia, &textBefore);
+
+        if (!inMultiLineComment) {
+            currentState = 1;         // initial state
+            index = 0;                // index of the char in the input
+            backupIndex = 0;          // index to handle non terminal states
+            acceptedAsFinal = true;  // if the current state is a final state
+            end = -1;                 // end state
+
+            if (firstLine) {
+                cadeia = createList();
+                firstLine = false;
+            } else {
+                if (!flagLexico) {
+                    printList(cadeia);
+                    // processSyntax(cadeia, &textBefore);
+                }
+                flagLexico = false;
+                freeList(cadeia);
+                cadeia = createList();
             }
-            flagLexico = false;
-            freeList(cadeia);
-            cadeia = createList();
         }
 
         while (input[index] != '\0') {
@@ -232,6 +241,7 @@ int main() {
 
             // special block only to handle cases when the char read is not in the alphabet
             if (currentCharIndex == -1) {
+                if (inMultiLineComment) continue;
                 if (end == -1) {
                     if (index == 0) {
                         if (input[index] == 10 || input[index] == 32) {
@@ -256,9 +266,11 @@ int main() {
 
                 if (end != -1) {  // if the end state is not -1, token is printed because at some point it went to a final state
                     insertNode(cadeia, end);
+                    inMultiLineComment = false;
                 }
 
                 // update variables to start again
+                if (inMultiLineComment) continue;
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                 if (input[index - 1] == 10 || input[index - 1] == 32) continue;  // skiping spaces and new lines
                 // printErroLexico(input[index - 2], &textBefore, &flagLexico);
@@ -267,11 +279,11 @@ int main() {
 
             // if the char is in the alphabet, the next state is calculated
             int nextState = edges[currentState - 1][currentCharIndex];
-
             // if the transition is not valid
             if (nextState == 0) {
                 if (end == -1) {  // the transition doesnt exist and no state in the token is final
                     // printErroLexico(input[index], &textBefore, &flagLexico);
+                    if (inMultiLineComment) continue;
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
@@ -279,6 +291,7 @@ int main() {
                 if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
                     insertNode(cadeia, end);
                     backupIndex = index;
+                    inMultiLineComment = false;
                 }
 
                 if (currentState != end) {  // transition invalid, current state isnt final, need to go back to the last final state
@@ -290,6 +303,8 @@ int main() {
                 continue;
             }
 
+            if (currentState == 1 && nextState == 169) inMultiLineComment = true;
+            if (currentState == 169 && nextState == 170) inMultiLineComment = false;
             // the transition is valid
             currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
@@ -306,23 +321,27 @@ int main() {
                 backupIndex = index;
             }
         }
-
+    
         // Check classification for the last token
         if (end == currentState) {
             backupIndex = index;
             insertNode(cadeia, end);
+            inMultiLineComment = false;
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 10 || input[backupIndex] == 32 || input[backupIndex] == 0) continue;
             // printErroLexico(input[backupIndex], &textBefore, &flagLexico);
+            if (inMultiLineComment) continue;
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
-        if (!flagLexico) {
-            printList(cadeia);
-            // processSyntax(cadeia, &textBefore);
+        if (!inMultiLineComment) {
+            if (!flagLexico) {
+                printList(cadeia);
+                // processSyntax(cadeia, &textBefore);
+            }
+            flagLexico = false;
+            freeList(cadeia);
         }
-        flagLexico = false;
-        freeList(cadeia);
     }
     return 0;
 }
@@ -344,7 +363,6 @@ bool isFinal(int *finals, int current) {
     }
     return false;
 }
-
 
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState) {
     *index = indexToSet;

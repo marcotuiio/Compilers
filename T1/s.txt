@@ -1,0 +1,43 @@
+ comentario de linha 
+ comentario de bloco 
+ string 
+
+ numero inteiro  numero real  ; 
+ ,  identificador  .  [  identificador  ]  (  identificador  ) 
+ numero inteiro  =  numero inteiro 
+ numero inteiro  >  numero inteiro 
+ numero inteiro  <  numero inteiro 
+ numero inteiro  +  numero inteiro 
+ numero inteiro  -  numero inteiro 
+ numero inteiro  *  numero inteiro 
+ numero inteiro  /  numero inteiro 
+ numero inteiro  <>  numero inteiro 
+ numero inteiro  >=  numero inteiro 
+ numero inteiro  <=  numero inteiro 
+ identificador  <-  numero inteiro 
+ algoritmo 
+ ate 
+ inicio 
+ fim 
+ imprima 
+ funcao 
+ variaveis 
+ faca 
+ falso  verdadeiro 
+ vetor 
+ inteiro  real  leia 
+ repita  se  senao  entao  enquanto  de 
+ div  nao 
+ tipo 
+ logico 
+ matriz  caractere 
+ para  passo 
+ procedimento 
+ identificador 
+ identificador 
+ identificador 
+ identificador 
+ identificador 
+ identificador 
+ leia 
+ logico  logico 

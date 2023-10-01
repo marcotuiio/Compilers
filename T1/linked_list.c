@@ -1,5 +1,6 @@
 #include "linked_list.h"
 #include "PORTUGOL_SINTATICO.h"
+
 void *createList() {
     listHeader *l = calloc(1, sizeof(listHeader));
     return l;
@@ -54,8 +55,8 @@ void freeList(listHeader *list) {
     nodeList *aux = list->head;
     while (aux != NULL) {
         nodeList *aux2 = aux->next;
-        free(aux);
+        if (aux) free(aux);
         aux = aux2;
     }
-    free(list);
+    if (list) free(list);
 }
