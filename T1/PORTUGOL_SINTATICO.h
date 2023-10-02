@@ -8,6 +8,7 @@
     // (excluindo 1, 167 e 169)
     // são considerados ID
 
+#define ID 2
 #define NUM_INT 3
 #define NUM_REAL 4
 #define PONTO_VIRGULA 5
@@ -123,6 +124,9 @@ char *defineErro(int tokenGlobal, int tokenAnalisado);
 
 // Checks if string is over when it shouldn't be
 void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver);
+
+// Checks if current token is a valid ID and padronizes it to ID enum
+void defineID(int *tokenGlobal);
 
 // See what token its receiving and writes it to a string
 void switchTokens(char *text, int token);
