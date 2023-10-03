@@ -9,6 +9,8 @@
 
 typedef struct node {
     int value;
+    int line;
+    int column;
     struct node *next;
 } nodeList;
 
@@ -20,13 +22,19 @@ typedef struct list {
 void *createList();
 
 // Just inserts at the end of the list
-void insertNode(listHeader *list, int value);
+void insertNode(listHeader *list, int value, int line, int column);
 
 // Just removes the first node
 void removeNode(listHeader *list);
 
 // Returns the value of the first node, -1 if the list is empty
 int getNode(listHeader *list);
+
+// Returns the line of the first node, -1 if the list is empty
+int getLine(listHeader *list);
+
+// Returns the column of the first node, -1 if the list is empty
+int getColumn(listHeader *list);
 
 // Prints all values of the list
 void printList(listHeader *list);

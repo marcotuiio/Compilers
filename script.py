@@ -2,15 +2,15 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/Lista_10/entradas'
-BSD = '/home/marcotuiio/Compilers/Lista_10/minhas_saidas'
-OFICIAL = '/home/marcotuiio/Compilers/Lista_10/saidas_padrao'
-src = '/home/marcotuiio/Compilers/Lista_10'
+BED = '/home/marcotuiio/Compilers/T1/testes'
+BSD = '/home/marcotuiio/Compilers/T1/minhas_saidas'
+OFICIAL = '/home/marcotuiio/Compilers/T1/saidas_padrao'
+src = '/home/marcotuiio/Compilers/T1'
 ini = datetime.datetime.now()
 
 os.chdir(src)
 subprocess.call(["make", "clear"])
-subprocess.call(["make", "l10e4"])
+subprocess.call(["make", "portugol"])
 
 inputs = []
 for (dirpath, dirnames, filenames) in os.walk(BED):
@@ -25,7 +25,7 @@ for f in inputs:
     
     # print("./l9e1 < " + input_file + " > " + output_file)
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
-        subprocess.Popen(["./l10e4"], stdin=stdin, stdout=stdout).wait()
+        subprocess.Popen(["./portugol"], stdin=stdin, stdout=stdout).wait()
 
 print("\nIniciando comparação de resutados...")
 

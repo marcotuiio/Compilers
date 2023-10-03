@@ -114,7 +114,7 @@ int main() {
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,  98,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,  98,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 97 N ID
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,  99,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,  99,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 98 A ID
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 99 O SENAO
-        {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 101,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 101,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 100 E ID
+        {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 101,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 101,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 100 E e (and)
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 105,   2,   2, 102,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 105,   2,   2, 102,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 101 N ID
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 103,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 103,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 102 T ID
         {2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 104,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2, 104,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0},  // 103 A ID
@@ -204,48 +204,48 @@ int main() {
     bool flagLexico = false;
     bool inMultiLineComment = false;
     int lineno = 0;
+    int index;
     void *cadeia;
 
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState;
-        int index = 0;
+        index = 0;
         int backupIndex;
         int end;
         bool acceptedAsFinal;
         lineno++;
 
         if (!inMultiLineComment) {
-            currentState = 1;         // initial state
-            backupIndex = 0;          // index to handle non terminal states
-            acceptedAsFinal = true;   // if the current state is a final state
-            end = -1;                 // end state
+            currentState = 1;        // initial state
+            backupIndex = 0;         // index to handle non terminal states
+            acceptedAsFinal = true;  // if the current state is a final state
+            end = -1;                // end state
 
             if (firstLine) {
                 cadeia = createList();
                 firstLine = false;
             } else {
                 if (!flagLexico) {
-                    insertNode(cadeia, EOF_TOKEN);
-                    // processSyntax(cadeia, &textBefore);
-                    printList(cadeia);
+                    insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                    processSyntax(cadeia, &textBefore);
                 }
                 flagLexico = false;
                 freeList(cadeia);
                 cadeia = createList();
             }
-            
+
             char *isThereComment = strchr(input, '{');
             if (isThereComment) inMultiLineComment = true;
         }
 
-        if (input[strlen(input)-1] == 10 && inMultiLineComment) {
-            input[strlen(input)-1] = '\0';
+        if (input[strlen(input) - 1] == 10 && inMultiLineComment) {
+            input[strlen(input) - 1] = '\0';
         }
 
         if (inMultiLineComment) {
             char *isThereComment = strchr(input, '}');
-            if (isThereComment) { 
-                insertNode(cadeia, 170);
+            if (isThereComment) {
+                // insertNode(cadeia, 170, lineno, index);  // comments must be ignored in the syntax analysis
                 inMultiLineComment = false;
             }
         }
@@ -255,14 +255,13 @@ int main() {
 
             // special block only to handle cases when the char read is not in the alphabet
             if (currentCharIndex == -1) {
-
                 if (end == -1) {
                     if (index == 0) {
                         printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
-                    
+
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico);
                     continue;
@@ -273,8 +272,9 @@ int main() {
                     backupIndex = index;
                 }
 
-                if (end != -1) {  // if the end state is not -1, token is printed because at some point it went to a final state
-                    insertNode(cadeia, end);
+                if (end != -1) {                                     // if the end state is not -1, token is printed because at some point it went to a final state
+                    if (end != COMENT_LINHA && end != COMENT_BLOCO)  // comments must be ignored in the syntax analysis
+                        insertNode(cadeia, end, lineno, index);
                     inMultiLineComment = false;
                 }
 
@@ -289,14 +289,15 @@ int main() {
 
             // if the transition is not valid
             if (nextState == 0) {
-                if (end == -1) {  // the transition doesnt exist and no state in the token is final
-                    printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico); // erro lexico de espaço e \n, sendo igonorados na função
+                if (end == -1) {                                                              // the transition doesnt exist and no state in the token is final
+                    printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico);  // erro lexico de espaço e \n, sendo igonorados na função
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
 
                 if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
-                    insertNode(cadeia, end);
+                    if (end != COMENT_LINHA && end != COMENT_BLOCO)
+                        insertNode(cadeia, end, lineno, index);
                     backupIndex = index;
                     inMultiLineComment = false;
                 }
@@ -309,7 +310,7 @@ int main() {
                 currentState = 1;
                 continue;
             }
-            
+
             // the transition is valid
             currentState = nextState;                              // updates the current state
             acceptedAsFinal = isFinal(finalStates, currentState);  // checks if the current state is a final state
@@ -331,7 +332,8 @@ int main() {
         if (input[index] == 0) continue;
         if (end == currentState) {
             backupIndex = index;
-            insertNode(cadeia, end);
+            if (end != COMENT_LINHA && end != COMENT_BLOCO)
+                insertNode(cadeia, end, lineno, index);
             inMultiLineComment = false;
 
         } else {  // this is the last token of the line, and its and error
@@ -341,9 +343,8 @@ int main() {
         }
         if (!inMultiLineComment) {
             if (!flagLexico) {
-                insertNode(cadeia, EOF_TOKEN);
-                printList(cadeia);
-                // processSyntax(cadeia, &textBefore);
+                insertNode(cadeia, EOF_TOKEN, lineno, index);  // inserting EOF token at the end of each line
+                processSyntax(cadeia, &textBefore);
             }
             flagLexico = false;
             freeList(cadeia);
@@ -353,31 +354,29 @@ int main() {
     // Last line
     if (!inMultiLineComment) {
         if (!flagLexico) {
-            insertNode(cadeia, EOF_TOKEN);
-            // processSyntax(cadeia, &textBefore);
-            printList(cadeia);
+            insertNode(cadeia, EOF_TOKEN, lineno, index);  // inserting EOF token at the end of each line
+            processSyntax(cadeia, &textBefore);
         }
         flagLexico = false;
         freeList(cadeia);
     }
     free(input);
+
+    printf("PROGRAMA CORRETO."); // if program was able to get here, no lexical or syntax errors were found
+
     return 0;
 }
 
 int getChar(char *reads, char input) {
     for (int i = 0; i < SIGMA; i++) {
-        if (reads[i] == input) {
-            return i;
-        }
+        if (reads[i] == input) return i;
     }
     return -1;  // error
 }
 
 bool isFinal(int *finals, int current) {
     for (int i = 0; i < QNTD_FINAL; i++) {
-        if (finals[i] == current) {
-            return true;
-        }
+        if (finals[i] == current) return true;
     }
     return false;
 }
@@ -393,10 +392,10 @@ void printErroLexico(void *cadeia, char *input, int line, int column, bool *text
     if (*flagLexico) return;
     if (input[column] == 10 || input[column] == 32) return;  // blank spaces and \n must be ignored without error
     if (*textBefore) printf("\n");
-    printf("ERRO LEXICO. Linha: %d Coluna: %d -> '%c'", line, column+1, input[column]);
+    printf("ERRO LEXICO. Linha: %d Coluna: %d -> '%c'", line, column + 1, input[column]);
     freeList(cadeia);
     free(input);
-    exit(-1); // lexical error found so the program must stop
     *textBefore = true;
     *flagLexico = true;
+    exit(-1);  // lexical error found so the program must stop
 }

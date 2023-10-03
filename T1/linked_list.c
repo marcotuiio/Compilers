@@ -6,9 +6,11 @@ void *createList() {
     return l;
 }
 
-void insertNode(listHeader *list, int value) { // sempre insere no final
+void insertNode(listHeader *list, int value, int line, int column) { // sempre insere no final
     nodeList *node = calloc(1, sizeof(nodeList));
     node->value = value;
+    node->line = line;
+    node->column = column;
     // printf("value: %d\n", value);
     if (list->head == NULL) {
         list->head = node;
@@ -37,6 +39,20 @@ int getNode(listHeader *list) {
         return -1;
     }
     return list->head->value;
+}
+
+int getLine(listHeader *list) {
+    if (list->head == NULL) {
+        return -1;
+    }
+    return list->head->line;
+}
+
+int getColumn(listHeader *list) {
+    if (list->head == NULL) {
+        return -1;
+    }
+    return list->head->column;
 }
 
 void printList(listHeader *list) {

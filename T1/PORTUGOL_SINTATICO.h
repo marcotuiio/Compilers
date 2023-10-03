@@ -46,6 +46,7 @@
 #define REPITA 94
 #define SE 96
 #define SENAO 99
+#define AND 100  // E
 #define ENTAO 104
 #define ENQUANTO 110
 #define DE 112
@@ -111,6 +112,7 @@ void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExpressaoSi
 void T(void *cadeia, int *tokenGlobal, bool *textBefore);  // Termo
 void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Termo'
 void F(void *cadeia, int *tokenGlobal, bool *textBefore);  // Fator
+void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Fator'
 void V(void *cadeia, int *tokenGlobal, bool *textBefore);  // Variavel
 void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Variavel'
 void EI(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExprIter

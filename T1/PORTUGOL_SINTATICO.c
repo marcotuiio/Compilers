@@ -5,16 +5,16 @@ bool errorFlag = false;
 void processSyntax(void *cadeia, bool *textBefore) {
     int tokenGlobal = getNode(cadeia);
     if (tokenGlobal == -1) {
-        printResult("ERRO LISTA VAZIA", textBefore);
+        printResult("ERRO LISTA VAZIA", textBefore); // this shouldnt appear 
         exit(0);
     }
     defineID(&tokenGlobal);
     errorFlag = false;
     Start(cadeia, &tokenGlobal, textBefore);  // S is the initial symbol
 
-    if (!errorFlag && getNode(cadeia) == -1) {
-        printResult("CADEIA ACEITA", textBefore);
-    }
+    // if (!errorFlag && getNode(cadeia) == -1) {
+    //     printResult("CADEIA ACEITA", textBefore);
+    // }
 }
 
 void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore) {
@@ -23,10 +23,14 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
         *tokenGlobal = getNode(cadeia);
         defineID(tokenGlobal);
     } else {
-        char *text = defineErro(*tokenGlobal, tokenAnalisado);
-        printResult(text, textBefore);
-        free(text);
+        // char *text = defineErro(*tokenGlobal, tokenAnalisado);
+        // printResult(text, textBefore);
+        // free(text);
+        if (getLine(cadeia) == -1 || getColumn(cadeia) == -1) return;
+        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> 'SOCORRO'", getLine(cadeia), getColumn(cadeia));
         errorFlag = true;
+        freeList(cadeia);
+        exit(-2);
     }
 }
 
@@ -55,6 +59,8 @@ void Start(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -95,6 +101,8 @@ void Prog(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -128,6 +136,8 @@ void PF(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -171,6 +181,8 @@ void DProc(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -218,6 +230,8 @@ void DF(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -247,6 +261,8 @@ void Param(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -276,6 +292,8 @@ void DParam(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -304,6 +322,8 @@ void BV(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -337,6 +357,8 @@ void DS(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -366,6 +388,8 @@ void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -414,6 +438,8 @@ void DT(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -446,6 +472,8 @@ void DV(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -469,6 +497,8 @@ void DI(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -496,6 +526,8 @@ void DI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -520,6 +552,8 @@ void VM(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -551,6 +585,8 @@ void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -577,6 +613,8 @@ void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -607,6 +645,8 @@ void TB(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -633,6 +673,8 @@ void BC(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -664,6 +706,8 @@ void LC(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -694,6 +738,8 @@ void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -831,6 +877,8 @@ void C(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -872,6 +920,8 @@ void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -911,6 +961,8 @@ void C_Prime2(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -964,6 +1016,8 @@ void C_Prime3(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -994,6 +1048,8 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1091,6 +1147,8 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1143,6 +1201,8 @@ void ES(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1193,6 +1253,8 @@ void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1200,13 +1262,29 @@ void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void T(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+        case NUM_INT:
+        case NUM_REAL:
+        case NAO:
+        case VERDADEIRO:
+        case FALSO:
+        case STRING:
+            F(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            T_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " id, num_int, num_real, nao, verdadeiro, falso, string");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1214,13 +1292,68 @@ void T(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case MAIS:
+        case MENOS:
+        case OU:
+            break;
+
+        case VEZES:
+            eatToken(cadeia, VEZES, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            T_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case DIVISAO:
+            eatToken(cadeia, DIVISAO, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            T_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case DIV:
+            eatToken(cadeia, DIV, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            T_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case AND:
+            eatToken(cadeia, AND, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            T_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " +, -, ou, *, /, div, e");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1228,13 +1361,79 @@ void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void F(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+            eatToken(cadeia, ID, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        case NUM_INT:
+            eatToken(cadeia, NUM_INT, tokenGlobal, textBefore);
+
+            break;
+        
+        case NUM_REAL:
+            eatToken(cadeia, NUM_REAL, tokenGlobal, textBefore);
+
+            break;
+        
+        case VERDADEIRO:
+            eatToken(cadeia, VERDADEIRO, tokenGlobal, textBefore);
+
+            break;
+        
+        case FALSO:
+            eatToken(cadeia, FALSO, tokenGlobal, textBefore);
+
+            break;
+
+        case STRING:
+            eatToken(cadeia, STRING, tokenGlobal, textBefore);
+
+            break;
+        
+        case NAO:
+            eatToken(cadeia, NAO, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            F(cadeia, tokenGlobal, textBefore);
+
+            break;
+        
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " identificador, numero inteiro, numero real, verdadeiro, falso, string, nao");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
+            }
+            break;
+    }
+}
+
+void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
+    switch (*tokenGlobal) {
+        case ID:
+            V(cadeia, tokenGlobal, textBefore);
+
+            break;
+
+        default:
+            if (!errorFlag) {
+                char *text = defineErro(*tokenGlobal, -1);
+                strcat(text, " identificador");
+                printResult(text, textBefore);
+                free(text);
+                errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1242,13 +1441,24 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void V(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+            eatToken(cadeia, ID, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, true);
+            if (errorFlag) return;
+
+            V_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " id");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1256,13 +1466,37 @@ void V(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case FECHA_PARENTESES:
+        case ATRIBUICAO:
+        case MAIS:
+        case MENOS:
+        case OU:
+        case VEZES:
+        case DIVISAO:
+        case DIV:
+        case AND:     
+            break;
+
+        case ABRE_COLCHETE:
+            eatToken(cadeia, ABRE_COLCHETE, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            EI(cadeia, tokenGlobal, textBefore);
+
+            eatToken(cadeia, FECHA_COLCHETE, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " fecha colchete, atribuicao, +, -, ou, *, /, div, e, abre colchete");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1270,13 +1504,29 @@ void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void EI(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+        case NUM_INT:
+        case NUM_REAL:
+        case NAO:
+        case VERDADEIRO:
+        case FALSO:
+        case STRING:
+            E(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            EI_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " identificador, numero inteiro, numero real, nao, verdadeiro, falso, string");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1284,13 +1534,28 @@ void EI(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case FECHA_PARENTESES:
+        case FECHA_COLCHETE:
+            break;
+
+        case VIRGULA:
+            eatToken(cadeia, VIRGULA, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, true);
+            if (errorFlag) return;
+
+            EI(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " fecha parenteses, fecha colchete, virgula");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
+                freeList(cadeia);
+                exit(-2);
             }
             break;
     }
@@ -1305,7 +1570,7 @@ void printResult(char *result, bool *textBefore) {
 
 char *defineErro(int tokenGlobal, int tokenAnalisado) {
     char *text = calloc(200, sizeof(char));
-    strcat(text, "ERRO SINTATICO EM:");
+    strcat(text, "ERRO DE SINTAXE. ");
     switchTokens(text, tokenGlobal);
     strcat(text, " ESPERADO:");
     if (tokenAnalisado != -1) {
@@ -1316,8 +1581,10 @@ char *defineErro(int tokenGlobal, int tokenAnalisado) {
 
 void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver) {
     if (getNode(cadeia) == -1 && couldBeOver) {
-        printResult("ERRO SINTATICO: CADEIA INCOMPLETA", textBefore);
+        printResult("ERRO SINTATICO: CADEIA INCOMPLETA", textBefore);  // dont think this is possible
         errorFlag = true;
+        freeList(cadeia);
+        exit(-2);
     }
 }
 
@@ -1332,8 +1599,8 @@ void defineID(int *tokenGlobal) {
             *tokenGlobal == VARIAVEIS || *tokenGlobal == VETOR) return;
 
         if (*tokenGlobal == VERDADEIRO || *tokenGlobal == INTEIRO || *tokenGlobal == REAL || *tokenGlobal == REPITA ||
-            *tokenGlobal == SE || *tokenGlobal == SENAO || *tokenGlobal == ENTAO || *tokenGlobal == ENQUANTO ||
-            *tokenGlobal == DE || *tokenGlobal == DIV) return;
+            *tokenGlobal == SE || *tokenGlobal == SENAO || *tokenGlobal == AND || *tokenGlobal == ENTAO ||
+            *tokenGlobal == ENQUANTO || *tokenGlobal == DE || *tokenGlobal == DIV) return;
 
         if (*tokenGlobal == OU || *tokenGlobal == NAO || *tokenGlobal == TIPO || *tokenGlobal == LEIA ||
             *tokenGlobal == LOGICO || *tokenGlobal == MATRIZ || *tokenGlobal == CARACTERE || *tokenGlobal == PARA ||
@@ -1462,6 +1729,9 @@ void switchTokens(char *text, int token) {
         case SENAO:
             strcat(text, " senao");
             break;
+        case AND:
+            strcat(text, " e");
+            break;
         case ENTAO:
             strcat(text, " entao");
             break;
@@ -1505,19 +1775,19 @@ void switchTokens(char *text, int token) {
             strcat(text, " procedimento");
             break;
         case COMENT_LINHA:
-            strcat(text, " comentario de linha");
+            strcat(text, " comentario de linha"); // this token sholdnt appear in syntax analysis
             break;
         case STRING:
             strcat(text, " string");
             break;
         case COMENT_BLOCO:
-            strcat(text, " comentario de bloco");
+            strcat(text, " comentario de bloco"); // this token sholdnt appear in syntax analysis
             break;
         case EOF_TOKEN:
             strcat(text, " fim de arquivo");
             break;
         default:
-            strcat(text, " nao identificado");
+            strcat(text, " nao identificado"); // this token sholdnt appear in syntax analysis
             break;
     }
 }
