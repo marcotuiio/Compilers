@@ -527,10 +527,26 @@ void VM(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case FECHA_COLCHETE:
+            break;
+
+        case NUM_INT:
+            eatToken(cadeia, NUM_INT, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            eatToken(cadeia, DOIS_PONTOS, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, true);
+            if (errorFlag) return;
+
+            Dimen_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " fecha colchete, numero inteiro");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -541,10 +557,19 @@ void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case VIRGULA:
+            eatToken(cadeia, VIRGULA, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            Dimen(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " virgula");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -555,10 +580,26 @@ void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void TB(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+            eatToken(cadeia, ID, tokenGlobal, textBefore);
+            break;
+        
+        case INTEIRO:
+            eatToken(cadeia, INTEIRO, tokenGlobal, textBefore);
+            break;
+
+        case REAL:
+            eatToken(cadeia, REAL, tokenGlobal, textBefore);
+            break;
+
+        case LOGICO:
+            eatToken(cadeia, LOGICO, tokenGlobal, textBefore);
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " identificador, inteiro, real, logico");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -569,10 +610,22 @@ void TB(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void BC(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case INICIO:
+            eatToken(cadeia, INICIO, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, false);
+            if (errorFlag) return;
+
+            LC(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            eatToken(cadeia, FIM, tokenGlobal, textBefore);
+            
+            break;
+        
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " inicio");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -583,10 +636,27 @@ void BC(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void LC(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+        case SE:
+        case ENQUANTO:
+        case PARA:
+        case REPITA:
+        case LEIA:
+        case IMPRIMA:
+            C(cadeia, tokenGlobal, textBefore);
+            if (errorFlag) return;
+
+            eatToken(cadeia, PONTO_VIRGULA, tokenGlobal, textBefore);
+            incompleteString(cadeia, tokenGlobal, textBefore, true);
+
+            LC_Prime(cadeia, tokenGlobal, textBefore);
+
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (");  // nao esquecer de mudar
+                strcat(text, " identificador, se, enquanto, para, repita, leia, imprima");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
@@ -597,6 +667,21 @@ void LC(void *cadeia, int *tokenGlobal, bool *textBefore) {
 
 void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
+        case ID:
+        case SE:
+        case ENQUANTO:
+        case PARA:
+        case REPITA:
+        case LEIA:
+        case IMPRIMA:
+            LC(cadeia, tokenGlobal, textBefore);
+            break;
+
+        case FIM:
+        case SENAO:
+        case ATE:
+            break;
+
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
