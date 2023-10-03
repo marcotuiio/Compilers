@@ -226,8 +226,11 @@ int main() {
                 firstLine = false;
             } else {
                 if (!flagLexico) {
-                    insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
-                    processSyntax(cadeia, &textBefore);
+                    if (getNode(cadeia) != -1) {
+                        insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                        printList(cadeia);
+                        processSyntax(cadeia, &textBefore, input);
+                    } 
                 }
                 flagLexico = false;
                 freeList(cadeia);
@@ -273,7 +276,7 @@ int main() {
                 }
 
                 if (end != -1) {                                     // if the end state is not -1, token is printed because at some point it went to a final state
-                    if (end != COMENT_LINHA && end != COMENT_BLOCO)  // comments must be ignored in the syntax analysis
+                    if (end != COMENT_LINHA)  // comments must be ignored in the syntax analysis
                         insertNode(cadeia, end, lineno, index);
                     inMultiLineComment = false;
                 }
@@ -296,7 +299,7 @@ int main() {
                 }
 
                 if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
-                    if (end != COMENT_LINHA && end != COMENT_BLOCO)
+                    if (end != COMENT_LINHA)
                         insertNode(cadeia, end, lineno, index);
                     backupIndex = index;
                     inMultiLineComment = false;
@@ -332,7 +335,7 @@ int main() {
         if (input[index] == 0) continue;
         if (end == currentState) {
             backupIndex = index;
-            if (end != COMENT_LINHA && end != COMENT_BLOCO)
+            if (end != COMENT_LINHA)
                 insertNode(cadeia, end, lineno, index);
             inMultiLineComment = false;
 
@@ -343,8 +346,11 @@ int main() {
         }
         if (!inMultiLineComment) {
             if (!flagLexico) {
-                insertNode(cadeia, EOF_TOKEN, lineno, index);  // inserting EOF token at the end of each line
-                processSyntax(cadeia, &textBefore);
+                if (getNode(cadeia) != -1) {
+                        insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                        printList(cadeia);
+                        processSyntax(cadeia, &textBefore, input);
+                    }
             }
             flagLexico = false;
             freeList(cadeia);
@@ -354,16 +360,17 @@ int main() {
     // Last line
     if (!inMultiLineComment) {
         if (!flagLexico) {
-            insertNode(cadeia, EOF_TOKEN, lineno, index);  // inserting EOF token at the end of each line
-            processSyntax(cadeia, &textBefore);
+            if (getNode(cadeia) != -1) {
+                insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                printList(cadeia);
+                processSyntax(cadeia, &textBefore, input);
+            }
         }
         flagLexico = false;
         freeList(cadeia);
     }
     free(input);
-
     printf("PROGRAMA CORRETO."); // if program was able to get here, no lexical or syntax errors were found
-
     return 0;
 }
 

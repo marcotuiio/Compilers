@@ -71,58 +71,59 @@
 */
 
 // Receives the list of all tokens of the sentece, and starts to processes it
-void processSyntax(void *cadeia, bool *textBefore);
+void processSyntax(void *cadeia, bool *textBefore, char *input);
 
 // Receives the current token and expected token
 // If current and expected are the same, then removes it from the list and gets the next token to be processed
 // If they are different, then prints an error message
-void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore);
+void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefore, char *input);
 
 // Following prototypes consist of the productions for every non terminal in the defined grammar
 // Checks and process current token within the productions
-void Start(void *cadeia, int *tokenGlobal, bool *textBefore); // Start
-void Prog(void *cadeia, int *tokenGlobal, bool *textBefore);  // Programa
-void PF(void *cadeia, int *tokenGlobal, bool *textBefore);  // ProcedimentoFuncao
-void DProc(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraProcedimento
-void DF(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraFuncao
-void Param(void *cadeia, int *tokenGlobal, bool *textBefore);  // Parametros
-void DParam(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraParametros
-void BV(void *cadeia, int *tokenGlobal, bool *textBefore);  // BlocoVariaveis
-void DS(void *cadeia, int *tokenGlobal, bool *textBefore);  // Declaracoes
-void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Declaracoes'
-void DT(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraTipo
-void DV(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraVariaveis
-void DI(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraIdentificador
-void DI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // DeclaraIdentificador'
-void VM(void *cadeia, int *tokenGlobal, bool *textBefore);  // VetorMatriz
-void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore);  // Dimensoes
-void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Dimensoes'
-void TB(void *cadeia, int *tokenGlobal, bool *textBefore);  // TipoBasico
-void BC(void *cadeia, int *tokenGlobal, bool *textBefore);  // BlocoComandos
-void LC(void *cadeia, int *tokenGlobal, bool *textBefore);  // ListaComandos
-void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore); // ListaComandos'
-void C(void *cadeia, int *tokenGlobal, bool *textBefore);  // Comandos
-void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore);  // Comandos1'
-void C_Prime2(void *cadeia, int *tokenGlobal, bool *textBefore);  // Comandos2'
-void C_Prime3(void *cadeia, int *tokenGlobal, bool *textBefore);  // Comandos3'
-void E(void *cadeia, int *tokenGlobal, bool *textBefore);  // Expressao
-void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Expressao'
-void ES(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExpressaoSimples
-void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExpressaoSimples'
-void T(void *cadeia, int *tokenGlobal, bool *textBefore);  // Termo
-void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Termo'
-void F(void *cadeia, int *tokenGlobal, bool *textBefore);  // Fator
-void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Fator'
-void V(void *cadeia, int *tokenGlobal, bool *textBefore);  // Variavel
-void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // Variavel'
-void EI(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExprIter
-void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore);  // ExprIter'
+void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input); // Start
+void Prog(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Programa
+void PF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ProcedimentoFuncao
+void DProc(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraProcedimento
+void DF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraFuncao
+void Param(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Parametros
+void DParam(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraParametros
+void BV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // BlocoVariaveis
+void DS(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Declaracoes
+void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Declaracoes'
+void DT(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraTipo
+void DV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraVariaveis
+void DI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraIdentificador
+void DI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // DeclaraIdentificador'
+void VM(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // VetorMatriz
+void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Dimensoes
+void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Dimensoes'
+void TB(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // TipoBasico
+void BC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // BlocoComandos
+void LC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ListaComandos
+void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input); // ListaComandos'
+void C(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Comandos
+void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Comandos1'
+void C_Prime2(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Comandos2'
+void C_Prime3(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Comandos3'
+void E(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Expressao
+void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Expressao'
+void ES(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ExpressaoSimples
+void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ExpressaoSimples'
+void T(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Termo
+void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Termo'
+void F(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Fator
+void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Fator'
+void V(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Variavel
+void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // Variavel'
+void EI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ExprIter
+void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  // ExprIter'
 
 // Prints syntax error message
 void printResult(char *result, bool *textBefore);
 
 // Returns the error message to be printed, analyzing the current token and the expected token
-char *defineErro(int tokenGlobal, int tokenAnalisado);
+// char *defineErro(int tokenGlobal, int tokenAnalisado);
+void handleError(int line, int column, int token);
 
 // Checks if string is over when it shouldn't be
 void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver);
