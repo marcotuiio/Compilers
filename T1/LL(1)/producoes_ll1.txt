@@ -24,7 +24,7 @@ VM -> vetor
 VM -> matriz
 DIMEN -> num_int : num_int DIMEN_PRIME
 DIMEN_PRIME -> , DIMEN
-DIMEN -> ''
+DIMEN_PRIME -> ''
 TB -> inteiro
 TB -> real
 TB -> logico
@@ -36,7 +36,7 @@ LC_PRIME -> ''
 C -> id C_PRIME1
 C_PRIME1 -> ( EI )
 C_PRIME1 -> ''
-C_PRIME -> V <- E
+C_PRIME1 -> V <- E
 C -> se E entao LC C_PRIME2
 C_PRIME2 -> fim se
 C_PRIME2 -> senao LC fim se
