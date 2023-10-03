@@ -33,7 +33,6 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 void Start(void *cadeia, int *tokenGlobal, bool *textBefore) {
     switch (*tokenGlobal) {
         case ID:
-        case ABRE_PARENTESES:
         case NUM_INT:
         case NUM_REAL:
         case MAIS:
@@ -52,7 +51,7 @@ void Start(void *cadeia, int *tokenGlobal, bool *textBefore) {
         default:
             if (!errorFlag) {
                 char *text = defineErro(*tokenGlobal, -1);
-                strcat(text, " id, (, numero inteiro, numero real, +, -, nao, verdadeiro, falso, string");
+                strcat(text, " id, numero inteiro, numero real, +, -, nao, verdadeiro, falso, string");
                 printResult(text, textBefore);
                 free(text);
                 errorFlag = true;
