@@ -1,4 +1,4 @@
-START -> E $
+START -> Prog $
 PROG -> algoritmo id ; BV PF BC .
 PF -> DPROC PF
 PF -> DF PF

@@ -230,7 +230,7 @@ int main() {
                         insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
                         printList(cadeia);
                         processSyntax(cadeia, &textBefore, input);
-                    } 
+                    }
                 }
                 flagLexico = false;
                 freeList(cadeia);
@@ -275,7 +275,7 @@ int main() {
                     backupIndex = index;
                 }
 
-                if (end != -1) {                                     // if the end state is not -1, token is printed because at some point it went to a final state
+                if (end != -1) {              // if the end state is not -1, token is printed because at some point it went to a final state
                     if (end != COMENT_LINHA)  // comments must be ignored in the syntax analysis
                         insertNode(cadeia, end, lineno, index);
                     inMultiLineComment = false;
@@ -347,10 +347,10 @@ int main() {
         if (!inMultiLineComment) {
             if (!flagLexico) {
                 if (getNode(cadeia) != -1) {
-                        insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
-                        printList(cadeia);
-                        processSyntax(cadeia, &textBefore, input);
-                    }
+                    insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                    printList(cadeia);
+                    processSyntax(cadeia, &textBefore, input);
+                }
             }
             flagLexico = false;
             freeList(cadeia);
@@ -370,7 +370,7 @@ int main() {
         freeList(cadeia);
     }
     free(input);
-    printf("PROGRAMA CORRETO."); // if program was able to get here, no lexical or syntax errors were found
+    printf("PROGRAMA CORRETO.");  // if program was able to get here, no lexical or syntax errors were found
     return 0;
 }
 

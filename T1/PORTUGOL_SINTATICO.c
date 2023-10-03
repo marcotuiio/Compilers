@@ -22,10 +22,10 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
         removeNode(cadeia);
         *tokenGlobal = getNode(cadeia);
         defineID(tokenGlobal);
-        
+
     } else {
         if (getLine(cadeia) == -1 || getColumn(cadeia) == -1) return;
-        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> '%c'", getLine(cadeia), getColumn(cadeia), input[getLine(cadeia) - 1]);
+        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> '%c'", getLine(cadeia), getColumn(cadeia), input[getLine(cadeia)]);
         errorFlag = true;
         freeList(cadeia);
         free(input);
@@ -35,16 +35,8 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 
 void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
-        case ID:
-        case NUM_INT:
-        case NUM_REAL:
-        case MAIS:
-        case MENOS:
-        case NAO:
-        case VERDADEIRO:
-        case FALSO:
-        case STRING:
-            E(cadeia, tokenGlobal, textBefore, input);
+        case ALGORITMO:
+            Prog(cadeia, tokenGlobal, textBefore, input);
             if (errorFlag) return;
 
             eatToken(cadeia, EOF_TOKEN, tokenGlobal, textBefore, input);
@@ -53,11 +45,7 @@ void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             if (!errorFlag) {
-                // char *text = defineErro(*tokenGlobal, -1);
-                // strcat(text, " id, numero inteiro, numero real, +, -, nao, verdadeiro, falso, string");
-                // printResult(text, textBefore);
-                // free(text);
-                errorFlag = true;
+                handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
                 freeList(cadeia);
                 free(input);
                 exit(-2);
@@ -92,6 +80,9 @@ void Prog(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
             eatToken(cadeia, FIM, tokenGlobal, textBefore, input);
 
+            break;
+
+        case EOF_TOKEN:
             break;
 
         default:
@@ -355,6 +346,7 @@ void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
         case FUNCAO:
         case VARIAVEIS:
         case INICIO:
+        case EOF_TOKEN:
             break;
 
         default:
@@ -982,7 +974,6 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
 void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
-        case EOF_TOKEN:
         case PONTO_VIRGULA:
         case FECHA_PARENTESES:
         case FECHA_COLCHETE:
@@ -1461,7 +1452,7 @@ void printResult(char *result, bool *textBefore) {
 }
 
 void handleError(int line, int column, int token) {
-    printf("ERRO DE SINTAXE. Linha: %d Coluna: %d -> Token causador do erro: %d\n", line, column, token);
+    printf("ERRO DE SINTAXE. Linha: %d Coluna: %d -> '%d'\n", line, column, token);
     // Você pode adicionar mais informações de erro, se necessário.
     errorFlag = true;
 }
