@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "linked_list.h"
 
 #define SIGMA 83
@@ -22,6 +23,6 @@ bool isFinal(int *finals, int current);
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState);
 
 // Prints the char that caused the error (first occurrence in the line)
-void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico);
+void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico, char *tokenContents);
 
 #endif

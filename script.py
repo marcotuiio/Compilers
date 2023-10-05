@@ -23,7 +23,7 @@ for f in inputs:
     input_file = os.path.join(BED, f)
     output_file = os.path.join(BSD, f'output_{f}')
     
-    # print("./l9e1 < " + input_file + " > " + output_file)
+    # print("valgrind ./portugol < " + input_file + " > " + output_file)
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
         subprocess.Popen(["./portugol"], stdin=stdin, stdout=stdout).wait()
 

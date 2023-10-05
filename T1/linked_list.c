@@ -1,4 +1,5 @@
 #include "linked_list.h"
+
 #include "PORTUGOL_SINTATICO.h"
 
 void *createList() {
@@ -6,7 +7,7 @@ void *createList() {
     return l;
 }
 
-void insertNode(listHeader *list, int value, int line, int column, char *token) { // sempre insere no final
+void insertNode(listHeader *list, int value, int line, int column, char *token) {  // sempre insere no final
     nodeList *node = calloc(1, sizeof(nodeList));
     node->value = value;
     node->line = line;
@@ -19,7 +20,7 @@ void insertNode(listHeader *list, int value, int line, int column, char *token) 
     // printf("value: %d line: %d column: %d\n", value, line, column);
     if (!list->head) {
         list->head = node;
-        
+
     } else {
         nodeList *aux = list->head;
         while (aux->next) {
@@ -29,7 +30,7 @@ void insertNode(listHeader *list, int value, int line, int column, char *token) 
     }
 }
 
-void removeNode(listHeader *list) { // sempre remove do inicio
+void removeNode(listHeader *list) {  // sempre remove do inicio
     if (!list->head) {
         return;
     } else {

@@ -72,19 +72,24 @@ C -> leia ( V )
 C -> imprima ( EI )
 
 E -> ES E_PRIME
-E_PRIME -> = ES E_PRIME
-E_PRIME -> <> ES E_PRIME
-E_PRIME -> < ES E_PRIME
-E_PRIME -> > ES E_PRIME
-E_PRIME -> <= ES E_PRIME
-E_PRIME -> >= ES E_PRIME
+E_PRIME -> OpR ES E_PRIME
 E_PRIME -> ''
 
 ES -> T ES_PRIME
-ES_PRIME -> + T ES_PRIME
-ES_PRIME -> - T ES_PRIME
+ES -> OpB T ES_PRIME
+ES_PRIME -> OpB T ES_PRIME
 ES_PRIME -> ou T ES_PRIME
 ES_PRIME -> ''
+
+OpR -> =
+OpR -> <>
+OpR -> <
+OpR -> >
+OpR -> >=
+OpR -> <=
+
+OpB -> +
+OpB -> -
 
 T -> F T_PRIME
 T_PRIME -> * F T_PRIME

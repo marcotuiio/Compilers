@@ -136,22 +136,6 @@ Variavel → identificador [ ExprIter ]
 
 -------------------------------------------------------------------------------------
 
-E -> T
-E -> + T
-E -> - T
-E -> ES E_PRIME
-E_PRIME -> + T
-E_PRIME -> - T
-E_PRIME -> ou T
-E_PRIME -> ''
-
-
-ES -> T
-ES -> + T
-ES -> - T
-ES -> ES ES_PRIME
-
-
 Expressao → ExpressaoSimples
 Expressao → Expressao = ExpressaoSimples
 Expressao → Expressao <> ExpressaoSimples
@@ -188,6 +172,22 @@ OpR -> <=
 OpB -> +
 OpB -> -
 ////////////////////////
+{
+E -> ES E_PRIME
+E_PRIME -> = ES E_PRIME
+E_PRIME -> <> ES E_PRIME
+E_PRIME -> < ES E_PRIME
+E_PRIME -> > ES E_PRIME
+E_PRIME -> <= ES E_PRIME
+E_PRIME -> >= ES E_PRIME
+E_PRIME -> ''
+
+ES -> T ES_PRIME
+ES_PRIME -> + T ES_PRIME
+ES_PRIME -> - T ES_PRIME
+ES_PRIME -> ou T ES_PRIME
+ES_PRIME -> ''
+}
 
 Expressao → ExpressaoSimples
 Expressao → Expressao OperadorRelacional ExpressaoSimples

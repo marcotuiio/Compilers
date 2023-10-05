@@ -250,13 +250,13 @@ int main() {
             if (currentCharIndex == -1) {
                 if (end == -1) {
                     if (index == 0) {
-                        printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico);
+                        printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico, tokenContents);
                         resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
                         continue;
                     }
 
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
-                    printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico);
+                    printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico, tokenContents);
                     continue;
                 }
 
@@ -265,8 +265,8 @@ int main() {
                     backupIndex = index;
                 }
 
-                if (end != -1) {              // if the end state is not -1, token is printed because at some point it went to a final state
-                    if (end != COMENT_LINHA) {  // comments must be ignored in the syntax analysis
+                if (end != -1) {                // if the end state is not -1, token is printed because at some point it went to a final state
+                    if (end != COMENT_LINHA && end != COMENT_BLOCO) {  // comments must be ignored in the syntax analysis
                         insertNode(cadeia, end, lineno, index, tokenContents);
                         free(tokenContents);
                         column = 0;
@@ -277,7 +277,7 @@ int main() {
 
                 // update variables to start again
                 resetVariables(&index, (index + 1), &backupIndex, &end, &currentState);
-                printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico);
+                printErroLexico(cadeia, input, lineno, index - 1, &textBefore, &flagLexico, tokenContents);
                 continue;
             }
 
@@ -286,14 +286,14 @@ int main() {
 
             // if the transition is not valid
             if (nextState == 0) {
-                if (end == -1) {                                                              // the transition doesnt exist and no state in the token is final
-                    printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico);  // erro lexico de espaço e \n, sendo igonorados na função
+                if (end == -1) {                                                                             // the transition doesnt exist and no state in the token is final
+                    printErroLexico(cadeia, input, lineno, index, &textBefore, &flagLexico, tokenContents);  // erro lexico de espaço e \n, sendo igonorados na função
                     resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
                     continue;
                 }
 
                 if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
-                    if (end != COMENT_LINHA) {
+                    if (end != COMENT_LINHA && end != COMENT_BLOCO) {
                         insertNode(cadeia, end, lineno, index, tokenContents);
                         free(tokenContents);
                         column = 0;
@@ -324,7 +324,7 @@ int main() {
                 }
                 end = currentState;
             }
-            if (currentState == 167) { // if the current state is a string, the token contents is updated
+            if (currentState == 167) {  // if the current state is a string, the token contents is updated
                 tokenContents[column] = input[index];
                 column++;
             }
@@ -341,7 +341,7 @@ int main() {
         if (input[index] == 0) continue;
         if (end == currentState) {
             backupIndex = index;
-            if (end != COMENT_LINHA) {
+            if (end != COMENT_LINHA && end != COMENT_BLOCO) {
                 insertNode(cadeia, end, lineno, index, tokenContents);
                 free(tokenContents);
                 column = 0;
@@ -351,7 +351,7 @@ int main() {
 
         } else {  // this is the last token of the line, and its and error
             if (input[backupIndex] == 0) continue;
-            printErroLexico(cadeia, input, lineno, backupIndex, &textBefore, &flagLexico);
+            printErroLexico(cadeia, input, lineno, backupIndex, &textBefore, &flagLexico, tokenContents);
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
         if (!inMultiLineComment) {
@@ -359,6 +359,7 @@ int main() {
         }
     }
 
+    free(tokenContents);
     // Last line
     if (!inMultiLineComment) {
         if (!flagLexico) {
@@ -371,7 +372,6 @@ int main() {
         flagLexico = false;
         freeList(cadeia);
     }
-    free(tokenContents);
     free(input);
     printf("PROGRAMA CORRETO.");  // if program was able to get here, no lexical or syntax errors were found
     return 0;
@@ -398,13 +398,14 @@ void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int 
     *currentState = 1;
 }
 
-void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico) {
+void printErroLexico(void *cadeia, char *input, int line, int column, bool *textBefore, bool *flagLexico, char *tokenContents) {
     if (*flagLexico) return;
     if (input[column] == 10 || input[column] == 32) return;  // blank spaces and \n must be ignored without error
     if (*textBefore) printf("\n");
     printf("ERRO LEXICO. Linha: %d Coluna: %d -> '%c'", line, column + 1, input[column]);
     freeList(cadeia);
     free(input);
+    free(tokenContents);
     *textBefore = true;
     *flagLexico = true;
     exit(-1);  // lexical error found so the program must stop
