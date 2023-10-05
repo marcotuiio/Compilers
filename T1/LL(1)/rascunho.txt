@@ -6,8 +6,8 @@ PF -> DPROC PF
 PF -> DF PF
 PF -> ''
 
-DPROC -> procedimento id PARAM ; DPARAM BV BC ;
-DF -> funcao id PARAM : TB ; DPARAM BV BC ;
+DPROC -> procedimento id PARAM ; DPARAM BV ;
+DF -> funcao id PARAM : TB ; DPARAM BV ;
 
 PARAM -> ( DI )
 PARAM -> ''
@@ -18,26 +18,23 @@ DPARAM -> ''
 BV -> variaveis DS
 BV -> ''
 
-DS -> DV DS_PRIME
-DS -> DT DS_PRIME
-
-DS_PRIME -> DS
-DS_PRIME -> ''
+DS -> DV
+DS -> DT
+DS -> DV DS
+DS -> DT DS
 
 DT -> tipo id = VM [ DIMEN ] TB ;
 
 DV -> TB : DI ;
 
-DI -> id DI_PRIME
-DI_PRIME -> , DI
-DI_PRIME -> ''
+DI -> id
+DI -> id , DI
 
 VM -> vetor
 VM -> matriz
 
-DIMEN -> num_int : num_int DIMEN_PRIME
-DIMEN_PRIME -> , DIMEN
-DIMEN_PRIME -> ''
+DIMEN -> num_int : num_int
+DIMEN -> num_int : num_int , DIMEN
 
 TB -> inteiro
 TB -> real
@@ -47,36 +44,30 @@ TB -> id
 
 BC -> inicio LC fim
 
-LC -> C ; LC_PRIME
-LC_PRIME -> LC
-LC_PRIME -> ''
+LC -> C ; LC
+LC -> ''
 
 C -> id C_PRIME1
 C_PRIME1 -> ( EI )
 C_PRIME1 -> <- E
 C_PRIME1 -> ''
 
-C -> se E entao LC C_PRIME2
-C_PRIME2 -> fim se
-C_PRIME2 -> senao LC fim se
-
-C -> enquanto E faca LC fim enquanto
-
-C -> para id de E ate E C_PRIME3
-C_PRIME3 -> faca LC fim para
-C_PRIME3 -> passo E faca LC fim para
-
+C -> se E entao LC FimSe
+C -> se E entao LC senao LC FimSe
+C -> enquanto E faca LC FimEnquanto
+C -> para id de E ate E faca LC FimPara
+C -> para id de E ate E passo E faca LC FimPara
 C -> repita LC ate E
 C -> leia ( V )
 C -> imprima ( EI )
 
 E -> ES E_PRIME
-E_PRIME -> = ES E_PRIME
-E_PRIME -> <> ES E_PRIME
-E_PRIME -> < ES E_PRIME
-E_PRIME -> > ES E_PRIME
-E_PRIME -> <= ES E_PRIME
-E_PRIME -> >= ES E_PRIME
+E_PRIME -> = ES
+E_PRIME -> <> ES
+E_PRIME -> < ES
+E_PRIME -> <= ES
+E_PRIME -> >= ES
+E_PRIME -> > ES
 E_PRIME -> ''
 
 ES -> T ES_PRIME
@@ -103,6 +94,7 @@ F -> id F_PRIME
 
 F_PRIME -> ( EI )
 F_PRIME -> V
+F_PRIME -> ''
 
 V -> id V_PRIME
 V_PRIME -> [ EI ]

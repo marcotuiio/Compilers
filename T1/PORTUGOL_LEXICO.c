@@ -205,10 +205,12 @@ int main() {
     bool inMultiLineComment = false;
     int lineno = 0;
     int index;
-    void *cadeia;
+    // int column;
+    void *cadeia = createList();
 
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState;
+        // column = 0;
         index = 0;
         int backupIndex;
         int end;
@@ -222,19 +224,7 @@ int main() {
             end = -1;                // end state
 
             if (firstLine) {
-                cadeia = createList();
-                firstLine = false;
-            } else {
-                if (!flagLexico) {
-                    if (getNode(cadeia) != -1) {
-                        insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
-                        printList(cadeia);
-                        processSyntax(cadeia, &textBefore, input);
-                    }
-                }
                 flagLexico = false;
-                freeList(cadeia);
-                cadeia = createList();
             }
 
             char *isThereComment = strchr(input, '{');
@@ -345,15 +335,7 @@ int main() {
             resetVariables(&index, (backupIndex + 1), &backupIndex, &end, &currentState);
         }
         if (!inMultiLineComment) {
-            if (!flagLexico) {
-                if (getNode(cadeia) != -1) {
-                    insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
-                    printList(cadeia);
-                    processSyntax(cadeia, &textBefore, input);
-                }
-            }
             flagLexico = false;
-            freeList(cadeia);
         }
     }
 
@@ -362,7 +344,7 @@ int main() {
         if (!flagLexico) {
             if (getNode(cadeia) != -1) {
                 insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
-                printList(cadeia);
+                // printList(cadeia);
                 processSyntax(cadeia, &textBefore, input);
             }
         }

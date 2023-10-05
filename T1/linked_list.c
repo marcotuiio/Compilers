@@ -11,7 +11,7 @@ void insertNode(listHeader *list, int value, int line, int column) { // sempre i
     node->value = value;
     node->line = line;
     node->column = column;
-    printf("value: %d line: %d column: %d\n", value, line, column);
+    // printf("value: %d line: %d column: %d\n", value, line, column);
     if (list->head == NULL) {
         list->head = node;
         
