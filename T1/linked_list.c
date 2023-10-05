@@ -59,11 +59,12 @@ void printList(listHeader *list) {
     nodeList *aux = list->head;
     while (aux != NULL) {
         defineID(&aux->value);
-        printf("%d ", aux->value);
-        // char *callocAux = calloc(30, sizeof(char));
-        // printf("%s ", callocAux);
+        // printf("%d ", aux->value);
+        char *callocAux = calloc(30, sizeof(char));
+        switchTokens(callocAux, aux->value);
+        printf("%s ", callocAux);
         aux = aux->next;
-        // free(callocAux);
+        free(callocAux);
     }
     printf("\n");
 }

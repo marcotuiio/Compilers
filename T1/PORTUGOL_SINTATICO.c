@@ -21,7 +21,7 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 
     } else {
         // if (getLine(cadeia) == -1 || getColumn(cadeia) == -1) return;
-        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> 'SOCORO'", getLine(cadeia), getColumn(cadeia));
+        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> '%d'", getLine(cadeia), getColumn(cadeia), *tokenGlobal);
         freeList(cadeia);
         free(input);
         exit(-2);
@@ -62,7 +62,7 @@ void Prog(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
             BC(cadeia, tokenGlobal, textBefore, input);
 
-            eatToken(cadeia, FIM, tokenGlobal, textBefore, input);
+            eatToken(cadeia, PONTO, tokenGlobal, textBefore, input);
 
             break;
 
@@ -692,6 +692,15 @@ void C(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
 void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
+        case ID:
+            V(cadeia, tokenGlobal, textBefore, input);
+
+            eatToken(cadeia, ATRIBUICAO, tokenGlobal, textBefore, input);
+
+            E(cadeia, tokenGlobal, textBefore, input);
+
+            break;
+
         case PONTO_VIRGULA:
             break;
 
@@ -701,6 +710,19 @@ void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             EI(cadeia, tokenGlobal, textBefore, input);
 
             eatToken(cadeia, FECHA_PARENTESES, tokenGlobal, textBefore, input);
+
+            break;
+
+        case ABRE_COLCHETE:
+            eatToken(cadeia, ABRE_COLCHETE, tokenGlobal, textBefore, input);
+
+            EI(cadeia, tokenGlobal, textBefore, input);
+
+            eatToken(cadeia, FECHA_COLCHETE, tokenGlobal, textBefore, input);
+
+            eatToken(cadeia, ATRIBUICAO, tokenGlobal, textBefore, input);
+
+            E(cadeia, tokenGlobal, textBefore, input);
 
             break;
 
@@ -1127,9 +1149,27 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
 void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
-        case ID:
-            V(cadeia, tokenGlobal, textBefore, input);
-
+        case PONTO_VIRGULA:
+        case FECHA_PARENTESES:
+        case FECHA_COLCHETE:
+        case VIRGULA:
+        case IGUAL:
+        case DIFERENTE:
+        case MAIOR:
+        case MAIOR_IGUAL:
+        case MENOR:
+        case MENOR_IGUAL:
+        case MAIS:
+        case MENOS:
+        case OU:
+        case VEZES:
+        case DIVISAO:
+        case DIV:
+        case AND:
+        case ENTAO:
+        case FACA:
+        case ATE:
+        case PASSO:
             break;
 
         case ABRE_PARENTESES:
@@ -1138,6 +1178,15 @@ void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             EI(cadeia, tokenGlobal, textBefore, input);
 
             eatToken(cadeia, FECHA_PARENTESES, tokenGlobal, textBefore, input);
+
+            break;
+
+        case ABRE_COLCHETE:
+            eatToken(cadeia, ABRE_COLCHETE, tokenGlobal, textBefore, input);
+
+            EI(cadeia, tokenGlobal, textBefore, input);
+
+            eatToken(cadeia, FECHA_COLCHETE, tokenGlobal, textBefore, input);
 
             break;
 
@@ -1172,27 +1221,8 @@ void V(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
 void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
-        case PONTO_VIRGULA:
         case FECHA_PARENTESES:
-        case FECHA_COLCHETE:
-        case VIRGULA:
-        case IGUAL:
-        case DIFERENTE:
-        case MAIOR:
-        case MAIOR_IGUAL:
-        case MENOR:
-        case MENOR_IGUAL:
-        case MAIS:
-        case MENOS:
-        case OU:
-        case VEZES:
-        case DIVISAO:
-        case DIV:
-        case AND:
-        case ENTAO:
-        case FACA:
-        case ATE:
-        case PASSO:
+        case ATRIBUICAO:
             break;
 
         case ABRE_COLCHETE:
@@ -1313,13 +1343,13 @@ void switchTokens(char *text, int token) {
         case -1:
             break;
         case ID:
-            strcat(text, " identificador");
+            strcat(text, " id");
             break;
         case NUM_INT:
-            strcat(text, " numero inteiro");
+            strcat(text, " num_int");
             break;
         case NUM_REAL:
-            strcat(text, " numero real");
+            strcat(text, " numero_real");
             break;
         case PONTO_VIRGULA:
             strcat(text, " ;");
@@ -1481,7 +1511,7 @@ void switchTokens(char *text, int token) {
             strcat(text, " comentario de bloco");  // this token sholdnt appear in syntax analysis
             break;
         case EOF_TOKEN:
-            strcat(text, " fim de arquivo");
+            strcat(text, " $");
             break;
         default:
             strcat(text, " nao identificado");  // this token sholdnt appear in syntax analysis

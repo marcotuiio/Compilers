@@ -54,6 +54,7 @@ LC_PRIME -> ''
 C -> id C_PRIME1
 C_PRIME1 -> ( EI )
 C_PRIME1 -> <- E
+C_PRIME1 -> [ EI ] <- E
 C_PRIME1 -> ''
 
 C -> se E entao LC C_PRIME2
@@ -99,10 +100,11 @@ F -> num_real
 F -> verdadeiro
 F -> falso
 F -> string
-F -> id F_PRIME
 
+F -> id F_PRIME
 F_PRIME -> ( EI )
-F_PRIME -> V
+F_PRIME -> [ EI ]
+F_PRIME -> ''
 
 V -> id V_PRIME
 V_PRIME -> [ EI ]

@@ -103,3 +103,33 @@ V_PRIME -> ''
 EI -> E EI_PRIME
 EI_PRIME -> , EI
 EI_PRIME -> ''
+
+
+
+C -> id C_PRIME1
+C_PRIME1 -> ( EI )
+C_PRIME1 -> <- E
+C_PRIME1 -> [ EI ] <- E
+C_PRIME1 -> ''
+
+F -> id F_PRIME
+F_PRIME -> ( EI )
+F_PRIME -> [ EI ]
+F_PRIME -> ''
+
+V -> id V_PRIME
+V_PRIME -> [ EI ]
+V_PRIME -> ''
+
+
+Comandos → identificador
+Comandos → identificador ( ExprIter )
+Comandos → identificador <- Expressao
+Comandos -> identificador [ ExprIter ] <- Expressao
+
+Fator → identificador ( ExprIter )
+Fator → identificador
+Fator -> identificador [ ExprIter ]
+
+Variavel → identificador
+Variavel → identificador [ ExprIter ]
