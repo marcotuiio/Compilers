@@ -205,12 +205,12 @@ int main() {
     bool inMultiLineComment = false;
     int lineno = 0;
     int index;
-    // int column;
     void *cadeia = createList();
+    char *tokenContents = calloc(200, sizeof(char));
+    int column = 0;
 
     while (fgets(input, MAX_INPUT, stdin) != NULL) {
         int currentState;
-        // column = 0;
         index = 0;
         int backupIndex;
         int end;
@@ -266,8 +266,12 @@ int main() {
                 }
 
                 if (end != -1) {              // if the end state is not -1, token is printed because at some point it went to a final state
-                    if (end != COMENT_LINHA)  // comments must be ignored in the syntax analysis
-                        insertNode(cadeia, end, lineno, index);
+                    if (end != COMENT_LINHA) {  // comments must be ignored in the syntax analysis
+                        insertNode(cadeia, end, lineno, index, tokenContents);
+                        free(tokenContents);
+                        column = 0;
+                        tokenContents = calloc(200, sizeof(char));
+                    }
                     inMultiLineComment = false;
                 }
 
@@ -289,8 +293,12 @@ int main() {
                 }
 
                 if (end != -1) {  // the transition doesnt exist and there is a final state, end of token
-                    if (end != COMENT_LINHA)
-                        insertNode(cadeia, end, lineno, index);
+                    if (end != COMENT_LINHA) {
+                        insertNode(cadeia, end, lineno, index, tokenContents);
+                        free(tokenContents);
+                        column = 0;
+                        tokenContents = calloc(200, sizeof(char));
+                    }
                     backupIndex = index;
                     inMultiLineComment = false;
                 }
@@ -310,7 +318,15 @@ int main() {
 
             // if the current state is a final state, the end state is updated
             if (acceptedAsFinal) {
+                if (currentState != 166 && currentState != 169 && currentState != 170) {
+                    tokenContents[column] = input[index];
+                    column++;
+                }
                 end = currentState;
+            }
+            if (currentState == 167) { // if the current state is a string, the token contents is updated
+                tokenContents[column] = input[index];
+                column++;
             }
             index++;
 
@@ -325,8 +341,12 @@ int main() {
         if (input[index] == 0) continue;
         if (end == currentState) {
             backupIndex = index;
-            if (end != COMENT_LINHA)
-                insertNode(cadeia, end, lineno, index);
+            if (end != COMENT_LINHA) {
+                insertNode(cadeia, end, lineno, index, tokenContents);
+                free(tokenContents);
+                column = 0;
+                tokenContents = calloc(200, sizeof(char));
+            }
             inMultiLineComment = false;
 
         } else {  // this is the last token of the line, and its and error
@@ -343,7 +363,7 @@ int main() {
     if (!inMultiLineComment) {
         if (!flagLexico) {
             if (getNode(cadeia) != -1) {
-                insertNode(cadeia, EOF_TOKEN, lineno, index);  // insert EOF token to the end of each line
+                insertNode(cadeia, EOF_TOKEN, lineno, index, "$");  // insert EOF token to the end of each line
                 // printList(cadeia);
                 processSyntax(cadeia, &textBefore, input);
             }
@@ -351,6 +371,7 @@ int main() {
         flagLexico = false;
         freeList(cadeia);
     }
+    free(tokenContents);
     free(input);
     printf("PROGRAMA CORRETO.");  // if program was able to get here, no lexical or syntax errors were found
     return 0;

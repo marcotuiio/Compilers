@@ -21,7 +21,8 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
 
     } else {
         // if (getLine(cadeia) == -1 || getColumn(cadeia) == -1) return;
-        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> '%d'", getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+        int column =  getColumn(cadeia) - strlen(getTokenContent(cadeia)) + 1;
+        printf("ERRO DE SINTAXE. Linha: %d Coluna %d -> '%s'", getLine(cadeia), column, getTokenContent(cadeia));
         freeList(cadeia);
         free(input);
         exit(-2);
@@ -39,7 +40,7 @@ void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case START: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -71,7 +72,7 @@ void Prog(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case PROG: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -100,7 +101,7 @@ void PF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case PF: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -131,7 +132,7 @@ void DProc(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DPROC: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -166,7 +167,7 @@ void DF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DF: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -191,7 +192,7 @@ void Param(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case PARAM: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -219,7 +220,7 @@ void DParam(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DPARAM: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -244,7 +245,7 @@ void BV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case BV: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -274,7 +275,7 @@ void DS(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DS: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -303,7 +304,7 @@ void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DSPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -336,7 +337,7 @@ void DT(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DT: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -363,7 +364,7 @@ void DV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DV: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -382,7 +383,7 @@ void DI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DI: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -405,7 +406,7 @@ void DI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DIPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -427,7 +428,7 @@ void VM(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case VM: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -450,7 +451,7 @@ void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case DIMEN: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -472,7 +473,7 @@ void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) 
 
         default:
             printf("Default case DIMENPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -509,7 +510,7 @@ void TB(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case TB: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -530,7 +531,7 @@ void BC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case BC: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -557,7 +558,7 @@ void LC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case LC: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -585,7 +586,7 @@ void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case LCPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -682,7 +683,7 @@ void C(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case C: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -735,7 +736,7 @@ void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case CPRIME1: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -765,7 +766,7 @@ void C_Prime2(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case CPRIME2: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -803,7 +804,7 @@ void C_Prime3(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case CPRIME3: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -829,7 +830,7 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case E: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -905,7 +906,7 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case EPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -931,7 +932,7 @@ void ES(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case ES: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -986,7 +987,7 @@ void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case ESPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1012,7 +1013,7 @@ void T(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case T: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1079,7 +1080,7 @@ void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case TPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1139,7 +1140,7 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case F: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1192,7 +1193,7 @@ void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case FPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1211,7 +1212,7 @@ void V(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case V: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1236,7 +1237,7 @@ void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case VPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1262,7 +1263,7 @@ void EI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case EI: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1285,7 +1286,7 @@ void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 
         default:
             printf("Default case EIPRIME: %d\n", *tokenGlobal);
-            handleError(getLine(cadeia), getColumn(cadeia), *tokenGlobal);
+            handleError(cadeia);
             freeList(cadeia);
             free(input);
             exit(-2);
@@ -1300,9 +1301,9 @@ void printResult(char *result, bool *textBefore) {
     *textBefore = true;
 }
 
-void handleError(int line, int column, int token) {
-    printf("ERRO DE SINTAXE. Linha: %d Coluna: %d -> token '%d'", line, column, token);
-    // errorFlag = true;
+void handleError(void *cadeia) {
+    int column = getColumn(cadeia) - strlen(getTokenContent(cadeia)) + 1;
+    printf("ERRO DE SINTAXE. Linha: %d Coluna: %d -> '%s'", getLine(cadeia), column, getTokenContent(cadeia));
 }
 
 void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver) {

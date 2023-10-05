@@ -104,7 +104,7 @@ EI -> E EI_PRIME
 EI_PRIME -> , EI
 EI_PRIME -> ''
 
-
+---- RASCUNHO ----
 
 C -> id C_PRIME1
 C_PRIME1 -> ( EI )
@@ -133,3 +133,77 @@ Fator -> identificador [ ExprIter ]
 
 Variavel → identificador
 Variavel → identificador [ ExprIter ]
+
+-------------------------------------------------------------------------------------
+
+E -> T
+E -> + T
+E -> - T
+E -> ES E_PRIME
+E_PRIME -> + T
+E_PRIME -> - T
+E_PRIME -> ou T
+E_PRIME -> ''
+
+
+ES -> T
+ES -> + T
+ES -> - T
+ES -> ES ES_PRIME
+
+
+Expressao → ExpressaoSimples
+Expressao → Expressao = ExpressaoSimples
+Expressao → Expressao <> ExpressaoSimples
+Expressao → Expressao < ExpressaoSimples
+Expressao → Expressao <= ExpressaoSimples
+Expressao → Expressao >= ExpressaoSimples
+Expressao → Expressao > ExpressaoSimples
+
+ExpressaoSimples → Termo
+ExpressaoSimples → + Termo
+ExpressaoSimples → - Termo
+ExpressaoSimples → ExpressaoSimples + Termo
+ExpressaoSimples → ExpressaoSimples - Termo
+ExpressaoSimples → ExpressaoSimples OU Termo
+
+////////////////////////
+E -> ES E_PRIME
+E_PRIME -> OpR ES E_PRIME
+E_PRIME -> ''
+
+ES -> T ES_PRIME
+ES -> OpB T ES_PRIME
+ES_PRIME -> OpB T ES_PRIME
+ES_PRIME -> ou T ES_PRIME
+ES_PRIME -> ''
+
+OpR -> =
+OpR -> <>
+OpR -> <
+OpR -> >
+OpR -> >=
+OpR -> <=
+
+OpB -> +
+OpB -> -
+////////////////////////
+
+Expressao → ExpressaoSimples
+Expressao → Expressao OperadorRelacional ExpressaoSimples
+
+ExpressaoSimples → Termo
+ExpressaoSimples → OperadorBinario Termo
+ExpressaoSimples → ExpressaoSimples OperadorBinario Termo
+ExpressaoSimples → ExpressaoSimples OU Termo
+
+OperadorRelacional → =
+OperadorRelacional → <>
+OperadorRelacional → <
+OperadorRelacional → <=
+OperadorRelacional → >=
+OperadorRelacional → >
+
+OperadorBinario → +
+OperadorBinario → -
+

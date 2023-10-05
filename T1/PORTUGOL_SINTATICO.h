@@ -122,7 +122,7 @@ void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);  /
 void printResult(char *result, bool *textBefore);
 
 // Returns the error message to be printed, analyzing the current token and the expected token
-void handleError(int line, int column, int token);
+void handleError(void *cadeia);
 
 // Checks if string is over when it shouldn't be
 void incompleteString(void *cadeia, int *tokenGlobal, bool *textBefore, bool couldBeOver);
