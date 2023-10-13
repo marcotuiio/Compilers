@@ -1,3 +1,5 @@
+// Author: Marco Túlio Alves de Barros
+
 #include "linked_list.h"
 
 #include "PORTUGOL_SINTATICO.h"
@@ -67,11 +69,7 @@ void printList(listHeader *list) {
         // defineID(&aux->value);
         printf("%d ", aux->value);
         // printf("%s %d\n", aux->token, aux->value);
-        // char *callocAux = calloc(30, sizeof(char));
-        // switchTokens(callocAux, aux->value);
-        // printf("%s ", callocAux);
         aux = aux->next;
-        // free(callocAux);
     }
     printf("\n");
 }

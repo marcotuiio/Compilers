@@ -1,3 +1,5 @@
+// Author: Marco Túlio Alves de Barros
+
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 

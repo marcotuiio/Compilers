@@ -1,6 +1,6 @@
-#include "PORTUGOL_SINTATICO.h"
+// Author: Marco Túlio Alves de Barros
 
-// bool errorFlag = false;
+#include "PORTUGOL_SINTATICO.h"
 
 void processSyntax(void *cadeia, bool *textBefore, char *input) {
     int tokenGlobal = getNode(cadeia);
@@ -9,7 +9,6 @@ void processSyntax(void *cadeia, bool *textBefore, char *input) {
         exit(0);
     }
     defineID(&tokenGlobal);
-    // errorFlag = false;
     Start(cadeia, &tokenGlobal, textBefore, input);  // S is the initial symbol
 }
 
@@ -20,7 +19,6 @@ void eatToken(void *cadeia, int tokenAnalisado, int *tokenGlobal, bool *textBefo
         defineID(tokenGlobal);
 
     } else {
-        // if (getLine(cadeia) == -1 || getColumn(cadeia) == -1) return;
         int column = getColumn(cadeia) - strlen(getTokenContent(cadeia)) + 1;
         printf("ERRO DE SINTAXE. Linha: %d Coluna: %d -> '%s'", getLine(cadeia), column, getTokenContent(cadeia));
         freeList(cadeia);
@@ -41,7 +39,6 @@ void printResult(char *result, bool *textBefore) {
     *textBefore = true;
 }
 
-
 void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
     switch (*tokenGlobal) {
         case ALGORITMO:
@@ -52,7 +49,6 @@ void Start(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case START: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -84,7 +80,6 @@ void Prog(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case PROG: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -113,7 +108,6 @@ void PF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case PF: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -144,7 +138,6 @@ void DProc(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DPROC: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -179,7 +172,6 @@ void DF(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DF: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -204,7 +196,6 @@ void Param(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case PARAM: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -232,7 +223,6 @@ void DParam(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DPARAM: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -257,7 +247,6 @@ void BV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case BV: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -287,7 +276,6 @@ void DS(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DS: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -316,7 +304,6 @@ void DS_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DSPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -349,7 +336,6 @@ void DT(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DT: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -376,7 +362,6 @@ void DV(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DV: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -395,7 +380,6 @@ void DI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DI: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -418,7 +402,6 @@ void DI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DIPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -440,7 +423,6 @@ void VM(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case VM: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -463,7 +445,6 @@ void Dimen(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case DIMEN: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -485,7 +466,6 @@ void Dimen_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) 
             break;
 
         default:
-            // printf("Default case DIMENPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -522,7 +502,6 @@ void TB(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case TB: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -543,7 +522,6 @@ void BC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case BC: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -570,7 +548,6 @@ void LC(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case LC: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -598,7 +575,6 @@ void LC_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case LCPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -695,7 +671,6 @@ void C(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case C: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -748,7 +723,6 @@ void C_Prime1(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case CPRIME1: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -778,7 +752,6 @@ void C_Prime2(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case CPRIME2: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -816,7 +789,6 @@ void C_Prime3(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case CPRIME3: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -844,7 +816,6 @@ void E(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case E: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -880,7 +851,6 @@ void E_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case EPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -916,7 +886,6 @@ void ES(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case ES: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -963,7 +932,6 @@ void ES_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case ESPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1005,7 +973,6 @@ void OPRel(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case OpRel: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1027,7 +994,6 @@ void OPBin(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case OpBin: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1053,7 +1019,6 @@ void T(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case T: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1120,7 +1085,6 @@ void T_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case TPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1180,7 +1144,6 @@ void F(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case F: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1233,7 +1196,6 @@ void F_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case FPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1252,7 +1214,6 @@ void V(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case V: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1277,7 +1238,6 @@ void V_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case VPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1305,7 +1265,6 @@ void EI(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case EI: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1328,7 +1287,6 @@ void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
             break;
 
         default:
-            // printf("Default case EIPRIME: %d\n", *tokenGlobal);
             handleError(cadeia);
             freeList(cadeia);
             free(input);
@@ -1338,7 +1296,6 @@ void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input) {
 }
 
 void defineID(int *tokenGlobal) {
-    // printf("\nDEFININDO TOKEN %d -> ", *tokenGlobal);
     if (*tokenGlobal != -1 && *tokenGlobal != 1 && *tokenGlobal != EOF_TOKEN) {
         if (*tokenGlobal >= NUM_INT && *tokenGlobal <= DIVISAO) return;            // reservados
         if (*tokenGlobal >= DIFERENTE && *tokenGlobal <= ATRIBUICAO) return;       // reservados
@@ -1357,187 +1314,5 @@ void defineID(int *tokenGlobal) {
             *tokenGlobal == PASSO || *tokenGlobal == PROCEDIMENTO) return;
 
         *tokenGlobal = ID;  // se passou por todas as palavras e tokens resevados, entao eh um identificador
-        // printf(" %d\n", *tokenGlobal);
-    }
-}
-
-void switchTokens(char *text, int token) {
-    switch (token) {
-        case -1:
-            break;
-        case ID:
-            strcat(text, " id");
-            break;
-        case NUM_INT:
-            strcat(text, " num_int");
-            break;
-        case NUM_REAL:
-            strcat(text, " numero_real");
-            break;
-        case PONTO_VIRGULA:
-            strcat(text, " ;");
-            break;
-        case VIRGULA:
-            strcat(text, " ,");
-            break;
-        case DOIS_PONTOS:
-            strcat(text, " :");
-            break;
-        case PONTO:
-            strcat(text, " .");
-            break;
-        case ABRE_COLCHETE:
-            strcat(text, " [");
-            break;
-        case FECHA_COLCHETE:
-            strcat(text, " ]");
-            break;
-        case ABRE_PARENTESES:
-            strcat(text, " (");
-            break;
-        case FECHA_PARENTESES:
-            strcat(text, " )");
-            break;
-        case IGUAL:
-            strcat(text, " =");
-            break;
-        case MAIOR:
-            strcat(text, " >");
-            break;
-        case MENOR:
-            strcat(text, " <");
-            break;
-        case MAIS:
-            strcat(text, " +");
-            break;
-        case MENOS:
-            strcat(text, " -");
-            break;
-        case VEZES:
-            strcat(text, " *");
-            break;
-        case DIVISAO:
-            strcat(text, " /");
-            break;
-        case ALGORITMO:
-            strcat(text, " algoritmo");
-            break;
-        case ATE:
-            strcat(text, " ate");
-            break;
-        case DIFERENTE:
-            strcat(text, " <>");
-            break;
-        case MAIOR_IGUAL:
-            strcat(text, " >=");
-            break;
-        case MENOR_IGUAL:
-            strcat(text, " <=");
-            break;
-        case ATRIBUICAO:
-            strcat(text, " <-");
-            break;
-        case INICIO:
-            strcat(text, " inicio");
-            break;
-        case IMPRIMA:
-            strcat(text, " imprima");
-            break;
-        case FIM:
-            strcat(text, " fim");
-            break;
-        case FUNCAO:
-            strcat(text, " funcao");
-            break;
-        case FACA:
-            strcat(text, " faca");
-            break;
-        case FALSO:
-            strcat(text, " falso");
-            break;
-        case VARIAVEIS:
-            strcat(text, " variaveis");
-            break;
-        case VETOR:
-            strcat(text, " vetor");
-            break;
-        case VERDADEIRO:
-            strcat(text, " verdadeiro");
-            break;
-        case INTEIRO:
-            strcat(text, " inteiro");
-            break;
-        case REAL:
-            strcat(text, " real");
-            break;
-        case REPITA:
-            strcat(text, " repita");
-            break;
-        case SE:
-            strcat(text, " se");
-            break;
-        case SENAO:
-            strcat(text, " senao");
-            break;
-        case AND:
-            strcat(text, " e");
-            break;
-        case ENTAO:
-            strcat(text, " entao");
-            break;
-        case ENQUANTO:
-            strcat(text, " enquanto");
-            break;
-        case DE:
-            strcat(text, " de");
-            break;
-        case DIV:
-            strcat(text, " div");
-            break;
-        case OU:
-            strcat(text, " ou");
-            break;
-        case NAO:
-            strcat(text, " nao");
-            break;
-        case TIPO:
-            strcat(text, " tipo");
-            break;
-        case LEIA:
-            strcat(text, " leia");
-            break;
-        case LOGICO:
-            strcat(text, " logico");
-            break;
-        case MATRIZ:
-            strcat(text, " matriz");
-            break;
-        case CARACTERE:
-            strcat(text, " caractere");
-            break;
-        case PARA:
-            strcat(text, " para");
-            break;
-        case PASSO:
-            strcat(text, " passo");
-            break;
-        case PROCEDIMENTO:
-            strcat(text, " procedimento");
-            break;
-        case COMENT_LINHA:
-            strcat(text, " comentario de linha");  // this token sholdnt appear in syntax analysis
-            break;
-        case STRING:
-            strcat(text, " string");
-            break;
-        case COMENT_BLOCO:
-            strcat(text, " comentario de bloco");  // this token sholdnt appear in syntax analysis
-            break;
-        case EOF_TOKEN:
-            strcat(text, " $");
-            break;
-        default:
-            strcat(text, " nao identificado");  // this token sholdnt appear in syntax analysis
-            break;
     }
 }

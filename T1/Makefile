@@ -1,3 +1,5 @@
+# Author: Marco Túlio Alves de Barros
+
 EXEC = gcc
 CFLAGS = -fstack-protector-all -g -Wall
 PROJECT_NAME = portugol

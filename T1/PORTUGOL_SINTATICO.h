@@ -1,12 +1,13 @@
+// Author: Marco Túlio Alves de Barros
+
 #ifndef _PORTUGOL_SINTATICO_H
 #define _PORTUGOL_SINTATICO_H
 
 #include "PORTUGOL_LEXICO.h"
 
-// ENUM of Final States to be processed by syntax analyzer]
-// Todos os outros tokens
-// (excluindo 1, 167 e 169)
-// são considerados ID
+// ENUM of Final States to be processed by syntax analyzer
+// Como todos os outros tokens (excluindo 1, 167 e 169)
+// são considerados ID, então por padrão, ID = 2
 
 #define ID 2
 #define NUM_INT 3
@@ -68,6 +69,128 @@
 
 /*
     -----------> Syntax Analyzer via Recursive Descent <-----------
+
+START -> PROG $
+
+PROG -> algoritmo id ; BV PF BC .
+
+PF -> DPROC PF
+PF -> DF PF
+PF -> ''
+
+DPROC -> procedimento id PARAM ; DPARAM BV BC ;
+DF -> funcao id PARAM : TB ; DPARAM BV BC ;
+
+PARAM -> ( DI )
+PARAM -> ''
+
+DPARAM -> DS
+DPARAM -> ''
+
+BV -> variaveis DS
+BV -> ''
+
+DS -> DV DS_PRIME
+DS -> DT DS_PRIME
+
+DS_PRIME -> DS
+DS_PRIME -> ''
+
+DT -> tipo id = VM [ DIMEN ] TB ;
+
+DV -> TB : DI ;
+
+DI -> id DI_PRIME
+DI_PRIME -> , DI
+DI_PRIME -> ''
+
+VM -> vetor
+VM -> matriz
+
+DIMEN -> num_int : num_int DIMEN_PRIME
+DIMEN_PRIME -> , DIMEN
+DIMEN_PRIME -> ''
+
+TB -> inteiro
+TB -> real
+TB -> caractere
+TB -> logico
+TB -> id
+
+BC -> inicio LC fim
+
+LC -> C ; LC_PRIME
+LC_PRIME -> LC
+LC_PRIME -> ''
+
+C -> id C_PRIME1
+C_PRIME1 -> ( EI )
+C_PRIME1 -> <- E
+C_PRIME1 -> [ EI ] <- E
+C_PRIME1 -> ''
+
+C -> se E entao LC C_PRIME2
+C_PRIME2 -> fim se
+C_PRIME2 -> senao LC fim se
+
+C -> enquanto E faca LC fim enquanto
+
+C -> para id de E ate E C_PRIME3
+C_PRIME3 -> faca LC fim para
+C_PRIME3 -> passo E faca LC fim para
+
+C -> repita LC ate E
+C -> leia ( V )
+C -> imprima ( EI )
+
+E -> ES E_PRIME
+E_PRIME -> OpR ES E_PRIME
+E_PRIME -> ''
+
+ES -> T ES_PRIME
+ES -> OpB T ES_PRIME
+ES_PRIME -> OpB T ES_PRIME
+ES_PRIME -> ou T ES_PRIME
+ES_PRIME -> ''
+
+OpR -> =
+OpR -> <>
+OpR -> <
+OpR -> >
+OpR -> >=
+OpR -> <=
+
+OpB -> +
+OpB -> -
+
+T -> F T_PRIME
+T_PRIME -> * F T_PRIME
+T_PRIME -> / F T_PRIME
+T_PRIME -> div F T_PRIME
+T_PRIME -> e F T_PRIME
+T_PRIME -> ''
+
+F -> ( E )
+F -> nao F
+F -> num_int
+F -> num_real
+F -> verdadeiro
+F -> falso
+F -> string
+
+F -> id F_PRIME
+F_PRIME -> ( EI )
+F_PRIME -> [ EI ]
+F_PRIME -> ''
+
+V -> id V_PRIME
+V_PRIME -> [ EI ]
+V_PRIME -> ''
+
+EI -> E EI_PRIME
+EI_PRIME -> , EI
+EI_PRIME -> ''
+
 */
 
 // Receives the list of all tokens of the sentece, and starts to processes it
@@ -128,8 +251,5 @@ void EI_Prime(void *cadeia, int *tokenGlobal, bool *textBefore, char *input);   
 
 // Checks if current token is a valid ID and padronizes it to ID enum
 void defineID(int *tokenGlobal);
-
-// See what token its receiving and writes it to a string
-void switchTokens(char *text, int token);
 
 #endif

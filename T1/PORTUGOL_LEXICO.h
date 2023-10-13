@@ -1,3 +1,5 @@
+// Author: Marco Túlio Alves de Barros
+
 #ifndef _PORTUGOL_LEXICO_H
 #define _PORTUGOL_LEXICO_H
 

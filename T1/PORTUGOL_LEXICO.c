@@ -1,3 +1,5 @@
+// Author: Marco Túlio Alves de Barros
+
 #include "PORTUGOL_LEXICO.h"
 #include "PORTUGOL_SINTATICO.h"
 
