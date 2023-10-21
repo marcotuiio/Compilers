@@ -6,6 +6,7 @@ extern int yylex();
 extern char *yytext;
 extern int textBefore;
 extern int myEof;
+extern int erroLexico;
 void yyerror(void *s);
 
 %}
@@ -110,10 +111,10 @@ Termo: L_PAREN Exp R_PAREN { }
 %%
 
 void yyerror(void *s) {
+    if (erroLexico) return;
     if (textBefore) printf("\n");
     printf("%d Erro sinatico na coluna [%d][%d]: %s", yylval.token.type, yylval.token.line, yylval.token.column, (char*)yylval.token.valor);
     textBefore = 1;
-    return;
 }
 
 int main(int argc, char* argv[]) {

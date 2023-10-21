@@ -20,7 +20,7 @@ void printErro() {
     printf("Caractere(s) invalido(s) -> [%s]", invalidos);
     textBefore = 1;
     for (int i = 0; i < 256; i++) invalidos[i] = '\0'; 
-    erroLexico = 0;
+    // erroLexico = 0;
 }
 
 void addToUnion() {
@@ -32,18 +32,18 @@ void addToUnion() {
 %}
 
 %%
+
 <<EOF>> { 
     myEof = 1;      
     if (erroLexico) {
         printErro();
         return ERRO;
     } 
-    return EOL; 
-}
+    return EOL; }
 
 \n { 
     yycolumn = 1; 
-    if (erroLexico) { 
+    if (erroLexico) {
         printErro();
         return ERRO; 
     }
