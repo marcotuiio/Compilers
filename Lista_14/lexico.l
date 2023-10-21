@@ -20,7 +20,7 @@ void printErro() {
     printf("Caractere(s) invalido(s) -> [%s]", invalidos);
     textBefore = 1;
     for (int i = 0; i < 256; i++) invalidos[i] = '\0'; 
-    // erroLexico = 0;
+    erroLexico = 0;
 }
 
 void addToUnion() {
@@ -141,7 +141,8 @@ void addToUnion() {
     yycolumn += strlen(yytext); 
     return ID; }
 
-. { erroLexico = 1; 
+. { 
+    erroLexico = 1; 
     if (strlen(invalidos) != 0) invalidos[strlen(invalidos)] = ','; 
     invalidos[strlen(invalidos)] = yytext[0];
     yycolumn += strlen(yytext);
