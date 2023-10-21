@@ -16,6 +16,7 @@ Ponteiro -> * Ponteiro
 Ponteiro -> 
 
 DeclaraVariaveis -> Tipo BlocoVariaveis
+
 BlocoVariaveis -> Ponteiro id AtribuicaoVar
 
 AtribuicaoVar -> = ExpressaoAtribuicao RetornoVar ;
@@ -27,7 +28,7 @@ RetornoVar ->
 
 DeclaraPrototipos -> Tipo Ponteiro id Parametros ;
 
-Parametros ->( BlocoParametros )
+Parametros -> ( BlocoParametros )
 
 BlocoParametros -> Tipo Ponteiro id ExpresaoColchete BlocoParametros
 BlocoParametros -> 
@@ -41,7 +42,7 @@ Tipo -> void
 
 Bloco -> { Comandos }
 
-Comandos-> ListaComandos RotornoComandos
+Comandos-> ListaComandos RetornoComandos
 
 RetornoComandos -> Comandos
 RetornoComandos -> 
@@ -53,7 +54,7 @@ ListaComandos -> for ( AuxFor ; AuxFor ; AuxFor ) Bloco
 ListaComandos -> printf ( string AuxPrint ) ;
 ListaComandos -> scanf ( string , & id ) ;
 ListaComandos -> exit ( Expressao ) ;
-ListaComandos -> return AuxFor;
+ListaComandos -> return AuxFor ;
 ListaComandos -> Expressao ;
 ListaComandos -> ;
 ListaComandos -> Bloco
@@ -69,9 +70,6 @@ AuxPrint ->
 
 Expressao -> ExpressaoAtribuicao
 Expressao -> Expressao , ExpressaoAtribuicao
-
-ExpressaoAtribuicao -> ExpressaoCondicional
-ExpressaoAtribuicao -> ExpressaoUnaria OpAtrib ExpressaoAtribuicao
 
 OpAtrib -> +=
 OpAtrib -> = 
@@ -93,11 +91,14 @@ OpUnario -> -
 OpUnario -> ~
 OpUnario -> !
 
+ExpressaoAtribuicao -> ExpressaoCondicional
+ExpressaoAtribuicao -> ExpressaoUnaria OpAtrib ExpressaoAtribuicao
+
 ExpressaoCondicional -> ExpressaoOrLogico
 ExpressaoCondicional -> ExpressaoOrLogico ? Expressao : ExpressaoCondicional
 
 ExpressaoOrLogico -> ExpressaoAndLogico
-ExpressaoAndLogico -> ExpressaoOrLogico || ExpressaoAndLogico
+ExpressaoOrLogico -> ExpressaoOrLogico || ExpressaoAndLogico
 
 ExpressaoAndLogico -> ExpressaoOr
 ExpressaoAndLogico -> ExpressaoAndLogico && ExpressaoOr
@@ -153,7 +154,7 @@ AuxPula ->
 
 ExpressaoPrimaria -> id 
 ExpressaoPrimaria -> Numero
-ExpressaoPrimaria -> caracter
+ExpressaoPrimaria -> character
 ExpressaoPrimaria -> string
 ExpressaoPrimaria -> ( Expressao )
 

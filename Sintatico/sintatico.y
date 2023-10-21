@@ -5,8 +5,6 @@
 extern int yylex();
 extern char *yytext;
 extern int textBefore;
-extern int myEof;
-extern int erroLexico;
 int erroAux = 0;
 void yyerror(void *s);
 
@@ -83,24 +81,232 @@ void yyerror(void *s);
 
 %%
 
-Start: Exp EOL { if (textBefore) printf("\n"); printf("EXPRESSAO CORRETA"); textBefore = 1; return 0; }
-    | Exp ERRO { erroAux = 1; return 0; }
-    // | error { return 0; }
+Start: Programa MyEOF { erroAux = 0; return 0; }
+    | Programa ERRO { erroAux = 1; return 0; }
+    | error { erroAux = 1; return 0; }
     // | Exp ADD EOL { if (textBefore) printf("\n"); printf("A expressao terminou de forma inesperada."); textBefore = 1; }
 ;
 
+Programa: Declaracoes Programa { }
+    | Funcao Programa { }
+;
+
+Declaracoes: NUMBER_SIGN DEFINE ID Expressao { }
+    | DeclaraVariaveis { }
+    | DeclaraPrototipos { }
+;
+
+Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET { }
+;
+
+DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { }
+    | { }
+;
+
+Ponteiro: MULTIPLY Ponteiro { }
+    | { }
+;
+
+DeclaraVariaveis: Tipo BlocoVariaveis { }
+;
+
+BlocoVariaveis: Ponteiro ID AtribuicaoVariavel { }
+;
+
+AtribuicaoVariavel: ASSIGN ExpressaoAtribuicao RetornoVariavel SEMICOLON { }
+    | ExpressaoColchete AtribuicaoVariavel { }
+    | RetornoVariavel SEMICOLON { }
+;
+
+RetornoVariavel: COMMA BlocoVariaveis { }
+    | { }
+; 
+
+DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { }
+; 
+
+Parametros: L_PAREN BlocoParametros R_PAREN { }
+;
+
+BlocoParametros: Tipo Ponteiro ID ExpressaoColchete BlocoParametros { }
+    | { }
+;
+
+ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
+    | { }
+;
+
+Tipo: INT { }
+    | CHAR { }
+    | VOID { }
+;
+
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { }
+;
+
+Comandos: ListaComandos RetornoComandos { }
+;
+
+RetornoComandos: Comandos { }
+    | { }
+;
+
+ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON { }
+    | WHILE L_PAREN Expressao R_PAREN Bloco { }
+    | IF L_PAREN Expressao R_PAREN Bloco AuxElse { }
+    | FOR L_PAREN AuxFor SEMICOLON AuxFor SEMICOLON AuxFor R_PAREN Bloco { }
+    | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON { }
+    | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON { }
+    | EXIT L_PAREN Expressao R_PAREN SEMICOLON { }
+    | RETURN AuxFor SEMICOLON { }
+    | Expressao SEMICOLON { }
+    | SEMICOLON { }
+    | Bloco { }
+;
+
+AuxElse: ELSE Bloco { }
+    | { }
+;
+
+AuxFor: Expressao { }
+    | { }
+;
+
+AuxPrint: COMMA Expressao { }
+    | { }
+;
+
+Expressao: ExpressaoAtribuicao { }
+    | Expressao COMMA ExpressaoAtribuicao { }
+;
+
+OpAtrib: ASSIGN { }
+    | ADD_ASSIGN { }
+    | MINUS_ASSIGN { }
+;
+
+OpRel: LESS_THAN { }
+    | LESS_EQUAL { }
+    | GREATER_THAN { }
+    | GREATER_EQUAL { }
+;
+
+OpMult: MULTIPLY { }
+    | DIVIDE { }
+    | REMAINDER { }
+;
+
+OpUnario: BITWISE_AND { }
+    | MULTIPLY { }
+    | PLUS { }
+    | MINUS { }
+    | NOT { }
+    | BITWISE_NOT { }
+;
+
+ExpressaoAtribuicao: ExpressaoCondicional { }
+    | ExpressaoUnaria OpAtrib ExpressaoAtribuicao { }
+;
+
+ExpressaoCondicional: ExpressaoOrLogico { }
+    | ExpressaoOrLogico TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
+;
+
+ExpressaoOrLogico: ExpressaoAndLogico { }
+    | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico { }
+;
+
+ExpressaoAndLogico: ExpressaoOr { }
+    | ExpressaoAndLogico LOGICAL_AND ExpressaoOr { }
+;
+
+ExpressaoOr: ExpressaoXor { }
+    | ExpressaoOr BITWISE_OR ExpressaoXor { }
+;
+
+ExpressaoXor: ExpressaoAnd { }
+    | ExpressaoXor BITWISE_XOR ExpressaoAnd { }
+;
+
+ExpressaoAnd: ExpressaoIgual { }
+    | ExpressaoAnd BITWISE_AND ExpressaoIgual { }
+;
+
+ExpressaoIgual: ExpressaoRelacional { }
+    | ExpressaoIgual EQUAL ExpressaoRelacional { }
+    | ExpressaoIgual NOT_EQUAL ExpressaoRelacional { }
+;
+
+ExpressaoRelacional: ExpressaoShift { }
+    | ExpressaoRelacional OpRel ExpressaoShift { }
+
+ExpressaoShift: ExpressaoAditiva { }
+    | ExpressaoShift R_SHIFT ExpressaoAditiva { }
+    | ExpressaoShift L_SHIFT ExpressaoAditiva { }
+;
+
+ExpressaoAditiva: ExpressaoMultiplicativa { }
+    | ExpressaoAditiva PLUS ExpressaoMultiplicativa { }
+    | ExpressaoAditiva MINUS ExpressaoMultiplicativa { }
+;
+
+ExpressaoMultiplicativa: ExpressaoCast { }
+    | ExpressaoMultiplicativa OpMult ExpressaoCast { }
+;
+
+ExpressaoCast: ExpressaoUnaria { }
+    | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast { }
+;
+
+ExpressaoUnaria: ExpressaoPostFixa { }
+    | INC ExpressaoUnaria { }
+    | DEC ExpressaoUnaria { }
+    | OpUnario ExpressaoCast { }
+;
+
+ExpressaoPostFixa: ExpressaoPrimaria { }
+    | ExpressaoPostFixa AuxPostFixa { }
+;
+
+AuxPostFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
+    | L_PAREN PulaExpressaoAtribuicao R_PAREN { }
+    | INC { }
+    | DEC { }
+;
+
+PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { }
+    | { }
+;
+
+AuxPula: COMMA ExpressaoAtribuicao AuxPula { }
+    | { }
+;
+
+ExpressaoPrimaria: ID { }
+    | Numero { }
+    | CHARACTER { }
+    | STRING { }
+    | L_PAREN Expressao R_PAREN { }
+;
+
+Numero: NUM_INT { }
+    | NUM_HEXA { }
+    | NUM_OCTAL { }
+;
 
 %%
 
-void yyerror(void *s) {
-    if (erroAux || erroLexico) return;
-    if (textBefore) printf("\n");
-    printf("%d Erro sinatico na coluna [%d][%d]: %s", yylval.token.type, yylval.token.line, yylval.token.column, yylval.token.valor);
-    textBefore = 1;
-    erroAux = 0;
-}
+void yyerror(void *s) {}
 
 int main(int argc, char* argv[]) {
-    while (!myEof) yyparse();
+    yyparse();
+
+    if (textBefore) printf("\n");
+    if (erroAux) {
+        printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
+    } else {
+        printf("SUCCESFUL COMPILATION.");
+    }
+
     return 0;
 }
