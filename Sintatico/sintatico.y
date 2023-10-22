@@ -6,7 +6,6 @@
 extern int yylex();
 void yyerror(void *s);
 
-extern char *yytext;
 extern int yychar;
 extern int textBefore;
 extern char lineBuffer[2048];
@@ -94,76 +93,59 @@ int erroAux = 0;
 
 Start: Programa MyEOF { erroAux = 0; return 0; }
     | Programa ERRO { erroAux = 1; return 0; }
-    | error { erroAux = 1; return 0; }
-;
+    | error { erroAux = 1; return 0; } ;
 
 Programa: Declaracoes AuxPrograma { }
-    | Funcao AuxPrograma { }
-;
+    | Funcao AuxPrograma { } ;
 
 AuxPrograma: Programa AuxPrograma { }
-    | { }
+    | { } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { }
     | DeclaraVariaveis { }
-    | DeclaraPrototipos { }
-;
+    | DeclaraPrototipos { } ;
 
-Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET { }
-;
+Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET { } ;
 
 DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { }
-    | { }
-;
+    | { } ;
 
 Ponteiro: MULTIPLY Ponteiro { }
-    | { }
-;
+    | { } ;
 
-DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { }
-;
+DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { } ;
 
-BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel { }
-;
+BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel { } ;
 
 ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete { }
-    | { }
-;
+    | { } ;
 
 ExpressaoAssign: ASSIGN ExpressaoAtribuicao { }
-    | { }
+    | { } ;
 
 RetornoVariavel: COMMA BlocoVariaveis { }
-    | { }
-; 
+    | { } ; 
 
-DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { }
-; 
+DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { } ; 
 
-Parametros: L_PAREN BlocoParametros R_PAREN { }
-;
+Parametros: L_PAREN BlocoParametros R_PAREN { } ;
 
 BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros { }
-    | { }
-;
+    | { } ;
 
 RetornaParametros: COMMA BlocoParametros { }
-    | { }
+    | { } ;
 
 Tipo: INT { }
     | CHAR { }
-    | VOID { }
-;
+    | VOID { } ;
 
-Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { }
-;
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { } ;
 
-Comandos: ListaComandos RetornoComandos { }
-;
+Comandos: ListaComandos RetornoComandos { } ;
 
 RetornoComandos: ListaComandos RetornoComandos { }
-    | { }
-;
+    | { } ;
 
 ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON { }
     | WHILE L_PAREN Expressao R_PAREN Bloco { }
@@ -175,140 +157,112 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON { }
     | RETURN AuxFor SEMICOLON { }
     | Expressao SEMICOLON { }
     | SEMICOLON { }
-    | Bloco { }
-;
+    | Bloco { } ;
 
 AuxElse: ELSE Bloco { }
-    | { }
-;
+    | { } ;
 
 AuxFor: Expressao { }
-    | { }
-;
+    | { } ;
 
 AuxPrint: COMMA Expressao { }
-    | { }
-;
+    | { } ;
 
 Expressao: ExpressaoAtribuicao { }
-    | Expressao COMMA ExpressaoAtribuicao { }
-;
+    | Expressao COMMA ExpressaoAtribuicao { } ;
 
 OpAtrib: ASSIGN { }
     | ADD_ASSIGN { }
-    | MINUS_ASSIGN { }
-;
+    | MINUS_ASSIGN { } ;
 
 OpRel: LESS_THAN { }
     | LESS_EQUAL { }
     | GREATER_THAN { }
-    | GREATER_EQUAL { }
-;
+    | GREATER_EQUAL { } ;
 
 OpMult: MULTIPLY { }
     | DIVIDE { }
-    | REMAINDER { }
-;
+    | REMAINDER { } ;
 
 OpUnario: BITWISE_AND { }
     | MULTIPLY { }
     | PLUS { }
     | MINUS { }
     | NOT { }
-    | BITWISE_NOT { }
-;
+    | BITWISE_NOT { } ;
 
 ExpressaoAtribuicao: ExpressaoCondicional { }
-    | ExpressaoUnaria OpAtrib ExpressaoAtribuicao { }
-;
+    | ExpressaoUnaria OpAtrib ExpressaoAtribuicao { } ;
 
-ExpressaoCondicional: ExpressaoOrLogico AuxCondicional { }
-;
+ExpressaoCondicional: ExpressaoOrLogico AuxCondicional { } ;
 
 AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
-    | { }
+    | { } ;
 
 ExpressaoOrLogico: ExpressaoAndLogico { }
-    | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico { }
-;
+    | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico { } ;
 
 ExpressaoAndLogico: ExpressaoOr { }
-    | ExpressaoAndLogico LOGICAL_AND ExpressaoOr { }
-;
+    | ExpressaoAndLogico LOGICAL_AND ExpressaoOr { } ;
 
 ExpressaoOr: ExpressaoXor { }
-    | ExpressaoOr BITWISE_OR ExpressaoXor { }
-;
+    | ExpressaoOr BITWISE_OR ExpressaoXor { } ;
 
 ExpressaoXor: ExpressaoAnd { }
-    | ExpressaoXor BITWISE_XOR ExpressaoAnd { }
-;
+    | ExpressaoXor BITWISE_XOR ExpressaoAnd { } ;
 
 ExpressaoAnd: ExpressaoIgual { }
-    | ExpressaoAnd BITWISE_AND ExpressaoIgual { }
-;
+    | ExpressaoAnd BITWISE_AND ExpressaoIgual { } ;
 
 ExpressaoIgual: ExpressaoRelacional { }
     | ExpressaoIgual EQUAL ExpressaoRelacional { }
-    | ExpressaoIgual NOT_EQUAL ExpressaoRelacional { }
-;
+    | ExpressaoIgual NOT_EQUAL ExpressaoRelacional { } ;
 
 ExpressaoRelacional: ExpressaoShift { }
-    | ExpressaoRelacional OpRel ExpressaoShift { }
+    | ExpressaoRelacional OpRel ExpressaoShift { } ;
 
 ExpressaoShift: ExpressaoAditiva { }
     | ExpressaoShift R_SHIFT ExpressaoAditiva { }
-    | ExpressaoShift L_SHIFT ExpressaoAditiva { }
-;
+    | ExpressaoShift L_SHIFT ExpressaoAditiva { } ;
 
 ExpressaoAditiva: ExpressaoMultiplicativa { }
     | ExpressaoAditiva PLUS ExpressaoMultiplicativa { }
-    | ExpressaoAditiva MINUS ExpressaoMultiplicativa { }
-;
+    | ExpressaoAditiva MINUS ExpressaoMultiplicativa { } ;
 
 ExpressaoMultiplicativa: ExpressaoCast { }
-    | ExpressaoMultiplicativa OpMult ExpressaoCast { }
-;
+    | ExpressaoMultiplicativa OpMult ExpressaoCast { } ;
 
 ExpressaoCast: ExpressaoUnaria { }
-    | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast { }
-;
+    | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast { } ;
 
 ExpressaoUnaria: ExpressaoPosFixa { }
     | INC ExpressaoUnaria { }
     | DEC ExpressaoUnaria { }
-    | OpUnario ExpressaoCast { }
-;
+    | OpUnario ExpressaoCast { } ;
 
 ExpressaoPosFixa: ExpressaoPrimaria { }
-    | ExpressaoPosFixa AuxPosFixa { }
-;
+    | ExpressaoPosFixa AuxPosFixa { } ;
 
 AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
     | L_PAREN PulaExpressaoAtribuicao R_PAREN { }
     | INC { }
-    | DEC { }
-;
+    | DEC { } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { }
-    | { }
-;
+    | { } ;
 
 AuxPula: COMMA ExpressaoAtribuicao AuxPula { }
-    | { }
-;
+    | { } ;
 
 ExpressaoPrimaria: ID { }
     | Numero { }
     | CHARACTER { }
     | STRING { }
-    | L_PAREN Expressao R_PAREN { }
-;
+    | L_PAREN Expressao R_PAREN { } ;
 
 Numero: NUM_INT { }
     | NUM_HEXA { }
-    | NUM_OCTAL { }
-;
+    | NUM_OCTAL { } ;
 
 %%
 
@@ -342,6 +296,5 @@ int main(int argc, char *argv[]) {
     } else {
         printf("SUCCESSFUL COMPILATION.");
     }
-
     return 0;
 }

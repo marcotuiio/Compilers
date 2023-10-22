@@ -140,11 +140,7 @@ void getLineBuffer(int nline) {
 "define" { addToUnion(); yycolumn += strlen(yytext); return DEFINE; }
 "exit" { addToUnion(); yycolumn += strlen(yytext); return EXIT; }
 
-\"([^\\\"]|\\.)*\" { /* (\".*\") */
-    addToUnion();
-    yycolumn += strlen(yytext);
-    return STRING;
-}
+\"([^\\\"]|\\.)*\" { addToUnion(); yycolumn += strlen(yytext); return STRING; }
 " " { addToUnion(); yycolumn++;  }
 \n { yycolumn = 1; if (syntaxError) return ERRO; }
 (_*[a-zA-Z][a-zA-Z0-9_]*) {
@@ -158,26 +154,10 @@ void getLineBuffer(int nline) {
     yycolumn += strlen(yytext);
     return ID;
 }
-"'"(\\.|[^\\']){1}"'" {
-    addToUnion();
-    yycolumn += strlen(yytext);
-    return CHARACTER;
-}
-(0x[0-9a-f]+)|(0X[0-9A-F]+) {
-    addToUnion();
-    yycolumn += strlen(yytext);
-    return NUM_HEXA;
-}
-0[1-7][0-7]* {
-    addToUnion();
-    yycolumn += strlen(yytext);
-    return NUM_OCTAL;
-}
-[0-9]+ {
-    addToUnion();
-    yycolumn += strlen(yytext);
-    return NUM_INT;
-}
+"'"(\\.|[^\\']){1}"'" { addToUnion(); yycolumn += strlen(yytext); return CHARACTER; }
+(0x[0-9a-f]+)|(0X[0-9A-F]+) { addToUnion(); yycolumn += strlen(yytext); return NUM_HEXA; }
+0[1-7][0-7]* { addToUnion(); yycolumn += strlen(yytext); return NUM_OCTAL; }
+[0-9]+ { addToUnion(); yycolumn += strlen(yytext); return NUM_INT; }
 . { 
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: %s", yylineno, yycolumn, yytext);
