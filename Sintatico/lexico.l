@@ -12,6 +12,11 @@ int yycolumn = 1;
 int lineStart;
 int columnStart;
 
+int syntaxError = 0;
+char wrongToken[32] = "";
+int wrongTokenLine;
+int wrongTokenColumn;
+
 char lineBuffer[2048] = "";
 
 void clearLineBuffer() {
@@ -26,21 +31,30 @@ void addToUnion() {
     strcat(lineBuffer, yytext);
 }
 
+void assignWrongToken() {
+    syntaxError = 1;
+    strcpy(wrongToken, yytext);
+    wrongTokenLine = yylineno;
+    wrongTokenColumn = yycolumn;
+    if (yycolumn == 1) clearLineBuffer();
+    strcat(lineBuffer, yytext);
+}
+
 %}
 
 %%
 
 "/*" { 
     BEGIN(COMMENT); 
+    addToUnion();
     lineStart = yylineno;
     columnStart = yycolumn; 
     yycolumn += strlen(yytext);
-    // strcat(lineBuffer, yytext);
 }
 <COMMENT>"*/" { // end comment
-    BEGIN(INITIAL); 
+    BEGIN(INITIAL);
     yycolumn += strlen(yytext);
-    // strcat(lineBuffer, yytext); 
+    addToUnion(); 
 } 
 <COMMENT>"/*" {  // nested comment
     char next = input();
@@ -57,7 +71,7 @@ void addToUnion() {
         textBefore = 1;
     }
 }
-<COMMENT>. { yycolumn += strlen(yytext); }
+<COMMENT>. { addToUnion(); yycolumn += strlen(yytext); }
 <COMMENT>\n { yycolumn = 1; }
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
@@ -72,17 +86,17 @@ void addToUnion() {
 "int" {  addToUnion(); yycolumn += strlen(yytext); return INT; } 
 "char" { addToUnion(); yycolumn += strlen(yytext); return CHAR; }
 "return" { addToUnion(); yycolumn += strlen(yytext); return RETURN; }
-"break" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
-"switch" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
-"case" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
-"default" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
+"break" { assignWrongToken(); yycolumn += strlen(yytext); }
+"switch" { assignWrongToken(); yycolumn += strlen(yytext); }
+"case" { assignWrongToken(); yycolumn += strlen(yytext); }
+"default" { assignWrongToken(); yycolumn += strlen(yytext); }
 "do" { addToUnion(); yycolumn += strlen(yytext); return DO; }
 "while" { addToUnion(); yycolumn += strlen(yytext); return WHILE; }
 "for" { addToUnion(); yycolumn += strlen(yytext); return FOR; }
 "if" { addToUnion(); yycolumn += strlen(yytext); return IF; }
 "else" { addToUnion(); yycolumn += strlen(yytext); return ELSE; }
-"typedef" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
-"struct" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
+"typedef" { assignWrongToken(); yycolumn += strlen(yytext); }
+"struct" { assignWrongToken(); yycolumn += strlen(yytext); }
 "+" { addToUnion(); yycolumn += strlen(yytext); return PLUS; }
 "-" { addToUnion(); yycolumn += strlen(yytext); return MINUS; }
 "*" { addToUnion(); yycolumn += strlen(yytext); return MULTIPLY; }
@@ -119,7 +133,7 @@ void addToUnion() {
 "]" { addToUnion(); yycolumn += strlen(yytext); return R_SQUARE_BRACKET; }
 "?" { addToUnion(); yycolumn += strlen(yytext); return TERNARY_CONDITIONAL; }
 "#" { addToUnion(); yycolumn += strlen(yytext); return NUMBER_SIGN; }
-"->" { addToUnion(); yycolumn += strlen(yytext); return ERRO; }
+"->" { assignWrongToken(); yycolumn += strlen(yytext); }
 "printf" { addToUnion(); yycolumn += strlen(yytext); return PRINTF; }
 "scanf" { addToUnion(); yycolumn += strlen(yytext); return SCANF; }
 "define" { addToUnion(); yycolumn += strlen(yytext); return DEFINE; }
@@ -131,7 +145,7 @@ void addToUnion() {
     return STRING;
 }
 " " { addToUnion(); yycolumn++;  }
-\n { yycolumn = 1; }
+\n { yycolumn = 1; if (syntaxError) return ERRO; }
 (_*[a-zA-Z][a-zA-Z0-9_]*) {
     if (strlen(yytext) > 255) {
         if (textBefore) printf("\n");

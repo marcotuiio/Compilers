@@ -2,13 +2,21 @@
 
 #include <stdio.h>
 #include <string.h>
+
 extern int yylex();
+void yyerror(void *s);
+
 extern char *yytext;
 extern int yychar;
 extern int textBefore;
 extern char lineBuffer[2048];
+
+// extern int syntaxError;
+extern char wrongToken[32];
+extern int wrongTokenLine;
+extern int wrongTokenColumn;
+
 int erroAux = 0;
-void yyerror(void *s);
 
 %}
 
@@ -306,22 +314,29 @@ Numero: NUM_INT { }
 
 void yyerror(void *s) {}
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     yyparse();
 
     if (textBefore) printf("\n");
     if (erroAux) {
 
+        int localColumn = yylval.token.column;
         if (yychar == 0 || yychar == MyEOF) {
-            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);            
+            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);
+        
         } else {
-            printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
+            if (strlen(wrongToken) > 0) {
+                localColumn = wrongTokenColumn;
+                printf("error:syntax:%d:%d: %s", wrongTokenLine, wrongTokenColumn, wrongToken);
+            } else {
+                printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
+            }
         }
 
         if (lineBuffer[0] == '\n') lineBuffer[0] = ' ';
         if (lineBuffer[strlen(lineBuffer) - 1] == '\n') lineBuffer[strlen(lineBuffer) - 1] = ' ';
         printf("\n%s\n", lineBuffer);
-        for (int i = 0; i < yylval.token.column - 1; i++) printf(" ");
+        for (int i = 0; i < localColumn - 1; i++) printf(" ");
         printf("^");
 
     } else {

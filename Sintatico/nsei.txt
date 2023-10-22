@@ -1,4 +1,1 @@
-void f(){ if(@)
-{
-a
-}
+void f() { //comentario de linha
