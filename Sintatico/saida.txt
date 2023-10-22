@@ -1,3 +1,0 @@
-error:syntax:1:12: expected declaration or statement at end of input
-void f() { //comentario de linha
-           ^

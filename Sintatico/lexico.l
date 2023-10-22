@@ -19,16 +19,10 @@ int wrongTokenColumn;
 
 char lineBuffer[2048] = "";
 
-void clearLineBuffer() {
-    for (int i = 0; i < 2048; i++) lineBuffer[i] = '\0';
-}
-
 void addToUnion() {
     yylval.token.valor = strdup(yytext);
     yylval.token.column = yycolumn;
     yylval.token.line = yylineno;
-    if (yycolumn == 1) clearLineBuffer();
-    strcat(lineBuffer, yytext);
 }
 
 void assignWrongToken() {
@@ -36,9 +30,16 @@ void assignWrongToken() {
     strcpy(wrongToken, yytext);
     wrongTokenLine = yylineno;
     wrongTokenColumn = yycolumn;
-    if (yycolumn == 1) clearLineBuffer();
-    strcat(lineBuffer, yytext);
 }
+
+void getLineBuffer(int nline) {
+    fseek(stdin, 0, SEEK_SET);
+    for (int i = 0; i < nline; i++) {
+        fgets(lineBuffer, 2048, stdin);
+    }
+    if (lineBuffer[0] == '\n') lineBuffer[0] = ' ';
+    if (lineBuffer[strlen(lineBuffer) - 1] == '\n') lineBuffer[strlen(lineBuffer) - 1] = '\0';
+} 
 
 %}
 

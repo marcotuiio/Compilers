@@ -10,8 +10,8 @@ extern char *yytext;
 extern int yychar;
 extern int textBefore;
 extern char lineBuffer[2048];
+extern void getLineBuffer();
 
-// extern int syntaxError;
 extern char wrongToken[32];
 extern int wrongTokenLine;
 extern int wrongTokenColumn;
@@ -333,8 +333,8 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (lineBuffer[0] == '\n') lineBuffer[0] = ' ';
-        if (lineBuffer[strlen(lineBuffer) - 1] == '\n') lineBuffer[strlen(lineBuffer) - 1] = ' ';
+        getLineBuffer(yylval.token.line);
+        
         printf("\n%s\n", lineBuffer);
         for (int i = 0; i < localColumn - 1; i++) printf(" ");
         printf("^");
