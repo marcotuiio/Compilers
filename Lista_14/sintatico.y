@@ -75,7 +75,7 @@ Termo -> REAL
 
 Start: Exp EOL { erroSintatico = 0; return 0; }
     | Exp ERRO { erroAux = 1; return 0; }
-    | error { erroSintatico = 1; charAtError = yychar; yyerrok; return 0;  }
+    | error { erroSintatico = 1; charAtError = yychar; return 0;  }
 ;
 
 Exp: Fator { }
@@ -105,7 +105,14 @@ Termo: L_PAREN Exp R_PAREN { }
 void yyerror(void *s) {}
 
 void resetAux() {
-    erroAux = erroLexico = erroSintatico = linhaDescartavel = 0;
+    erroAux = 0; 
+    erroLexico = 0;
+    erroSintatico = 0;
+    linhaDescartavel = 0;
+}
+
+void goToNextLine() {
+    while (yylex() != EOL);
 }
 
 int main(int argc, char* argv[]) {
@@ -120,7 +127,12 @@ int main(int argc, char* argv[]) {
 
         if (textBefore) printf("\n");
 
-        if (erroSintatico && linhaDescartavel) { // tem erro sintatico
+        // if (!linhaDescartavel) {
+        //     resetAux();
+        //     continue;
+        // }
+
+        if (erroSintatico) { // tem erro sintatico
 
             if (charAtError == 0 || charAtError == EOL || charAtError == YYEMPTY) {  // acabou a linha subitamente
                 printf("A expressao terminou de forma inesperada. %d ", charAtError);
@@ -128,7 +140,7 @@ int main(int argc, char* argv[]) {
                 printf("Erro sinatico na coluna [%d][%d]: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
             }
             
-            yyclearin;
+            // yyclearin;
             // goToNextLine();
             // resetAux();
 
