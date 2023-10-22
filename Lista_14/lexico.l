@@ -8,25 +8,29 @@
 #include <sintatico.tab.h>
 
 extern YYSTYPE yylval;
+extern int erroSintatico;
 
 int myEof = 0;
 int yycolumn = 1;
 int erroLexico = 0;
 int textBefore = 0;
+int linhaDescartavel = 0;
 char invalidos[256] = "";
 
-void printErro() {
+void printErroLexico() {
+    if (strlen(invalidos) < 1) return;
     if (textBefore) printf("\n");
     printf("Caractere(s) invalido(s) -> [%s]", invalidos);
     textBefore = 1;
     for (int i = 0; i < 256; i++) invalidos[i] = '\0'; 
-    erroLexico = 0;
+    // erroLexico = 0;
 }
 
 void addToUnion() {
     yylval.token.valor = strdup(yytext);
     yylval.token.column = yycolumn;
     yylval.token.line = yylineno;
+    linhaDescartavel = 1;
 }
 
 %}
@@ -36,46 +40,46 @@ void addToUnion() {
 <<EOF>> { 
     myEof = 1;      
     if (erroLexico) {
-        printErro();
+        printErroLexico();
         return ERRO;
     } 
     return EOL; }
 
-\n { 
+\n {
     yycolumn = 1; 
     if (erroLexico) {
-        printErro();
+        printErroLexico();
         return ERRO; 
     }
     return EOL; }
 
 [ \t] { yycolumn += strlen(yytext); }
 
-[+-]?(([0-9]+"."[0-9]*)|([0-9]*"."[0-9]+)) {
+(([0-9]+"."[0-9]*)|([0-9]*"."[0-9]+)) { 
     addToUnion();
     yylval.token.type = REAL;
     yycolumn += strlen(yytext);
     return REAL; }
 
-[+-]?[0-9]+ { 
+[0-9]+ {  
     addToUnion();
     yylval.token.type = INT;
     yycolumn += strlen(yytext); 
     return INT; }
 
-"+" {
+"+" { 
     addToUnion();
     yylval.token.type = ADD;
     yycolumn += strlen(yytext); 
     return ADD; }
 
-"-" {
+"-" { 
     addToUnion(); 
     yylval.token.type = SUB;
     yycolumn += strlen(yytext); 
     return SUB; }
 
-"*" {
+"*" { 
     addToUnion(); 
     yylval.token.type = MUL;
     yycolumn += strlen(yytext); 
@@ -146,6 +150,7 @@ void addToUnion() {
     if (strlen(invalidos) != 0) invalidos[strlen(invalidos)] = ','; 
     invalidos[strlen(invalidos)] = yytext[0];
     yycolumn += strlen(yytext);
+    linhaDescartavel = 1;
 }
 
 %%
