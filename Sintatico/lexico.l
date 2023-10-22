@@ -12,26 +12,35 @@ int yycolumn = 1;
 int lineStart;
 int columnStart;
 
+char lineBuffer[2048] = "";
+
+void clearLineBuffer() {
+    for (int i = 0; i < 2048; i++) lineBuffer[i] = '\0';
+}
+
 void addToUnion() {
     yylval.token.valor = strdup(yytext);
     yylval.token.column = yycolumn;
     yylval.token.line = yylineno;
+    if (yycolumn == 1) clearLineBuffer();
+    strcat(lineBuffer, yytext);
 }
 
 %}
 
 %%
 
-
 "/*" { 
     BEGIN(COMMENT); 
     lineStart = yylineno;
     columnStart = yycolumn; 
-    yycolumn += strlen(yytext); 
+    yycolumn += strlen(yytext);
+    // strcat(lineBuffer, yytext);
 }
 <COMMENT>"*/" { // end comment
     BEGIN(INITIAL); 
-    yycolumn += strlen(yytext); 
+    yycolumn += strlen(yytext);
+    // strcat(lineBuffer, yytext); 
 } 
 <COMMENT>"/*" {  // nested comment
     char next = input();
@@ -45,8 +54,8 @@ void addToUnion() {
         yycolumn += strlen(yytext);
         if (next == '\n') yylineno++;
         unput(next);
+        textBefore = 1;
     }
-    textBefore = 1;
 }
 <COMMENT>. { yycolumn += strlen(yytext); }
 <COMMENT>\n { yycolumn = 1; }
@@ -58,7 +67,7 @@ void addToUnion() {
 
 <<EOF>> { return MyEOF; }
 
-"//".*\n { /*ignore */ }
+"//".* { addToUnion(); }
 "void" { addToUnion(); yycolumn += strlen(yytext); return VOID; }
 "int" {  addToUnion(); yycolumn += strlen(yytext); return INT; } 
 "char" { addToUnion(); yycolumn += strlen(yytext); return CHAR; }
@@ -117,17 +126,15 @@ void addToUnion() {
 "exit" { addToUnion(); yycolumn += strlen(yytext); return EXIT; }
 
 \"([^\\\"]|\\.)*\" { /* (\".*\") */
-    if (textBefore) printf("\n");
-    // printf("STRING(%.*s)", (int)(strlen(yytext) - 2), yytext + 1); 
     addToUnion();
     yycolumn += strlen(yytext);
     return STRING;
 }
-" " { yycolumn++; }
+" " { addToUnion(); yycolumn++;  }
 \n { yycolumn = 1; }
 (_*[a-zA-Z][a-zA-Z0-9_]*) {
-    if (textBefore) printf("\n");
     if (strlen(yytext) > 255) {
+        if (textBefore) printf("\n");
         printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
         yycolumn += strlen(yytext);
         exit(1);
@@ -137,29 +144,21 @@ void addToUnion() {
     return ID;
 }
 "'"(\\.|[^\\']){1}"'" {
-    if (textBefore) printf("\n");
-    // printf("CHARACTER(%.*s)", (int)(strlen(yytext) - 2), yytext + 1); 
     addToUnion();
     yycolumn += strlen(yytext);
     return CHARACTER;
 }
 (0x[0-9a-f]+)|(0X[0-9A-F]+) {
-    if (textBefore) printf("\n");
-    // printf("NUM_HEXA(%s)", yytext);
     addToUnion();
     yycolumn += strlen(yytext);
     return NUM_HEXA;
 }
 0[1-7][0-7]* {
-    if (textBefore) printf("\n");
-    // printf("NUM_OCTAL(%s)", yytext);
     addToUnion();
     yycolumn += strlen(yytext);
     return NUM_OCTAL;
 }
 [0-9]+ {
-    if (textBefore) printf("\n");
-    // printf("NUM_INTEGER(%s)", yytext);
     addToUnion();
     yycolumn += strlen(yytext);
     return NUM_INT;

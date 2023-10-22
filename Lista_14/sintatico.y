@@ -5,6 +5,7 @@
 extern int yylex();
 extern char *yytext;
 extern int textBefore;
+extern int yychar;
 extern int myEof;
 extern int erroLexico;
 int erroAux = 0;
@@ -102,7 +103,11 @@ Termo: L_PAREN Exp R_PAREN { }
 void yyerror(void *s) {
     if (erroAux || erroLexico) return;
     if (textBefore) printf("\n");
-    printf("%d Erro sinatico na coluna [%d][%d]: %s", yylval.token.type, yylval.token.line, yylval.token.column, yylval.token.valor);
+    if (yychar == EOL) {
+        printf("A expressao terminou de forma inesperada.");
+    } else {
+        printf("%d Erro sinatico na coluna [%d][%d]: %s", yylval.token.type, yylval.token.line, yylval.token.column, yylval.token.valor);
+    }
     textBefore = 1;
     erroAux = 0;
 }

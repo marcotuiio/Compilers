@@ -6,12 +6,11 @@ extern int yylex();
 extern char *yytext;
 extern int yychar;
 extern int textBefore;
+extern char lineBuffer[2048];
 int erroAux = 0;
 void yyerror(void *s);
 
 %}
-
-%define parse.trace
 
 %union {
     struct {
@@ -24,6 +23,7 @@ void yyerror(void *s);
 
 %token MyEOF
 %token ERRO
+
 %token NUMBER_SIGN
 %token DEFINE
 %token L_CURLY_BRACKET
@@ -87,7 +87,6 @@ void yyerror(void *s);
 Start: Programa MyEOF { erroAux = 0; return 0; }
     | Programa ERRO { erroAux = 1; return 0; }
     | error { erroAux = 1; return 0; }
-    // | Exp ADD EOL { if (textBefore) printf("\n"); printf("A expressao terminou de forma inesperada."); textBefore = 1; }
 ;
 
 Programa: Declaracoes AuxPrograma { }
@@ -308,16 +307,23 @@ Numero: NUM_INT { }
 void yyerror(void *s) {}
 
 int main(int argc, char* argv[]) {
-    // yydebug = 1;
     yyparse();
 
     if (textBefore) printf("\n");
     if (erroAux) {
+
         if (yychar == 0 || yychar == MyEOF) {
-            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);
+            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);            
         } else {
             printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
         }
+
+        if (lineBuffer[0] == '\n') lineBuffer[0] = ' ';
+        if (lineBuffer[strlen(lineBuffer) - 1] == '\n') lineBuffer[strlen(lineBuffer) - 1] = ' ';
+        printf("\n%s\n", lineBuffer);
+        for (int i = 0; i < yylval.token.column - 1; i++) printf(" ");
+        printf("^");
+
     } else {
         printf("SUCCESSFUL COMPILATION.");
     }

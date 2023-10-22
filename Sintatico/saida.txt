@@ -1,1 +1,1 @@
-error:syntax:6:19: =
+error:lexical:1:14: @

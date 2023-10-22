@@ -50,7 +50,7 @@ void printToken(char *token, int *textBefore) {
     exit(1); 
 }
 
-"//".*\n { /*ignore */ }
+"//".*\n { printf("comentario de linha\n"); /*ignore */ }
 "void" { printToken("VOID", &textBefore); yycolumn += strlen(yytext); }
 "int" {  printToken("INT", &textBefore); yycolumn += strlen(yytext); }
 "char" { printToken("CHAR", &textBefore); yycolumn += strlen(yytext); }
