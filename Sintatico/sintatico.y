@@ -4,11 +4,14 @@
 #include <string.h>
 extern int yylex();
 extern char *yytext;
+extern int yychar;
 extern int textBefore;
 int erroAux = 0;
 void yyerror(void *s);
 
 %}
+
+%define parse.trace
 
 %union {
     struct {
@@ -87,9 +90,12 @@ Start: Programa MyEOF { erroAux = 0; return 0; }
     // | Exp ADD EOL { if (textBefore) printf("\n"); printf("A expressao terminou de forma inesperada."); textBefore = 1; }
 ;
 
-Programa: Declaracoes Programa { }
-    | Funcao Programa { }
+Programa: Declaracoes AuxPrograma { }
+    | Funcao AuxPrograma { }
 ;
+
+AuxPrograma: Programa AuxPrograma { }
+    | { }
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { }
     | DeclaraVariaveis { }
@@ -107,16 +113,18 @@ Ponteiro: MULTIPLY Ponteiro { }
     | { }
 ;
 
-DeclaraVariaveis: Tipo BlocoVariaveis { }
+DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { }
 ;
 
-BlocoVariaveis: Ponteiro ID AtribuicaoVariavel { }
+BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel { }
 ;
 
-AtribuicaoVariavel: ASSIGN ExpressaoAtribuicao RetornoVariavel SEMICOLON { }
-    | ExpressaoColchete AtribuicaoVariavel { }
-    | RetornoVariavel SEMICOLON { }
+ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete { }
+    | { }
 ;
+
+ExpressaoAssign: ASSIGN ExpressaoAtribuicao { }
+    | { }
 
 RetornoVariavel: COMMA BlocoVariaveis { }
     | { }
@@ -128,13 +136,12 @@ DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { }
 Parametros: L_PAREN BlocoParametros R_PAREN { }
 ;
 
-BlocoParametros: Tipo Ponteiro ID ExpressaoColchete BlocoParametros { }
+BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros { }
     | { }
 ;
 
-ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
+RetornaParametros: COMMA BlocoParametros { }
     | { }
-;
 
 Tipo: INT { }
     | CHAR { }
@@ -147,7 +154,7 @@ Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { }
 Comandos: ListaComandos RetornoComandos { }
 ;
 
-RetornoComandos: Comandos { }
+RetornoComandos: ListaComandos RetornoComandos { }
     | { }
 ;
 
@@ -208,9 +215,11 @@ ExpressaoAtribuicao: ExpressaoCondicional { }
     | ExpressaoUnaria OpAtrib ExpressaoAtribuicao { }
 ;
 
-ExpressaoCondicional: ExpressaoOrLogico { }
-    | ExpressaoOrLogico TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
+ExpressaoCondicional: ExpressaoOrLogico AuxCondicional { }
 ;
+
+AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
+    | { }
 
 ExpressaoOrLogico: ExpressaoAndLogico { }
     | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico { }
@@ -258,17 +267,17 @@ ExpressaoCast: ExpressaoUnaria { }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast { }
 ;
 
-ExpressaoUnaria: ExpressaoPostFixa { }
+ExpressaoUnaria: ExpressaoPosFixa { }
     | INC ExpressaoUnaria { }
     | DEC ExpressaoUnaria { }
     | OpUnario ExpressaoCast { }
 ;
 
-ExpressaoPostFixa: ExpressaoPrimaria { }
-    | ExpressaoPostFixa AuxPostFixa { }
+ExpressaoPosFixa: ExpressaoPrimaria { }
+    | ExpressaoPosFixa AuxPosFixa { }
 ;
 
-AuxPostFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
+AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
     | L_PAREN PulaExpressaoAtribuicao R_PAREN { }
     | INC { }
     | DEC { }
@@ -299,13 +308,18 @@ Numero: NUM_INT { }
 void yyerror(void *s) {}
 
 int main(int argc, char* argv[]) {
+    // yydebug = 1;
     yyparse();
 
     if (textBefore) printf("\n");
     if (erroAux) {
-        printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
+        if (yychar == 0 || yychar == MyEOF) {
+            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);
+        } else {
+            printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
+        }
     } else {
-        printf("SUCCESFUL COMPILATION.");
+        printf("SUCCESSFUL COMPILATION.");
     }
 
     return 0;

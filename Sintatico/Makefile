@@ -1,7 +1,7 @@
 FLEX=flex
 BISON=bison
 CC=gcc
-# CFLAGS = -fstack-protector-all -g -Wall
+CFLAGS=-Wall
 
 PROGRAMA = sintatico
 LEXICO = lexico.l
@@ -9,9 +9,9 @@ SINTATICO = sintatico.y
 
 $(PROGRAMA): $(LEXICO) $(SINTATICO)
 	$(FLEX) $(LEXICO)
+# $(BISON) -d -Wcounterexamples $(SINTATICO)
 	$(BISON) -d $(SINTATICO)
-	$(CC) *.c -I. -o $(PROGRAMA)
-# $(CC) $(CFLAGS) *.c -I. -o $(PROGRAMA)
+	$(CC) $(CFLAGS) *.c -I. -o $(PROGRAMA)
 
 clear:
 	rm -f sintatico.tab.c

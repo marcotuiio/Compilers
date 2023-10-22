@@ -1,7 +1,10 @@
 Start -> Programa MyEOF
 
-Programa -> Declaracoes Programa
-Programa -> Funcao Programa
+Programa -> Declaracoes AuxPrograma
+Programa -> Funcao AuxPrograma
+
+AuxPrograma -> Programa AuxPrograma
+AuxPrograma -> 
 
 Declaracoes -> # define id Expressao
 Declaracoes -> DeclaraVariaveis
@@ -15,13 +18,15 @@ DeclaraVariaveisFuncao ->
 Ponteiro -> * Ponteiro
 Ponteiro -> 
 
-DeclaraVariaveis -> Tipo BlocoVariaveis
+DeclaraVariaveis -> Tipo BlocoVariaveis ;
 
-BlocoVariaveis -> Ponteiro id AtribuicaoVar
+BlocoVariaveis -> Ponteiro id ExpressaoColchete ExpressaoAssign RetornoVar
 
-AtribuicaoVar -> = ExpressaoAtribuicao RetornoVar ;
-AtribuicaoVar -> ExpresaoColchete AtribuicaoVar
-AtribuicaoVar -> RetornoVar ;
+ExpressaoColchete -> [ Expressao ] ExpressaoColchete
+ExpressaoColchete ->
+
+ExpressaoAssign -> = ExpressaoAtribuicao
+ExpressaoAssign -> 
 
 RetornoVar -> , BlocoVariaveis
 RetornoVar ->
@@ -30,11 +35,11 @@ DeclaraPrototipos -> Tipo Ponteiro id Parametros ;
 
 Parametros -> ( BlocoParametros )
 
-BlocoParametros -> Tipo Ponteiro id ExpresaoColchete BlocoParametros
-BlocoParametros -> 
+BlocoParametros -> Tipo Ponteiro id ExpressaoColchete RetornaParametros
+BlocoParametros ->
 
-ExpresaoColchete -> [ Expressao ] ExpresaoColchete
-ExpresaoColchete ->
+RetornaParametros -> , BlocoParametros
+RetornaParametros ->
 
 Tipo -> int
 Tipo -> char
@@ -44,7 +49,7 @@ Bloco -> { Comandos }
 
 Comandos-> ListaComandos RetornoComandos
 
-RetornoComandos -> Comandos
+RetornoComandos -> ListaComandos RetornoComandos
 RetornoComandos -> 
 
 ListaComandos -> do Bloco while ( Expressao ) ;
@@ -94,8 +99,10 @@ OpUnario -> !
 ExpressaoAtribuicao -> ExpressaoCondicional
 ExpressaoAtribuicao -> ExpressaoUnaria OpAtrib ExpressaoAtribuicao
 
-ExpressaoCondicional -> ExpressaoOrLogico
-ExpressaoCondicional -> ExpressaoOrLogico ? Expressao : ExpressaoCondicional
+ExpressaoCondicional -> ExpressaoOrLogico AuxCondicional
+
+AuxCondicional -> ? Expressao : ExpressaoCondicional
+AuxCondicional -> 
 
 ExpressaoOrLogico -> ExpressaoAndLogico
 ExpressaoOrLogico -> ExpressaoOrLogico || ExpressaoAndLogico

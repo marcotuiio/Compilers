@@ -41,6 +41,10 @@ void yyerror(void *s);
 
 %start Start
 
+%left '+' '-'
+%left '*' '/'
+%right '^'
+
 %%
 
 /* 
