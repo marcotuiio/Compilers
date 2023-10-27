@@ -2,11 +2,11 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/Lista_14/testes'
-BSD = '/home/marcotuiio/Compilers/Lista_14/minhas_saidas'
-OFICIAL = '/home/marcotuiio/Compilers/Lista_14/saidas_padrao'
-EXEC = 'l14e1'
-src = '/home/marcotuiio/Compilers/Lista_14'
+BED = '/home/marcotuiio/Compilers/Lista_15/testes'
+BSD = '/home/marcotuiio/Compilers/Lista_15/saidas'
+OFICIAL = '/home/marcotuiio/Compilers/Lista_15/saidas_padrao'
+EXEC = 'l15e1'
+src = '/home/marcotuiio/Compilers/Lista_15'
 ini = datetime.datetime.now()
 
 os.chdir(src)
@@ -24,7 +24,7 @@ for f in inputs:
     input_file = os.path.join(BED, f)
     output_file = os.path.join(BSD, f'output_{f}')
     
-    # print("valgrind ./portugol < " + input_file + " > " + output_file)
+    print("valgrind ./" + EXEC +" < " + input_file + " > " + output_file)
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
         subprocess.Popen(["./"+EXEC], stdin=stdin, stdout=stdout).wait()
 
