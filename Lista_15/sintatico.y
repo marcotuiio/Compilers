@@ -4,11 +4,14 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define HASH_SIZE 211
+
 extern int yylex();
 void yyerror(void *s);
 
 extern int yychar;
 extern int textBefore;
+extern int myEof;
 
 int erroAux = 0;
 int semanticError = 0;
@@ -21,10 +24,9 @@ typedef struct node {
     struct node *next;
 } HashNode;
 
-void **hashTable();
-int hash(char *value);
-void insertHash(char *value);
-int lookForValueInHash(char *value);
+int hash();
+void insertHash();
+int lookForValueInHash();
 void freeHash();
 
 void **myHashTable = NULL;
@@ -39,9 +41,7 @@ void **myHashTable = NULL;
     } token;
 }
 
-%token MyEOF
 %token EOL
-%token ERRO
 %token COMMA
 %token INT
 %token CHAR
@@ -66,66 +66,64 @@ T: INT { currentType = INT; }
 
 I: ID { 
     // printf(">> %d %s\n\n", currentType, yylval.token.valor);
-    if (!lookForValueInHash(yylval.token.valor))
-        insertHash(yylval.token.valor); 
+    if (!lookForValueInHash())
+        insertHash(); 
 }
     | I COMMA ID { 
         // printf("-> %d %s\n\n", currentType, yylval.token.valor);
-        if (!lookForValueInHash(yylval.token.valor))
-            insertHash(yylval.token.valor); 
+        if (!lookForValueInHash())
+            insertHash(); 
 } ;
 
 %%
 
 void yyerror(void *s) {}
 
-void **hashTable() {
-    void **hashTable = calloc(211, sizeof(HashNode));
-    return hashTable;
-}
-
-int hash(char *value) {
+int hash() {
     int hash = 0;
-    for (int i = 0; i < strlen(value); i++) hash += value[i];
-    return hash % 211;
+    for (int i = 0; i < strlen(yylval.token.valor); i++)
+        hash += yylval.token.valor[i];
+    return hash % HASH_SIZE;
 }
 
-void insertHash(char *value) {
-    if (!myHashTable) myHashTable = hashTable();
-    // printf("%p\n", myHashTable);
-    int index = hash(value);
-    // printf("index %d\n", index);
+void insertHash() {
+    int index = hash(yylval.token.valor);
     HashNode *aux = calloc(1, sizeof(HashNode));
-    printf("\n Node inserted: %s\n", aux->value);
     aux->key = currentType;
-    strcpy(aux->value, value);
+    aux->value = calloc(strlen(yylval.token.valor) + 1, sizeof(char));
+    strcpy(aux->value, yylval.token.valor);
 
-    exit(1);
     HashNode *head = (HashNode *) myHashTable[index];
-    while (head) head = head->next;
-    head = aux;
+    if (!head) {
+        myHashTable[index] = aux;
+    } else {
+        while (head->next) 
+            head = head->next;
+        head->next = aux;
+    }
+
 }
 
-int lookForValueInHash(char *value) {
+int lookForValueInHash() {
     if (!myHashTable) return 0;
-    int index = hash(value);
+    int index = hash(yylval.token.valor);
     int ocorrencias = 0;
     HashNode *head = (HashNode *) myHashTable[index];
 
     while (head) {
-        if (!strcmp(value, head->value)) { // existe outro daquele identificador na hash
+        if (!strcmp(yylval.token.valor, head->value)) { // existe outro daquele identificador na hash
             ocorrencias++;
             if (ocorrencias == 1) continue;  // se for o primeiro, continua 
             if (currentType == head->key) {  // se for do mesmo tipo
                 if (textBefore) printf("\n");
-                printf("identifier '%s' already declared", value);
+                printf("%d: identifier '%s' already declared", yylval.token.line, yylval.token.valor);
                 semanticError = 1;
                 textBefore = 1;
                 return 1;
 
             } else {  // se for de tipo diferente
                 if (textBefore) printf("\n");
-                printf("redefinition of identifier '%s'", value);
+                printf("%d: redefinition of identifier '%s'", yylval.token.line, yylval.token.valor);
                 semanticError = 1;
                 textBefore = 1;
                 return 1;
@@ -137,37 +135,38 @@ int lookForValueInHash(char *value) {
 }
 
 void freeHash() {
-    for (int i = 0; i < 211; i++) {
-        HashNode *head = (HashNode *) myHashTable[i];
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *head = myHashTable[i];
         while (head) {
-            HashNode *aux = head;
-            head = head->next;
-            if (aux) free(aux);
+            HashNode *aux = head->next;
+            if (head->value) 
+                free(head->value);
+            free(head);
+            head = aux;
         }
+        myHashTable[i] = NULL; 
     }
-    free(myHashTable);
 }
 
 int main(int argc, char *argv[]) {
-    yyparse();
+    myHashTable = calloc(HASH_SIZE, sizeof(HashNode));
+    while (!myEof) {
+        yyparse();
 
-    if (textBefore) printf("\n");
-    if (erroAux) {
-
-        if (yychar == 0 || yychar == MyEOF) {
-            printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);
-        
-        } else {
-            printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
-        }
-
-    } else {
+        if (yychar == 0) break;
         if (semanticError == 0) {
             if (textBefore) printf("\n");
-            printf("All Identifiers on Hash.");
+            printf("%d: All Identifiers on Hash.", yylval.token.line);
             textBefore = 1;
-        }
-        if (myHashTable) freeHash(myHashTable);
+            freeHash();
+        } else {
+            semanticError = 0;
+            freeHash();
+        }        
+    }
+    if (myHashTable) {
+        freeHash(myHashTable);
+        free(myHashTable);
     }
     return 0;
 }
