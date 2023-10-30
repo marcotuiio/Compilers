@@ -5,8 +5,6 @@
 #include <string.h>
 #include "ast.h"
 
-#define HASH_SIZE 211
-
 extern int yylex();
 void yyerror(void *s);
 
@@ -23,18 +21,7 @@ int erroAux = 0;
 int semanticError = 0;
 int CURRENT_TYPE;
 
-typedef struct node {
-    int key;
-    char *value;
-    struct node *next;
-} HashNode;
-
-int hash();
-void insertHash();
-int lookForValueInHash();
-void freeHash();
-
-void **myHashTable = NULL;
+// void **myHashTable = NULL;
 
 %}
 
@@ -223,32 +210,43 @@ RetornoComandos: ListaComandos RetornoComandos {
     | { $$ = NULL; } ;
 
 ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
-        DoWhileStatement *aux = createDoWhileStatement($5, $2, NULL);
+        Command *aux = createDoWhileStatement($5, $2, NULL);
         $$ = aux;
     }
     | WHILE L_PAREN Expressao R_PAREN Bloco {
-        WhileStatement *aux = createWhileStatement($3, $5, NULL);
+        Command *aux = createWhileStatement($3, $5, NULL);
         $$ = aux;
     }
     | IF L_PAREN Expressao R_PAREN Bloco AuxElse {
-        IfStatement *aux = createIfStatement($3, $5, $6, NULL);
+        Command *aux = createIfStatement($3, $5, $6, NULL);
         $$ = aux;
     }
     | FOR L_PAREN AuxFor SEMICOLON AuxFor SEMICOLON AuxFor R_PAREN Bloco {
-        ForStatement *aux = createForStatement($3, $5, $7, $9, NULL);
+        Command *aux = createForStatement($3, $5, $7, $9, NULL);
         $$ = aux;
     }
-    | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON { }
-    | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON { }
-    | EXIT L_PAREN Expressao R_PAREN SEMICOLON { $$ = $3; }
-    | RETURN AuxFor SEMICOLON { $$ = $2; }
+    | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
+        Command *aux = createPrintStatement($3.token.valor, $4, NULL);
+        $$ = aux;
+    }
+    | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON {
+        Command *aux = createScanStatement($7.token.valor, $3.token.valor, NULL);
+        $$ = aux;
+    }
+    | EXIT L_PAREN Expressao R_PAREN SEMICOLON {
+        Command *aux = createExitStatemeent($3, NULL);
+        $$ = aux; 
+    }
+    | RETURN AuxFor SEMICOLON {
+        Command *aux = createReturnStatement($2, NULL);
+        $$ = aux;
+    }
     | Expressao SEMICOLON { $$ = $1; }
     | SEMICOLON { }
     | Bloco { $$ = $1; } ;
 
 AuxElse: ELSE Bloco {
-        ElseStatement *aux = createElseStatement($2, NULL);
-        $$ = aux;
+        $$ = $2;
     }
     | { $$ = NULL; } ;
 
@@ -258,7 +256,9 @@ AuxFor: Expressao { $$ = $1; }
 AuxPrint: COMMA Expressao { $$ = $2; }
     | { $$ = NULL; } ;
 
-Expressao: ExpressaoAtribuicao { }
+Expressao: ExpressaoAtribuicao {
+        $$ = $1;
+    }
     | Expressao COMMA ExpressaoAtribuicao { } ;
 
 OpAtrib: ASSIGN { $$ = $1 }
@@ -428,75 +428,6 @@ Numero: NUM_INT {
 %%
 
 void yyerror(void *s) {}
-
-int hash() {
-    int hash = 0;
-    for (int i = 0; i < strlen(yylval.token.valor); i++)
-        hash += yylval.token.valor[i];
-    return hash % HASH_SIZE;
-}
-
-void insertHash() {
-    int index = hash(yylval.token.valor);
-    HashNode *aux = calloc(1, sizeof(HashNode));
-    aux->key = CURRENT_TYPE;
-    aux->value = calloc(strlen(yylval.token.valor) + 1, sizeof(char));
-    strcpy(aux->value, yylval.token.valor);
-
-    HashNode *head = (HashNode *) myHashTable[index];
-    if (!head) {
-        myHashTable[index] = aux;
-    } else {
-        while (head->next) 
-            head = head->next;
-        head->next = aux;
-    }
-
-}
-
-int lookForValueInHash() {
-    if (!myHashTable) return 0;
-    int index = hash(yylval.token.valor);
-    int ocorrencias = 0;
-    HashNode *head = (HashNode *) myHashTable[index];
-
-    while (head) {
-        if (!strcmp(yylval.token.valor, head->value)) { // existe outro daquele identificador na hash
-            ocorrencias++;
-            if (ocorrencias == 1) continue;  // se for o primeiro, continua 
-            if (CURRENT_TYPE == head->key) {  // se for do mesmo tipo
-                if (textBefore) printf("\n");
-                printf("%d: identifier '%s' already declared", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-
-            } else {  // se for de tipo diferente
-                if (textBefore) printf("\n");
-                printf("%d: redefinition of identifier '%s'", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-            }
-        }
-        head = head->next;
-    }
-    return 0;
-}
-
-void freeHash() {
-    for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *head = myHashTable[i];
-        while (head) {
-            HashNode *aux = head->next;
-            if (head->value) 
-                free(head->value);
-            free(head);
-            head = aux;
-        }
-        myHashTable[i] = NULL; 
-    }
-}
 
 int main(int argc, char *argv[]) {
     yyparse();

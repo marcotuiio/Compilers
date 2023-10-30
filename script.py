@@ -24,7 +24,7 @@ for f in inputs:
     input_file = os.path.join(BED, f)
     output_file = os.path.join(BSD, f'output_{f}')
     
-    print("valgrind ./" + EXEC +" < " + input_file + " > " + output_file)
+    # print("valgrind ./" + EXEC +" < " + input_file + " > " + output_file)
     with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
         subprocess.Popen(["./"+EXEC], stdin=stdin, stdout=stdout).wait()
 
@@ -48,7 +48,7 @@ my_outputs.sort()
 for index in range(len(outputs)):
     correct_output = os.path.join(OFICIAL, outputs[index])
     my_output = os.path.join(BSD, f'{my_outputs[index]}')
-    # print(f"diff {correct_output} {my_output}")
+    print(f"diff {correct_output} {my_output}")
 
     with open(os.path.join(src, "diff.txt"), 'a') as stdout:
         subprocess.Popen(["diff", correct_output, my_output], stdout=stdout).wait()

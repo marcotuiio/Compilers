@@ -1,0 +1,170 @@
+Start -> Programa MyEOF
+
+Programa -> Declaracoes AuxPrograma
+Programa -> Funcao AuxPrograma
+
+AuxPrograma -> Programa AuxPrograma
+AuxPrograma -> 
+
+Declaracoes -> # define id Expressao
+Declaracoes -> DeclaraVariaveis
+Declaracoes -> DeclaraPrototipos
+
+Funcao -> Tipo Ponteiro id Parametros { DeclaraVariaveisFuncao Comandos }
+
+DeclaraVariaveisFuncao -> DeclaraVariaveis DeclaraVariaveisFuncao
+DeclaraVariaveisFuncao -> 
+
+Ponteiro -> * Ponteiro
+Ponteiro -> 
+
+DeclaraVariaveis -> Tipo BlocoVariaveis ;
+
+BlocoVariaveis -> Ponteiro id ExpressaoColchete ExpressaoAssign RetornoVar
+
+ExpressaoColchete -> [ Expressao ] ExpressaoColchete
+ExpressaoColchete ->
+
+ExpressaoAssign -> = ExpressaoAtribuicao
+ExpressaoAssign -> 
+
+RetornoVar -> , BlocoVariaveis
+RetornoVar ->
+
+DeclaraPrototipos -> Tipo Ponteiro id Parametros ;
+
+Parametros -> ( BlocoParametros )
+
+BlocoParametros -> Tipo Ponteiro id ExpressaoColchete RetornaParametros
+BlocoParametros ->
+
+RetornaParametros -> , BlocoParametros
+RetornaParametros ->
+
+Tipo -> int
+Tipo -> char
+Tipo -> void
+
+Bloco -> { Comandos }
+
+Comandos-> ListaComandos RetornoComandos
+
+RetornoComandos -> ListaComandos RetornoComandos
+RetornoComandos -> 
+
+ListaComandos -> do Bloco while ( Expressao ) ;
+ListaComandos -> if ( Expressao ) Bloco AuxElse
+ListaComandos -> while ( Expressao ) Bloco
+ListaComandos -> for ( AuxFor ; AuxFor ; AuxFor ) Bloco
+ListaComandos -> printf ( string AuxPrint ) ;
+ListaComandos -> scanf ( string , & id ) ;
+ListaComandos -> exit ( Expressao ) ;
+ListaComandos -> return AuxFor ;
+ListaComandos -> Expressao ;
+ListaComandos -> ;
+ListaComandos -> Bloco
+
+AuxElse -> else Bloco
+AuxElse -> 
+
+AuxFor -> Expressao
+AuxFor ->
+
+AuxPrint -> , Expressao
+AuxPrint ->
+
+Expressao -> ExpressaoAtribuicao
+Expressao -> Expressao , ExpressaoAtribuicao
+
+OpAtrib -> +=
+OpAtrib -> = 
+OpAtrib -> -=
+
+OpRel -> <
+OpRel -> <=
+OpRel -> >
+OpRel -> >=
+
+OpMult -> *
+OpMult -> /
+OpMult -> %
+
+OpUnario -> &
+OpUnario -> *
+OpUnario -> +
+OpUnario -> -
+OpUnario -> ~
+OpUnario -> !
+
+ExpressaoAtribuicao -> ExpressaoCondicional
+ExpressaoAtribuicao -> ExpressaoUnaria OpAtrib ExpressaoAtribuicao
+
+ExpressaoCondicional -> ExpressaoOrLogico AuxCondicional
+
+AuxCondicional -> ? Expressao : ExpressaoCondicional
+AuxCondicional -> 
+
+ExpressaoOrLogico -> ExpressaoAndLogico
+ExpressaoOrLogico -> ExpressaoOrLogico || ExpressaoAndLogico
+
+ExpressaoAndLogico -> ExpressaoOr
+ExpressaoAndLogico -> ExpressaoAndLogico && ExpressaoOr
+
+ExpressaoOr -> ExpressaoXor
+ExpressaoOr -> ExpressaoOr | ExpressaoXor
+
+ExpressaoXor -> ExpressaoAnd
+ExpressaoXor -> ExpressaoXor ^ ExpressaoAnd
+
+ExpressaoAnd -> ExpressaoIgual
+ExpressaoAnd -> ExpressaoAnd & ExpressaoIgual
+
+ExpressaoIgual -> ExpressaoRelacional
+ExpressaoIgual -> ExpressaoIgual == ExpressaoRelacional
+ExpressaoIgual -> ExpressaoIgual != ExpressaoRelacional
+
+ExpressaoRelacional -> ExpressaoShift
+ExpressaoRelacional -> ExpressaoRelacional OpRel ExpressaoShift
+
+ExpressaoShift -> ExpressaoAditiva
+ExpressaoShift -> ExpressaoShift >> ExpressaoAditiva
+ExpressaoShift -> ExpressaoShift << ExpressaoAditiva
+
+ExpressaoAditiva -> ExpressaoMultiplicativa
+ExpressaoAditiva -> ExpressaoAditiva - ExpressaoMultiplicativa
+ExpressaoAditiva -> ExpressaoAditiva + ExpressaoMultiplicativa
+
+ExpressaoMultiplicativa -> ExpressaoCast
+ExpressaoMultiplicativa -> ExpressaoMultiplicativa OpMult ExpressaoCast
+
+ExpressaoCast -> ExpressaoUnaria
+ExpressaoCast -> ( Tipo Ponteiro ) ExpressaoCast
+
+ExpressaoUnaria -> ExpressaoPosFixa
+ExpressaoUnaria -> ++ ExpressaoUnaria
+ExpressaoUnaria -> -- ExpressaoUnaria
+ExpressaoUnaria -> OpUnario ExpressaoCast
+
+ExpressaoPosFixa -> ExpressaoPrimaria
+ExpressaoPosFixa -> ExpressaoPosFixa AuxPosFixa
+
+AuxPosFixa -> [ Expressao ]
+AuxPosFixa -> ++
+AuxPosFixa -> --
+AuxPosFixa -> ( PulaExpressaoAtribuicao )
+
+PulaExpressaoAtribuicao -> ExpressaoAtribuicao AuxPula
+PulaExpressaoAtribuicao -> 
+
+AuxPula -> , ExpressaoAtribuicao AuxPula
+AuxPula -> 
+
+ExpressaoPrimaria -> id 
+ExpressaoPrimaria -> Numero
+ExpressaoPrimaria -> character
+ExpressaoPrimaria -> string
+ExpressaoPrimaria -> ( Expressao )
+
+Numero -> num_int
+Numero -> num_hexa
+Numero -> num_octal
