@@ -10,7 +10,7 @@
 
 #include "linked_list.h"
 
-#define SIGMA 83
+#define SIGMA 91
 #define QNTD_FINAL 167
 #define MAX_INPUT 131072
 

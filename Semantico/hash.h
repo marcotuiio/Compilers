@@ -12,6 +12,8 @@ typedef struct node {
     struct node *next;
 } HashNode;
 
+void **createHash();
+
 int hash(char *value);
 
 void insertHash(void **hashTable, char *value, int currentType);

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "hash.h"
 
 extern int yylex();
 void yyerror(void *s);
@@ -94,7 +95,7 @@ int CURRENT_TYPE;
 %token ID
 
 %type <token> Programa
-%type <token> AuxPrograma
+%type <token> ListaFuncoes
 %type <token> Declaracoes
 %type <token> Funcao
 %type <token> DeclaraVariaveisFuncao
@@ -151,11 +152,15 @@ Start: Programa MyEOF { erroAux = 0; return 0; }
     | Programa ERRO { erroAux = 1; return 0; }
     | error { erroAux = 1; return 0; } ;
 
-Programa: Declaracoes AuxPrograma { }
-    | Funcao AuxPrograma { } ;
+Programa: DeclaracaoOUFuncao ListaFuncoes {
+        Programa *aux = createProgram($1, $2);
+    } ;
 
-AuxPrograma: Programa AuxPrograma { }
-    | { } ;
+DeclaracaoOUFuncao: Declaracoes { }
+    | Funcao { } ;
+    
+ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { $$ = $1 }
+    | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { }
     | DeclaraVariaveis { }

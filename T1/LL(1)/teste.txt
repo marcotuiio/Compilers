@@ -10,6 +10,8 @@
 { comentario de bloco tem q arrumar}
 "loucuras >>> do meu12 - + mundiNHO cor de rosa"
 
+"Oi mundo, eu sou o Portugol!"
+
 8303 122.666;
 ,t.[ sal ] ( gol )
 4=5

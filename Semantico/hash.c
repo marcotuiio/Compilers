@@ -12,7 +12,7 @@ void **createHash() {
 int hash(char *value) {
     int hash = 0;
     for (int i = 0; i < strlen(value); i++)
-        hash += value[i];
+        hash += value[i] * (i + 1);
     return hash % HASH_SIZE;
 }
 

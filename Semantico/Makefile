@@ -1,20 +1,23 @@
-FLEX=flex
-BISON=bison
-CC=gcc
-CFLAGS=-Wall
+FLEX = flex
+BISON = bison
+CC = gcc
+CFLAGS = -Wall
+OBJECTS = lexico.l sintatico.y ast.o hash.o
 
 PROGRAMA = semantico
 LEXICO = lexico.l
 SINTATICO = sintatico.y
 
-$(PROGRAMA): $(LEXICO) $(SINTATICO) ast.o
+$(PROGRAMA): $(OBJECTS)
 	$(FLEX) $(LEXICO)
-# $(BISON) -d -Wcounterexamples $(SINTATICO)
 	$(BISON) -d $(SINTATICO)
 	$(CC) $(CFLAGS) *.c -I. -o $(PROGRAMA)
 
 ast.o: ast.c ast.h
 	$(CC) $(CFLAGS) -c ast.c
+
+hash.o: hash.c hash.h
+	$(CC) $(CFLAGS) -c hash.c
 
 clear:
 	rm -f sintatico.tab.c

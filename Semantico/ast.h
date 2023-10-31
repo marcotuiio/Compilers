@@ -6,10 +6,9 @@
 #include <sintatico.tab.h>
 
 typedef struct programa {
-    void **hashTable;
-    void *declarations;
+    void **hashTable;  // declarations
     void *functionsList;
-    void *main;
+    void *main;  // start of the program, wont be used here
 } Programa;
 
 typedef struct function {
@@ -55,7 +54,7 @@ typedef struct command {
     char *format;
 } Command;
 
-Programa *createPrograma(void *declarations, void *functionsList, void *main);
+Programa *createPrograma(void **hash, void *functionsList, void *main);
 
 Function *createFunction(int returnType, char *name, void *parameters, void *declarations, void *commandList, void *next);
 

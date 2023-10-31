@@ -1,8 +1,8 @@
 #include "ast.h"
 
-Programa *createPrograma(void *declarations, void *functionsList, void *main) {
+Programa *createPrograma(void **hash, void *functionsList, void *main) {
     Programa *newProg = calloc(1, sizeof(Programa));
-    newProg->declarations = declarations;
+    newProg->hashTable = hash;
     newProg->functionsList = functionsList;
     newProg->main = main;
     return newProg;
