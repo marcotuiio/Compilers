@@ -21,12 +21,15 @@ extern int wrongTokenColumn;
 int erroAux = 0;
 int semanticError = 0;
 int CURRENT_TYPE;
-
-// void **myHashTable = NULL;
+int pointerQntd = 0;
 
 %}
 
 %union {
+    Program *prog;
+    Function *func;
+    Expression *exp;
+    Command *cmd;
     struct {
         char *valor;
         int column;
@@ -95,6 +98,7 @@ int CURRENT_TYPE;
 %token ID
 
 %type <token> Programa
+%type <token> DeclaracaoOUFuncao
 %type <token> ListaFuncoes
 %type <token> Declaracoes
 %type <token> Funcao
@@ -153,55 +157,86 @@ Start: Programa MyEOF { erroAux = 0; return 0; }
     | error { erroAux = 1; return 0; } ;
 
 Programa: DeclaracaoOUFuncao ListaFuncoes {
-        Programa *aux = createProgram($1, $2);
+        void **hash = createHash();
+        Programa *aux = createProgram(hash, $2, NULL);
+        $$ = aux;
     } ;
 
-DeclaracaoOUFuncao: Declaracoes { }
-    | Funcao { } ;
+DeclaracaoOUFuncao: Declaracoes { $$ = NULL; /* inserir na hash o que quer que apareça aqui */}
+    | Funcao { $$ = $1; } ;
     
-ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { $$ = $1 }
+ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
+        if ($1 != NULL) { // é uma função e nao uma declaracao
+            $1->next = $2;  // a função aponta para a próxima função
+        }
+        $$ = $1
+    }
     | { $$ = NULL; } ;
 
-Declaracoes: NUMBER_SIGN DEFINE ID Expressao { }
-    | DeclaraVariaveis { }
-    | DeclaraPrototipos { } ;
+Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */ }
+    | DeclaraVariaveis { /* Adicionar isso na hash */ }
+    | DeclaraPrototipos { /* Adicionar isso na hash */ } ;
 
-Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET { } ;
+Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
+        void **hash = createHash();
+        // descobrir como pegar nome da funcao
+        // colocar nome da funcao na hash global e na struct da funcao 
+        Function *func = createFunction(hash, $1, pointerQntd, "Nome da funcao", $4, $6, $7, NULL);
+        pointerQntd = 0;  // nao sei se funciona
+    } ;
 
 DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { }
-    | { } ;
+    | { $$ = NULL; } ;
 
-Ponteiro: MULTIPLY Ponteiro { }
-    | { } ;
+Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
+    | { $$ = NULL; } ; 
 
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { } ;
 
-BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel { } ;
+BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
+        // inserir na hash devida
+        // considerar ponteiro, nome e dimensoes (se tiver)
+        pointerQntd = 0;
+    } ;
 
-ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete { }
-    | { } ;
+ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete {
+        // nova struct para dimensoes?
+    }
+    | { $$ = NULL; } ;
 
-ExpressaoAssign: ASSIGN ExpressaoAtribuicao { }
-    | { } ;
+ExpressaoAssign: ASSIGN ExpressaoAtribuicao { $$ = $2; }
+    | { $$ = NULL; } ;
 
-RetornoVariavel: COMMA BlocoVariaveis { }
-    | { } ; 
+RetornoVariavel: COMMA BlocoVariaveis { $$ = $2; }
+    | { $$ = NULL; } ; 
 
-DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { } ; 
+DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
+        // colocar na hash global e ver se bate com as funcoes ?
+    } ; 
 
-Parametros: L_PAREN BlocoParametros R_PAREN { } ;
+Parametros: L_PAREN BlocoParametros R_PAREN { $$ = $2; } ;
 
-BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros { }
-    | { } ;
+BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
+        // colocar na hash devida 
+    }
+    | { $$ = NULL; } ;
 
-RetornaParametros: COMMA BlocoParametros { }
-    | { } ;
+RetornaParametros: COMMA BlocoParametros { $$ = $2; }
+    | { $$ = NULL; } ;
 
-Tipo: INT { CURRENT_TYPE = INT; }
-    | CHAR { CURRENT_TYPE = CHAR; }
-    | VOID { CURRENT_TYPE = VOID; } ;
+Tipo: INT { 
+        CURRENT_TYPE = INT; 
+        $$ = INT; 
+    }
+    | CHAR { CURRENT_TYPE = CHAR;
+        $$ = CHAR;
+    }
+    | VOID { 
+        CURRENT_TYPE = VOID;
+        $$ = VOID;
+    } ;
 
-Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { } ;
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { $$ = $2; } ;
 
 Comandos: ListaComandos RetornoComandos {
         $1->next = $2;
@@ -231,11 +266,11 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
         $$ = aux;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
-        Command *aux = createPrintStatement($3.token.valor, $4, NULL);
+        Command *aux = createPrintStatement(yylval.token.valor, $4, NULL);
         $$ = aux;
     }
     | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON {
-        Command *aux = createScanStatement($7.token.valor, $3.token.valor, NULL);
+        Command *aux = createScanStatement(yylval.token.valor, yylval.token.valor, NULL);
         $$ = aux;
     }
     | EXIT L_PAREN Expressao R_PAREN SEMICOLON {
@@ -264,10 +299,13 @@ AuxPrint: COMMA Expressao { $$ = $2; }
 Expressao: ExpressaoAtribuicao {
         $$ = $1;
     }
-    | Expressao COMMA ExpressaoAtribuicao { } ;
+    | Expressao COMMA ExpressaoAtribuicao { 
+        Expression *aux = createExpression(COMMA, NSEI, $1, $3);
+        $$ = aux;
+    } ;
 
-OpAtrib: ASSIGN { $$ = $1 }
-    | ADD_ASSIGN { $$ = $1; }
+OpAtrib: ASSIGN { }
+    | ADD_ASSIGN { }
     | MINUS_ASSIGN { } ;
 
 OpRel: LESS_THAN { }
@@ -293,7 +331,7 @@ ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
     } ;
 
 ExpressaoCondicional: ExpressaoOrLogico AuxCondicional { }
-    | ExpressaoOrLogico {} ;
+    | ExpressaoOrLogico { } ;
 
 AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
     | { } ;
@@ -377,9 +415,11 @@ ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
     } ;
 
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
-    | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {  } ;
+    | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
+        // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
+    } ;
 
-ExpressaoUnaria: ExpressaoPosFixa { }
+ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     | INC ExpressaoUnaria { }
     | DEC ExpressaoUnaria { }
     | OpUnario ExpressaoCast { } ;
@@ -387,16 +427,16 @@ ExpressaoUnaria: ExpressaoPosFixa { }
 ExpressaoPosFixa: ExpressaoPrimaria { }
     | ExpressaoPosFixa AuxPosFixa { } ;
 
-AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { }
-    | L_PAREN PulaExpressaoAtribuicao R_PAREN { }
+AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { $$ = $2 }
+    | L_PAREN PulaExpressaoAtribuicao R_PAREN { $$ = $2 }
     | INC { }
     | DEC { } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { }
-    | { } ;
+    | { $$ = NULL; } ;
 
 AuxPula: COMMA ExpressaoAtribuicao AuxPula { }
-    | { } ;
+    | { $$ = NULL; } ;
 
 ExpressaoPrimaria: ID { 
         if (!lookForValueInHash(local) && !lookForValueInHash(global)) {

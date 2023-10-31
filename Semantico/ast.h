@@ -3,17 +3,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sintatico.tab.h>
+#include "sintatico.tab.h"
 
-typedef struct programa {
+typedef struct program {
     void **hashTable;  // declarations
     void *functionsList;
     void *main;  // start of the program, wont be used here
-} Programa;
+} Program;
 
 typedef struct function {
     void **hashTable;
     int returnType;
+    int pointer;
     char *name;
     void *parameters;
     void *declarations;
@@ -54,9 +55,9 @@ typedef struct command {
     char *format;
 } Command;
 
-Programa *createPrograma(void **hash, void *functionsList, void *main);
+Program *createProgram(void **hash, void *functionsList, void *main);
 
-Function *createFunction(int returnType, char *name, void *parameters, void *declarations, void *commandList, void *next);
+Function *createFunction(void **hash, int returnType, int pointer, char *name, void *parameters, void *declarations, void *commandList, void *next);
 
 Expression *createExpression(int type, void *aux, void *left, void *right);
 

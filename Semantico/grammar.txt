@@ -1,10 +1,12 @@
 Start -> Programa MyEOF
 
-Programa -> Declaracoes AuxPrograma
-Programa -> Funcao AuxPrograma
+Programa -> DeclaracoesOUFuncao ListaFuncoes
 
-AuxPrograma -> Programa AuxPrograma
-AuxPrograma -> 
+DeclaracoesOUFuncao -> Declaracoes
+DeclaracoesOUFuncao -> Funcao
+
+ListaFuncoes -> DeclaracoesOUFuncao ListaFuncoes
+ListaFuncoes -> 
 
 Declaracoes -> # define id Expressao
 Declaracoes -> DeclaraVariaveis

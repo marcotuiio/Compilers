@@ -13,7 +13,7 @@ $(PROGRAMA): $(OBJECTS)
 	$(BISON) -d $(SINTATICO)
 	$(CC) $(CFLAGS) *.c -I. -o $(PROGRAMA)
 
-ast.o: ast.c ast.h
+ast.o: ast.c ast.h sintatico.tab.h
 	$(CC) $(CFLAGS) -c ast.c
 
 hash.o: hash.c hash.h
@@ -21,7 +21,6 @@ hash.o: hash.c hash.h
 
 clear:
 	rm -f sintatico.tab.c
-# rm -f sintatico.tab.h
 	rm -f lex.yy.c
 	rm -f $(PROGRAMA)
 	rm -f diff.txt

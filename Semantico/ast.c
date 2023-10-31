@@ -1,16 +1,18 @@
 #include "ast.h"
 
-Programa *createPrograma(void **hash, void *functionsList, void *main) {
-    Programa *newProg = calloc(1, sizeof(Programa));
+Program *createProgram(void **hash, void *functionsList, void *main) {
+    Program *newProg = calloc(1, sizeof(Program));
     newProg->hashTable = hash;
     newProg->functionsList = functionsList;
     newProg->main = main;
     return newProg;
 }
 
-Function *createFunction(int returnType, char *name, void *parameters, void *declarations, void *commandList, void *next) {
+Function *createFunction(void **hash, int returnType, int pointer, char *name, void *parameters, void *declarations, void *commandList, void *next) {
     Function *newFunc = calloc(1, sizeof(Function));
+    newFunc->hashTable = hash;
     newFunc->returnType = returnType;
+    newFunc->pointer = pointer;
     newFunc->name = name;
     newFunc->parameters = parameters;
     newFunc->declarations = declarations;

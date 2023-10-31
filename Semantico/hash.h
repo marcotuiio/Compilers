@@ -3,11 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define HASH_SIZE 997
 
 typedef struct node {
     int key;
+    int pointer;
     char *value;
     struct node *next;
 } HashNode;
