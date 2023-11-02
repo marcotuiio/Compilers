@@ -31,6 +31,7 @@ void **currentHash = NULL;
 %union {
     Program *prog;
     Function *func;
+    Dimension *dim;
     Expression *expr;
     Command *cmd;
     struct {
@@ -109,7 +110,7 @@ void **currentHash = NULL;
 %type <token> Ponteiro
 %type <token> DeclaraVariaveis
 %type <token> BlocoVariaveis
-%type <expr> ExpressaoColchete
+%type <dim> ExpressaoColchete
 %type <expr> ExpressaoAssign
 %type <token> RetornoVariavel
 %type <token> DeclaraPrototipos
@@ -175,31 +176,36 @@ DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apare
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
-        if (((Function *) $1) != NULL) {  // should verify if its a function or a declaration, but its verifying if the union return is NULL
-            $1->next = $2;  // should link the fuctions, but is trying to link the unions
-            $$ = $1;  // then again should return the functions, but is returning the union
+        if (((Function *) $1) != NULL) {  // se for uma funcao e nao uma declaracao
+            $1->next = $2;  // devia linkar as funcoes, sera se ta certo?
+            $$ = $1;  // devia retornar aa lista de funcoes
         }
     }
     | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError))
-            insertHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, $4);
+            insertHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, 0, $4, NULL);
     }
     | DeclaraVariaveis { /* Adicionar isso na hash */ }
     | DeclaraPrototipos { /* Adicionar isso na hash */ } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
+        // vendo se a funcao ja foi declarada
+        if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError))
+            insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd, NULL, NULL);
+        pointerQntd = 0;
+
         void **hash = createHash();
         // descobrir como pegar nome da funcao
         // colocar nome da funcao na hash global e na struct da funcao  
-        
+        currentHash = hash;
         Function *func = createFunction(hash, $1.type, pointerQntd, $3.valor, $7, NULL);
         pointerQntd = 0;  // nao sei se funciona
         $$ = func;
     } ;
 
-DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { /* colocar na hash da funcao */}
+DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { /* descendo para colocar na hash da funcao */ }
     | { } ;
 
 Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
@@ -208,20 +214,28 @@ Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON {
         // inserir na hash devida
         // considerar ponteiro, nome e dimensoes (se tiver)
+        CURRENT_TYPE = $1.type;
     } ;
 
 BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
-        // inserir na hash devida
         // considerar ponteiro, nome e dimensoes (se tiver)
+        if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError))
+            insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, pointerQntd, $4, $3);
         pointerQntd = 0;
     } ;
 
 ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete {
         // nova struct para dimensoes?
+        Dimension *aux = createDimension($2);
+        aux->next = $4;
+        $$ = aux;
     }
-    | { } ;
+    | { $$ = NULL; } ;
 
-ExpressaoAssign: ASSIGN ExpressaoAtribuicao { $$ = $2; }
+ExpressaoAssign: ASSIGN ExpressaoAtribuicao { 
+        $2->assign = ASSIGN;
+        $$ = $2;
+    }
     | { $$ = NULL; } ;
 
 RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
@@ -229,12 +243,16 @@ RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
 
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
         // colocar na hash global e ver se bate com as funcoes ?
+        if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError))
+            insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd, NULL, NULL);
     } ; 
 
 Parametros: L_PAREN BlocoParametros R_PAREN { /* vai pra hash */ } ;
 
 BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
-        // colocar na hash devida 
+        if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError))
+            insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd, NULL, $4);
+        pointerQntd = 0;
     }
     | { } ;
 
@@ -242,14 +260,15 @@ RetornaParametros: COMMA BlocoParametros { /* colocar na hash */ }
     | { } ;
 
 Tipo: INT { 
-        CURRENT_TYPE = INT; 
+        // CURRENT_TYPE = INT; 
         $$ = yylval.token; 
     }
-    | CHAR { CURRENT_TYPE = CHAR;
+    | CHAR { 
+        // CURRENT_TYPE = CHAR;
         $$ = yylval.token;
     }
     | VOID { 
-        CURRENT_TYPE = VOID;
+        // CURRENT_TYPE = VOID;
         $$ = yylval.token;
     } ;
 
@@ -356,7 +375,7 @@ ExpressaoCondicional: ExpressaoOrLogico AuxCondicional {
     }
 
 AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional {
-        Expression *aux = createExpression(TERNARY_CONDITIONAL, NULL, $1, $3);
+        Expression *aux = createExpression(TERNARY_CONDITIONAL, NULL, $2, $4);
         $$ = aux;
     }
     | { $$ = NULL; } ;
@@ -436,7 +455,7 @@ ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
-        Expression *aux = createExpression(CAST, NULL, $2, $5);
+        Expression *aux = createExpression(CAST, NULL, NULL, $5);
         aux->pointer = pointerQntd;
         pointerQntd = 0;
     } ;

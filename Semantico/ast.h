@@ -5,6 +5,8 @@
 #include <stdlib.h>
 // #include "sintatico.tab.h"
 
+#define CAST 1001
+
 typedef struct program {
     void **hashTable;  // declarations
     void *functionsList;
@@ -27,12 +29,20 @@ typedef struct expression {
     void *value;
     int increment;
     int unario;
+    int assign;
+    struct expression *dimension;
     void *next;
     void *extra;
+
     struct expression *ternary;
     struct expression *left;
     struct expression *right;
 } Expression;
+
+typedef struct dimension {
+    Expression *size;
+    struct dimension *next;
+} Dimension;
 
 typedef struct command {
     // generic
@@ -64,6 +74,8 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
 Expression *createExpression(int type, void *aux, void *left, void *right);
+
+Dimension *createDimension(Expression *size);
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next);
 

@@ -119,10 +119,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 28 "sintatico.y"
+#line 31 "sintatico.y"
 
     Program *prog;
     Function *func;
+    Dimension *dim;
     Expression *expr;
     Command *cmd;
     struct {
@@ -132,7 +133,7 @@ union YYSTYPE
         int type;
     } token;
 
-#line 136 "sintatico.tab.h"
+#line 137 "sintatico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

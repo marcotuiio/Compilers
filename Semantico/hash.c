@@ -16,7 +16,7 @@ int hash(char *value) {
     return hash % HASH_SIZE;
 }
 
-void insertHash(void **hashTable, char *value, int line, int column, int currentType, void *extra) {
+void insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer, void *assign, void *dimensions) {
     int index = hash(value);
     HashNode *aux = calloc(1, sizeof(HashNode));
     aux->typeVar = currentType;
@@ -24,7 +24,9 @@ void insertHash(void **hashTable, char *value, int line, int column, int current
     strcpy(aux->value, value);
     aux->line = line;
     aux->column = column;
-    aux->extra = extra;
+    aux->pointer = pointer;
+    aux->assign = assign;
+    aux->dimensions = dimensions;
 
     HashNode *head = (HashNode *) hashTable[index];
     if (!head) {

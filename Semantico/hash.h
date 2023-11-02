@@ -14,7 +14,8 @@ typedef struct node {
     char *value;
     int line;
     int column;
-    void *extra;
+    void *assign;
+    void *dimensions;
     struct node *next;
 } HashNode;
 
@@ -22,7 +23,7 @@ void **createHash();
 
 int hash(char *value);
 
-void insertHash(void **hashTable, char *value, int line, int column, int currentType, void *extra);
+void insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer, void *assign, void *dimensions);
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
 

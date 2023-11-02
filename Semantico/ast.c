@@ -28,6 +28,12 @@ Expression *createExpression(int type, void *aux, void *left, void *right) {
     return newExp;
 }
 
+Dimension *createDimension(Expression *size) {
+    Dimension *newDim = calloc(1, sizeof(Dimension));
+    newDim->size = size;
+    return newDim;
+}
+
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next) {
     Command *newIf = calloc(1, sizeof(Command));
     newIf->condition = condition;
