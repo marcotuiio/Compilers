@@ -8,14 +8,12 @@ Program *createProgram(void **hash, void *functionsList, void *main) {
     return newProg;
 }
 
-Function *createFunction(void **hash, int returnType, int pointer, char *name, void *parameters, void *declarations, void *commandList, void *next) {
+Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next) {
     Function *newFunc = calloc(1, sizeof(Function));
     newFunc->hashTable = hash;
     newFunc->returnType = returnType;
     newFunc->pointer = pointer;
     newFunc->name = name;
-    newFunc->parameters = parameters;
-    newFunc->declarations = declarations;
     newFunc->commandList = commandList;
     newFunc->next = next;
     return newFunc;
@@ -100,4 +98,11 @@ Command *createExitStatement(Expression *expression, void *next) {
     newExit->condition = expression;
     newExit->next = next;
     return newExit;
+}
+
+Command *createCommandExpression(Expression *expression, void *next) {
+    Command *newCommand = calloc(1, sizeof(Command));
+    newCommand->condition = expression;
+    newCommand->next = next;
+    return newCommand;
 }

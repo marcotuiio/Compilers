@@ -123,7 +123,7 @@ union YYSTYPE
 
     Program *prog;
     Function *func;
-    Expression *exp;
+    Expression *expr;
     Command *cmd;
     struct {
         char *valor;

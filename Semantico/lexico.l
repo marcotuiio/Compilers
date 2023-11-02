@@ -3,7 +3,7 @@
 %x COMMENT
 
 %{
-
+#include <ast.h>
 #include <sintatico.tab.h>
 extern YYSTYPE yylval;
 

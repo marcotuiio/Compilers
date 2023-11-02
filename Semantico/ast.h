@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "sintatico.tab.h"
+// #include "sintatico.tab.h"
 
 typedef struct program {
     void **hashTable;  // declarations
@@ -16,7 +16,6 @@ typedef struct function {
     int returnType;
     int pointer;
     char *name;
-    void *parameters;
     void *declarations;
     void *commandList;
     void *next;
@@ -57,7 +56,7 @@ typedef struct command {
 
 Program *createProgram(void **hash, void *functionsList, void *main);
 
-Function *createFunction(void **hash, int returnType, int pointer, char *name, void *parameters, void *declarations, void *commandList, void *next);
+Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
 Expression *createExpression(int type, void *aux, void *left, void *right);
 
@@ -78,5 +77,7 @@ Command *createScanStatement(char *identifier, char *format, void *next);
 Command *createReturnStatement(Expression *expression, void *next);
 
 Command *createExitStatement(Expression *expression, void *next);
+
+Command *createCommandExpression(Expression *expression, void *next);
 
 #endif

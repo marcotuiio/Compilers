@@ -13,7 +13,7 @@ $(PROGRAMA): $(OBJECTS)
 	$(BISON) -d $(SINTATICO)
 	$(CC) $(CFLAGS) *.c -I. -o $(PROGRAMA)
 
-ast.o: ast.c ast.h sintatico.tab.h
+ast.o: ast.c ast.h
 	$(CC) $(CFLAGS) -c ast.c
 
 hash.o: hash.c hash.h
