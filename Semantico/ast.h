@@ -23,8 +23,13 @@ typedef struct function {
 
 typedef struct expression {
     int type;
+    int pointer;
     void *value;
+    int increment;
+    int unario;
+    void *next;
     void *extra;
+    struct expression *ternary;
     struct expression *left;
     struct expression *right;
 } Expression;

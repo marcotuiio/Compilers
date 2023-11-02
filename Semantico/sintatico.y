@@ -23,6 +23,9 @@ int semanticError = 0;
 int CURRENT_TYPE;
 int pointerQntd = 0;
 
+void **globalHash = NULL;
+void **currentHash = NULL;
+
 %}
 
 %union {
@@ -88,14 +91,14 @@ int pointerQntd = 0;
 %token COLON
 %token R_SHIFT
 %token L_SHIFT
-%token INC
-%token DEC
-%token NUM_INT
-%token NUM_HEXA
-%token NUM_OCTAL
-%token STRING
-%token CHARACTER
-%token ID
+%token <token> INC
+%token <token> DEC
+%token <token> NUM_INT
+%token <token> NUM_HEXA
+%token <token> NUM_OCTAL
+%token <token> STRING
+%token <token> CHARACTER
+%token <token> ID
 
 %type <prog> Programa
 %type <func> DeclaracaoOUFuncao
@@ -158,13 +161,17 @@ Start: Programa MyEOF { erroAux = 0; return 0; }
 
 Programa: DeclaracaoOUFuncao ListaFuncoes {
         void **hash = createHash();
+        globalHash = hash;
         Program *aux = createProgram(hash, $2, NULL); // $2 should be a list of functions, therefore Function *
-        $$ = aux;  // should return the whole program after being parsed, but its returning the union
+        $$ = aux; 
     } ;
 
-DeclaracaoOUFuncao: Declaracoes { $$ = NULL; /* inserir na hash o que quer que apareça aqui */}
+DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apareça aqui */
+        currentHash = globalHash;
+        $$ = NULL;
+    }
     | Funcao { 
-        $$ = $1;  // should return a list of functions, but its returning the union  
+        $$ = $1;  // should return a list of functions
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
@@ -175,15 +182,19 @@ ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes {
     }
     | { $$ = NULL; } ;
 
-Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */ }
+Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
+        if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError))
+            insertHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, $4);
+    }
     | DeclaraVariaveis { /* Adicionar isso na hash */ }
     | DeclaraPrototipos { /* Adicionar isso na hash */ } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
         void **hash = createHash();
         // descobrir como pegar nome da funcao
-        // colocar nome da funcao na hash global e na struct da funcao 
-        Function *func = createFunction(hash, $1.type, pointerQntd, "Nome da funcao", $7, NULL);
+        // colocar nome da funcao na hash global e na struct da funcao  
+        
+        Function *func = createFunction(hash, $1.type, pointerQntd, $3.valor, $7, NULL);
         pointerQntd = 0;  // nao sei se funciona
         $$ = func;
     } ;
@@ -194,7 +205,10 @@ DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { /* colocar na 
 Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
     | { } ; 
 
-DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { } ;
+DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON {
+        // inserir na hash devida
+        // considerar ponteiro, nome e dimensoes (se tiver)
+    } ;
 
 BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         // inserir na hash devida
@@ -314,21 +328,21 @@ OpAtrib: ASSIGN { $$ = yylval.token; }
     | ADD_ASSIGN { $$ = yylval.token; }
     | MINUS_ASSIGN { $$ = yylval.token; } ;
 
-OpRel: LESS_THAN { }
-    | LESS_EQUAL { }
-    | GREATER_THAN { }
-    | GREATER_EQUAL { } ;
+OpRel: LESS_THAN { $$ = yylval.token; }
+    | LESS_EQUAL { $$ = yylval.token; }
+    | GREATER_THAN { $$ = yylval.token; }
+    | GREATER_EQUAL { $$ = yylval.token; } ;
 
-OpMult: MULTIPLY { }
-    | DIVIDE { }
-    | REMAINDER { } ;
+OpMult: MULTIPLY { $$ = yylval.token; }
+    | DIVIDE { $$ = yylval.token; }
+    | REMAINDER { $$ = yylval.token; } ;
 
-OpUnario: BITWISE_AND { }
-    | MULTIPLY { }
-    | PLUS { }
-    | MINUS { }
-    | NOT { }
-    | BITWISE_NOT { } ;
+OpUnario: BITWISE_AND { $$ = yylval.token; }
+    | MULTIPLY { $$ = yylval.token; }
+    | PLUS { $$ = yylval.token; }
+    | MINUS { $$ = yylval.token; }
+    | NOT { $$ = yylval.token; }
+    | BITWISE_NOT { $$ = yylval.token; } ;
 
 ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
     | ExpressaoUnaria OpAtrib ExpressaoAtribuicao {
@@ -336,9 +350,15 @@ ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
         $$ = aux;
     } ;
 
-ExpressaoCondicional: ExpressaoOrLogico AuxCondicional { }
+ExpressaoCondicional: ExpressaoOrLogico AuxCondicional {
+        $1->ternary = $2;
+        $$ = $1;
+    }
 
-AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional { }
+AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional {
+        Expression *aux = createExpression(TERNARY_CONDITIONAL, NULL, $1, $3);
+        $$ = aux;
+    }
     | { $$ = NULL; } ;
 
 ExpressaoOrLogico: ExpressaoAndLogico { $$ = $1; }
@@ -416,38 +436,58 @@ ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
+        Expression *aux = createExpression(CAST, NULL, $2, $5);
+        aux->pointer = pointerQntd;
+        pointerQntd = 0;
     } ;
 
 ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
-    | INC ExpressaoUnaria { }
-    | DEC ExpressaoUnaria { }
-    | OpUnario ExpressaoCast { } ;
+    | INC ExpressaoUnaria { 
+        $2->increment = $1.type; 
+        $$ = $2;
+    }
+    | DEC ExpressaoUnaria {
+        $2->increment = $1.type; 
+        $$ = $2;
+    }
+    | OpUnario ExpressaoCast {
+        $2->unario = $1.type; 
+        $$ = $2;
+    } ;
 
-ExpressaoPosFixa: ExpressaoPrimaria { }
-    | ExpressaoPosFixa AuxPosFixa { } ;
+ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
+    | ExpressaoPosFixa AuxPosFixa {
+        
+    } ;
 
 AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { $$ = $2; }
     | L_PAREN PulaExpressaoAtribuicao R_PAREN { $$ = $2; }
     | INC { }
     | DEC { } ;
 
-PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { }
+PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
+        $1->next = $2; 
+        $$ = $1;
+    }
     | { $$ = NULL; } ;
 
-AuxPula: COMMA ExpressaoAtribuicao AuxPula { }
+AuxPula: COMMA ExpressaoAtribuicao AuxPula {
+        $2->next = $3;
+        $$ = $2;
+    }
     | { $$ = NULL; } ;
 
 ExpressaoPrimaria: ID { 
-        Expression *aux = createExpression(ID, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(ID, $1.valor, NULL, NULL);
         $$ = aux;
     }
     | Numero { $$ = $1; }
     | CHARACTER { 
-        Expression *aux = createExpression(CHARACTER, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(CHARACTER, $1.valor, NULL, NULL);
         $$ = aux;
     }
     | STRING { 
-        Expression *aux = createExpression(STRING, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(STRING, $1.valor, NULL, NULL);
         $$ = aux;
     }
     | L_PAREN Expressao R_PAREN {
@@ -455,15 +495,15 @@ ExpressaoPrimaria: ID {
     } ;
 
 Numero: NUM_INT {
-        Expression *aux = createExpression(NUM_INT, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(NUM_INT, $1.valor, NULL, NULL);
         $$ = aux;
     }
     | NUM_HEXA { 
-        Expression *aux = createExpression(NUM_HEXA, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(NUM_HEXA, $1.valor, NULL, NULL);
         $$ = aux;
     }
     | NUM_OCTAL {
-        Expression *aux = createExpression(NUM_OCTAL, yylval.token.valor, NULL, NULL);
+        Expression *aux = createExpression(NUM_OCTAL, $1.valor, NULL, NULL);
         $$ = aux;
     } ;
 

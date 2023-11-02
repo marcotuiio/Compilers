@@ -8,9 +8,13 @@
 #define HASH_SIZE 997
 
 typedef struct node {
-    int key;
+    int typeVar;
     int pointer;
+    char *identifier;
     char *value;
+    int line;
+    int column;
+    void *extra;
     struct node *next;
 } HashNode;
 
@@ -18,7 +22,7 @@ void **createHash();
 
 int hash(char *value);
 
-void insertHash(void **hashTable, char *value, int currentType);
+void insertHash(void **hashTable, char *value, int line, int column, int currentType, void *extra);
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
 

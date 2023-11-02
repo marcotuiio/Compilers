@@ -16,12 +16,15 @@ int hash(char *value) {
     return hash % HASH_SIZE;
 }
 
-void insertHash(void **hashTable, char *value, int currentType) {
+void insertHash(void **hashTable, char *value, int line, int column, int currentType, void *extra) {
     int index = hash(value);
     HashNode *aux = calloc(1, sizeof(HashNode));
-    aux->key = currentType;
+    aux->typeVar = currentType;
     aux->value = calloc(strlen(value) + 1, sizeof(char));
     strcpy(aux->value, value);
+    aux->line = line;
+    aux->column = column;
+    aux->extra = extra;
 
     HashNode *head = (HashNode *) hashTable[index];
     if (!head) {
@@ -44,7 +47,7 @@ int lookForValueInHash(void **hashTable, char *value, int line, int column, int 
         if (!strcmp(value, head->value)) { // existe outro daquele identificador na hash
             ocorrencias++;
             if (ocorrencias == 1) continue;  // se for o primeiro, continua 
-            if (currentType == head->key) {  // se for do mesmo tipo
+            if (currentType == head->typeVar) {  // se for do mesmo tipo
                 if (*textBefore) printf("\n");
                 printf("%d: identifier '%s' already declared", line, value);
                 *semanticError = 1;
