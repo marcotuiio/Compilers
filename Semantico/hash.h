@@ -18,6 +18,7 @@ typedef struct node {
     void *dimensions;
     void *param;
     int prototype;
+    int qntdParams;
     struct node *next;
 } HashNode;
 
@@ -32,13 +33,18 @@ void **createHash();
 
 int hash(char *value);
 
-void insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer, Param *p, int prototype, void *assign, void *dimensions);
+void *insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer);
+void setPrototype(void *node);
+void setQntdParams(void *node, int qntdParams);
+void setParam(void *node, Param *p);
+void setAssign(void *node, void *assign);
+void setDimensions(void *node, void *dimensions);
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
 
 Param *createParam(int type, char *identifier, int pointer, void *next);
 
-int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int *textBefore, int *semanticError);
+int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
 
 void freeHash(void **hashTable);
 
