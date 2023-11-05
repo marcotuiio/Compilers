@@ -3,8 +3,8 @@
 %x COMMENT
 
 %{
-#include <ast.h>
-#include <sintatico.tab.h>
+#include "ast.h"
+#include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
 int textBefore = 0;

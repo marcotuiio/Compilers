@@ -16,16 +16,29 @@ typedef struct node {
     int column;
     void *assign;
     void *dimensions;
+    void *param;
+    int prototype;
     struct node *next;
 } HashNode;
+
+typedef struct param {
+    int type;
+    int pointer;
+    char *identifier;
+    struct param *next;
+} Param;
 
 void **createHash();
 
 int hash(char *value);
 
-void insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer, void *assign, void *dimensions);
+void insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer, Param *p, int prototype, void *assign, void *dimensions);
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
+
+Param *createParam(int type, char *identifier, int pointer, void *next);
+
+int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int *textBefore, int *semanticError);
 
 void freeHash(void **hashTable);
 

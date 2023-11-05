@@ -27,7 +27,8 @@ typedef struct expression {
     int type;
     int pointer;
     void *value;
-    int increment;
+    int preIncrement;
+    int posIncrement;
     int unario;
     int assign;
     struct expression *dimension;

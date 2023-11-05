@@ -112,3 +112,11 @@ Command *createCommandExpression(Expression *expression, void *next) {
     newCommand->next = next;
     return newCommand;
 }
+
+// void freeAST(Program *program) {
+//     if (!program) return;
+//     freeHash(program->hashTable);
+//     freeFunctions(program->functionsList);
+//     freeMain(program->main);
+//     free(program);
+// }
