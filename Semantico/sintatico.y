@@ -31,6 +31,8 @@ void *prototypeParam = NULL;
 void **globalHash = NULL;
 void **currentHash = NULL;
 
+void printLineError(int line, int column);
+
 %}
 
 %union {
@@ -167,7 +169,6 @@ Start: Programa MyEOF { erroAux = 0; return 0; }
     | error { erroAux = 1; return 0; } ;
 
 Programa: { 
-        printf("global: ");
         void **hash = createHash();
         globalHash = hash;
     } 
@@ -193,9 +194,13 @@ ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes {
     | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
-        if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError)) {
+        if (lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError) != -1) {
             void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, DEFINE, 0);
             setAssign(node, $4);
+        } else {
+            printLineError($3.line, $3.column);
+            freeHash(globalHash);
+            exit(-1);
         }
     }
     | DeclaraVariaveis { /* Adicionar isso na hash */ }
@@ -203,16 +208,13 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
         // vendo se a funcao ja foi declarada
-        printf("Funcao 1- %p %p\n", currentHash, globalHash);
-        printf("ID: %s\n", $3.valor);
-        printf("CURRENT_TYPE: %d\n", $1.type);
-        printf("pointerQntd: %d\n", pointerQntd);
+
         if (!lookForPrototypeInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $4, paramsQntd, &textBefore, &semanticError)) {
             if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
                 void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
                 setQntdParams(node, paramsQntd);
                 setParam(node, $4);
-            }
+            } 
         }
         Function *func = createFunction(currentHash, $1.type, pointerQntd, $3.valor, $7, NULL);
         pointerQntd = 0;
@@ -227,20 +229,14 @@ DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { /* descendo pa
 Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
     | { } ; 
 
-DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON {
-        // inserir na hash devida
-    } ;
+DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { /* inserir na hash devida */} ;
 
 BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         if (!currentHash) {  // hash da funcao
             void **hash = createHash();
             currentHash = hash;
         }
-        // considerar ponteiro, nome e dimensoes (se tiver)
-        printf("Bloco Var 2- %p %p\n", currentHash, globalHash);
-        printf("ID: %s\n", $2.valor);
-        printf("CURRENT_TYPE: %d\n", CURRENT_TYPE);
-        printf("pointerQntd: %d\n", pointerQntd);
+        // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, pointerQntd);
             setDimensions(node, $3);
@@ -269,14 +265,12 @@ RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
         // colocar na hash global e ver se bate com as funcoes ?
         void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
-        printf("prototipos %p %d\n", $4, paramsQntd);
         setPrototype(node);
         setQntdParams(node, paramsQntd);
         setParam(node, $4);
         prototypeParam = NULL;
         pointerQntd = 0;
         paramsQntd = 0;
-        printf("free useless prototype hash %p\n", currentHash);
         free(currentHash);
         currentHash = NULL;
     } ; 
@@ -289,12 +283,10 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
         if (!currentHash) {  // hash da funcao
             void **hash = createHash();
             currentHash = hash;
-            printf("criando hash para parametros %p\n", currentHash);
         }
         paramsQntd++;
-        Param *aux = createParam($1.type, $3.valor, pointerQntd, $5);
+        Param *aux = createParam($1.type, $3.valor, pointerQntd, $3.line, $3.column+1, $5);
         if (!prototypeParam) prototypeParam = aux;
-        printf("Bloco Param 3- %p %p\n", prototypeParam, aux);
 
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
@@ -586,6 +578,14 @@ Numero: NUM_INT {
 
 void yyerror(void *s) {}
 
+void printLineError(int line, int column) {
+    getLineBuffer(line);
+        
+    printf("\n%s\n", lineBuffer);
+    for (int i = 0; i < column - 1; i++) printf(" ");
+    printf("^");
+}
+
 int main(int argc, char *argv[]) {
     yyparse();
 
@@ -604,13 +604,8 @@ int main(int argc, char *argv[]) {
                 printf("error:syntax:%d:%d: %s", yylval.token.line, yylval.token.column, yylval.token.valor);
             }
         }
-
-        getLineBuffer(yylval.token.line);
-        
-        printf("\n%s\n", lineBuffer);
-        for (int i = 0; i < localColumn - 1; i++) printf(" ");
-        printf("^");
-
+        printLineError(yylval.token.line, localColumn);
+    
     } else {
         printf("SUCCESSFUL COMPILATION.");
     }

@@ -25,6 +25,8 @@ typedef struct node {
 typedef struct param {
     int type;
     int pointer;
+    int line;
+    int column;
     char *identifier;
     struct param *next;
 } Param;
@@ -42,7 +44,7 @@ void setDimensions(void *node, void *dimensions);
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
 
-Param *createParam(int type, char *identifier, int pointer, void *next);
+Param *createParam(int type, char *identifier, int pointer, int line, int column, void *next);
 
 int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
 

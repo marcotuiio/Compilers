@@ -2,11 +2,11 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/T1/testes'
-BSD = '/home/marcotuiio/Compilers/T1/minhas_saidas'
-OFICIAL = '/home/marcotuiio/Compilers/T1/saidas_padrao'
-EXEC = 'portugol'
-src = '/home/marcotuiio/Compilers/T1'
+BED = '/home/marcotuiio/Compilers/Semantico/testes'
+BSD = '/home/marcotuiio/Compilers/Semantico/saidas'
+OFICIAL = '/home/marcotuiio/Compilers/Semantico/saidas_padrao'
+EXEC = 'semantico'
+src = '/home/marcotuiio/Compilers/Semantico'
 ini = datetime.datetime.now()
 
 os.chdir(src)

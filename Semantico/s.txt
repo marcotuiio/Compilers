@@ -1,27 +1,3 @@
-global: criando hash 0x4a95230
-criando hash 0x4aa6d60
-criando hash para parametros 0x4aa6d60
-Bloco Param 3- 0x4ab8610 0x4ab8610
-looking for a in 0x4aa6d60 
-inserting a in 0x4aa6d60 
-inserting f in 0x4a95230 
-prototipos 0x4ab8610 1
-free useless prototype hash 0x4aa6d60
-criando hash 0x4ab8b50
-criando hash para parametros 0x4ab8b50
-Bloco Param 3- 0x4aca400 0x4aca400
-looking for a in 0x4ab8b50 
-inserting a in 0x4ab8b50 
-Bloco Var 2- 0x4ab8b50 0x4a95230
-ID: i
-CURRENT_TYPE: 275
-pointerQntd: 0
-looking for i in 0x4ab8b50 
-inserting i in 0x4ab8b50 
-Funcao 1- 0x4ab8b50 0x4a95230
-ID: f
-CURRENT_TYPE: 277
-pointerQntd: 0
-looking for prototype f in 0x4a95230 
-encontrou f 1 
-error:semantic:3:6: conflicting types for 'f'
+error:semantic:3:13: argument 'a' does not match prototype
+void f(char a)
+            ^

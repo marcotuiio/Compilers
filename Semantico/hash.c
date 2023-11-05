@@ -1,11 +1,11 @@
 #include "hash.h"
+extern void printLineError(int line, int column);
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
-    printf("criando hash %p\n", hashTable);
     if (!hashTable) {
         printf("Erro ao alocar memoria para hash\n");
-        exit(-1);
+        exit(1);
     }
     return hashTable;
 }
@@ -18,7 +18,6 @@ int hash(char *value) {
 }
 
 void *insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer) {
-    printf("inserting %s in %p \n", value, hashTable);
     int index = hash(value);
     HashNode *aux = calloc(1, sizeof(HashNode));
     aux->typeVar = currentType;
@@ -66,7 +65,6 @@ void setDimensions(void *node, void *dimensions) {
 
 int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError) {
     if (!hashTable) return 0;
-    printf("looking for %s in %p \n", value, hashTable);
     int index = hash(value);
     int ocorrencias = 0;
     HashNode *head = (HashNode *)hashTable[index];
@@ -81,16 +79,18 @@ int lookForValueInHash(void **hashTable, char *value, int line, int column, int 
                 printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, value, head->line, head->column);
                 *semanticError = 1;
                 *textBefore = 1;
+                printLineError(line, column);
                 freeHash(hashTable);
-                exit(-1);
+                exit(1);
 
             } else {  // se for de tipo diferente
                 if (*textBefore) printf("\n");
                 printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, value, head->line, head->column);
                 *semanticError = 1;
                 *textBefore = 1;
+                printLineError(line, column);
                 freeHash(hashTable);
-                exit(-1);
+                exit(1);
             }
         }
         head = head->next;
@@ -98,24 +98,24 @@ int lookForValueInHash(void **hashTable, char *value, int line, int column, int 
     return 0;
 }
 
-Param *createParam(int type, char *identifier, int pointer, void *next) {
+Param *createParam(int type, char *identifier, int pointer, int line, int column, void *next) {
     Param *newParam = calloc(1, sizeof(Param));
     newParam->type = type;
     newParam->identifier = identifier;
     newParam->pointer = pointer;
+    newParam->line = line;
+    newParam->column = column;
     newParam->next = next;
     return newParam;
 }
 
 int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError) {
     if (!hashTable) return 0;
-    printf("looking for prototype %s in %p \n", value, hashTable);
     int index = hash(value);
     HashNode *head = (HashNode *)hashTable[index];
 
     while (head) {
         if (!strcmp(value, head->value) && head->prototype) {  // existe outro daquele identificador na hash
-            printf("encontrou %s %d \n", value, head->prototype);
             if (currentType == head->typeVar) {  // se for do mesmo tipo
                 Param *aux = head->param;
                 if (head->qntdParams != qntdParam) {
@@ -123,17 +123,19 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
                     printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, value);
                     *semanticError = 1;
                     *textBefore = 1;
+                    printLineError(line, column);
                     freeHash(hashTable);
-                    exit(-1);
+                    exit(1);
                 } else {
                     while (aux) {
                         if (aux->type != p->type) {
                             if (*textBefore) printf("\n");
-                            printf("error:semantic:%d:%d: argument '%s' does not match prototype", line, column, aux->identifier);
+                            printf("error:semantic:%d:%d: argument '%s' does not match prototype", line, aux->column, aux->identifier);
                             *semanticError = 1;
                             *textBefore = 1;
+                            printLineError(line, aux->column);
                             freeHash(hashTable);
-                            exit(-1);
+                            exit(1);
                         }
                         aux = aux->next;
                         p = p->next;
@@ -146,8 +148,9 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
                 printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, value);
                 *semanticError = 1;
                 *textBefore = 1;
+                printLineError(line, column);
                 freeHash(hashTable);
-                exit(-1);
+                exit(1);
             }
         }
         head = head->next;
@@ -156,7 +159,9 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
 }
 
 void freeHash(void **hashTable) {
+    if (!hashTable) return;
     for (int i = 0; i < HASH_SIZE; i++) {
+        if (!hashTable[i]) continue;
         HashNode *head = hashTable[i];
         while (head) {
             HashNode *aux = head->next;
@@ -176,4 +181,5 @@ void freeHash(void **hashTable) {
         hashTable[i] = NULL;
     }
     free(hashTable);
+    hashTable = NULL;
 }
