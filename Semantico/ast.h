@@ -26,6 +26,70 @@ enum expressionTypes {
     NUMEROS
 };
 
+// enum tokens {
+//     YYEMPTY = -2,
+//     YYEOF = 0,
+//     YYerror = 256,
+//     YYUNDEF = 257,
+//     MyEOF = 258,
+//     ERRO = 259,
+//     NUMBER_SIGN = 260,
+//     DEFINE = 261,
+//     L_CURLY_BRACKET = 262,
+//     R_CURLY_BRACKET = 263,
+//     L_PAREN = 264,
+//     R_PAREN = 265,
+//     L_SQUARE_BRACKET = 266,
+//     R_SQUARE_BRACKET = 267,
+//     COMMA = 268,
+//     SEMICOLON = 269,
+//     PLUS = 270,
+//     MINUS = 271,
+//     MULTIPLY = 272,
+//     DIVIDE = 273,
+//     REMAINDER = 274,
+//     INT = 275,
+//     CHAR = 276,
+//     VOID = 277,
+//     DO = 278,
+//     WHILE = 279,
+//     IF = 280,
+//     ELSE = 281,
+//     FOR = 282,
+//     PRINTF = 283,
+//     SCANF = 284,
+//     RETURN = 285,
+//     EXIT = 286,
+//     ADD_ASSIGN = 287,
+//     MINUS_ASSIGN = 288,
+//     ASSIGN = 289,
+//     EQUAL = 290,
+//     NOT_EQUAL = 291,
+//     LESS_THAN = 292,
+//     LESS_EQUAL = 293,
+//     GREATER_THAN = 294,
+//     GREATER_EQUAL = 295,
+//     BITWISE_AND = 296,
+//     BITWISE_OR = 297,
+//     BITWISE_XOR = 298,
+//     BITWISE_NOT = 299,
+//     LOGICAL_AND = 300,
+//     LOGICAL_OR = 301,
+//     NOT = 302,
+//     TERNARY_CONDITIONAL = 303,
+//     COLON = 304,
+//     R_SHIFT = 305,
+//     L_SHIFT = 306,
+//     INC = 307,
+//     DEC = 308,
+//     NUM_INT = 309,
+//     NUM_HEXA = 310,
+//     NUM_OCTAL = 311,
+//     STRING = 312,
+//     CHARACTER = 313,
+//     ID = 314
+// };
+
 typedef struct program {
     void **hashTable;  // declarations
     void *functionsList;
@@ -69,10 +133,10 @@ typedef struct command {
     // while, do while, for, if, if else, print, scan, return, exit
     // most of them have a condition, a execution and a next
     int type;
-    Expression *condition; 
+    Expression *condition;
     void *then;
     void *next;
-    
+
     // if else
     void *elseStatement;
 
@@ -93,7 +157,7 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
-Expression *createExpression(int type, int operator, void *aux, void *left, void *right);
+Expression *createExpression(int type, int operator, void * aux, void *left, void *right);
 
 Dimension *createDimension(Expression *size);
 

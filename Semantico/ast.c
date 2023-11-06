@@ -139,62 +139,184 @@ void evalExpression(void *node, void *expression) {
 void traverseASTExpression(Expression *expression) {
     if (expression == NULL) return;
 
-    printf("Type: %d\n", expression->type);
-
     switch (expression->type) {
         case ATRIBUICAO:
-        case NAOSEI:
+            printf("Type ATRIBUICAO\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
+        case NAOSEI: // Expressao COMMA ExpressaoAtribuicao
+            printf("Type NAOSEI\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case TERNARY:
+            printf("Type TERNARY\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case OR_LOGICO:
+            printf("Type OR_LOGICO\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case AND_LOGICO:
+            printf("Type AND_LOGICO\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case OR_BIT:
+            printf("Type OR_BIT\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case XOR_BIT:
+            printf("Type XOR_BIT\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case AND_BIT:
+            printf("Type AND_BIT\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case IGUALDADE:
+            printf("Type IGUALDADE\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case RELACIONAL:
+            printf("Type RELACIONAL\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case SHIFT:
+            printf("Type SHIFT\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case ADITIVIVA:
+            printf("Type ADITIVIVA\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case MULTIPLICATIVA:
+            printf("Type MULTIPLICATIVA\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case CASTING:
+            printf("Type CASTING\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case UNARIA:
+            printf("Type UNARIA\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case POS_FIXA:
+            printf("Type POS_FIXA\n");
+            printf("Operator: %d\n", expression->operator);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left); // 1
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right); // 2
+            break;
+
         case PRIMARIA:
+            printf("Type PRIMARIA\n");
+            printf("Operator: %d %s\n", expression->operator, (char*)expression->value);
+            printf("Left Operand:\n");
+            traverseASTExpression(expression->left);
+            printf("Right Operand:\n");
+            traverseASTExpression(expression->right);
+            break;
+
         case NUMEROS:
+            printf("Type NUMEROS\n");
+            printf("Value: %s\n", (char*)expression->value);
             break;
+
         default:
-            printf("Unknown expression type\n");
+            printf("Unknown expression type: %d \n", expression->type);
             break;
     }
 
-    // Recursivamente chame a função para as subexpressões
-    if (expression->left != NULL) {
-        printf("Left Operand:\n");
-        traverseASTExpression(expression->left);
-    }
-
-    if (expression->right != NULL) {
-        printf("Right Operand:\n");
-        traverseASTExpression(expression->right);
-    }
-
-    // Você pode adicionar mais casos aqui para tipos específicos, se necessário
 }
 
 void traverseASTCommand(Command *command) {
-    if (command == NULL) {
-        return;
-    }
-
-    // Imprima o tipo do comando
-    printf("Command Type: %d\n", command->type);
+    if (command == NULL) return;
 
     // Se o comando for um comando de expressão, percorra a expressão
     if (command->type == 9802) {
+        printf("Command de expressão\n");
         traverseASTExpression(command->condition);
     }
 
     // Se o comando for um comando IF ou ELSE, percorra as condições e blocos
     if (command->type == IF || command->type == ELSE) {
+        printf("Command de if ou else\n");
         traverseASTExpression(command->condition);
         traverseASTCommand(command->then);
         traverseASTCommand(command->elseStatement);
@@ -202,12 +324,14 @@ void traverseASTCommand(Command *command) {
 
     // Se o comando for um comando WHILE ou DO-WHILE, percorra a condição e o bloco
     if (command->type == WHILE || command->type == DO) {
+        printf("Command de while ou do-while\n");
         traverseASTExpression(command->condition);
         traverseASTCommand(command->then);
     }
 
     // Se o comando for um comando FOR, percorra a inicialização, condição, incremento e bloco
     if (command->type == FOR) {
+        printf("Command de for\n");
         traverseASTExpression(command->init);
         traverseASTExpression(command->condition);
         traverseASTExpression(command->increment);
@@ -216,11 +340,13 @@ void traverseASTCommand(Command *command) {
 
     // Se o comando for um comando PRINTF ou SCANF, percorra os argumentos
     if (command->type == PRINTF || command->type == SCANF) {
+        printf("Command de printf ou scanf\n");
         traverseASTExpression(command->auxPrint);
     }
 
     // Se o comando for um comando RETURN ou EXIT, percorra a expressão
     if (command->type == RETURN || command->type == EXIT) {
+        printf("Command de return ou exit\n");
         traverseASTExpression(command->condition);
     }
 

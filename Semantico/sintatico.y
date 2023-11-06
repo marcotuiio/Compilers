@@ -21,7 +21,6 @@ extern int wrongTokenColumn;
 int erroAux = 0;
 int semanticError = 0;
 int CURRENT_TYPE;
-int pointerQntd = 0;
 int paramsQntd = 0;
 int auxPosIncrement;
 
@@ -44,6 +43,7 @@ void printLineError(int line, int column);
     Expression *expr;
     Command *cmd;
     void *param;
+    int ptr;
     struct {
         char *valor;
         int column;
@@ -117,7 +117,7 @@ void printLineError(int line, int column);
 %type <token> Declaracoes
 %type <func> Funcao
 %type <token> DeclaraVariaveisFuncao
-%type <token> Ponteiro
+%type <ptr> Ponteiro
 %type <token> DeclaraVariaveis
 %type <token> BlocoVariaveis
 %type <dim> ExpressaoColchete
@@ -214,13 +214,12 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
 
         if (!lookForPrototypeInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $4, paramsQntd, &textBefore, &semanticError)) {
             if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
-                void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
+                void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $2);
                 setQntdParams(node, paramsQntd);
                 setParam(node, $4);
             } 
         }
-        Function *func = createFunction(currentHash, $1.type, pointerQntd, $3.valor, $7, NULL);
-        pointerQntd = 0;
+        Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
         paramsQntd = 0;
         currentHash = NULL;
         $$ = func;
@@ -229,8 +228,11 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
 DeclaraVariaveisFuncao: DeclaraVariaveis DeclaraVariaveisFuncao { /* descendo para colocar na hash da funcao */ }
     | { } ;
 
-Ponteiro: MULTIPLY Ponteiro { pointerQntd++; }
-    | { } ; 
+Ponteiro: MULTIPLY Ponteiro {
+        int ptr = $2 + 1;
+        $$ = ptr;
+    }
+    | { $$ = 0; } ; 
 
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { 
         CURRENT_TYPE = $1.type;
@@ -241,7 +243,8 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             void **hash = createHash();
             currentHash = hash;
         }
-        if (CURRENT_TYPE == 277 && pointerQntd == 0) { // variables of type void not allowed
+
+        if (CURRENT_TYPE == 277 && $1 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: variable '%s' declared void", $2.line, $2.column, $2.valor);
             printLineError($2.line, $2.column);
@@ -251,12 +254,11 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         }
         // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
-            void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, pointerQntd);
+            void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
             setDimensions(node, $3);
             // evalExpression(node, $4);
             setAssign(node, $4);
         }
-        pointerQntd = 0;
     } ;
 
 ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete {
@@ -278,12 +280,11 @@ RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
 
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
         // colocar na hash global e ver se bate com as funcoes ?
-        void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
+        void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $2);
         setPrototype(node);
         setQntdParams(node, paramsQntd);
         setParam(node, $4);
         prototypeParam = NULL;
-        pointerQntd = 0;
         paramsQntd = 0;
         free(currentHash);
         currentHash = NULL;
@@ -299,7 +300,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             currentHash = hash;
         }
 
-        if ($1.type == 277 && pointerQntd == 0) { // variables of type void not allowed
+        if ($1.type == 277 && $2 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: variable '%s' declared void", $3.line, $3.column, $3.valor);
             printLineError($3.line, $3.column);
@@ -308,16 +309,15 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             exit(1);
         }
         paramsQntd++;
-        Param *aux = createParam($1.type, $3.valor, pointerQntd, $3.line, $3.column+1, $5);
+        Param *aux = createParam($1.type, $3.valor, $2, $3.line, $3.column+1, $5);
         if (!prototypeParam) prototypeParam = aux;
 
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
-            void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, pointerQntd);
+            void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, $2);
             setQntdParams(node, paramsQntd);
             setDimensions(node, $4);
         }
 
-        pointerQntd = 0;
         $$ = aux;
     }
     | { $$ = NULL; } ;
@@ -370,11 +370,11 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
         $$ = aux;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
-        Command *aux = createPrintStatement(yylval.token.valor, $4, NULL);
+        Command *aux = createPrintStatement($3.valor, $4, NULL);
         $$ = aux;
     }
     | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON {
-        Command *aux = createScanStatement(yylval.token.valor, yylval.token.valor, NULL);
+        Command *aux = createScanStatement($6.valor, $3.valor, NULL);
         $$ = aux;
     }
     | EXIT L_PAREN Expressao R_PAREN SEMICOLON {
@@ -524,8 +524,7 @@ ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
         Expression *aux = createExpression(CASTING, $2.type, NULL, NULL, $5);
-        aux->pointer = pointerQntd;
-        pointerQntd = 0;
+        aux->pointer = $3;
     } ;
 
 ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
