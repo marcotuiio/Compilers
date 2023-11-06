@@ -3,6 +3,7 @@
         "istream": "cpp",
         "stdio.h": "c",
         "portugol_lexico.h": "c",
-        "ast.h": "c"
+        "ast.h": "c",
+        "sintatico.tab.h": "c"
     }
 }

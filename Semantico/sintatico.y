@@ -20,7 +20,7 @@ extern int wrongTokenColumn;
 
 int erroAux = 0;
 int semanticError = 0;
-int CURRENT_TYPE;
+int CURRENT_TYPE, AUX_CURRENT_TYPE = -1;
 int paramsQntd = 0;
 int auxPosIncrement;
 
@@ -327,15 +327,24 @@ RetornaParametros: COMMA BlocoParametros {
     }
     | { $$ = NULL; } ;
 
-Tipo: INT { 
+Tipo: INT {
+        if (AUX_CURRENT_TYPE == -1) {
+            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        }
         CURRENT_TYPE = INT; 
         $$ = yylval.token; 
     }
     | CHAR { 
+        if (AUX_CURRENT_TYPE == -1) {
+            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        }
         CURRENT_TYPE = CHAR;
         $$ = yylval.token;
     }
-    | VOID { 
+    | VOID {
+        if (AUX_CURRENT_TYPE == -1) {
+            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        }
         CURRENT_TYPE = VOID;
         $$ = yylval.token;
     } ;
@@ -407,7 +416,7 @@ Expressao: ExpressaoAtribuicao {
         $$ = $1;
     }
     | Expressao COMMA ExpressaoAtribuicao { 
-        Expression *aux = createExpression(NAOSEI, COMMA, NULL, $1, $3);
+        Expression *aux = createExpression(LISTA_EXP, COMMA, NULL, $1, $3);
         $$ = aux;
     } ;
 
@@ -524,6 +533,8 @@ ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
         Expression *aux = createExpression(CASTING, $2.type, NULL, NULL, $5);
+        CURRENT_TYPE = AUX_CURRENT_TYPE;
+        AUX_CURRENT_TYPE = -1;
         aux->pointer = $3;
     } ;
 
@@ -546,7 +557,7 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
 
 ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
     | ExpressaoPosFixa AuxPosFixa {
-        $1->next = $2;
+        $1->right = $2;
         $1->posIncrement = auxPosIncrement;
         auxPosIncrement = 0;
         $$ = $1; 
@@ -558,13 +569,13 @@ AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { $$ = $2; }
     | DEC { auxPosIncrement = DEC; } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
-        $1->next = $2; 
+        $1->right = $2; 
         $$ = $1;
     }
     | { $$ = NULL; } ;
 
 AuxPula: COMMA ExpressaoAtribuicao AuxPula {
-        $2->next = $3;
+        $2->right = $3;
         $$ = $2;
     }
     | { $$ = NULL; } ;
@@ -613,7 +624,7 @@ void printLineError(int line, int column) {
 
 int main(int argc, char *argv[]) {
     yyparse();
-    traverseAST(AST);
+
     if (textBefore) printf("\n");
     if (erroAux) {
         int localColumn = yylval.token.column;
@@ -629,14 +640,11 @@ int main(int argc, char *argv[]) {
             }
         }
         printLineError(yylval.token.line, localColumn);
-        freeAST(AST);
     
     } else {
-        int resultado = traverseAST(AST);
-        if (resultado != 666) {
-            printf("SUCCESSFUL COMPILATION.");
-            freeAST(AST);
-        }
+        traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
+        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
     }
+    freeAST(AST);   
     return 0;
 }

@@ -7,7 +7,7 @@
 
 enum expressionTypes {
     ATRIBUICAO = 1001,
-    NAOSEI,
+    LISTA_EXP,
     TERNARY,
     OR_LOGICO,
     AND_LOGICO,
@@ -87,7 +87,8 @@ enum expressionTypes {
 //     NUM_OCTAL = 311,
 //     STRING = 312,
 //     CHARACTER = 313,
-//     ID = 314
+//     ID = 314,
+//     COMMAND_EXP = 9802
 // };
 
 typedef struct program {
@@ -114,8 +115,7 @@ typedef struct expression {
     int posIncrement;
     int unario;
     int assign;
-    struct expression *dimension;
-    void *next;
+    void *dimension;  // Dimension *dimension
     void *extra;
 
     struct expression *ternary;
@@ -157,7 +157,7 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
-Expression *createExpression(int type, int operator, void * aux, void *left, void *right);
+Expression *createExpression(int type, int operator, void *value, void *left, void *right);
 
 Dimension *createDimension(Expression *size);
 
@@ -181,7 +181,7 @@ Command *createExitStatement(Expression *expression, void *next);
 
 Command *createCommandExpression(Expression *expression, void *next);
 
-void evalExpression(void *node, void *expression);
+int evalExpression(Expression *expression);
 
 int traverseAST(Program *program);
 
