@@ -5,7 +5,26 @@
 #include <stdlib.h>
 // #include "sintatico.tab.h"
 
-#define CAST 1001
+enum expressionTypes {
+    ATRIBUICAO = 1001,
+    NAOSEI,
+    TERNARY,
+    OR_LOGICO,
+    AND_LOGICO,
+    OR_BIT,
+    XOR_BIT,
+    AND_BIT,
+    IGUALDADE,
+    RELACIONAL,
+    SHIFT,
+    ADITIVIVA,
+    MULTIPLICATIVA,
+    CASTING,
+    UNARIA,
+    POS_FIXA,
+    PRIMARIA,
+    NUMEROS
+};
 
 typedef struct program {
     void **hashTable;  // declarations
@@ -18,7 +37,6 @@ typedef struct function {
     int returnType;
     int pointer;
     char *name;
-    void *declarations;
     void *commandList;
     void *next;
 } Function;
@@ -26,6 +44,7 @@ typedef struct function {
 typedef struct expression {
     int type;
     int pointer;
+    int operator;
     void *value;
     int preIncrement;
     int posIncrement;
@@ -74,7 +93,7 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
-Expression *createExpression(int type, void *aux, void *left, void *right);
+Expression *createExpression(int type, int operator, void *aux, void *left, void *right);
 
 Dimension *createDimension(Expression *size);
 
@@ -97,5 +116,11 @@ Command *createReturnStatement(Expression *expression, void *next);
 Command *createExitStatement(Expression *expression, void *next);
 
 Command *createCommandExpression(Expression *expression, void *next);
+
+void evalExpression(void *node, void *expression);
+
+int traverseAST(Program *program);
+
+void freeAST(Program *program);
 
 #endif

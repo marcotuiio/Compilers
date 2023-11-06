@@ -77,8 +77,6 @@ int lookForValueInHash(void **hashTable, char *value, int line, int column, int 
             if (currentType == head->typeVar) {  // se for do mesmo tipo
                 if (*textBefore) printf("\n");
                 printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, value, head->line, head->column);
-                *semanticError = 1;
-                *textBefore = 1;
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
@@ -86,8 +84,6 @@ int lookForValueInHash(void **hashTable, char *value, int line, int column, int 
             } else {  // se for de tipo diferente
                 if (*textBefore) printf("\n");
                 printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, value, head->line, head->column);
-                *semanticError = 1;
-                *textBefore = 1;
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
@@ -121,8 +117,6 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
                 if (head->qntdParams != qntdParam) {
                     if (*textBefore) printf("\n");
                     printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, value);
-                    *semanticError = 1;
-                    *textBefore = 1;
                     printLineError(line, column);
                     freeHash(hashTable);
                     exit(1);
@@ -131,8 +125,6 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
                         if (aux->type != p->type) {
                             if (*textBefore) printf("\n");
                             printf("error:semantic:%d:%d: argument '%s' does not match prototype", line, aux->column, aux->identifier);
-                            *semanticError = 1;
-                            *textBefore = 1;
                             printLineError(line, aux->column);
                             freeHash(hashTable);
                             exit(1);
@@ -146,8 +138,6 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
             } else {  // se for de tipo diferente
                 if (*textBefore) printf("\n");
                 printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, value);
-                *semanticError = 1;
-                *textBefore = 1;
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
@@ -156,6 +146,60 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
         head = head->next;
     }
     return 0;
+}
+
+void *getIdentifierNode(void **hashTable, char *id) {
+    int index = hash(id);
+    HashNode *head = (HashNode *) hashTable[index];
+    while (head) {
+        if (!strcmp(id, head->value)) return head;
+        head = head->next;
+    }
+    return NULL;
+}
+
+char *getValue(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->value;
+}
+
+int getType(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->typeVar;
+}
+
+int getPointer(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->pointer;
+}
+int getLine(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->line;
+}
+
+int getColumn(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->column;
+}
+
+void *getAssign(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->assign;
+}
+
+void *getDimensions(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->dimensions;
+}
+
+int getQntdParams(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->qntdParams;
+}
+
+void *getParam(void *node) {
+    HashNode *aux = (HashNode *)node;
+    return aux->param;
 }
 
 void freeHash(void **hashTable) {

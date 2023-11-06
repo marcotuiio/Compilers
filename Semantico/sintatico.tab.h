@@ -119,7 +119,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 38 "sintatico.y"
+#line 40 "sintatico.y"
 
     Program *prog;
     Function *func;

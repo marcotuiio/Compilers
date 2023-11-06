@@ -1,3 +1,4 @@
-error:semantic:3:13: argument 'a' does not match prototype
-void f(char a)
-            ^
+AAA 0
+error:semantic:22:11: variable 'v' declared void
+    void* v = (void*) "DDominar o mundo\n" + 1;
+          ^
