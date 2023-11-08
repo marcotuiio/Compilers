@@ -1,0 +1,3 @@
+type: 1017
+numeros
+SUCCESSFUL COMPILATION.

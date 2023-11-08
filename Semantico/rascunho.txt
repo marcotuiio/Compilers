@@ -1,0 +1,167 @@
+// void traverseASTExpression(Expression *expression) {
+//     if (expression == NULL) return;
+
+//     switch (expression->type) {
+//         case ATRIBUICAO:
+//             printf("Type ATRIBUICAO\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case LISTA_EXP:  // Expressao COMMA ExpressaoAtribuicao
+//             printf("Type LISTA_EXP\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case TERNARY:
+//             printf("Type TERNARY\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case OR_LOGICO:
+//             printf("Type OR_LOGICO\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case AND_LOGICO:
+//             printf("Type AND_LOGICO\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case OR_BIT:
+//             printf("Type OR_BIT\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case XOR_BIT:
+//             printf("Type XOR_BIT\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case AND_BIT:
+//             printf("Type AND_BIT\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case IGUALDADE:
+//             printf("Type IGUALDADE\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case RELACIONAL:
+//             printf("Type RELACIONAL\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case SHIFT:
+//             printf("Type SHIFT\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case ADITIVIVA:
+//             printf("Type ADITIVIVA\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case MULTIPLICATIVA:
+//             printf("Type MULTIPLICATIVA\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case CASTING:
+//             printf("Type CASTING\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case UNARIA:
+//             printf("Type UNARIA\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case POS_FIXA:
+//             printf("Type POS_FIXA\n");
+//             printf("Operator: %d\n", expression->operator);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);  // 1
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);  // 2
+//             break;
+
+//         case PRIMARIA:
+//             printf("Type PRIMARIA\n");
+//             printf("Operator: %d %s\n", expression->operator,(char *) expression->value);
+//             printf("Left Operand:\n");
+//             traverseASTExpression(expression->left);
+//             printf("Right Operand:\n");
+//             traverseASTExpression(expression->right);
+//             break;
+
+//         case NUMEROS:
+//             printf("Type NUMEROS\n");
+//             printf("Value: %s %d\n", (char *)expression->value, (int)expression->posIncrement);
+//             break;
+
+//         default:
+//             printf("Unknown expression type: %p \n", expression);
+//             break;
+//     }
+// }

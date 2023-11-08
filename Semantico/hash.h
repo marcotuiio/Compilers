@@ -48,16 +48,8 @@ Param *createParam(int type, char *identifier, int pointer, int line, int column
 
 int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
 
-void *getIdentifierNode(void **hashTable, char *id);
-char *getValue(void *node);
-int getType(void *node);
-int getPointer(void *node);
-int getLine(void *node);
-int getColumn(void *node);
-void *getAssign(void *node);
-void *getDimensions(void *node);
-int getQntdParams(void *node);
-void *getParam(void *node);
+HashNode *getIdentifierNode(void **hashTable, char *id);
+char *getExactType(int type, int pointer);
 
 void freeHash(void **hashTable);
 

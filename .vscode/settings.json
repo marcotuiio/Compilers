@@ -4,6 +4,12 @@
         "stdio.h": "c",
         "portugol_lexico.h": "c",
         "ast.h": "c",
-        "sintatico.tab.h": "c"
+        "sintatico.tab.h": "c",
+        "array": "c",
+        "compare": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

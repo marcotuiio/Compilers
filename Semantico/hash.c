@@ -148,7 +148,7 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
     return 0;
 }
 
-void *getIdentifierNode(void **hashTable, char *id) {
+HashNode *getIdentifierNode(void **hashTable, char *id) {
     int index = hash(id);
     HashNode *head = (HashNode *) hashTable[index];
     while (head) {
@@ -158,48 +158,25 @@ void *getIdentifierNode(void **hashTable, char *id) {
     return NULL;
 }
 
-char *getValue(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->value;
-}
-
-int getType(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->typeVar;
-}
-
-int getPointer(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->pointer;
-}
-int getLine(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->line;
-}
-
-int getColumn(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->column;
-}
-
-void *getAssign(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->assign;
-}
-
-void *getDimensions(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->dimensions;
-}
-
-int getQntdParams(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->qntdParams;
-}
-
-void *getParam(void *node) {
-    HashNode *aux = (HashNode *)node;
-    return aux->param;
+char *getExactType(int type, int pointer) {
+    char newType[50];
+    switch (type) {
+        case 275:
+            strcpy(newType, "int");
+            break;
+        case 276:
+            strcpy(newType, "char");
+            break;
+        case 277:
+            strcpy(newType, "void");
+            break;
+        default:
+            break;
+    }
+    for (int i = 0; i < pointer; i++) strcat(newType, "*");
+    char *aux = calloc(strlen(newType) + 1, sizeof(char));
+    strcpy(aux, newType);
+    return aux;
 }
 
 void freeHash(void **hashTable) {
@@ -217,8 +194,8 @@ void freeHash(void **hashTable) {
                     p = auxP;
                 }
             }
-            if (head->value)
-                free(head->value);
+            if (head->value) free(head->value);
+            head->value = NULL;
             free(head);
             head = aux;
         }

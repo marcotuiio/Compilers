@@ -14,7 +14,6 @@ enum expressionTypes {
     OR_BIT,
     XOR_BIT,
     AND_BIT,
-    IGUALDADE,
     RELACIONAL,
     SHIFT,
     ADITIVIVA,
@@ -106,27 +105,35 @@ typedef struct function {
     void *next;
 } Function;
 
+typedef struct auxtoken {
+    char *valor;
+    int column;
+    int line;
+    int type;
+    int pointer;
+} AuxToken;
+
+typedef struct dimension {
+    int size;
+    struct dimension *next;
+} Dimension;
+
 typedef struct expression {
     int type;
     int pointer;
     int operator;
-    void *value;
+    AuxToken *value;
     int preIncrement;
     int posIncrement;
     int unario;
     int assign;
-    void *dimension;  // Dimension *dimension
+    Dimension *dimension;
     void *extra;
 
     struct expression *ternary;
     struct expression *left;
     struct expression *right;
 } Expression;
-
-typedef struct dimension {
-    Expression *size;
-    struct dimension *next;
-} Dimension;
 
 typedef struct command {
     // generic
@@ -153,13 +160,21 @@ typedef struct command {
     char *format;
 } Command;
 
+typedef struct resultExpression {
+    int type;
+    int pointer;
+    int value;
+} ResultExpression;
+
 Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
-Expression *createExpression(int type, int operator, void *value, void *left, void *right);
+AuxToken *createAuxToken(char *valor, int line, int column, int type);
 
-Dimension *createDimension(Expression *size);
+Dimension *createDimension(int size);
+
+Expression *createExpression(int type, int operator, void *value, void *left, void *right);
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next);
 
@@ -181,7 +196,9 @@ Command *createExitStatement(Expression *expression, void *next);
 
 Command *createCommandExpression(Expression *expression, void *next);
 
-int evalExpression(Expression *expression);
+ResultExpression *createResultExpression(int type, int pointer, int value);
+
+ResultExpression *evalExpression(Expression *expression, void **globalHash, void **localHash, Program *program);
 
 int traverseAST(Program *program);
 

@@ -23,6 +23,9 @@ int semanticError = 0;
 int CURRENT_TYPE, AUX_CURRENT_TYPE = -1;
 int paramsQntd = 0;
 int auxPosIncrement;
+int dimensionError = 0;
+char bufferAux[128];
+char printDimen[1024];
 
 void *prototypeParam = NULL;
 
@@ -55,53 +58,53 @@ void printLineError(int line, int column);
 %token MyEOF
 %token ERRO
 
-%token NUMBER_SIGN
-%token DEFINE
-%token L_CURLY_BRACKET
-%token R_CURLY_BRACKET
-%token L_PAREN
-%token R_PAREN
-%token L_SQUARE_BRACKET
-%token R_SQUARE_BRACKET
-%token COMMA
-%token SEMICOLON
-%token PLUS
-%token MINUS
-%token MULTIPLY
-%token DIVIDE
-%token REMAINDER
-%token INT
-%token CHAR
-%token VOID
-%token DO
-%token WHILE
-%token IF
-%token ELSE
-%token FOR
-%token PRINTF
-%token SCANF
-%token RETURN
-%token EXIT
-%token ADD_ASSIGN
-%token MINUS_ASSIGN
-%token ASSIGN
-%token EQUAL
-%token NOT_EQUAL
-%token LESS_THAN
-%token LESS_EQUAL
-%token GREATER_THAN
-%token GREATER_EQUAL
-%token BITWISE_AND
-%token BITWISE_OR
-%token BITWISE_XOR
-%token BITWISE_NOT
-%token LOGICAL_AND
-%token LOGICAL_OR
-%token NOT
-%token TERNARY_CONDITIONAL
-%token COLON
-%token R_SHIFT
-%token L_SHIFT
+%token <token> NUMBER_SIGN
+%token <token> DEFINE
+%token <token> L_CURLY_BRACKET
+%token <token> R_CURLY_BRACKET
+%token <token> L_PAREN
+%token <token> R_PAREN
+%token <token> L_SQUARE_BRACKET
+%token <token> R_SQUARE_BRACKET
+%token <token> COMMA
+%token <token> SEMICOLON
+%token <token> PLUS
+%token <token> MINUS
+%token <token> MULTIPLY
+%token <token> DIVIDE
+%token <token> REMAINDER
+%token <token> INT
+%token <token> CHAR
+%token <token> VOID
+%token <token> DO
+%token <token> WHILE
+%token <token> IF
+%token <token> ELSE
+%token <token> FOR
+%token <token> PRINTF
+%token <token> SCANF
+%token <token> RETURN
+%token <token> EXIT
+%token <token> ADD_ASSIGN
+%token <token> MINUS_ASSIGN
+%token <token> ASSIGN
+%token <token> EQUAL
+%token <token> NOT_EQUAL
+%token <token> LESS_THAN
+%token <token> LESS_EQUAL
+%token <token> GREATER_THAN
+%token <token> GREATER_EQUAL
+%token <token> BITWISE_AND
+%token <token> BITWISE_OR
+%token <token> BITWISE_XOR
+%token <token> BITWISE_NOT
+%token <token> LOGICAL_AND
+%token <token> LOGICAL_OR
+%token <token> NOT
+%token <token> TERNARY_CONDITIONAL
+%token <token> COLON
+%token <token> R_SHIFT
+%token <token> L_SHIFT
 %token <token> INC
 %token <token> DEC
 %token <token> NUM_INT
@@ -211,13 +214,20 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
         // vendo se a funcao ja foi declarada
-
         if (!lookForPrototypeInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $4, paramsQntd, &textBefore, &semanticError)) {
             if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
                 void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $2);
                 setQntdParams(node, paramsQntd);
                 setParam(node, $4);
             } 
+        }
+        if (strlen(printDimen) > 0) {
+            printf("%s", printDimen);
+            printLineError($6.line, $6.column);
+            if (currentHash) freeHash(currentHash);
+            if (globalHash) freeHash(globalHash);
+            traverseAST(AST);
+            exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
         paramsQntd = 0;
@@ -236,6 +246,7 @@ Ponteiro: MULTIPLY Ponteiro {
 
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { 
         CURRENT_TYPE = $1.type;
+        $$ = $2;
     } ;
 
 BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
@@ -249,21 +260,53 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             printf("error:semantic:%d:%d: variable '%s' declared void", $2.line, $2.column, $2.valor);
             printLineError($2.line, $2.column);
             if (currentHash) freeHash(currentHash);
+            if (globalHash) freeHash(globalHash);
             traverseAST(AST);
             exit(1);
         }
         // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
+            
+            if (dimensionError != 0) {
+                if (textBefore) printf("\n");
+                strcpy(printDimen, "error:semantic:");
+                for (int i = 0; i < 128; i++) bufferAux[i] = '\0';
+                sprintf(bufferAux, "%d", $2.line);
+                strcat(printDimen, bufferAux);
+                strcat(printDimen, ":");
+                for (int i = 0; i < 128; i++) bufferAux[i] = '\0';
+                sprintf(bufferAux, "%d", $2.column);
+                strcat(printDimen, bufferAux);
+                strcat(printDimen, ": size of array '");
+                strcat(printDimen, $2.valor);
+                if (dimensionError == 1) {
+                    strcat(printDimen, "' is zero");
+                } else if (dimensionError == 2) {
+                    strcat(printDimen, "' is negative");
+                }
+                $$ = $2;
+            }
+
             setDimensions(node, $3);
-            // evalExpression(node, $4);
             setAssign(node, $4);
         }
     } ;
 
 ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete {
         // nova struct para dimensoes?
-        Dimension *aux = createDimension($2);
+
+        ResultExpression *result = NULL;
+        if ($2) result = evalExpression($2, globalHash, currentHash, NULL);
+        if (result) {
+            if (result->value == 0) {
+                dimensionError = 1;
+            } else if (result->value < 0) {
+                dimensionError = 2;
+            }   
+        }
+
+        Dimension *aux = createDimension(result->value);
         aux->next = $4;
         $$ = aux;
     }
@@ -315,6 +358,25 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, $2);
             setQntdParams(node, paramsQntd);
+            
+            if (dimensionError != 0) {
+                if (textBefore) printf("\n");
+                strcpy(printDimen, "error:semantic:");
+                for (int i = 0; i < 128; i++) bufferAux[i] = '\0';
+                sprintf(bufferAux, "%d", $3.line);
+                strcat(printDimen, bufferAux);
+                strcat(printDimen, ":");
+                for (int i = 0; i < 128; i++) bufferAux[i] = '\0';
+                sprintf(bufferAux, "%d", $3.column);
+                strcat(printDimen, bufferAux);
+                strcat(printDimen, ": size of array '");
+                strcat(printDimen, $3.valor);
+                if (dimensionError == 1) {
+                    strcat(printDimen, "' is zero");
+                } else if (dimensionError == 2) {
+                    strcat(printDimen, "' is negative");
+                }
+            }
             setDimensions(node, $4);
         }
 
@@ -415,8 +477,9 @@ AuxPrint: COMMA Expressao { $$ = $2; }
 Expressao: ExpressaoAtribuicao {
         $$ = $1;
     }
-    | Expressao COMMA ExpressaoAtribuicao { 
-        Expression *aux = createExpression(LISTA_EXP, COMMA, NULL, $1, $3);
+    | Expressao COMMA ExpressaoAtribuicao {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, COMMA);
+        Expression *aux = createExpression(LISTA_EXP, COMMA, auxToken, $1, $3);
         $$ = aux;
     } ;
 
@@ -442,7 +505,8 @@ OpUnario: BITWISE_AND { $$ = yylval.token; }
 
 ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
     | ExpressaoUnaria OpAtrib ExpressaoAtribuicao {
-        Expression *aux = createExpression(ATRIBUICAO, $2.type, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        Expression *aux = createExpression(ATRIBUICAO, $2.type, auxToken, $1, $3);
         $$ = aux;
     } ;
 
@@ -452,87 +516,103 @@ ExpressaoCondicional: ExpressaoOrLogico AuxCondicional {
     }
 
 AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional {
-        Expression *aux = createExpression(TERNARY, TERNARY_CONDITIONAL, NULL, $2, $4);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, $1.type);
+        Expression *aux = createExpression(TERNARY, TERNARY_CONDITIONAL, auxToken, $2, $4);
         $$ = aux;
     }
     | { $$ = NULL; } ;
 
 ExpressaoOrLogico: ExpressaoAndLogico { $$ = $1; }
-    | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico { 
-        Expression *aux = createExpression(OR_LOGICO, LOGICAL_OR, NULL, $1, $3);
+    | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, LOGICAL_OR);
+        Expression *aux = createExpression(OR_LOGICO, LOGICAL_OR, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoAndLogico: ExpressaoOr { $$ = $1; }
     | ExpressaoAndLogico LOGICAL_AND ExpressaoOr {
-        Expression *aux = createExpression(AND_LOGICO, LOGICAL_AND, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, LOGICAL_AND);
+        Expression *aux = createExpression(AND_LOGICO, LOGICAL_AND, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoOr: ExpressaoXor { $$ = $1;}
     | ExpressaoOr BITWISE_OR ExpressaoXor {
-        Expression *aux = createExpression(OR_BIT, BITWISE_OR, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, BITWISE_OR);
+        Expression *aux = createExpression(OR_BIT, BITWISE_OR, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoXor: ExpressaoAnd { $$ = $1; }
     | ExpressaoXor BITWISE_XOR ExpressaoAnd {
-        Expression *aux = createExpression(XOR_BIT, BITWISE_XOR, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, BITWISE_XOR);
+        Expression *aux = createExpression(XOR_BIT, BITWISE_XOR, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoAnd: ExpressaoIgual { $$ = $1; }
     | ExpressaoAnd BITWISE_AND ExpressaoIgual {
-        Expression *aux = createExpression(AND_BIT, BITWISE_AND, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, BITWISE_AND);
+        Expression *aux = createExpression(AND_BIT, BITWISE_AND, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoIgual: ExpressaoRelacional { $$ = $1; }
     | ExpressaoIgual EQUAL ExpressaoRelacional {
-        Expression *aux = createExpression(IGUALDADE, EQUAL, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, EQUAL);
+        Expression *aux = createExpression(RELACIONAL, EQUAL, auxToken, $1, $3);
         $$ = aux;
     }
-    | ExpressaoIgual NOT_EQUAL ExpressaoRelacional { 
-        Expression *aux = createExpression(IGUALDADE, NOT_EQUAL, NULL, $1, $3);
+    | ExpressaoIgual NOT_EQUAL ExpressaoRelacional {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, NOT_EQUAL);
+        Expression *aux = createExpression(RELACIONAL, NOT_EQUAL, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoRelacional: ExpressaoShift { $$ = $1; }
-    | ExpressaoRelacional OpRel ExpressaoShift { 
-        Expression *aux = createExpression(RELACIONAL, $2.type, NULL, $1, $3);
+    | ExpressaoRelacional OpRel ExpressaoShift {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        Expression *aux = createExpression(RELACIONAL, $2.type, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoShift: ExpressaoAditiva { $$ = $1; }
     | ExpressaoShift R_SHIFT ExpressaoAditiva {
-        Expression *aux = createExpression(SHIFT, R_SHIFT, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, R_SHIFT);
+        Expression *aux = createExpression(SHIFT, R_SHIFT, auxToken, $1, $3);
         $$ = aux;
     }
     | ExpressaoShift L_SHIFT ExpressaoAditiva {
-        Expression *aux = createExpression(SHIFT, L_SHIFT, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_SHIFT);
+        Expression *aux = createExpression(SHIFT, L_SHIFT, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoAditiva: ExpressaoMultiplicativa { $$ = $1; }
     | ExpressaoAditiva PLUS ExpressaoMultiplicativa { 
-        Expression *aux = createExpression(ADITIVIVA, PLUS, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, PLUS);
+        Expression *aux = createExpression(ADITIVIVA, PLUS, auxToken, $1, $3);
         $$ = aux;
     }   
     | ExpressaoAditiva MINUS ExpressaoMultiplicativa { 
-        Expression *aux = createExpression(ADITIVIVA, MINUS, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, MINUS);
+        Expression *aux = createExpression(ADITIVIVA, MINUS, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
     | ExpressaoMultiplicativa OpMult ExpressaoCast {
-        Expression *aux = createExpression(MULTIPLICATIVA, $2.type, NULL, $1, $3);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        Expression *aux = createExpression(MULTIPLICATIVA, $2.type, auxToken, $1, $3);
         $$ = aux;
     } ;
 
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
-        Expression *aux = createExpression(CASTING, $2.type, NULL, NULL, $5);
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        auxToken->pointer = $3;
+        Expression *aux = createExpression(CASTING, $2.type, auxToken, NULL, $5);
         CURRENT_TYPE = AUX_CURRENT_TYPE;
         AUX_CURRENT_TYPE = -1;
         aux->pointer = $3;
@@ -540,19 +620,22 @@ ExpressaoCast: ExpressaoUnaria { $$ = $1; }
 
 ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     | INC ExpressaoUnaria {
-        Expression *aux = createExpression(UNARIA, INC, NULL, $2, NULL);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, INC);
+        Expression *aux = createExpression(UNARIA, INC, auxToken, $2, NULL);
         $2->preIncrement = INC; 
         $$ = aux;
     }
     | DEC ExpressaoUnaria {
-        Expression *aux = createExpression(UNARIA, DEC, NULL, $2, NULL);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
+        Expression *aux = createExpression(UNARIA, DEC, auxToken, $2, NULL);
         $2->preIncrement = DEC; 
         $$ = aux;
     }
     | OpUnario ExpressaoCast {
-        // Expression *aux = createExpression(UNARIA, $1.type, NULL, $2, NULL);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, $1.type);
+        Expression *aux = createExpression(UNARIA, $1.type, auxToken, $2, NULL);
         $2->unario = $1.type; 
-        $$ = $2;
+        $$ = aux;
     } ;
 
 ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
@@ -580,17 +663,20 @@ AuxPula: COMMA ExpressaoAtribuicao AuxPula {
     }
     | { $$ = NULL; } ;
 
-ExpressaoPrimaria: ID { 
-        Expression *aux = createExpression(PRIMARIA, ID, $1.valor, NULL, NULL);
+ExpressaoPrimaria: ID {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, ID);
+        Expression *aux = createExpression(PRIMARIA, ID, auxToken, NULL, NULL);
         $$ = aux;
     }
     | Numero { $$ = $1; }
-    | CHARACTER { 
-        Expression *aux = createExpression(PRIMARIA, CHARACTER, $1.valor, NULL, NULL);
+    | CHARACTER {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, CHARACTER);
+        Expression *aux = createExpression(PRIMARIA, CHARACTER, auxToken, NULL, NULL);
         $$ = aux;
     }
-    | STRING { 
-        Expression *aux = createExpression(PRIMARIA, STRING, $1.valor, NULL, NULL);
+    | STRING {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, STRING);
+        Expression *aux = createExpression(PRIMARIA, STRING, auxToken, NULL, NULL);
         $$ = aux;
     }
     | L_PAREN Expressao R_PAREN {
@@ -598,15 +684,18 @@ ExpressaoPrimaria: ID {
     } ;
 
 Numero: NUM_INT {
-        Expression *aux = createExpression(NUMEROS, NUM_INT, $1.valor, NULL, NULL);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, NUM_INT);
+        Expression *aux = createExpression(NUMEROS, NUM_INT, auxToken, NULL, NULL);
         $$ = aux;
     }
-    | NUM_HEXA { 
-        Expression *aux = createExpression(NUMEROS, NUM_HEXA, $1.valor, NULL, NULL);
+    | NUM_HEXA {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, NUM_HEXA);
+        Expression *aux = createExpression(NUMEROS, NUM_HEXA, auxToken, NULL, NULL);
         $$ = aux;
     }
     | NUM_OCTAL {
-        Expression *aux = createExpression(NUMEROS, NUM_OCTAL, $1.valor, NULL, NULL);
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, NUM_OCTAL);
+        Expression *aux = createExpression(NUMEROS, NUM_OCTAL, auxToken, NULL, NULL);
         $$ = aux;
     } ;
 

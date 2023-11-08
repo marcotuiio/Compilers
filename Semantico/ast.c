@@ -4,6 +4,7 @@
 #include "sintatico.tab.h"
 
 extern void printLineError(int line, int column);
+extern int textBefore;
 
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
@@ -24,6 +25,16 @@ Function *createFunction(void **hash, int returnType, int pointer, char *name, v
     return newFunc;
 }
 
+AuxToken *createAuxToken(char *valor, int line, int column, int type) {
+    AuxToken *newAux = calloc(1, sizeof(AuxToken));
+    newAux->valor = calloc(strlen(valor) + 1, sizeof(char));
+    newAux->valor = valor;
+    newAux->line = line;
+    newAux->column = column;
+    newAux->type = type;
+    return newAux;
+}
+
 Expression *createExpression(int type, int operator, void *value, void *left, void *right) {
     Expression *newExp = calloc(1, sizeof(Expression));
     newExp->type = type;
@@ -35,7 +46,7 @@ Expression *createExpression(int type, int operator, void *value, void *left, vo
     return newExp;
 }
 
-Dimension *createDimension(Expression *size) {
+Dimension *createDimension(int size) {
     Dimension *newDim = calloc(1, sizeof(Dimension));
     newDim->size = size;
     return newDim;
@@ -130,127 +141,358 @@ Command *createCommandExpression(Expression *expression, void *next) {
     return newCommand;
 }
 
-int evalExpression(Expression *expr) {
-    if (!expr) return -1;
+ResultExpression *createResultExpression(int type, int pointer, int value) {
+    ResultExpression *newResult = calloc(1, sizeof(ResultExpression));
+    newResult->type = type;
+    newResult->pointer = pointer;
+    newResult->value = value;
+    return newResult;
+}
+
+ResultExpression *evalExpression(Expression *expr, void **globalHash, void **localHash, Program *program) {
+    if (!expr) return NULL;
+    ResultExpression *leftExp = NULL;
+    ResultExpression *rightExp = NULL;
+    ResultExpression *result = NULL;
+    HashNode *left = NULL;
+    HashNode *right = NULL;
+
     printf("type: %d\n", expr->type);
 
     switch (expr->type) {
         case NUMEROS:
             printf("numeros\n");
-            return atoi(expr->value);
+            if (expr->value->type == NUM_INT) {
+                result = createResultExpression(expr->value->type, expr->value->pointer, atoi(expr->value->valor));
+                return result;
+            } else {
+                printf("Numero que nao e int\n");
+                break;
+            }
         
         case ATRIBUICAO:
-            // Implementação depende do seu ambiente
-            if (expr->operator == ASSIGN) {
-                printf("assign %s %s\n", (char *)expr->left->value, (char *)expr->right->value);
-            } else if (expr->operator == ADD_ASSIGN) {
-                printf("add assign\n");
-            } else if (expr->operator == MINUS_ASSIGN) {
-                printf("sub assign\n");
+            // atribuindo para constante
+            if (expr->left->value->type == STRING) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: assignment of read-only location %s", expr->value->line, expr->value->column, expr->left->value->valor);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
             }
+
+            // atribuindo sem ser id
+            if (expr->left->value->type != ID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            // transformar em funcao de verificar se for declarada mesmo
+            left = getIdentifierNode(localHash, expr->left->value->valor);
+            if (!left) left = getIdentifierNode(globalHash, expr->left->value->valor);
+            if (!left) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->left->value->valor);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+            right = getIdentifierNode(localHash, expr->right->value->valor);
+            if (!right) right = getIdentifierNode(globalHash, expr->right->value->valor);
+            if (!right) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->right->value->valor);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            if (right->typeVar == VOID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            if (expr->operator == ASSIGN) {
+                printf("assign %s %s\n", (char *)expr->left->value->valor, (char *)expr->right->value->valor);
+
+                // nao esta preparado para casting
+                if (left->pointer != 0 || right->pointer != 0) {  // existem pointer envolvido
+                    // se forem de tipo diferente ou ponteiro diferente
+                    if (left->typeVar != right->typeVar || left->pointer != right->pointer) {  
+                        if (textBefore) printf("\n");
+                        char *type1 = getExactType(left->typeVar, left->pointer);
+                        char *type2 = getExactType(right->typeVar, right->pointer);
+                        printf("error:semantic:%d:%d: incompatible types when assigning to type '%s' from type '%s'", expr->value->line, expr->value->column, type1, type2);
+                        free(type1);
+                        free(type2);
+                        printLineError(expr->value->line, expr->value->column);
+                        freeAST(program);
+                        exit(0);
+                    }
+                }    
+
+            } else if (expr->operator == ADD_ASSIGN || expr->operator == MINUS_ASSIGN) {
+                printf("add assign or sub assign\n");
+
+                if (left->pointer != 0) {
+                    if (right->typeVar != NUM_INT || right->typeVar != CHAR) {
+                        if (textBefore) printf("\n");
+                        char *type1 = getExactType(left->typeVar, left->pointer);
+                        char *type2 = getExactType(right->typeVar, right->pointer);
+                        printf("error:semantic:%d:%d: incompatible types when assigning to type '%s' from type '%s'", expr->value->line, expr->value->column, type1, type2);
+                        free(type1);
+                        free(type2);
+                        printLineError(expr->value->line, expr->value->column);
+                        freeAST(program);
+                        exit(0);
+                    }
+                }
+                // retorna o valor calculado com o tipo do ponteiro da esquerda?  
+            } 
             break;
         
         case LISTA_EXP:
-            // Implementação depende do seu ambiente
             printf("lista_exp\n");
             break;
         
         case TERNARY:
-            if (evalExpression(expr->left)) {
+            if (evalExpression(expr->left, globalHash, localHash, program)) {
                 printf("ternary\n");
-                return evalExpression(expr->right->left);
+                return evalExpression(expr->right->left, globalHash, localHash, program);
             } else {
                 printf("ternary\n");
-                return evalExpression(expr->right->right);
+                return evalExpression(expr->right->right, globalHash, localHash, program);
             }
         
         case OR_LOGICO:
             printf("or logico\n");
-            return evalExpression(expr->left) || evalExpression(expr->right);
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value || rightExp->value);
+            // return result;
         
         case AND_LOGICO:
             printf("and logico\n");
-            return evalExpression(expr->left) && evalExpression(expr->right);
-        
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value && rightExp->value);
+            // return result;
+
         case OR_BIT:
             printf("or bit\n");
-            return evalExpression(expr->left) | evalExpression(expr->right);
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value | rightExp->value);
+            // return result;
         
         case XOR_BIT:
             printf("xor bit\n");
-            return evalExpression(expr->left) ^ evalExpression(expr->right);
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value ^ rightExp->value);
+            // return result;
         
         case AND_BIT:
             printf("and bit\n");
-            return evalExpression(expr->left) & evalExpression(expr->right);
-        
-        case IGUALDADE:
-            if (expr->operator == EQUAL) {
-                printf("equal\n");
-                return evalExpression(expr->left) == evalExpression(expr->right);
-            } else if (expr->operator == NOT_EQUAL) {
-                printf("not equal\n");
-                return evalExpression(expr->left) != evalExpression(expr->right);
-            }
-            break;
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value & rightExp->value);
+            // return result;
         
         case RELACIONAL:
-            // Implementação depende do seu ambiente
-            printf("relacional\n");
+            leftExp = evalExpression(expr->left, globalHash, localHash, program); 
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+
+            if (expr->operator == LESS_THAN) {
+                printf("less than\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value < rightExp->value);
+            } else if (expr->operator == GREATER_THAN) {
+                printf("greater than\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value > rightExp->value);
+            } else if (expr->operator == LESS_EQUAL) {
+                printf("less equal\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value <= rightExp->value);
+            } else if (expr->operator == GREATER_EQUAL) {
+                printf("greater equal\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value >= rightExp->value);
+            } else if (expr->operator == EQUAL) {
+                printf("equal\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value == rightExp->value);
+            } else if (expr->operator == NOT_EQUAL) {
+                printf("not equal\n");
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value != rightExp->value);
+            }
+            // return result;
             break;
         
         case SHIFT:
-            // Implementação depende do seu ambiente
-            printf("shift\n");
-            break;
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            // verificar tipos etc etc
+            if (expr->operator == R_SHIFT) {
+                printf("r shift\n");    
+                // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value >> rightExp->value);
+                // return result;
+            } else if (expr->operator == L_SHIFT) {
+                printf("l shift\n");
+                // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value << rightExp->value);
+                // return result;
+            }
         
         case ADITIVIVA:
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
+            // verificar tipos etc etc
             if (expr->operator == PLUS) {
                 printf("plus\n");
-                return evalExpression(expr->left) + evalExpression(expr->right);
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value + rightExp->value);
+                // return result;  
             } else if (expr->operator == MINUS) {
                 printf("minus\n");  
-                return evalExpression(expr->left) - evalExpression(expr->right);
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value - rightExp->value);
+                // return result;  
             }
-            break;
         
         case MULTIPLICATIVA:
+            leftExp = evalExpression(expr->left, globalHash, localHash, program);
+            rightExp = evalExpression(expr->right, globalHash, localHash, program);
             if (expr->operator == MULTIPLY) {
                 printf("multiply\n");
-                return evalExpression(expr->left) * evalExpression(expr->right);
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value * rightExp->value);
+                // return result;
             } else if (expr->operator == DIVIDE) {
                 printf("divide\n");
-                return evalExpression(expr->left) / evalExpression(expr->right);
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value / rightExp->value);
+                // return result;
             } else if (expr->operator == REMAINDER) {
                 printf("remainder\n");
-                return evalExpression(expr->left) % evalExpression(expr->right);
+                result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value % rightExp->value);
+                // return result;
             }
             break;
         
         case CASTING:
-            // Implementação depende do seu ambiente
+            
             printf("casting\n");
             break;
         
         case UNARIA:
-            if (expr->operator == BITWISE_NOT) {
-                printf("bitwise not\n");
-                return ~evalExpression(expr->left);
-            } else if (expr->operator == NOT) {
-                printf("not\n");
-                return !evalExpression(expr->left);
+            leftExp = evalExpression(expr->left, globalHash, localHash, program); 
+
+            if (expr->left->value->type != ID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
             }
-            // Outros operadores unários
+
+            left = getIdentifierNode(localHash, expr->left->value->valor);
+            if (!left) left = getIdentifierNode(globalHash, expr->left->value->valor);
+            if (!left) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->left->value->valor);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            if (expr->operator == PLUS || expr->operator == MINUS || expr->operator == BITWISE_NOT) {
+                printf("plus minus bitnot\n");
+
+
+                if (left->typeVar == NUM_INT || left->typeVar != CHAR) {
+                    if (left->pointer != 0 && expr->operator != BITWISE_NOT) {
+                        if (textBefore) printf("\n");
+                        printf("error:semantic:%d:%d: wrong type argument to unary %s", expr->value->line, expr->value->column, expr->operator == PLUS ? "plus" : "minus");
+                        printLineError(expr->value->line, expr->value->column);
+                        freeAST(program);
+                        exit(0);
+                    }
+                }
+
+                if (left->typeVar != NUM_INT || left->typeVar != CHAR) {
+                    char c;
+                    if (expr->operator == PLUS) c = '+';
+                    else if (expr->operator == MINUS) c = '-';
+                    else if (expr->operator == BITWISE_NOT) c = '~';
+                    char *type1 = getExactType(left->typeVar, left->pointer);
+
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: invalid type argument of unary '%c' (have '%s')", expr->value->line, expr->value->column, c, type1);
+                    free(type1);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+                if (expr->operator == PLUS) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, +leftExp->value);
+                } else if (expr->operator == MINUS) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, -leftExp->value);
+                } else if (expr->operator == BITWISE_NOT) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, ~leftExp->value);
+                }
+                // return result;
+
+            } else if (expr->operator == MULTIPLY) {
+                printf("multply\n");
+
+                if ((left->typeVar != NUM_INT || left->typeVar != CHAR) && left->pointer == 0) {
+                    if (textBefore) printf("\n");
+                    char *type1 = getExactType(left->typeVar, left->pointer);
+                    printf("error:semantic:%d:%d: invalid type argument of unary '%c' (have '%s')", expr->value->line, expr->value->column, '*', type1);
+                    free(type1);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                } 
+                result = createResultExpression(leftExp->type, leftExp->pointer, *(&leftExp->value));
+                // return result;
+
+            } else if (expr->operator == BITWISE_AND || expr->operator == NOT || expr->operator == INC || expr->operator == DEC) {
+                printf("bitwise and not inc dec\n");
+                if (left->typeVar != NUM_INT || left->typeVar != CHAR) {
+                    char t[3];
+                    if (expr->operator == BITWISE_AND) strcpy(t, "&");
+                    else if (expr->operator == NOT) strcpy(t, "!");
+                    else if (expr->operator == INC) strcpy(t, "++");
+                    else if (expr->operator == DEC) strcpy(t, "--");
+                    char *type1 = getExactType(left->typeVar, left->pointer);
+                    printf("error:semantic:%d:%d: invalid type argument of unary '%s' (have '%s')", expr->value->line, expr->value->column, t, type1);
+                    free(type1);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+
+                if (expr->operator == BITWISE_AND) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, *(&leftExp->value));
+                } else if (expr->operator == NOT) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, !leftExp->value);
+                } else if (expr->operator == INC) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, ++leftExp->value);
+                } else if (expr->operator == DEC) {
+                    result = createResultExpression(leftExp->type, leftExp->pointer, --leftExp->value);
+                } 
+                // return result;
+            } 
             break;
 
         case POS_FIXA:
             printf("pos fixa\n");
-            // Implementação depende do seu ambiente
+            
             break;
         
         case PRIMARIA:
             printf("primaria\n");
-            // Implementação depende do seu ambiente
+            
             break;
         
         default:
@@ -260,221 +502,53 @@ int evalExpression(Expression *expr) {
     return 0;
 }
 
-void traverseASTExpression(Expression *expression) {
-    if (expression == NULL) return;
-
-    switch (expression->type) {
-        case ATRIBUICAO:
-            printf("Type ATRIBUICAO\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case LISTA_EXP:  // Expressao COMMA ExpressaoAtribuicao
-            printf("Type LISTA_EXP\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case TERNARY:
-            printf("Type TERNARY\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case OR_LOGICO:
-            printf("Type OR_LOGICO\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case AND_LOGICO:
-            printf("Type AND_LOGICO\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case OR_BIT:
-            printf("Type OR_BIT\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case XOR_BIT:
-            printf("Type XOR_BIT\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case AND_BIT:
-            printf("Type AND_BIT\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case IGUALDADE:
-            printf("Type IGUALDADE\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case RELACIONAL:
-            printf("Type RELACIONAL\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case SHIFT:
-            printf("Type SHIFT\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case ADITIVIVA:
-            printf("Type ADITIVIVA\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case MULTIPLICATIVA:
-            printf("Type MULTIPLICATIVA\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case CASTING:
-            printf("Type CASTING\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case UNARIA:
-            printf("Type UNARIA\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case POS_FIXA:
-            printf("Type POS_FIXA\n");
-            printf("Operator: %d\n", expression->operator);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);  // 1
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);  // 2
-            break;
-
-        case PRIMARIA:
-            printf("Type PRIMARIA\n");
-            printf("Operator: %d %s\n", expression->operator,(char *) expression->value);
-            printf("Left Operand:\n");
-            traverseASTExpression(expression->left);
-            printf("Right Operand:\n");
-            traverseASTExpression(expression->right);
-            break;
-
-        case NUMEROS:
-            printf("Type NUMEROS\n");
-            printf("Value: %s %d\n", (char *)expression->value, (int)expression->posIncrement);
-            break;
-
-        default:
-            printf("Unknown expression type: %p \n", expression);
-            break;
-    }
-}
-
-void traverseASTCommand(Command *command) {
+void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program) {
     if (command == NULL) return;
 
     // Se o comando for um comando de expressão, percorra a expressão
     if (command->type == 9802) {
         printf("Command de expressão\n");
-        evalExpression(command->condition);
+        evalExpression(command->condition, globalHash, localHash, program);
     }
 
     // Se o comando for um comando IF ou ELSE, percorra as condições e blocos
     if (command->type == IF || command->type == ELSE) {
         printf("Command de if ou else\n");
-        evalExpression(command->condition);
-        traverseASTCommand(command->then);
-        traverseASTCommand(command->elseStatement);
+        evalExpression(command->condition, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program);
+        traverseASTCommand(command->elseStatement, globalHash, localHash, program);
     }
 
     // Se o comando for um comando WHILE ou DO-WHILE, percorra a condição e o bloco
     if (command->type == WHILE || command->type == DO) {
         printf("Command de while ou do-while\n");
-        evalExpression(command->condition);
-        traverseASTCommand(command->then);
+        evalExpression(command->condition, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program);
     }
 
     // Se o comando for um comando FOR, percorra a inicialização, condição, incremento e bloco
     if (command->type == FOR) {
         printf("Command de for\n");
-        evalExpression(command->init);
-        evalExpression(command->condition);
-        evalExpression(command->increment);
-        traverseASTCommand(command->then);
+        evalExpression(command->init, globalHash, localHash, program);
+        evalExpression(command->condition, globalHash, localHash, program);
+        evalExpression(command->increment, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program);
     }
 
     // Se o comando for um comando PRINTF ou SCANF, percorra os argumentos
     if (command->type == PRINTF || command->type == SCANF) {
         printf("Command de printf ou scanf\n");
-        evalExpression(command->auxPrint);
+        evalExpression(command->auxPrint, globalHash, localHash, program);
     }
 
     // Se o comando for um comando RETURN ou EXIT, percorra a expressão
     if (command->type == RETURN || command->type == EXIT) {
         printf("Command de return ou exit\n");
-        if (command->condition) evalExpression(command->condition);
+        if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
     }
 
     // Continue percorrendo os comandos na lista
-    // traverseASTCommand(command->next);
+    traverseASTCommand(command->next, globalHash, localHash, program);
 }
 
 int traverseAST(Program *program) {
@@ -488,7 +562,7 @@ int traverseAST(Program *program) {
         // Percorra os comandos na função
         Command *currentCommand = currentFunction->commandList;
         while (currentCommand != NULL) {
-            traverseASTCommand(currentCommand);
+            traverseASTCommand(currentCommand, program->hashTable, currentFunction->hashTable, program);
             currentCommand = currentCommand->next;
         }
 
@@ -532,10 +606,22 @@ void freeAST(Program *program) {
         Command *cmd = functions->commandList;
         while (cmd) {
             Command *cmd2 = cmd->next;
-            if (cmd->condition) free(cmd->condition);
-            if (cmd->init) free(cmd->init);
-            if (cmd->increment) free(cmd->increment);
-            if (cmd->auxPrint) free(cmd->auxPrint);
+            if (cmd->condition) {
+                if (cmd->condition->value) free(cmd->condition->value);
+                free(cmd->condition);
+            } 
+            if (cmd->init) {
+                if (cmd->init->value) free(cmd->condition->value);
+                free(cmd->init);
+            } 
+            if (cmd->increment) {
+                if (cmd->increment->value) free(cmd->condition->value);
+                free(cmd->increment); 
+            }
+            if (cmd->auxPrint) {
+                if (cmd->auxPrint->value) free(cmd->condition->value);
+                free(cmd->auxPrint);
+            }
             free(cmd);
             cmd = cmd2;
         }
