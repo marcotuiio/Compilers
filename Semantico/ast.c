@@ -161,7 +161,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
     int auxLeftPointer, auxRightPointer;
     int auxLeftType, auxRightType;
-    int auxRightValor;
+    int auxLeftValor, auxRightValor;
 
     printf("type: %d\n", expr->type);
 
@@ -179,6 +179,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (expr->operator == ID) {
                 left = getIdentifierNode(localHash, expr->value->valor);
                 if (!left) left = getIdentifierNode(globalHash, expr->value->valor);
+                // printf("cuzinn2 %p %s %d\n", left, left->varId, left->assign);
+
                 if (!left) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->value->valor);
@@ -193,10 +195,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     freeAST(program);
                     exit(0);
                 } else if (left->typeVar == NUM_INT) {
-                    result = createResultExpression(left->typeVar, left->pointer, atoi(left->value));
+                    printf("puta merdaaa cuzinn2 %d\n", left->assign);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign);
                     return result;
                 } else if (left->typeVar == CHARACTER) {
-                    result = createResultExpression(left->typeVar, left->pointer, left->value[0]);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign);
                     return result;
                 } else if (left->typeVar == STRING) {
                     // result = createResultExpression(left->typeVar, left->pointer, left->value);
@@ -477,16 +480,22 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
+            auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 auxLeftPointer = left->pointer;
                 auxLeftType = left->typeVar;
+                auxLeftValor = left->assign;
             } 
             auxRightPointer = expr->right->value->pointer;
             auxRightType = expr->right->value->type;
+            auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 auxRightPointer = right->pointer;
                 auxRightType = right->typeVar;
+                auxRightValor = right->assign; 
             }
+            printf("cuzin2 left %d %d %d\n", auxLeftPointer, auxLeftType, auxLeftValor);
+            printf("cuzin2 right %d %d %d\n", auxRightPointer, auxRightType, auxRightValor);
             
             // se tem tipo diferente de char e int ou sao dois pointers
             if ((auxLeftPointer != 0 && auxRightPointer != 0) || 
@@ -576,9 +585,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
+            auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 auxLeftPointer = left->pointer;
                 auxLeftType = left->typeVar;
+                auxLeftValor = left->assign;
             }
             auxRightPointer = expr->right->value->pointer;
             auxRightType = expr->right->value->type;
@@ -586,9 +597,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (right) {
                 auxRightPointer = right->pointer;
                 auxRightType = right->typeVar;
-                auxRightValor = atoi(right->value);
+                auxRightValor = right->assign;
             }
-            
+            printf("cuzin3 left %d %d %d\n", auxLeftPointer, auxLeftType, auxLeftValor);
+            printf("cuzin3 right %d %d %d\n", auxRightPointer, auxRightType, auxRightValor);
+
             if (auxLeftPointer != 0 || auxRightPointer != 0 || 
                 auxLeftType != NUM_INT || auxRightType != NUM_INT || 
                 auxLeftType != CHARACTER || auxRightType != CHARACTER) {

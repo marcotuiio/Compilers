@@ -17,12 +17,12 @@ int hash(char *value) {
     return hash % HASH_SIZE;
 }
 
-void *insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer) {
-    int index = hash(value);
+void *insertHash(void **hashTable, char *varId, int line, int column, int currentType, int pointer) {
+    int index = hash(varId);
     HashNode *aux = calloc(1, sizeof(HashNode));
     aux->typeVar = currentType;
-    aux->value = calloc(strlen(value) + 1, sizeof(char));
-    strcpy(aux->value, value);
+    aux->varId = calloc(strlen(varId) + 1, sizeof(char));
+    strcpy(aux->varId, varId);
     aux->line = line;
     aux->column = column;
     aux->pointer = pointer;
@@ -53,7 +53,7 @@ void setParam(void *node, Param *p) {
     aux->param = p;
 }
 
-void setAssign(void *node, void *assign) {
+void setAssign(void *node, int assign) {
     HashNode *aux = (HashNode *)node;
     aux->assign = assign;
 }
@@ -63,27 +63,27 @@ void setDimensions(void *node, void *dimensions) {
     aux->dimensions = dimensions;
 }
 
-int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError) {
+int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError) {
     if (!hashTable) return 0;
-    int index = hash(value);
+    int index = hash(varId);
     int ocorrencias = 0;
     HashNode *head = (HashNode *)hashTable[index];
 
     while (head) {
-        if (!strcmp(value, head->value)) {  // existe outro daquele identificador na hash
+        if (!strcmp(varId, head->varId)) {  // existe outro daquele identificador na hash
             if (head->prototype) continue;  // se for um prototipo, continua
             ocorrencias++;
             if (ocorrencias == 1) continue;      // se for o primeiro, continua
             if (currentType == head->typeVar) {  // se for do mesmo tipo
                 if (*textBefore) printf("\n");
-                printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, value, head->line, head->column);
+                printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, varId, head->line, head->column);
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
 
             } else {  // se for de tipo diferente
                 if (*textBefore) printf("\n");
-                printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, value, head->line, head->column);
+                printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, varId, head->line, head->column);
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
@@ -105,24 +105,24 @@ Param *createParam(int type, char *identifier, int pointer, int line, int column
     return newParam;
 }
 
-int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError) {
+int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError) {
     if (!hashTable) return 0;
-    int index = hash(value);
+    int index = hash(varId);
     HashNode *head = (HashNode *)hashTable[index];
 
     while (head) {
-        if (!strcmp(value, head->value) && head->prototype) {  // existe outro daquele identificador na hash
+        if (!strcmp(varId, head->varId) && head->prototype) {  // existe outro daquele identificador na hash
             if (currentType == head->typeVar) {                // se for do mesmo tipo
                 Param *aux = head->param;
                 if (head->qntdParams < qntdParam) {
                     if (*textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, value);
+                    printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, varId);
                     printLineError(line, column);
                     freeHash(hashTable);
                     exit(1);
                 } else if (head->qntdParams > qntdParam) {
                     if (*textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: prototype for '%s' declares more arguments", line, column, value);
+                    printf("error:semantic:%d:%d: prototype for '%s' declares more arguments", line, column, varId);
                     printLineError(line, column);
                     freeHash(hashTable);
                     exit(1);
@@ -143,7 +143,7 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
 
             } else {  // se for de tipo diferente
                 if (*textBefore) printf("\n");
-                printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, value);
+                printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, varId);
                 printLineError(line, column);
                 freeHash(hashTable);
                 exit(1);
@@ -155,11 +155,12 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
 }
 
 HashNode *getIdentifierNode(void **hashTable, char *id) {
+    if (!hashTable) return NULL;
     int index = hash(id);
     HashNode *head = (HashNode *)hashTable[index];
     while (head) {
         // printf("head->value: %s %d\n", head->value, head->typeVar);
-        if (!strcmp(id, head->value)) return head;
+        if (!strcmp(id, head->varId)) return head;
         head = head->next;
     }
     return NULL;
@@ -201,8 +202,8 @@ void freeHash(void **hashTable) {
                     p = auxP;
                 }
             }
-            if (head->value) free(head->value);
-            head->value = NULL;
+            if (head->varId) free(head->varId);
+            head->varId = NULL;
             free(head);
             head = aux;
         }

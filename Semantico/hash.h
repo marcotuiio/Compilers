@@ -10,11 +10,10 @@
 typedef struct node {
     int typeVar;
     int pointer;
-    char *identifier;
-    char *value;
+    char *varId;
+    int assign;
     int line;
     int column;
-    void *assign;
     void *dimensions;
     void *param;
     int prototype;
@@ -35,18 +34,18 @@ void **createHash();
 
 int hash(char *value);
 
-void *insertHash(void **hashTable, char *value, int line, int column, int currentType, int pointer);
+void *insertHash(void **hashTable, char *varId, int line, int column, int currentType, int pointer);
 void setPrototype(void *node);
 void setQntdParams(void *node, int qntdParams);
 void setParam(void *node, Param *p);
-void setAssign(void *node, void *assign);
+void setAssign(void *node, int assign);
 void setDimensions(void *node, void *dimensions);
 
-int lookForValueInHash(void **hashTable, char *value, int line, int column, int currentType, int *textBefore, int *semanticError);
+int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError);
 
 Param *createParam(int type, char *identifier, int pointer, int line, int column, void *next);
 
-int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
+int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
 
 HashNode *getIdentifierNode(void **hashTable, char *id);
 char *getExactType(int type, int pointer);

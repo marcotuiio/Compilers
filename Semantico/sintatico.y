@@ -213,13 +213,13 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             if (globalHash) freeHash(globalHash);
             exit(1);
         }
-        if (lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError) != -1) {
-            void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, DEFINE, 0);
+        if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, INT, &textBefore, &semanticError)) {
+            void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, INT, 0);
             defineAux = 1;
-            ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+            ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
             printf("result do define %d %d\n", result->type, result->value);
-            setAssign(node, $4);
+            setAssign(node, result->value);
         }
     }
     | DeclaraVariaveis { /* Adicionar isso na hash */ }
@@ -300,9 +300,11 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 }
                 $$ = $2;
             }
-
             setDimensions(node, $3);
-            setAssign(node, $4);
+            if ($4) {
+                ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+                setAssign(node, result->value);
+            }
         }
     } ;
 
