@@ -158,6 +158,7 @@ HashNode *getIdentifierNode(void **hashTable, char *id) {
     int index = hash(id);
     HashNode *head = (HashNode *)hashTable[index];
     while (head) {
+        // printf("head->value: %s %d\n", head->value, head->typeVar);
         if (!strcmp(id, head->value)) return head;
         head = head->next;
     }

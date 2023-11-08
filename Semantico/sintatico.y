@@ -26,6 +26,7 @@ int auxPosIncrement;
 int dimensionError = 0;
 char bufferAux[128];
 char printDimen[1024];
+int defineAux = 0;
 
 void *prototypeParam = NULL;
 
@@ -203,9 +204,21 @@ ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes {
     | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
+        printf("tipo da expressaao do define %d\n", $4->type);
+        if ($4->value->type == STRING) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: string type is not compatible with define", $4->value->line, $4->value->column);
+            printLineError($4->value->line, $4->value->column);
+            if (currentHash) freeHash(currentHash);
+            if (globalHash) freeHash(globalHash);
+            exit(1);
+        }
         if (lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, DEFINE, &textBefore, &semanticError) != -1) {
             void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, DEFINE, 0);
-            // evalExpression(node, $4);
+            defineAux = 1;
+            ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+            defineAux = 0;
+            printf("result do define %d %d\n", result->type, result->value);
             setAssign(node, $4);
         }
     }

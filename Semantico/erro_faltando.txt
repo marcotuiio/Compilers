@@ -2,29 +2,19 @@ incompatible types in initialization when assigning to type ’<nome-do-tipo>’
 
 "called object ’<nome-do-identificador>’ is not a function or function pointer"
 
-"’<nome-do-identificador>’ undeclared"
-
 "too few arguments to function ’<nome-da-funcao>’"
 
 "too many arguments to function ’<nome-da-funcao>’"
 
 "incompatible type for argument ’<numero-do-argumento>’ of ’<nome-da-funcao>’ expected ’<nome-do-tipo>’ but argument is of type ’<nome-do-tipo>’"
 
-"no return statement in function returning non-void"
-
-"return with a value, in function returning void"
-
-"return with no value, in function returning non-void"
-
 "incompatible types when returning type ’<nome-do-tipo>’ but ’<nome-do-tipo>’ was expected"
 
-"’<nome-do-identificador>’ initializer element is not constant"
+"’<nome-do-identificador>’ initializer element is not constant" alguns sim outros nao
 
 "right shift count is negative"
 
 "left shift count is negative"
-
-"string type is not compatible with define"
 
 "division by zero"
 
