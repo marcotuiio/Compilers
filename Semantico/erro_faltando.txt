@@ -1,0 +1,46 @@
+incompatible types in initialization when assigning to type ’<nome-do-tipo>’ from type ’<nome-do-tipo>’"
+
+"called object ’<nome-do-identificador>’ is not a function or function pointer"
+
+"’<nome-do-identificador>’ undeclared"
+
+"too few arguments to function ’<nome-da-funcao>’"
+
+"too many arguments to function ’<nome-da-funcao>’"
+
+"incompatible type for argument ’<numero-do-argumento>’ of ’<nome-da-funcao>’ expected ’<nome-do-tipo>’ but argument is of type ’<nome-do-tipo>’"
+
+"no return statement in function returning non-void"
+
+"return with a value, in function returning void"
+
+"return with no value, in function returning non-void"
+
+"incompatible types when returning type ’<nome-do-tipo>’ but ’<nome-do-tipo>’ was expected"
+
+"’<nome-do-identificador>’ initializer element is not constant"
+
+"right shift count is negative"
+
+"left shift count is negative"
+
+"string type is not compatible with define"
+
+"division by zero"
+
+"subscripted value is neither array nor pointer"
+
+"array subscript is not an integer"
+
+"comparison between ’<nome-do-tipo>’ and ’<nome-do-tipo>’ operator ’<operador-binario>’"
+
+"cannot convert from ’<nome-do-tipo>’ to int"
+
+
+
+"left shift count >= width of type"
+"right shift count >= width of type"
+"array index out of bounds"
+"comparison between ’<nome-do-tipo>’ and ’<nome-do-tipo>’ operator ’<operador-binario>’"
+"cast from ’<nome-do-tipo>’ to ’<nome-do-tipo>’ of different size"
+"’<nome-do-tipo>’/’<nome-do-tipo>’ type mismatch in conditional expression"

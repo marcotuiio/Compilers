@@ -1,5 +1,5 @@
 Function: f
-Command de return ou exit
-type: 1017
-numeros
-SUCCESSFUL COMPILATION.
+Command de return
+error:semantic:1:6: return with a value, in function returning void
+void f(char* a)
+     ^

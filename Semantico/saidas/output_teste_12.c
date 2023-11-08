@@ -1,3 +1,5 @@
 Function: f
-Command de return ou exit
-SUCCESSFUL COMPILATION.
+Command de return
+error:semantic:3:5: return with no value, in function returning non-void
+    return;
+    ^

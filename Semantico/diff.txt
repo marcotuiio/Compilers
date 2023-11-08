@@ -1,0 +1,447 @@
+0a1,2
+> type: 1017
+> numeros
+1,3d0
+< error:semantic:5:5: size of array 'i' is negative
+< int i[v3-v1*v2-v4];
+<     ^
+\ No newline at end of file
+0a1,2
+> type: 1017
+> numeros
+0a1,2
+> type: 1017
+> numeros
+0a1,2
+> type: 1017
+> numeros
+1,3c1,6
+< error:semantic:1:5: no return statement in function returning non-void
+< int f(char* a)
+<     ^
+\ No newline at end of file
+---
+> Function: f
+> Command de expressão
+> type: 1001
+> error:semantic:4:7: '0' undeclared
+>     i = 0;
+>       ^
+\ No newline at end of file
+0a1,2
+> Function: f
+> Command de return
+1,3c1,5
+< error:semantic:3:5: incompatible types when returning type 'char*' but 'int*' was expected
+<     return "SkyNet Online";
+<     ^
+\ No newline at end of file
+---
+> Function: f
+> Command de return
+> type: 1016
+> primaria
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,2
+> Function: f
+> Command de return
+0a1,4
+> Function: f
+> Command de return
+> type: 1016
+> primaria
+1,3c1,5
+< error:semantic:3:8: lvalue required as increment operand
+<     666++;
+<        ^
+\ No newline at end of file
+---
+> Function: f
+> Command de expressão
+> type: 1017
+> numeros
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,3
+> Function: f
+> Command de expressão
+> type: 1001
+1,3c1
+< error:semantic:2:19: 'i' initializer element is not constant
+< #define constante i+1
+<                   ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3d0
+< error:semantic:2:7: 'j' initializer element is not constant
+< int i[j];
+<       ^
+\ No newline at end of file
+1,3c1
+< error:semantic:3:21: left shift count is negative
+< #define constante 1 << (v1-v2)
+<                     ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1
+< error:semantic:1:19: string type is not compatible with define
+< #define constante "Adeus Mundo!"
+<                   ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1
+< error:semantic:4:20: division by zero
+< #define constante 1/(v3-v1*v2)
+<                    ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,3
+> Function: f
+> Command de expressão
+> type: 1001
+0a1,4
+> Function: f
+> Command de if ou else
+> type: 1016
+> primaria
+1,3c1,7
+< error:semantic:5:13: subscripted value is neither array nor pointer
+<     j = i[1][1];
+<             ^
+\ No newline at end of file
+---
+> type: 1017
+> numeros
+> Function: f
+> Command de expressão
+> type: 1001
+> assign j i
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1,7
+< error:semantic:5:9: called object 'i' is not a function or function pointer
+<     j = i[1](1);
+<         ^
+\ No newline at end of file
+---
+> type: 1017
+> numeros
+> Function: f
+> Command de expressão
+> type: 1001
+> assign j i
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,3
+> Function: f
+> Command de expressão
+> type: 1001
+1,3c1
+< error:semantic:5:5: too few arguments to function 'foo'
+<     foo(3);
+<     ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1
+< error:semantic:6:5: incompatible type for argument '2' of 'foo' expected 'int' but argument is of type 'char*'
+<     foo(3,&c);
+<     ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1,3
+< error:semantic:3:14: lvalue required as unary '&' operand
+<     int* i = &666;    
+<              ^
+\ No newline at end of file
+---
+> Function: f
+> Command de return
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,6
+> Function: f
+> Command de expressão
+> type: 1014
+> type: 1016
+> primaria
+> plus minus bitnot
+0a1,6
+> Function: f
+> Command de expressão
+> type: 1014
+> type: 1016
+> primaria
+> multply
+1,3c1,8
+< error:semantic:6:6: array subscript is not an integer
+<     i[p];
+<      ^
+\ No newline at end of file
+---
+> type: 1017
+> numeros
+> Function: f
+> Command de expressão
+> type: 1016
+> primaria
+> Command de return
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3d0
+< error:semantic:5:7: cannot convert from 'int*' to int
+<     i << p;
+<       ^
+\ No newline at end of file
+0a1,4
+> Function: f
+> Command de expressão
+> type: 1001
+> assign i p
+1,3c1,3
+< error:semantic:3:16: comparison between 'int*' and 'char*' operator '>='
+<     int i = &i >= "teste";
+<                ^
+\ No newline at end of file
+---
+> Function: f
+> Command de return
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+0a1,7
+> Function: f
+> Command de expressão
+> type: 1011
+> type: 1016
+> primaria
+> type: 1016
+> primaria
+1,3d0
+< warning:1:21: right shift count >= width of type
+< #define constante 1 >> 32
+<                     ^
+1,6d0
+< warning:1:14: right shift count >= width of type
+< #define c1 1 >> 32
+<              ^
+< warning:2:14: left shift count >= width of type
+< #define c2 1 << 33
+<              ^
+1,3c1,2
+< warning:4:10: array index out of bounds
+< int i = v[c1*c2] + c1;
+<          ^
+---
+> type: 1017
+> numeros
+1c1,4
+< warning:5:11: comparison between 'int*' and 'int' operator '>'
+---
+> Function: f
+> Command de expressão
+> type: 1001
+> error:semantic:5:7: '>' undeclared
+3,4c6
+<           ^
+< SUCCESSFUL COMPILATION.
+\ No newline at end of file
+---
+>       ^
+\ No newline at end of file
+1,6d0
+< warning:15:9: cast from 'int' to 'char' of different size
+<     c = (char) i; /*meio certo*/  i << -1; /*errado*/
+<         ^
+< error:semantic:15:37: left shift count is negative
+<     c = (char) i; /*meio certo*/  i << -1; /*errado*/
+<                                     ^
+\ No newline at end of file
+1c1,5
+< warning:6:13: 'int*'/'char*' type mismatch in conditional expression
+---
+> Function: f
+> Command de expressão
+> type: 1001
+> assign p i
+> error:semantic:6:7: incompatible types when assigning to type 'int*' from type 'int'
+3,4c7
+<             ^
+< SUCCESSFUL COMPILATION.
+\ No newline at end of file
+---
+>       ^
+\ No newline at end of file
+1,7d0
+< warning:5:20: 'int*'/'char*' type mismatch in conditional expression
+<     c = (char)(i?&i:&c);
+<                    ^
+< warning:5:9: cast from 'int*' to 'char' of different size
+<     c = (char)(i?&i:&c);
+<         ^
+< SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,9d0
+< warning:5:20: 'int*'/'char*' type mismatch in conditional expression
+<     p = (char)(i?&i:&c);
+<                    ^
+< warning:5:9: cast from 'int*' to 'char' of different size
+<     p = (char)(i?&i:&c);
+<         ^
+< error:semantic:5:7: incompatible types when assigning to type 'int*' from type 'char'
+<     p = (char)(i?&i:&c);
+<       ^
+\ No newline at end of file
+1,12d0
+< warning:6:6: array index out of bounds
+<     v[valor_negativo] = 
+<      ^
+< warning:7:6: array index out of bounds
+<     v[-valor_positivo];
+<      ^
+< warning:9:6: array index out of bounds
+<     v[valor_negativo]
+<      ^
+< error:semantic:12:5: left shift count is negative
+<     <<
+<     ^
+\ No newline at end of file
+1,9c1,11
+< warning:3:10: cast from 'int' to 'void' of different size
+<     if(3?(void)4:(void)5)
+<          ^
+< warning:3:18: cast from 'int' to 'void' of different size
+<     if(3?(void)4:(void)5)
+<                  ^
+< error:semantic:3:17: void value not ignored as it ought to be
+<     if(3?(void)4:(void)5)
+<                 ^
+\ No newline at end of file
+---
+> Function: main
+> Command de if ou else
+> type: 1017
+> numeros
+> Command de expressão
+> type: 1017
+> numeros
+> Command de return
+> type: 1017
+> numeros
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,3c1
+< error:semantic:1:8: incompatible types in initialization when assigning to type 'char' from type 'char*'
+< char c = "character";
+<        ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,6c1
+< warning:1:15: cast from 'int' to 'void' of different size
+< int z,w=5,x = (void)3;
+<               ^
+< error:semantic:1:13: void value not ignored as it ought to be
+< int z,w=5,x = (void)3;
+<             ^
+\ No newline at end of file
+---
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,6c1,6
+< warning:3:13: cast from 'int' to 'void' of different size
+<     int i = (void) 0;
+<             ^
+< error:semantic:3:11: void value not ignored as it ought to be
+<     int i = (void) 0;
+<           ^
+\ No newline at end of file
+---
+> Function: main
+> Command de expressão
+> type: 1001
+> error:semantic:5:7: 'c' undeclared
+>     c = i;
+>       ^
+\ No newline at end of file
+1,12c1,5
+< warning:15:5: cast from 'int' to 'void' of different size
+<     (void) 666;
+<     ^
+< warning:18:22: cast from 'int' to 'char' of different size
+<     (void)(char)(int)(char)77;
+<                      ^
+< warning:18:11: cast from 'int' to 'char' of different size
+<     (void)(char)(int)(char)77;
+<           ^
+< error:semantic:20:9: void value not ignored as it ought to be
+<     w = (int) f();
+<         ^
+\ No newline at end of file
+---
+> Function: f
+> Command de expressão
+> type: 1016
+> primaria
+> SUCCESSFUL COMPILATION.
+\ No newline at end of file
+1,46d0
+< warning:4:15: right shift count >= width of type
+< #define c4 c2 >> c3*c3
+<               ^
+< warning:11:6: array index out of bounds
+<     v[c4],c1>v,(char)c2,NULL?v:c3;
+<      ^
+< warning:11:13: comparison between 'int' and 'int*' operator '>'
+<     v[c4],c1>v,(char)c2,NULL?v:c3;
+<             ^
+< warning:11:16: cast from 'int' to 'char' of different size
+<     v[c4],c1>v,(char)c2,NULL?v:c3;
+<                ^
+< warning:11:31: 'int*'/'int' type mismatch in conditional expression
+<     v[c4],c1>v,(char)c2,NULL?v:c3;
+<                               ^
+< warning:23:28: right shift count >= width of type
+<     printf("%s",((char*)v) >> 666);
+<                            ^
+< warning:24:33: cast from 'int*' to 'char' of different size
+<     v=(void*)(v?((void*)((char)((char)(int*)666<(char)(void*)11))):(char*)"Mundo Invertido");
+<                                 ^
+< warning:24:49: cast from 'void*' to 'char' of different size
+<     v=(void*)(v?((void*)((char)((char)(int*)666<(char)(void*)11))):(char*)"Mundo Invertido");
+<                                                 ^
+< warning:24:26: cast from 'int' to 'char' of different size
+<     v=(void*)(v?((void*)((char)((char)(int*)666<(char)(void*)11))):(char*)"Mundo Invertido");
+<                          ^
+< warning:24:67: 'void*'/'char*' type mismatch in conditional expression
+<     v=(void*)(v?((void*)((char)((char)(int*)666<(char)(void*)11))):(char*)"Mundo Invertido");
+<                                                                   ^
+< warning:25:23: array index out of bounds
+<     return (char)vetor[1 << 1];
+<                       ^
+< warning:25:12: cast from 'char*' to 'char' of different size
+<     return (char)vetor[1 << 1];
+<            ^
+< warning:31:36: cast from 'int' to 'char' of different size
+<     char  c = g(), ch = '\r',  d = (char) 65; int* i = (int*) &p;    
+<                                    ^
+< warning:32:23: cast from 'int' to 'char' of different size
+<     for(ptr = (void*)((char)((int)666)); ptr;ptr++)
+<                       ^
+< warning:39:69: cast from 'int' to 'char' of different size
+<                 *i/*666*/; *i/ 666/*Porta para o mundo invertido*/; (char)CALL_ELEVEN;
+<                                                                     ^
+< SUCCESSFUL COMPILATION.
+\ No newline at end of file

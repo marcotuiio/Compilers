@@ -165,14 +165,54 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (expr->value->type == NUM_INT) {
                 result = createResultExpression(expr->value->type, expr->value->pointer, atoi(expr->value->valor));
                 return result;
-            } else {
-                printf("Numero que nao e int\n");
-                break;
             }
+            printf("Numero que nao e int\n");
+            break;
+
+        case PRIMARIA:
+            printf("primaria\n");
+            if (expr->operator == ID) {
+                left = getIdentifierNode(localHash, expr->value->valor);
+                if (!left) left = getIdentifierNode(globalHash, expr->value->valor);
+                if (!left) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->value->valor);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+                if (left->typeVar == VOID) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                } else if (left->typeVar == NUM_INT) {
+                    result = createResultExpression(left->typeVar, left->pointer, atoi(left->value));
+                    return result;
+                } else if (left->typeVar == CHARACTER) {
+                    result = createResultExpression(left->typeVar, left->pointer, left->value[0]);
+                    return result;
+                } else if (left->typeVar == STRING) {
+                    // result = createResultExpression(left->typeVar, left->pointer, left->value);
+                    return result;
+                }
+
+            
+            } else if (expr->operator == CHARACTER) {
+                result = createResultExpression(expr->value->type, expr->value->pointer, expr->value->valor[0]);
+                return result;
+                
+            } else if (expr->operator == STRING) {
+                // result = createResultExpression(expr->value->type, expr->value->pointer, expr->value->valor);
+                return result;
+            } 
+            
+            break;
         
         case ATRIBUICAO:
             // atribuindo para constante
-            if (expr->left->value->type == STRING) {
+            if (expr->left->value->type == STRING || expr->left->value->type == CHARACTER) {
                 if (textBefore) printf("\n");
                 printf("error:semantic:%d:%d: assignment of read-only location %s", expr->value->line, expr->value->column, expr->left->value->valor);
                 printLineError(expr->value->line, expr->value->column);
@@ -240,7 +280,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("add assign or sub assign\n");
 
                 if (left->pointer != 0) {
-                    if (right->typeVar != NUM_INT || right->typeVar != CHAR) {
+                    if (right->typeVar != NUM_INT || right->typeVar != CHARACTER) {
                         if (textBefore) printf("\n");
                         char *type1 = getExactType(left->typeVar, left->pointer);
                         char *type2 = getExactType(right->typeVar, right->pointer);
@@ -274,35 +314,35 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
             result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value || rightExp->value);
-            // return result;
+            return result;
         
         case AND_LOGICO:
             printf("and logico\n");
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
             result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value && rightExp->value);
-            // return result;
+            return result;
 
         case OR_BIT:
             printf("or bit\n");
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
             result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value | rightExp->value);
-            // return result;
+            return result;
         
         case XOR_BIT:
             printf("xor bit\n");
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
             result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value ^ rightExp->value);
-            // return result;
+            return result;
         
         case AND_BIT:
             printf("and bit\n");
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
             result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value & rightExp->value);
-            // return result;
+            return result;
         
         case RELACIONAL:
             leftExp = evalExpression(expr->left, globalHash, localHash, program); 
@@ -327,7 +367,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("not equal\n");
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value != rightExp->value);
             }
-            // return result;
+            return result;
             break;
         
         case SHIFT:
@@ -338,43 +378,146 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("r shift\n");    
                 // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value >> rightExp->value);
-                // return result;
+                return result;
             } else if (expr->operator == L_SHIFT) {
                 printf("l shift\n");
                 // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value << rightExp->value);
-                // return result;
+                return result;
             }
         
         case ADITIVIVA:
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
-            // verificar tipos etc etc
+
+            // se for um id, verificar se ele existe
+            if (expr->left->value->type == ID) {
+                left = getIdentifierNode(localHash, expr->left->value->valor);
+                if (!left) left = getIdentifierNode(globalHash, expr->left->value->valor);
+                if (!left) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->left->value->valor);
+                    printLineError(expr->left->value->line, expr->left->value->column);
+                    freeAST(program);
+                    exit(0);
+                }   
+            }
+            if (expr->right->value->type == ID) {
+                right = getIdentifierNode(localHash, expr->right->value->valor);
+                if (!right) right = getIdentifierNode(globalHash, expr->right->value->valor);
+                if (!right) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->right->value->valor);
+                    printLineError(expr->right->value->line, expr->right->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+            }
+            
+            // se tem tipo diferente de char e int ou sao dois pointers
+            if ((expr->left->value->pointer != 0 && expr->right->value->pointer != 0) || 
+                expr->left->type != NUM_INT || expr->right->type != NUM_INT || 
+                expr->left->value->type != CHARACTER || expr->right->value->type != CHARACTER) {
+
+                char *type1 = getExactType(left->typeVar, left->pointer);
+                char *type2 = getExactType(right->typeVar, right->pointer);
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: invalid operands to binary '%s' (have '%s' and '%s')", expr->value->line, expr->value->column, expr->operator == PLUS ? "+" : "-", type1, type2);
+                free(type1);
+                free(type2);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
             if (expr->operator == PLUS) {
                 printf("plus\n");
+                // pode somar pointer e char ou int                
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value + rightExp->value);
-                // return result;  
+                return result;  
             } else if (expr->operator == MINUS) {
                 printf("minus\n");  
+                if (expr->right->value->pointer != 0) {
+                    char *type1 = getExactType(left->typeVar, left->pointer);
+                    char *type2 = getExactType(right->typeVar, right->pointer);
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: invalid operands to binary '%s' (have '%s' and '%s')", expr->value->line, expr->value->column, expr->operator == PLUS ? "+" : "-", type1, type2);
+                    free(type1);
+                    free(type2);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value - rightExp->value);
-                // return result;  
+                return result;  
             }
         
         case MULTIPLICATIVA:
             leftExp = evalExpression(expr->left, globalHash, localHash, program);
             rightExp = evalExpression(expr->right, globalHash, localHash, program);
+
+            // se for um id, verificar se ele existe
+            if (expr->left->value->type == ID) {
+                left = getIdentifierNode(localHash, expr->left->value->valor);
+                if (!left) left = getIdentifierNode(globalHash, expr->left->value->valor);
+                if (!left) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->left->value->valor);
+                    printLineError(expr->left->value->line, expr->left->value->column);
+                    freeAST(program);
+                    exit(0);
+                }   
+            }
+            if (expr->right->value->type == ID) {
+                right = getIdentifierNode(localHash, expr->right->value->valor);
+                if (!right) right = getIdentifierNode(globalHash, expr->right->value->valor);
+                if (!right) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->right->value->valor);
+                    printLineError(expr->right->value->line, expr->right->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+            }
+            
+            if (expr->left->value->pointer != 0 || expr->right->value->pointer != 0 || 
+                expr->left->type != NUM_INT || expr->right->type != NUM_INT || 
+                expr->left->value->type != CHARACTER || expr->right->value->type != CHARACTER) {
+                
+                char c;
+                if (expr->operator == MULTIPLY) c = '*';
+                else if (expr->operator == DIVIDE) c = '/';
+                else if (expr->operator == REMAINDER) c = '%';
+                char *type1 = getExactType(left->typeVar, left->pointer);
+                char *type2 = getExactType(right->typeVar, right->pointer);
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: invalid operands to binary '%c' (have '%s' and '%s')", expr->value->line, expr->value->column, c, type1, type2);
+                free(type1);
+                free(type2);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
             if (expr->operator == MULTIPLY) {
                 printf("multiply\n");
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value * rightExp->value);
-                // return result;
+                return result;
             } else if (expr->operator == DIVIDE) {
                 printf("divide\n");
+                if (rightExp->value == 0 || expr->right->value->valor == 0) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: division by zero", expr->value->line, expr->value->column);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value / rightExp->value);
-                // return result;
+                return result;
             } else if (expr->operator == REMAINDER) {
                 printf("remainder\n");
                 result = createResultExpression(leftExp->type, leftExp->pointer, leftExp->value % rightExp->value);
-                // return result;
+                return result;
             }
             break;
         
@@ -408,7 +551,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("plus minus bitnot\n");
 
 
-                if (left->typeVar == NUM_INT || left->typeVar != CHAR) {
+                if (left->typeVar == NUM_INT || left->typeVar != CHARACTER) {
                     if (left->pointer != 0 && expr->operator != BITWISE_NOT) {
                         if (textBefore) printf("\n");
                         printf("error:semantic:%d:%d: wrong type argument to unary %s", expr->value->line, expr->value->column, expr->operator == PLUS ? "plus" : "minus");
@@ -418,7 +561,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
 
-                if (left->typeVar != NUM_INT || left->typeVar != CHAR) {
+                if (left->typeVar != NUM_INT || left->typeVar != CHARACTER) {
                     char c;
                     if (expr->operator == PLUS) c = '+';
                     else if (expr->operator == MINUS) c = '-';
@@ -439,12 +582,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 } else if (expr->operator == BITWISE_NOT) {
                     result = createResultExpression(leftExp->type, leftExp->pointer, ~leftExp->value);
                 }
-                // return result;
+                return result;
 
             } else if (expr->operator == MULTIPLY) {
                 printf("multply\n");
 
-                if ((left->typeVar != NUM_INT || left->typeVar != CHAR) && left->pointer == 0) {
+                if ((left->typeVar != NUM_INT || left->typeVar != CHARACTER) && left->pointer == 0) {
                     if (textBefore) printf("\n");
                     char *type1 = getExactType(left->typeVar, left->pointer);
                     printf("error:semantic:%d:%d: invalid type argument of unary '%c' (have '%s')", expr->value->line, expr->value->column, '*', type1);
@@ -454,11 +597,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 } 
                 result = createResultExpression(leftExp->type, leftExp->pointer, *(&leftExp->value));
-                // return result;
+                return result;
 
             } else if (expr->operator == BITWISE_AND || expr->operator == NOT || expr->operator == INC || expr->operator == DEC) {
                 printf("bitwise and not inc dec\n");
-                if (left->typeVar != NUM_INT || left->typeVar != CHAR) {
+                if (left->typeVar != NUM_INT || left->typeVar != CHARACTER) {
                     char t[3];
                     if (expr->operator == BITWISE_AND) strcpy(t, "&");
                     else if (expr->operator == NOT) strcpy(t, "!");
@@ -481,17 +624,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 } else if (expr->operator == DEC) {
                     result = createResultExpression(leftExp->type, leftExp->pointer, --leftExp->value);
                 } 
-                // return result;
+                return result;
             } 
             break;
 
         case POS_FIXA:
             printf("pos fixa\n");
-            
-            break;
-        
-        case PRIMARIA:
-            printf("primaria\n");
             
             break;
         
@@ -502,10 +640,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     return 0;
 }
 
-void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program) {
+void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
     if (command == NULL) return;
 
-    // Se o comando for um comando de expressão, percorra a expressão
     if (command->type == 9802) {
         printf("Command de expressão\n");
         evalExpression(command->condition, globalHash, localHash, program);
@@ -515,15 +652,15 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     if (command->type == IF || command->type == ELSE) {
         printf("Command de if ou else\n");
         evalExpression(command->condition, globalHash, localHash, program);
-        traverseASTCommand(command->then, globalHash, localHash, program);
-        traverseASTCommand(command->elseStatement, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        traverseASTCommand(command->elseStatement, globalHash, localHash, program, currentFunction);
     }
 
     // Se o comando for um comando WHILE ou DO-WHILE, percorra a condição e o bloco
     if (command->type == WHILE || command->type == DO) {
         printf("Command de while ou do-while\n");
         evalExpression(command->condition, globalHash, localHash, program);
-        traverseASTCommand(command->then, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
     }
 
     // Se o comando for um comando FOR, percorra a inicialização, condição, incremento e bloco
@@ -532,7 +669,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         evalExpression(command->init, globalHash, localHash, program);
         evalExpression(command->condition, globalHash, localHash, program);
         evalExpression(command->increment, globalHash, localHash, program);
-        traverseASTCommand(command->then, globalHash, localHash, program);
+        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
     }
 
     // Se o comando for um comando PRINTF ou SCANF, percorra os argumentos
@@ -541,29 +678,50 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         evalExpression(command->auxPrint, globalHash, localHash, program);
     }
 
-    // Se o comando for um comando RETURN ou EXIT, percorra a expressão
-    if (command->type == RETURN || command->type == EXIT) {
-        printf("Command de return ou exit\n");
+    if (command->type == RETURN) {
+        printf("Command de return\n");
+        if (currentFunction->returnType == VOID) {
+            if (command->condition) {
+                HashNode *auxFunc = getIdentifierNode(globalHash, currentFunction->name);
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: return with a value, in function returning void", auxFunc->line, auxFunc->column);
+                printLineError(auxFunc->line, auxFunc->column);
+                freeAST(program);
+                exit(0);
+            }
+        } else {
+            if (!command->condition) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: return with no value, in function returning non-void", command->auxToken->line, command->auxToken->column);
+                printLineError(command->auxToken->line, command->auxToken->column);
+                freeAST(program);
+                exit(0);
+            }
+        }
         if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
     }
 
-    // Continue percorrendo os comandos na lista
-    traverseASTCommand(command->next, globalHash, localHash, program);
+    // Se o comando for um comando RETURN ou EXIT, percorra a expressão
+    if (command->type == EXIT) {
+        printf("Command de exit\n");
+        if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
+    }
+
+    command = command->next;
 }
 
 int traverseAST(Program *program) {
     if (!program) return -1;
-
     // Percorra as funções na lista de funções
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
-        printf("Function: %s\n", currentFunction->name);
 
+        printf("Function: %s\n", currentFunction->name);
         // Percorra os comandos na função
-        Command *currentCommand = currentFunction->commandList;
-        while (currentCommand != NULL) {
-            traverseASTCommand(currentCommand, program->hashTable, currentFunction->hashTable, program);
-            currentCommand = currentCommand->next;
+        Command *command = currentFunction->commandList;
+        while (command != NULL) {
+            traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
+            command = command->next;
         }
 
         currentFunction = currentFunction->next;

@@ -139,6 +139,7 @@ typedef struct command {
     // generic
     // while, do while, for, if, if else, print, scan, return, exit
     // most of them have a condition, a execution and a next
+    AuxToken *auxToken;
     int type;
     Expression *condition;
     void *then;

@@ -112,11 +112,17 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
 
     while (head) {
         if (!strcmp(value, head->value) && head->prototype) {  // existe outro daquele identificador na hash
-            if (currentType == head->typeVar) {  // se for do mesmo tipo
+            if (currentType == head->typeVar) {                // se for do mesmo tipo
                 Param *aux = head->param;
-                if (head->qntdParams != qntdParam) {
+                if (head->qntdParams < qntdParam) {
                     if (*textBefore) printf("\n");
                     printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, value);
+                    printLineError(line, column);
+                    freeHash(hashTable);
+                    exit(1);
+                } else if (head->qntdParams > qntdParam) {
+                    if (*textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: prototype for '%s' declares more arguments", line, column, value);
                     printLineError(line, column);
                     freeHash(hashTable);
                     exit(1);
@@ -150,7 +156,7 @@ int lookForPrototypeInHash(void **hashTable, char *value, int line, int column, 
 
 HashNode *getIdentifierNode(void **hashTable, char *id) {
     int index = hash(id);
-    HashNode *head = (HashNode *) hashTable[index];
+    HashNode *head = (HashNode *)hashTable[index];
     while (head) {
         if (!strcmp(id, head->value)) return head;
         head = head->next;

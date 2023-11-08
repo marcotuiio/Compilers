@@ -1,3 +1,3 @@
 Function: f
-Command de return ou exit
+Command de return
 SUCCESSFUL COMPILATION.

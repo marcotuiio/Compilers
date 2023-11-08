@@ -1,5 +1,7 @@
 Function: f
-Command de return ou exit
+Command de return
 type: 1016
 primaria
-SUCCESSFUL COMPILATION.
+error:semantic:3:12: 'i' undeclared
+    return i;
+           ^

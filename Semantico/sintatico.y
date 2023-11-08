@@ -345,7 +345,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
 
         if ($1.type == 277 && $2 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: variable '%s' declared void", $3.line, $3.column, $3.valor);
+            printf("error:semantic:%d:%d: parameter '%s' declared void", $3.line, $3.column, $3.valor);
             printLineError($3.line, $3.column);
             if (currentHash) freeHash(currentHash);
             traverseAST(AST);
@@ -425,35 +425,51 @@ RetornoComandos: ListaComandos RetornoComandos {
     | { $$ = NULL; } ;
 
 ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DO);
         Command *aux = createDoWhileStatement($5, $2, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | WHILE L_PAREN Expressao R_PAREN Bloco {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, WHILE);
         Command *aux = createWhileStatement($3, $5, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | IF L_PAREN Expressao R_PAREN Bloco AuxElse {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, IF);
         Command *aux = createIfStatement($3, $5, $6, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | FOR L_PAREN AuxFor SEMICOLON AuxFor SEMICOLON AuxFor R_PAREN Bloco {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, FOR);
         Command *aux = createForStatement($3, $5, $7, $9, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, PRINTF);
         Command *aux = createPrintStatement($3.valor, $4, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, SCANF);
         Command *aux = createScanStatement($6.valor, $3.valor, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | EXIT L_PAREN Expressao R_PAREN SEMICOLON {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, EXIT);
         Command *aux = createExitStatement($3, NULL);
+        aux->auxToken = auxToken;
         $$ = aux; 
     }
     | RETURN AuxFor SEMICOLON {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, RETURN);
         Command *aux = createReturnStatement($2, NULL);
+        aux->auxToken = auxToken;
         $$ = aux;
     }
     | Expressao SEMICOLON {
