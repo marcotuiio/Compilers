@@ -169,14 +169,19 @@ HashNode *getIdentifierNode(void **hashTable, char *id) {
 char *getExactType(int type, int pointer) {
     char newType[50];
     switch (type) {
-        case 275:
+        case 275:  // int
+        case 309:  // num_int
             strcpy(newType, "int");
             break;
-        case 276:
+        case 276:  // char
+        case 313:  // character
             strcpy(newType, "char");
             break;
-        case 277:
+        case 277:  // void
             strcpy(newType, "void");
+            break;
+        case 312:  // string
+            strcpy(newType, "char*");
             break;
         default:
             break;

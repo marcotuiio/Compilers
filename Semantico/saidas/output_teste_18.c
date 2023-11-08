@@ -1,12 +1,7 @@
-tipo da expressaao do define 1017
 type: 1017
 numeros
-result do define 309 10
-tipo da expressaao do define 1017
 type: 1017
 numeros
-result do define 309 15
-tipo da expressaao do define 1010
 type: 1010
 type: 1017
 numeros

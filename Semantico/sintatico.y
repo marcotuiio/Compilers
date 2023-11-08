@@ -204,7 +204,7 @@ ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes {
     | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
-        printf("tipo da expressaao do define %d\n", $4->type);
+        // printf("tipo da expressaao do define %d\n", $4->type);
         if ($4->value->type == STRING) {
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: string type is not compatible with define", $4->value->line, $4->value->column);
@@ -218,7 +218,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             defineAux = 1;
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
-            printf("result do define %d %d\n", result->type, result->value);
+            // printf("result do define %d %d\n", result->type, result->value);
             setAssign(node, result->value);
         }
     }
@@ -489,6 +489,7 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
     }
     | Expressao SEMICOLON {
         Command *aux = createCommandExpression($1, NULL);
+        // printf("%d %s\n", aux->condition->type, aux->condition->value->valor);
         $$ = aux;
     }
     | SEMICOLON { }

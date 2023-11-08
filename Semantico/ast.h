@@ -165,6 +165,7 @@ typedef struct resultExpression {
     int type;
     int pointer;
     int value;
+    char string[256];
 } ResultExpression;
 
 Program *createProgram(void **hash, void *functionsList, void *main);

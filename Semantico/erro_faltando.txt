@@ -8,8 +8,6 @@ incompatible types in initialization when assigning to type ’<nome-do-tipo>’
 
 "incompatible type for argument ’<numero-do-argumento>’ of ’<nome-da-funcao>’ expected ’<nome-do-tipo>’ but argument is of type ’<nome-do-tipo>’"
 
-"incompatible types when returning type ’<nome-do-tipo>’ but ’<nome-do-tipo>’ was expected"
-
 "’<nome-do-identificador>’ initializer element is not constant" alguns sim outros nao
 
 "right shift count is negative"
