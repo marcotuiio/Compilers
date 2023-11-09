@@ -7,6 +7,7 @@ int functionWithNoReturn = 0;
 extern void printLineError(int line, int column);
 extern int textBefore;
 extern int defineAux;
+extern int dimensionAux;
 
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
@@ -176,14 +177,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case PRIMARIA:
             if (expr->operator == ID) {
 
-                if (defineAux) {
-                    if (textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: '%s' initializer element is not constant", expr->value->line, expr->value->column, expr->value->valor);
-                    printLineError(expr->value->line, expr->value->column);
-                    freeAST(program);
-                    exit(0);
-                }
-
                 hashNode = getIdentifierNode(localHash, expr->value->valor);
                 if (!hashNode) hashNode = getIdentifierNode(globalHash, expr->value->valor);
                 if (!hashNode) {
@@ -193,6 +186,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     freeAST(program);
                     exit(0);
                 }
+
+                if (!hashNode->isConstant && (defineAux || dimensionAux)) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: '%s' initializer element is not constant", expr->value->line, expr->value->column, expr->value->valor);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    exit(0);
+                }
+
                 printf("Achei %s %d %d = %d\n", hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->assign);
 
                 if (hashNode->typeVar == VOID) {

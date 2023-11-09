@@ -12,6 +12,7 @@ typedef struct node {
     int pointer;
     char *varId;
     int assign;
+    int isConstant;
     int line;
     int column;
     void *dimensions;
@@ -35,6 +36,7 @@ void **createHash();
 int hash(char *value);
 
 void *insertHash(void **hashTable, char *varId, int line, int column, int currentType, int pointer);
+void setIsConstant(void *node);
 void setPrototype(void *node);
 void setQntdParams(void *node, int qntdParams);
 void setParam(void *node, Param *p);

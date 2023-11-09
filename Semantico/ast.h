@@ -93,6 +93,8 @@ enum expressionTypes {
 typedef struct program {
     void **hashTable;  // declarations
     void *functionsList;
+    void *definesExps;
+    void *dimensionsExps;
     void *main;  // start of the program, wont be used here
 } Program;
 

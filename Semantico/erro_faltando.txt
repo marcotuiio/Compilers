@@ -14,8 +14,6 @@ incompatible types in initialization when assigning to type ’<nome-do-tipo>’
 
 "left shift count is negative"
 
-"division by zero"
-
 "subscripted value is neither array nor pointer"
 
 "array subscript is not an integer"

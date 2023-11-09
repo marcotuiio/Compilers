@@ -1,4 +1,3 @@
-Achei j 275 0 = 0
-error:semantic:2:5: size of array 'i' is zero
+error:semantic:2:7: 'j' initializer element is not constant
 int i[j];
-    ^
+      ^

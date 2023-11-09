@@ -38,6 +38,11 @@ void *insertHash(void **hashTable, char *varId, int line, int column, int curren
     return aux;
 }
 
+void setIsConstant(void *node) {
+    HashNode *aux = (HashNode *)node;
+    aux->isConstant = 1;
+}
+
 void setPrototype(void *node) {
     HashNode *aux = (HashNode *)node;
     aux->prototype = 1;
