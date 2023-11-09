@@ -46,6 +46,7 @@ Expression *createExpression(int type, int operator, void *value, void *left, vo
     newExp->left = left;
     newExp->right = right;
     newExp->dimension = NULL;
+    newExp->ternary = NULL;
     return newExp;
 }
 
@@ -222,7 +223,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 return result;
                 
             } else if (expr->operator == STRING) {
-                result = createResultExpression(CHAR, 1, 0);
+                result = createResultExpression(STRING, 0, 0);
                 return result;
             } 
             break;
@@ -234,7 +235,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             // printf("testando assign right %p %d %d\n", right, expr->value->type, expr->value->pointer);
 
             // atribuindo para constante
-            if (left->typeVar == STRING || left->typeVar == CHARACTER || left->typeVar == CHAR) {
+            if (left->typeVar == STRING || left->typeVar == CHARACTER) {
                 if (textBefore) printf("\n");
                 printf("error:semantic:%d:%d: assignment of read-only location %s", expr->value->line, expr->value->column, expr->left->value->valor);
                 printLineError(expr->value->line, expr->value->column);
@@ -327,15 +328,25 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             printf("lista_exp\n");
             break;
         
-        case TERNARY: // nao sei fazer ainda
-            if (evalExpression(expr->left, globalHash, localHash, program)) {
-                printf("ternary\n");
-                return evalExpression(expr->right->left, globalHash, localHash, program);
-            } else {
-                printf("ternary\n");
-                return evalExpression(expr->right->right, globalHash, localHash, program);
+        case TERNARY: 
+            ResultExpression *condition = evalExpression(expr->ternary, globalHash, localHash, program);
+            left = evalExpression(expr->left, globalHash, localHash, program);
+            right = evalExpression(expr->right, globalHash, localHash, program);
+
+            if (left->typeVar != right->typeVar) {
+                if (textBefore) printf("\n");
+                char *type1 = getExactType(left->typeVar, left->pointer);
+                char *type2 = getExactType(right->typeVar, right->pointer);
+                printf("warning:%d:%d: '%s'/'%s' type mismatch in conditional expression", expr->value->line, expr->value->column, type1, type2);
+                free(type1);
+                free(type2);
+                printLineError(expr->value->line, expr->value->column);
+                textBefore = 1;
             }
-        
+            if (condition->assign) result = createResultExpression(left->typeVar, left->pointer, left->assign);
+            else result = createResultExpression(right->typeVar, right->pointer, right->assign);
+            return result;
+
         case OR_LOGICO:
         case AND_LOGICO:
             left = evalExpression(expr->left, globalHash, localHash, program);
@@ -350,6 +361,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (left->typeVar == INT || left->typeVar == NUM_INT) auxLeftType = NUM_INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER) auxLeftType = CHARACTER;
                 auxLeftPointer = left->pointer;
+                if (left->typeVar == STRING) {
+                    auxLeftType = CHARACTER;
+                    auxLeftPointer = 1;
+                }
                 auxLeftValor = left->assign;
             } 
             auxRightPointer = expr->right->value->pointer;
@@ -359,6 +374,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
                 auxRightPointer = right->pointer;
+                if (right->typeVar == STRING) {
+                    auxRightType = CHARACTER;
+                    auxRightPointer = 1;
+                }
                 auxRightValor = right->assign; 
             }
 
@@ -369,8 +388,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case RELACIONAL:
             left = evalExpression(expr->left, globalHash, localHash, program); 
             right = evalExpression(expr->right, globalHash, localHash, program);
-            // printf("testando relaccional left %p %d %d\n", left, expr->value->type, expr->value->pointer);
-            // printf("testando relaccional right %p %d %d\n", right, expr->value->type, expr->value->pointer);
+            // printf("testando relaccional left %p %d %d\n", left, left->typeVar, left->pointer);
+            // printf("testando relaccional right %p %d %d\n", right, right->typeVar, right->pointer);
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
@@ -379,6 +398,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (left->typeVar == INT || left->typeVar == NUM_INT) auxLeftType = NUM_INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER) auxLeftType = CHARACTER;
                 auxLeftPointer = left->pointer;
+                if (left->typeVar == STRING) {
+                    auxLeftType = CHARACTER;
+                    auxLeftPointer = 1;
+                }
                 auxLeftValor = left->assign;
             } 
             auxRightPointer = expr->right->value->pointer;
@@ -388,6 +411,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
                 auxRightPointer = right->pointer;
+                if (right->typeVar == STRING) {
+                    auxRightType = CHARACTER;
+                    auxRightPointer = 1;
+                }
                 auxRightValor = right->assign; 
             }
 
@@ -466,6 +493,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (left->typeVar == INT || left->typeVar == NUM_INT) auxLeftType = NUM_INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER) auxLeftType = CHARACTER;
                 auxLeftPointer = left->pointer;
+                if (left->typeVar == STRING) {
+                    auxLeftType = CHARACTER;
+                    auxLeftPointer = 1;
+                }
                 auxLeftValor = left->assign;
             } 
             auxRightPointer = expr->right->value->pointer;
@@ -475,6 +506,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
                 auxRightPointer = right->pointer;
+                if (right->typeVar == STRING) {
+                    auxRightType = CHARACTER;
+                    auxRightPointer = 1;
+                }
                 auxRightValor = right->assign; 
             }
 
@@ -538,6 +573,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (left->typeVar == INT || left->typeVar == NUM_INT) auxLeftType = NUM_INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER) auxLeftType = CHARACTER;
                 auxLeftPointer = left->pointer;
+                if (left->typeVar == STRING) {
+                    auxLeftType = CHARACTER;
+                    auxLeftPointer = 1;
+                }
                 auxLeftValor = left->assign;
             } 
             auxRightPointer = expr->right->value->pointer;
@@ -547,6 +586,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
                 auxRightPointer = right->pointer;
+                if (right->typeVar == STRING) {
+                    auxRightType = CHARACTER;
+                    auxRightPointer = 1;
+                }
                 auxRightValor = right->assign; 
             }
 
@@ -604,6 +647,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         
         case CASTING:
             printf("casting\n");
+            right = evalExpression(expr->right, globalHash, localHash, program);
+
+            printf("\ncastando left %d %d\n", expr->value->type, expr->value->pointer);
+            printf("castando right %d %d\n", right->typeVar, right->pointer);
+
             break;
         
         case UNARIA:
@@ -711,7 +759,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
         
         default:
-            printf("Tipo de expressão não suportado\n");
+            printf("Tipo de expressão não suportado %p\n", expr);
             exit(0);
     }
     return 0;

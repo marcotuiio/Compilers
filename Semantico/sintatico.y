@@ -29,6 +29,7 @@ char printDimen[1024];
 int defineAux = 0;
 int dimensionAux = 0;
 int funcAux = 0;
+int auxColumnAssign;
 
 void *prototypeParam = NULL;
 
@@ -148,7 +149,6 @@ void printLineError(int line, int column);
 %type <token> OpUnario
 %type <expr> ExpressaoAtribuicao
 %type <expr> ExpressaoCondicional
-%type <expr> AuxCondicional
 %type <expr> ExpressaoOrLogico
 %type <expr> ExpressaoAndLogico
 %type <expr> ExpressaoOr
@@ -320,6 +320,29 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             setDimensions(node, $3);
             if ($4) {
                 ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+                int assignType, assignPointer = result->pointer;
+                if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
+                    assignType = CHAR;
+                } else if (result->typeVar == INT || result->typeVar == NUM_INT) {
+                    assignType = INT;
+                } else if (result->typeVar == STRING) {
+                    assignType = CHAR;
+                    assignPointer = 1;
+                }
+
+                if (((CURRENT_TYPE == CHAR || CURRENT_TYPE == CHARACTER) && assignType == CHAR) 
+                    || ((CURRENT_TYPE == INT || CURRENT_TYPE == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
+                    if ($1 != assignPointer) {
+                        if (textBefore) printf("\n");
+                        char *type1 = getExactType(CURRENT_TYPE, $1);
+                        char *type2 = getExactType(assignType, assignPointer);
+                        printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", $2.line, auxColumnAssign, type1, type2);
+                        printLineError($2.line, auxColumnAssign);
+                        if (currentHash) freeHash(currentHash);
+                        // if (globalHash) freeHash(globalHash);
+                        exit(1);
+                    }
+                }
                 setAssign(node, result->assign);
             }
         }
@@ -347,6 +370,7 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
 
 ExpressaoAssign: ASSIGN ExpressaoAtribuicao { 
         $2->assign = ASSIGN;
+        auxColumnAssign = $1.column;
         $$ = $2;
     }
     | { $$ = NULL; } ;
@@ -561,17 +585,13 @@ ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
         $$ = aux;
     } ;
 
-ExpressaoCondicional: ExpressaoOrLogico AuxCondicional {
-        $1->ternary = $2;
-        $$ = $1;
-    }
-
-AuxCondicional: TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional {
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, $1.type);
-        Expression *aux = createExpression(TERNARY, TERNARY_CONDITIONAL, auxToken, $2, $4);
+ExpressaoCondicional: ExpressaoOrLogico { $$ = $1; }
+    | ExpressaoOrLogico TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional {
+        AuxToken *auxToken = createAuxToken($4.valor, $4.line, $4.column, $4.type);
+        Expression *aux = createExpression(TERNARY, TERNARY_CONDITIONAL, auxToken, $3, $5);
+        aux->ternary = $1;
         $$ = aux;
-    }
-    | { $$ = NULL; } ;
+    } ;
 
 ExpressaoOrLogico: ExpressaoAndLogico { $$ = $1; }
     | ExpressaoOrLogico LOGICAL_OR ExpressaoAndLogico {
@@ -667,6 +687,7 @@ ExpressaoCast: ExpressaoUnaria { $$ = $1; }
         CURRENT_TYPE = AUX_CURRENT_TYPE;
         AUX_CURRENT_TYPE = -1;
         aux->pointer = $3;
+        $$ = aux;
     } ;
 
 ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
