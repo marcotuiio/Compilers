@@ -1,7 +1,4 @@
-type: 1009
-type: 1014
-type: 1016
-bitwise and not inc dec
-error:semantic:3:13: invalid type argument of unary '&' (have 'int')
+Achei i 275 0
+error:semantic:3:16: comparison between 'int*' and 'char*' operator '>='
     int i = &i >= "teste";
-            ^
+               ^

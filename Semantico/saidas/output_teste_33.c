@@ -1,7 +1,5 @@
-Function: f
-Command de expressão
-type: 1001
-assign i p
+Achei i 275 0
+Achei p 275 1
 error:semantic:4:7: incompatible types when assigning to type 'int' from type 'int*'
     i = p;
       ^

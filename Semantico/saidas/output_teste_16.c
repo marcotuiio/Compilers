@@ -1,5 +1,3 @@
-type: 1011
-type: 1016
-error:semantic:2:19: 'i' undeclared
+error:semantic:2:19: 'i' initializer element is not constant
 #define constante i+1
                   ^

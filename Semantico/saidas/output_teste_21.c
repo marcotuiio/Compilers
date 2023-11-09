@@ -1,6 +1,5 @@
-Function: f
-Command de expressão
-type: 1001
-error:semantic:4:7: void value not ignored as it ought to be
+Achei i 275 0
+Achei f 277 0
+error:semantic:4:9: void value not ignored as it ought to be
     i = f();    
-      ^
+        ^

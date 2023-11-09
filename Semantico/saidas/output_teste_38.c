@@ -1,12 +1,3 @@
-type: 1017
-numeros
-type: 1017
-numeros
-type: 1017
-numeros
-type: 1011
-type: 1016
-type: 1016
-certo!
-plus
+Achei v 275 0
+Achei c1 275 0
 SUCCESSFUL COMPILATION.

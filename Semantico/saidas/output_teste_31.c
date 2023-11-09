@@ -1,7 +1,2 @@
-type: 1017
-numeros
-Function: f
-Command de expressão
-type: 1016
-Command de return
+Achei i 275 0
 SUCCESSFUL COMPILATION.
