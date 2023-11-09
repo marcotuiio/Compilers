@@ -162,10 +162,11 @@ typedef struct command {
 } Command;
 
 typedef struct resultExpression {
-    int type;
+    int typeVar;
     int pointer;
-    int value;
+    int assign;
     char string[256];
+    char id[256];
 } ResultExpression;
 
 Program *createProgram(void **hash, void *functionsList, void *main);

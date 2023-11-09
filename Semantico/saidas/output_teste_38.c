@@ -1,3 +1,3 @@
-Achei v 275 0
-Achei c1 275 0
+Achei v 275 0 = 0
+Achei c1 275 0 = 2
 SUCCESSFUL COMPILATION.

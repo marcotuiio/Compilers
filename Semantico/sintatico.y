@@ -27,6 +27,7 @@ int dimensionError = 0;
 char bufferAux[128];
 char printDimen[1024];
 int defineAux = 0;
+int dimensionAux = 0;
 
 void *prototypeParam = NULL;
 
@@ -219,10 +220,19 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
             // printf("result do define %d %d\n", result->type, result->value);
-            setAssign(node, result->value);
+            setAssign(node, result->assign);
         }
     }
-    | DeclaraVariaveis { /* Adicionar isso na hash */ }
+    | DeclaraVariaveis { 
+        if (strlen(printDimen) > 0) {
+            printf("%s", printDimen);
+            printLineError($1.line, $1.column);
+            if (currentHash) freeHash(currentHash);
+            if (globalHash) freeHash(globalHash);
+            traverseAST(AST);
+            exit(1);
+        }
+    }
     | DeclaraPrototipos { /* Adicionar isso na hash */ } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
@@ -259,7 +269,7 @@ Ponteiro: MULTIPLY Ponteiro {
 
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { 
         CURRENT_TYPE = $1.type;
-        $$ = $2;
+        $$ = $2;  // retornando id da declaracao
     } ;
 
 BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
@@ -280,8 +290,9 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
-            
+
             if (dimensionError != 0) {
+                // printf("dimension error\n");
                 if (textBefore) printf("\n");
                 strcpy(printDimen, "error:semantic:");
                 for (int i = 0; i < 128; i++) bufferAux[i] = '\0';
@@ -303,7 +314,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             setDimensions(node, $3);
             if ($4) {
                 ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
-                setAssign(node, result->value);
+                setAssign(node, result->assign);
             }
         }
     } ;
@@ -314,14 +325,15 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
         ResultExpression *result = NULL;
         if ($2) result = evalExpression($2, globalHash, currentHash, NULL);
         if (result) {
-            if (result->value == 0) {
+            printf("result->assign %d %d\n", result->assign, result->typeVar);
+            if (result->assign == 0) {
                 dimensionError = 1;
-            } else if (result->value < 0) {
+            } else if (result->assign < 0) {
                 dimensionError = 2;
             }   
         }
 
-        Dimension *aux = createDimension(result->value);
+        Dimension *aux = createDimension(result->assign);
         aux->next = $4;
         $$ = aux;
     }
@@ -390,6 +402,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
                     strcat(printDimen, "' is zero");
                 } else if (dimensionError == 2) {
                     strcat(printDimen, "' is negative");
+                    printf("UAIIII\n");
                 }
             }
             setDimensions(node, $4);
@@ -764,6 +777,7 @@ int main(int argc, char *argv[]) {
     
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
+        if (textBefore) printf("\n");
         printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
     }
     freeAST(AST);   

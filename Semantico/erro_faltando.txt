@@ -20,8 +20,6 @@ incompatible types in initialization when assigning to type ’<nome-do-tipo>’
 
 "array subscript is not an integer"
 
-"comparison between ’<nome-do-tipo>’ and ’<nome-do-tipo>’ operator ’<operador-binario>’"
-
 "cannot convert from ’<nome-do-tipo>’ to int"
 
 
@@ -29,6 +27,5 @@ incompatible types in initialization when assigning to type ’<nome-do-tipo>’
 "left shift count >= width of type"
 "right shift count >= width of type"
 "array index out of bounds"
-"comparison between ’<nome-do-tipo>’ and ’<nome-do-tipo>’ operator ’<operador-binario>’"
 "cast from ’<nome-do-tipo>’ to ’<nome-do-tipo>’ of different size"
 "’<nome-do-tipo>’/’<nome-do-tipo>’ type mismatch in conditional expression"
