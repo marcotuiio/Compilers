@@ -681,7 +681,7 @@ ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
         // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
-        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        AuxToken *auxToken = createAuxToken($2.valor, $1.line, $1.column, $2.type);
         auxToken->pointer = $3;
         Expression *aux = createExpression(CASTING, $2.type, auxToken, NULL, $5);
         CURRENT_TYPE = AUX_CURRENT_TYPE;

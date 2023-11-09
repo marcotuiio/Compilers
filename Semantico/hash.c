@@ -26,6 +26,7 @@ void *insertHash(void **hashTable, char *varId, int line, int column, int curren
     aux->line = line;
     aux->column = column;
     aux->pointer = pointer;
+    aux->assign = 1;
 
     HashNode *head = (HashNode *)hashTable[index];
     if (!head) {

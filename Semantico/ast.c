@@ -196,7 +196,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
-                printf("Achei %s %d %d = %d\n", hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->assign);
+                // printf("Achei %s %d %d = %d\n", hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->assign);
 
                 if (hashNode->typeVar == VOID) {
                     if (textBefore) printf("\n");
@@ -254,7 +254,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->operator == ASSIGN) {
                 if (right) {
-                    // nao esta preparado para casting
                     if (left->pointer != 0 || right->pointer != 0) {  // existem pointers envolvidos
                         // se forem de tipo diferente ou ponteiro diferente
                         if (left->typeVar != right->typeVar || left->pointer != right->pointer) {  
@@ -646,13 +645,36 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
         
         case CASTING:
-            printf("casting\n");
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            printf("\ncastando left %d %d\n", expr->value->type, expr->value->pointer);
-            printf("castando right %d %d\n", right->typeVar, right->pointer);
+            // printf("\ncastando left %d %d\n", expr->value->type, expr->value->pointer);
+            // printf("castando right %d %d\n", right->typeVar, right->pointer);
+            if (right->typeVar == STRING) {
+                right->typeVar = CHAR;
+                right->pointer = 1;
+            }
 
-            break;
+            if (right->typeVar == VOID && expr->value->type != VOID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);                
+            }
+
+            if ((right->typeVar == NUM_INT || right->typeVar == INT) 
+                && (expr->value->type != NUM_INT && expr->value->type != INT)) {
+                if (textBefore) printf("\n");
+                char *type1 = getExactType(right->typeVar, right->pointer);
+                char *type2 = getExactType(expr->value->type, expr->value->pointer);
+                printf("warning:%d:%d: cast from '%s' to '%s' of different size", expr->value->line, expr->value->column, type1, type2);
+                free(type1);
+                free(type2);
+                printLineError(expr->value->line, expr->value->column);
+                textBefore = 1;
+            }
+            result = createResultExpression(expr->value->type, expr->value->pointer, right->assign);
+            return result;
         
         case UNARIA:
             left = evalExpression(expr->left, globalHash, localHash, program);

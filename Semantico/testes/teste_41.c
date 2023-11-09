@@ -1,7 +1,7 @@
 void f()
 {
     char c;
-    int i = 1;
+    int i;
     int* p;
     p = i?&i:&c;
 }
