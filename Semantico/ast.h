@@ -125,7 +125,6 @@ typedef struct expression {
     int pointer;
     int operator;
     AuxToken *value;
-    int unario;
     int assign;
     Dimension *dimension;
     void *extra;

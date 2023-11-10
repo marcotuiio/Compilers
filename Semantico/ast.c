@@ -766,16 +766,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case UNARIA:
             left = evalExpression(expr->left, globalHash, localHash, program);
             // printf("testando unaria left %p %d %d\n", left, expr->value->type, expr->value->pointer);
-
-            if (expr->left->value->type != ID) {
-                if (textBefore) printf("\n");
-                printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
-                printLineError(expr->value->line, expr->value->column);
-                freeAST(program);
-                deleteAuxFile();
-                exit(0);
-            }
-
+            
             if (expr->operator == PLUS || expr->operator == MINUS || expr->operator == BITWISE_NOT) {
 
                 if (left->typeVar == NUM_INT || left->typeVar != CHARACTER 
@@ -822,6 +813,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             } else if (expr->operator == MULTIPLY) {
 
+                if (expr->left->value->type != ID) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+                }
+
                 if ((left->typeVar != NUM_INT || left->typeVar != CHARACTER   // alerta
                     || left->typeVar != INT || left->typeVar != CHAR)
                     && left->pointer == 0) {
@@ -835,12 +835,21 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     deleteAuxFile();
                     exit(0);
                 } 
-                result = createResultExpression(left->typeVar, left->pointer, *(&left->assign));
+                result = createResultExpression(left->typeVar, 0, *(&left->assign));
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
                 return result;
 
             } else if (expr->operator == BITWISE_AND || expr->operator == NOT || expr->operator == INC || expr->operator == DEC) {
+
+                if (expr->operator != NOT && expr->left->value->type != ID) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+                }
 
                 if (left->typeVar != NUM_INT && left->typeVar != CHARACTER 
                     && left->typeVar != INT && left->typeVar != CHAR) {
@@ -877,11 +886,35 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case POS_FIXA:
             printf("pos fixa\n");
             left = evalExpression(expr->left, globalHash, localHash, program);
-            right = evalExpression(expr->right, globalHash, localHash, program);
-            printf("testando pos fixa left %p %d %d\n", left, expr->value->type, expr->value->pointer);
-            printf("testando pos fixa right %p %d %d\n", right, expr->value->type, expr->value->pointer);
-            deleteAuxFile();
-            exit(0);
+            // right = evalExpression(expr->right, globalHash, localHash, program);
+            // printf("testando pos fixa left %p %d %d\n", left, expr->value->type, expr->value->pointer);
+            // printf("testando pos fixa right %p %d %d\n", right, expr->value->type, expr->value->pointer);
+            // deleteAuxFile();
+            // exit(0);
+            if (expr->operator == INC || expr->operator == DEC) {
+                if (expr->left->value->type != ID) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+                }
+
+                int auxAssign;
+                if (expr->operator == INC) {
+                    auxAssign = left->assign++;
+                    result = createResultExpression(left->typeVar, left->pointer, auxAssign);
+                } else if (expr->operator == DEC) {
+                    auxAssign = left->assign--;
+                    result = createResultExpression(left->typeVar, left->pointer, auxAssign);
+                }
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
+                printf("pos fixa result %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
+                return result;
+
+            }
             break;
         
         default:
@@ -938,15 +971,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     if (command->type == FOR) {
         // printf("Command de for\n");
         ResultExpression *forResult = NULL;
-        forResult = evalExpression(command->init, globalHash, localHash, program);
-        if (forResult->typeVar == VOID) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
-            printLineError(forResult->auxLine, forResult->auxColumn);
-            freeAST(program);
-            deleteAuxFile();
-            exit(0);
-        }
+        evalExpression(command->init, globalHash, localHash, program);
         forResult = evalExpression(command->condition, globalHash, localHash, program);
         if (forResult->typeVar == VOID) {
             if (textBefore) printf("\n");
@@ -956,21 +981,13 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        forResult = evalExpression(command->increment, globalHash, localHash, program);
-        if (forResult->typeVar == VOID) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
-            printLineError(forResult->auxLine, forResult->auxColumn);
-            freeAST(program);
-            deleteAuxFile();
-            exit(0);
-        }
+        evalExpression(command->increment, globalHash, localHash, program);
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
     }
 
     // Se o comando for um comando PRINTF ou SCANF, percorra os argumentos
     if (command->type == PRINTF || command->type == SCANF) {
-        // printf("Command de printf ou scanf\n");
+        // printf("\nCommand de printf ou scanf %p %p\n\n", command, command->auxPrint);
         evalExpression(command->auxPrint, globalHash, localHash, program);
     }
 
@@ -1066,15 +1083,15 @@ void freeAST(Program *program) {
                 free(cmd->condition);
             } 
             if (cmd->init) {
-                if (cmd->init->value) free(cmd->condition->value);
+                if (cmd->init->value) free(cmd->init->value);
                 free(cmd->init);
             } 
             if (cmd->increment) {
-                if (cmd->increment->value) free(cmd->condition->value);
+                if (cmd->increment->value) free(cmd->increment->value);
                 free(cmd->increment); 
             }
             if (cmd->auxPrint) {
-                if (cmd->auxPrint->value) free(cmd->condition->value);
+                if (cmd->auxPrint->value) free(cmd->auxPrint->value);
                 free(cmd->auxPrint);
             }
             if (cmd->auxToken) free(cmd->auxToken);

@@ -32,7 +32,7 @@ int defineAux = 0;
 int dimensionAux = 0;
 int funcAux = 0;
 int auxColumnAssign;
-int posFixaAux = -1;
+int auxPosFixa = -1;
 
 void *prototypeParam = NULL;
 
@@ -596,12 +596,12 @@ OpMult: MULTIPLY { $$ = yylval.token; }
     | DIVIDE { $$ = yylval.token; }
     | REMAINDER { $$ = yylval.token; } ;
 
-OpUnario: BITWISE_AND { $$ = yylval.token; }
-    | MULTIPLY { $$ = yylval.token; }
+OpUnario: BITWISE_AND { $$ = yylval.token; }  // &
+    | MULTIPLY { $$ = yylval.token; } 
     | PLUS { $$ = yylval.token; }
     | MINUS { $$ = yylval.token; }
-    | NOT { $$ = yylval.token; }
-    | BITWISE_NOT { $$ = yylval.token; } ;
+    | NOT { $$ = yylval.token; }  // !
+    | BITWISE_NOT { $$ = yylval.token; } ;  // ~
 
 ExpressaoAtribuicao: ExpressaoCondicional { $$ = $1; }
     | ExpressaoUnaria OpAtrib ExpressaoAtribuicao {
@@ -729,7 +729,6 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     | OpUnario ExpressaoCast {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, $1.type);
         Expression *aux = createExpression(UNARIA, $1.type, auxToken, $2, NULL);
-        $2->unario = $1.type; 
         $$ = aux;
     } ;
 
@@ -745,29 +744,37 @@ ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
         // posFixaAux = -1;
         // $$ = aux;
 
-        $1->right = $2;
-        $$ = $1; 
+        AuxToken *decoy = createAuxToken($2->value->valor, $2->value->line, $2->value->column, $2->value->type);
+        printf("Criada pos fixa %d %p %p\n", $2->value->type, $1, $2);
+        if ($2->value->type == DEC || $2->value->type == INC) {
+            Expression *aux = createExpression(POS_FIXA, $2->value->type, decoy, $1, NULL);
+            auxPosFixa = -1;
+            $$ = aux;
+        }
+
+        // $1->right = $2;
+        // $$ = $1; 
     } ;
 
-AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { 
-        posFixaAux = L_SQUARE_BRACKET;
+AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET {
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, L_SQUARE_BRACKET);
+        $2->value = auxToken;
         $$ = $2; 
     }
     | L_PAREN PulaExpressaoAtribuicao R_PAREN { 
-        posFixaAux = L_PAREN;
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, L_PAREN);
+        $2->value = auxToken;
         $$ = $2; 
     }
-    | INC { 
+    | INC {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, INC);
-        Expression *aux = createExpression(UNARIA, INC, auxToken, NULL, NULL);
-        posFixaAux = INC;
-        $$ = aux;
+        Expression *decoy = createExpression(POS_FIXA, INC, auxToken, NULL, NULL);
+        $$ = decoy;
     }
-    | DEC { 
+    | DEC {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
-        Expression *aux = createExpression(UNARIA, DEC, auxToken, NULL, NULL);
-        posFixaAux = DEC;
-        $$ = aux;
+        Expression *decoy = createExpression(POS_FIXA, DEC, auxToken, NULL, NULL);
+        $$ = decoy;
     } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
