@@ -329,6 +329,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
                 result = createResultExpression(left->typeVar, left->pointer, left->assign);
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 return result;
             } 
             break;
@@ -355,6 +357,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (condition->assign) result = createResultExpression(left->typeVar, left->pointer, left->assign);
             else result = createResultExpression(right->typeVar, right->pointer, right->assign);
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;
             return result;
 
         case OR_LOGICO:
@@ -390,9 +394,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
                 auxRightValor = right->assign; 
             }
-
             if (expr->type == OR_LOGICO) result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
             else if (expr->type == AND_LOGICO) result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;
             return result;
         
         case RELACIONAL:
@@ -456,7 +461,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 deleteAuxFile();
                 exit(0);
             }
-
             if (expr->operator == LESS_THAN) {
                 result = createResultExpression(INT, 0, left->assign < right->assign);
             } else if (expr->operator == GREATER_THAN) {
@@ -470,8 +474,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             } else if (expr->operator == NOT_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign != right->assign);
             }
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;
             return result;
-            break;
         
         case SHIFT:
             left = evalExpression(expr->left, globalHash, localHash, program);
@@ -543,12 +548,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printLineError(expr->value->line, expr->value->column);
                 textBefore = 1;
             }
-
             if (expr->operator == R_SHIFT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
             } else if (expr->operator == L_SHIFT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
             }
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;    
             return result;
         
         case ADITIVIVA:
@@ -607,6 +613,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (expr->operator == PLUS) {
                 // pode somar pointer e char ou int                
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 return result;  
 
             } else if (expr->operator == MINUS) {
@@ -625,6 +633,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 // printf("minus %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
                 return result;  
             }
@@ -689,11 +699,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 deleteAuxFile();
                 exit(0);
             }
-
+            
             if (expr->operator == MULTIPLY) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
                 // printf("criando mult %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
-                return result;
             } else if (expr->operator == DIVIDE) {
                 if (right->assign == 0 || auxRightValor == 0) {
                     if (textBefore) printf("\n");
@@ -704,20 +713,18 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
-                return result;
             } else if (expr->operator == REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
-                return result;
             } else if (expr->operator == OR_BIT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
-                return result;
             } else if (expr->operator == XOR_BIT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
-                return result;
             } else if (expr->operator == AND_BIT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor & auxRightValor);
-                return result;
             }
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;
+            return result;
             break;
         
         case CASTING:
@@ -751,6 +758,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 textBefore = 1;
             }
             result = createResultExpression(expr->value->type, expr->value->pointer, right->assign);
+            result->auxLine = expr->value->line;
+            result->auxColumn = expr->value->column;
             // printf("\n\ncastando result %d %d\n", result->typeVar, result->pointer);
             return result;
         
@@ -807,6 +816,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 } else if (expr->operator == BITWISE_NOT) {
                     result = createResultExpression(left->typeVar, left->pointer, ~left->assign);
                 }
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 return result;
 
             } else if (expr->operator == MULTIPLY) {
@@ -825,6 +836,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 } 
                 result = createResultExpression(left->typeVar, left->pointer, *(&left->assign));
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 return result;
 
             } else if (expr->operator == BITWISE_AND || expr->operator == NOT || expr->operator == INC || expr->operator == DEC) {
@@ -855,6 +868,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 } else if (expr->operator == DEC) {
                     result = createResultExpression(left->typeVar, left->pointer, --left->assign);
                 } 
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
                 return result;
             } 
             break;
@@ -893,8 +908,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         // printf("resultValue %d\n", ifResult->assign);
         if (ifResult->typeVar == VOID) {
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
-            printLineError(command->auxToken->line, command->auxToken->column);
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", ifResult->auxLine, ifResult->auxColumn);
+            printLineError(ifResult->auxLine, ifResult->auxColumn);
             freeAST(program);
             deleteAuxFile();
             exit(0);
@@ -910,8 +925,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         whileResult = evalExpression(command->condition, globalHash, localHash, program);
         if (whileResult->typeVar == VOID) {
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
-            printLineError(command->auxToken->line, command->auxToken->column);
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", whileResult->auxLine, whileResult->auxColumn);
+            printLineError(whileResult->auxLine, whileResult->auxColumn);
             freeAST(program);
             deleteAuxFile();
             exit(0);
@@ -926,8 +941,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         forResult = evalExpression(command->init, globalHash, localHash, program);
         if (forResult->typeVar == VOID) {
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
-            printLineError(command->auxToken->line, command->auxToken->column);
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
+            printLineError(forResult->auxLine, forResult->auxColumn);
             freeAST(program);
             deleteAuxFile();
             exit(0);
@@ -935,8 +950,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         forResult = evalExpression(command->condition, globalHash, localHash, program);
         if (forResult->typeVar == VOID) {
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
-            printLineError(command->auxToken->line, command->auxToken->column);
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
+            printLineError(forResult->auxLine, forResult->auxColumn);
             freeAST(program);
             deleteAuxFile();
             exit(0);
@@ -944,8 +959,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         forResult = evalExpression(command->increment, globalHash, localHash, program);
         if (forResult->typeVar == VOID) {
             if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
-            printLineError(command->auxToken->line, command->auxToken->column);
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
+            printLineError(forResult->auxLine, forResult->auxColumn);
             freeAST(program);
             deleteAuxFile();
             exit(0);
