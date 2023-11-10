@@ -165,7 +165,6 @@ void printLineError(int line, int column);
 %type <expr> ExpressaoCast
 %type <expr> ExpressaoUnaria
 %type <expr> ExpressaoPosFixa
-%type <expr> AuxPosFixa
 %type <expr> PulaExpressaoAtribuicao
 %type <expr> AuxPula
 %type <expr> ExpressaoPrimaria
@@ -733,22 +732,34 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     } ;
 
 ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
-    | ExpressaoPosFixa AuxPosFixa {
-        // if (posFixaAux == -1) {
-        //     printf("fiz alguma merda na pos fixa 719\n");
-        //     exit(1);
-        // }
-        // AuxToken *auxToken = createAuxToken($2->value->valor, $2->value->line, $2->value->column, $2->value->type);
-        // Expression *aux = createExpression(POS_FIXA, posFixaAux, auxToken, $1, $2);
-        // printf("Criada pos fixa %d %p %p\n", posFixaAux, $1, $2);
-        // posFixaAux = -1;
-        // $$ = aux;
+    | ExpressaoPosFixa L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { 
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_SQUARE_BRACKET);
+        Expression *aux = createExpression(POS_FIXA, L_SQUARE_BRACKET, auxToken, $1, $3);
+        $$ = aux;
+    }
+    | ExpressaoPosFixa L_PAREN PulaExpressaoAtribuicao R_PAREN {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_PAREN);
+        Expression *aux = createExpression(POS_FIXA, L_PAREN, auxToken, $1, $3);
+        $$ = aux;
+    }
+    | ExpressaoPosFixa INC {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, INC);
+        Expression *aux = createExpression(POS_FIXA, INC, auxToken, $1, NULL);
+        $$ = aux;
+    }
+    | ExpressaoPosFixa DEC {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, DEC);
+        Expression *aux = createExpression(POS_FIXA, DEC, auxToken, $1, NULL);
+        $$ = aux;
+    } ;
 
+
+/* ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
+    | ExpressaoPosFixa AuxPosFixa {
         AuxToken *decoy = createAuxToken($2->value->valor, $2->value->line, $2->value->column, $2->value->type);
         printf("Criada pos fixa %d %p %p\n", $2->value->type, $1, $2);
         if ($2->value->type == DEC || $2->value->type == INC) {
             Expression *aux = createExpression(POS_FIXA, $2->value->type, decoy, $1, NULL);
-            auxPosFixa = -1;
             $$ = aux;
         }
 
@@ -775,7 +786,7 @@ AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
         Expression *decoy = createExpression(POS_FIXA, DEC, auxToken, NULL, NULL);
         $$ = decoy;
-    } ;
+    } ; */
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
         $1->right = $2; 

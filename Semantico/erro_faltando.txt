@@ -1,3 +1,4 @@
+    erros:
 "called object ’<nome-do-identificador>’ is not a function or function pointer"
 
 "too few arguments to function ’<nome-da-funcao>’"
@@ -10,9 +11,8 @@
 
 "array subscript is not an integer"
 
-
+    warnings :  
 "array index out of bounds"
-"’<nome-do-tipo>’/’<nome-do-tipo>’ type mismatch in conditional expression"
 
 
-atencao aos 14, 23, 24, 44, 47, 48, 49, 50
+atencao aos 23, 24, 26, 27, '31', '38', '40', '44', '47', 48, 49, 50
