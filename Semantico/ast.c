@@ -5,6 +5,7 @@
 
 int functionWithNoReturn = 0;
 extern void printLineError(int line, int column);
+extern void deleteAuxFile();
 extern int textBefore;
 extern int defineAux;
 extern int dimensionAux;
@@ -185,6 +186,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
 
@@ -193,6 +195,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: '%s' initializer element is not constant", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
 
@@ -203,6 +206,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 } else if (hashNode->typeVar == NUM_INT || hashNode->typeVar == INT) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
@@ -240,6 +244,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: assignment of read-only location %s", expr->value->line, expr->value->column, expr->left->value->valor);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -249,6 +254,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -265,6 +271,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteAuxFile();
                             exit(0);
                         }
                     }    
@@ -282,6 +289,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteAuxFile();
                             exit(0);
                         }
                     } 
@@ -299,6 +307,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteAuxFile();
                             exit(0);
                         }
                     }
@@ -314,6 +323,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteAuxFile();
                             exit(0);
                         }
                     }
@@ -443,6 +453,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -512,6 +523,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -520,6 +532,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: %s shift count is negative", expr->value->line, expr->value->column, expr->operator == R_SHIFT ? "right" : "left");
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -527,7 +540,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (auxRightValor >= leftBits) {
                 if (textBefore) printf("\n");
                 printf("warning:%d:%d: %s shift count >= width of type", expr->value->line, expr->value->column, expr->operator == R_SHIFT ? "right" : "left");
-                // printLineError(expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
                 textBefore = 1;
             }
 
@@ -587,6 +600,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
             
@@ -607,6 +621,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type2);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
@@ -671,6 +686,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -684,6 +700,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: division by zero", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
@@ -718,6 +735,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);                
             }
 
@@ -733,7 +751,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 textBefore = 1;
             }
             result = createResultExpression(expr->value->type, expr->value->pointer, right->assign);
-            printf("\n\ncastando result %d %d\n", result->typeVar, result->pointer);
+            // printf("\n\ncastando result %d %d\n", result->typeVar, result->pointer);
             return result;
         
         case UNARIA:
@@ -745,6 +763,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
 
@@ -758,6 +777,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         printf("error:semantic:%d:%d: wrong type argument to unary %s", expr->value->line, expr->value->column, expr->operator == PLUS ? "plus" : "minus");
                         printLineError(expr->value->line, expr->value->column);
                         freeAST(program);
+                        deleteAuxFile();
                         exit(0);
                     }
                 }
@@ -776,6 +796,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
 
@@ -800,6 +821,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 } 
                 result = createResultExpression(left->typeVar, left->pointer, *(&left->assign));
@@ -820,6 +842,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteAuxFile();
                     exit(0);
                 }
 
@@ -842,11 +865,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             right = evalExpression(expr->right, globalHash, localHash, program);
             printf("testando pos fixa left %p %d %d\n", left, expr->value->type, expr->value->pointer);
             printf("testando pos fixa right %p %d %d\n", right, expr->value->type, expr->value->pointer);
+            deleteAuxFile();
             exit(0);
             break;
         
         default:
             printf("Tipo de expressão não suportado %p\n", expr);
+            deleteAuxFile();
             exit(0);
     }
     return 0;
@@ -865,12 +890,13 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         // printf("Command de if ou else\n");
         ResultExpression *ifResult = NULL;
         ifResult = evalExpression(command->condition, globalHash, localHash, program);
-        printf("resultValue %d\n", ifResult->assign);
+        // printf("resultValue %d\n", ifResult->assign);
         if (ifResult->typeVar == VOID) {
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
             printLineError(command->auxToken->line, command->auxToken->column);
             freeAST(program);
+            deleteAuxFile();
             exit(0);
         }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
@@ -887,6 +913,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
             printLineError(command->auxToken->line, command->auxToken->column);
             freeAST(program);
+            deleteAuxFile();
             exit(0);
         }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
@@ -902,6 +929,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
             printLineError(command->auxToken->line, command->auxToken->column);
             freeAST(program);
+            deleteAuxFile();
             exit(0);
         }
         forResult = evalExpression(command->condition, globalHash, localHash, program);
@@ -910,6 +938,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
             printLineError(command->auxToken->line, command->auxToken->column);
             freeAST(program);
+            deleteAuxFile();
             exit(0);
         }
         forResult = evalExpression(command->increment, globalHash, localHash, program);
@@ -918,6 +947,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
             printLineError(command->auxToken->line, command->auxToken->column);
             freeAST(program);
+            deleteAuxFile();
             exit(0);
         }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
@@ -939,6 +969,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 printf("error:semantic:%d:%d: return with a value, in function returning void", auxFunc->line, auxFunc->column);
                 printLineError(auxFunc->line, auxFunc->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
         } else {
@@ -947,6 +978,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 printf("error:semantic:%d:%d: return with no value, in function returning non-void", command->auxToken->line, command->auxToken->column);
                 printLineError(command->auxToken->line, command->auxToken->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
         }
@@ -962,6 +994,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 free(type2);
                 printLineError(command->auxToken->line, command->auxToken->column);
                 freeAST(program);
+                deleteAuxFile();
                 exit(0);
             }
         }

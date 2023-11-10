@@ -13,3 +13,6 @@
 
 "array index out of bounds"
 "’<nome-do-tipo>’/’<nome-do-tipo>’ type mismatch in conditional expression"
+
+
+atencao aos 14, 23, 24, 40, 44, 45, 47, 48, 49, 50

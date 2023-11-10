@@ -1,10 +1,12 @@
 #include "hash.h"
 extern void printLineError(int line, int column);
+extern void deleteAuxFile();
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
     if (!hashTable) {
         printf("Erro ao alocar memoria para hash\n");
+        deleteAuxFile();
         exit(1);
     }
     return hashTable;
@@ -95,6 +97,7 @@ int lookForValueInHash(void **hashTable, char *varId, int line, int column, int 
                 printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, varId, head->line, head->column);
                 printLineError(line, column);
                 freeHash(hashTable);
+                deleteAuxFile();
                 exit(1);
 
             } else {  // se for de tipo diferente
@@ -102,6 +105,7 @@ int lookForValueInHash(void **hashTable, char *varId, int line, int column, int 
                 printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, varId, head->line, head->column);
                 printLineError(line, column);
                 freeHash(hashTable);
+                deleteAuxFile();
                 exit(1);
             }
         }
@@ -135,12 +139,14 @@ int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, 
                     printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, varId);
                     printLineError(line, column);
                     freeHash(hashTable);
+                    deleteAuxFile();
                     exit(1);
                 } else if (head->qntdParams > qntdParam) {
                     if (*textBefore) printf("\n");
                     printf("error:semantic:%d:%d: prototype for '%s' declares more arguments", line, column, varId);
                     printLineError(line, column);
                     freeHash(hashTable);
+                    deleteAuxFile();
                     exit(1);
                 } else {
                     while (aux) {
@@ -149,6 +155,7 @@ int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, 
                             printf("error:semantic:%d:%d: argument '%s' does not match prototype", line, aux->column, aux->identifier);
                             printLineError(line, aux->column);
                             freeHash(hashTable);
+                            deleteAuxFile();
                             exit(1);
                         }
                         aux = aux->next;
@@ -162,6 +169,7 @@ int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, 
                 printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, varId);
                 printLineError(line, column);
                 freeHash(hashTable);
+                deleteAuxFile();
                 exit(1);
             }
         }

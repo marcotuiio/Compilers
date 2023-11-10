@@ -25,4 +25,5 @@ clear:
 	rm -f lex.yy.c
 	rm -f $(PROGRAMA)
 	rm -f diff.txt
+	rm -f tempfile.txt
 	rm -f *.o

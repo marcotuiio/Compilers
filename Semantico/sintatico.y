@@ -217,6 +217,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             printLineError($4->value->line, $4->value->column);
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
+            deleteAuxFile();
             exit(1);
         }
 
@@ -238,6 +239,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             printLineError($1.line, $1.column);
             if (currentHash) freeHash(currentHash);
             // if (globalHash) freeHash(globalHash);
+            deleteAuxFile();
             exit(1);
         }
         currentHash = NULL;
@@ -261,6 +263,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
             traverseAST(AST);
+            deleteAuxFile();
             exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
@@ -300,6 +303,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
             traverseAST(AST);
+            deleteAuxFile();
             exit(1);
         }
         // considerar o ponteiro, dimensoes e atribuicao se existirem
@@ -356,6 +360,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                         printLineError($2.line, auxColumnAssign);
                         if (currentHash) freeHash(currentHash);
                         // if (globalHash) freeHash(globalHash);
+                        deleteAuxFile();
                         exit(1);
                     }
                 }
@@ -424,7 +429,8 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             printf("error:semantic:%d:%d: parameter '%s' declared void", $3.line, $3.column, $3.valor);
             printLineError($3.line, $3.column);
             if (currentHash) freeHash(currentHash);
-            traverseAST(AST);
+            // traverseAST(AST);
+            deleteAuxFile();
             exit(1);
         }
         paramsQntd++;

@@ -97,7 +97,8 @@ void deleteAuxFile() {
 <COMMENT>\n { yycolumn = 1; }
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
-    printf("error:lexical:%d:%d: unterminated comment", lineStart, columnStart); 
+    printf("error:lexical:%d:%d: unterminated comment", lineStart, columnStart);
+    deleteAuxFile();
     exit(1); 
 }
 
@@ -169,6 +170,7 @@ void deleteAuxFile() {
         if (textBefore) printf("\n");
         printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
         yycolumn += strlen(yytext);
+        deleteAuxFile();
         exit(1);
     } 
     addToUnion(ID);
@@ -184,6 +186,7 @@ void deleteAuxFile() {
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: %s", yylineno, yycolumn, yytext);
     yycolumn += strlen(yytext);
+    deleteAuxFile();
     exit(1);
 }
 

@@ -1,4 +1,1 @@
-
-
-castando result 275 0
 SUCCESSFUL COMPILATION.
