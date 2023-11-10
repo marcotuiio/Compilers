@@ -18,6 +18,7 @@ int wrongTokenLine;
 int wrongTokenColumn;
 
 char lineBuffer[2048] = "";
+FILE *auxFile;
 
 void addToUnion(int type) {
     yylval.token.valor = strdup(yytext);
@@ -33,14 +34,33 @@ void assignWrongToken() {
     wrongTokenColumn = yycolumn;
 }
 
-void getLineBuffer(int nline) {
+void readInputIntoAuxFile() {
+    auxFile = fopen("tempfile.txt", "w+");
+    if (auxFile == NULL) {
+        printf("Erro: não foi possível abrir o arquivo auxiliar\n");
+        return;
+    }
+    char ch;
+    while ((ch = fgetc(stdin)) != EOF) {
+        fputc(ch, auxFile);
+    }
+    rewind(auxFile);
     fseek(stdin, 0, SEEK_SET);
+}
+
+void getLineBuffer(int nline) {
+    fseek(auxFile, 0, SEEK_SET);
     for (int i = 0; i < nline; i++) {
-        fgets(lineBuffer, 2048, stdin);
+        fgets(lineBuffer, 2048, auxFile);
     }
     if (lineBuffer[0] == '\n') lineBuffer[0] = ' ';
     if (lineBuffer[strlen(lineBuffer) - 1] == '\n') lineBuffer[strlen(lineBuffer) - 1] = '\0';
-} 
+}
+
+void deleteAuxFile() {
+    fclose(auxFile);
+    remove("tempfile.txt");
+}
 
 %}
 

@@ -7,6 +7,10 @@
 
 #define HASH_SIZE 997
 
+#define VAR 1
+#define FUNCTION 2
+#define VECTOR 3
+
 typedef struct node {
     int typeVar;
     int pointer;
@@ -17,8 +21,10 @@ typedef struct node {
     int column;
     void *dimensions;
     void *param;
+    int kind;
     int prototype;
     int qntdParams;
+    int qntdDimen;
     struct node *next;
 } HashNode;
 
@@ -41,7 +47,8 @@ void setPrototype(void *node);
 void setQntdParams(void *node, int qntdParams);
 void setParam(void *node, Param *p);
 void setAssign(void *node, int assign);
-void setDimensions(void *node, void *dimensions);
+void setDimensions(void *node, void *dimensions, int qntdDimen);
+void setKind(void *node, int kind);
 
 int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError);
 

@@ -342,6 +342,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printLineError(expr->value->line, expr->value->column);
                 textBefore = 1;
             }
+
             if (condition->assign) result = createResultExpression(left->typeVar, left->pointer, left->assign);
             else result = createResultExpression(right->typeVar, right->pointer, right->assign);
             return result;
@@ -466,18 +467,76 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             right = evalExpression(expr->right, globalHash, localHash, program);
             // printf("testando shift left %p %d %d\n", left, expr->value->type, expr->value->pointer);
             // printf("testando shift right %p %d %d\n", right, expr->value->type, expr->value->pointer);
-            // verificar tipos etc etc
-            if (expr->operator == R_SHIFT) {
-                printf("r shift\n");    
-                // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
-                result = createResultExpression(left->typeVar, left->pointer, left->assign >> right->assign);
-                return result;
-            } else if (expr->operator == L_SHIFT) {
-                printf("l shift\n");
-                // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
-                result = createResultExpression(left->typeVar, left->pointer, left->assign << right->assign);
-                return result;
+            int leftBits = 0;
+
+            auxLeftPointer = expr->left->value->pointer;
+            auxLeftType = expr->left->value->type;
+            auxLeftValor = atoi(expr->left->value->valor);
+            if (left) {
+                if (left->typeVar == INT || left->typeVar == NUM_INT) {
+                    auxLeftType = NUM_INT;
+                    leftBits = 32;
+                } else if (left->typeVar == CHAR || left->typeVar == CHARACTER) {
+                    auxLeftType = CHARACTER;
+                    leftBits = 8;
+                }
+                auxLeftPointer = left->pointer;
+                if (left->typeVar == STRING) {
+                    auxLeftType = CHARACTER;
+                    auxLeftPointer = 1;
+                }
+                if (auxLeftPointer > 0) leftBits = 32;
+                auxLeftValor = left->assign;
+            } 
+            auxRightPointer = expr->right->value->pointer;
+            auxRightType = expr->right->value->type;
+            auxRightValor = atoi(expr->right->value->valor);
+            if (right) {
+                if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
+                else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
+                auxRightPointer = right->pointer;
+                if (right->typeVar == STRING) {
+                    auxRightType = CHARACTER;
+                    auxRightPointer = 1;
+                }
+                auxRightValor = right->assign; 
             }
+
+            if (auxRightPointer != 0) {
+                if (textBefore) printf("\n");
+                char t[5];
+                if (expr->operator == R_SHIFT) strcpy(t, ">>");
+                else if (expr->operator == L_SHIFT) strcpy(t, "<<");
+                char *type2 = getExactType(auxRightType, auxRightPointer);
+                printf("error:semantic:%d:%d: cannot convert from '%s' to int", expr->value->line, expr->value->column, type2);
+                free(type2);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            if (auxRightValor < 0) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: %s shift count is negative", expr->value->line, expr->value->column, expr->operator == R_SHIFT ? "right" : "left");
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                exit(0);
+            }
+
+            // verificar se o valor da direita é maior que o tamanho do tipo da esquerda
+            if (auxRightValor >= leftBits) {
+                if (textBefore) printf("\n");
+                printf("warning:%d:%d: %s shift count >= width of type", expr->value->line, expr->value->column, expr->operator == R_SHIFT ? "right" : "left");
+                // printLineError(expr->value->line, expr->value->column);
+                textBefore = 1;
+            }
+
+            if (expr->operator == R_SHIFT) {
+                result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
+            } else if (expr->operator == L_SHIFT) {
+                result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
+            }
+            return result;
         
         case ADITIVIVA:
             left = evalExpression(expr->left, globalHash, localHash, program);
@@ -530,7 +589,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 freeAST(program);
                 exit(0);
             }
-
+            
             if (expr->operator == PLUS) {
                 // pode somar pointer e char ou int                
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
@@ -674,6 +733,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 textBefore = 1;
             }
             result = createResultExpression(expr->value->type, expr->value->pointer, right->assign);
+            printf("\n\ncastando result %d %d\n", result->typeVar, result->pointer);
             return result;
         
         case UNARIA:
@@ -778,6 +838,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
         case POS_FIXA:
             printf("pos fixa\n");
+            left = evalExpression(expr->left, globalHash, localHash, program);
+            right = evalExpression(expr->right, globalHash, localHash, program);
+            printf("testando pos fixa left %p %d %d\n", left, expr->value->type, expr->value->pointer);
+            printf("testando pos fixa right %p %d %d\n", right, expr->value->type, expr->value->pointer);
+            exit(0);
             break;
         
         default:
@@ -798,7 +863,16 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // Se o comando for um comando IF ou ELSE, percorra as condições e blocos
     if (command->type == IF || command->type == ELSE) {
         // printf("Command de if ou else\n");
-        evalExpression(command->condition, globalHash, localHash, program);
+        ResultExpression *ifResult = NULL;
+        ifResult = evalExpression(command->condition, globalHash, localHash, program);
+        printf("resultValue %d\n", ifResult->assign);
+        if (ifResult->typeVar == VOID) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
+            printLineError(command->auxToken->line, command->auxToken->column);
+            freeAST(program);
+            exit(0);
+        }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
         traverseASTCommand(command->elseStatement, globalHash, localHash, program, currentFunction);
     }
@@ -806,16 +880,46 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // Se o comando for um comando WHILE ou DO-WHILE, percorra a condição e o bloco
     if (command->type == WHILE || command->type == DO) {
         // printf("Command de while ou do-while\n");
-        evalExpression(command->condition, globalHash, localHash, program);
+        ResultExpression *whileResult = NULL;
+        whileResult = evalExpression(command->condition, globalHash, localHash, program);
+        if (whileResult->typeVar == VOID) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
+            printLineError(command->auxToken->line, command->auxToken->column);
+            freeAST(program);
+            exit(0);
+        }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
     }
 
     // Se o comando for um comando FOR, percorra a inicialização, condição, incremento e bloco
     if (command->type == FOR) {
         // printf("Command de for\n");
-        evalExpression(command->init, globalHash, localHash, program);
-        evalExpression(command->condition, globalHash, localHash, program);
-        evalExpression(command->increment, globalHash, localHash, program);
+        ResultExpression *forResult = NULL;
+        forResult = evalExpression(command->init, globalHash, localHash, program);
+        if (forResult->typeVar == VOID) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
+            printLineError(command->auxToken->line, command->auxToken->column);
+            freeAST(program);
+            exit(0);
+        }
+        forResult = evalExpression(command->condition, globalHash, localHash, program);
+        if (forResult->typeVar == VOID) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
+            printLineError(command->auxToken->line, command->auxToken->column);
+            freeAST(program);
+            exit(0);
+        }
+        forResult = evalExpression(command->increment, globalHash, localHash, program);
+        if (forResult->typeVar == VOID) {
+            if (textBefore) printf("\n");
+            printf("error:semantic:%d:%d: void value not ignored as it ought to be", command->auxToken->line, command->auxToken->column);
+            printLineError(command->auxToken->line, command->auxToken->column);
+            freeAST(program);
+            exit(0);
+        }
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
     }
 

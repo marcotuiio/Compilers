@@ -40,33 +40,43 @@ void *insertHash(void **hashTable, char *varId, int line, int column, int curren
 }
 
 void setIsConstant(void *node) {
-    HashNode *aux = (HashNode *)node;
+    HashNode *aux = node;
     aux->isConstant = 1;
 }
 
 void setPrototype(void *node) {
-    HashNode *aux = (HashNode *)node;
+    HashNode *aux = node;
     aux->prototype = 1;
 }
 
 void setQntdParams(void *node, int qntdParams) {
-    HashNode *aux = (HashNode *)node;
+    HashNode *aux = node;
     aux->qntdParams = qntdParams;
 }
 
 void setParam(void *node, Param *p) {
-    HashNode *aux = (HashNode *)node;
+    HashNode *aux = node;
     aux->param = p;
 }
 
 void setAssign(void *node, int assign) {
-    HashNode *aux = (HashNode *)node;
+    HashNode *aux = node;
     aux->assign = assign;
 }
 
-void setDimensions(void *node, void *dimensions) {
-    HashNode *aux = (HashNode *)node;
+void setDimensions(void *node, void *dimensions, int qntdDimen) {
+    HashNode *aux = node;
     aux->dimensions = dimensions;
+    aux->qntdDimen = qntdDimen;
+    if (qntdDimen == 0)
+        aux->kind = VAR;
+    else
+        aux->kind = VECTOR;
+}
+
+void setKind(void *node, int kind) {
+    HashNode *aux = node;
+    aux->kind = kind;
 }
 
 int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError) {
@@ -74,7 +84,7 @@ int lookForValueInHash(void **hashTable, char *varId, int line, int column, int 
     int index = hash(varId);
     int ocorrencias = 0;
     HashNode *head = (HashNode *)hashTable[index];
-
+    // printf("\nlooking for varId: %s in %p\n", varId, hashTable);
     while (head) {
         if (!strcmp(varId, head->varId)) {  // existe outro daquele identificador na hash
             if (head->prototype) continue;  // se for um prototipo, continua

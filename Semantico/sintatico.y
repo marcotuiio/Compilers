@@ -12,7 +12,9 @@ void yyerror(void *s);
 extern int yychar;
 extern int textBefore;
 extern char lineBuffer[2048];
+extern void readInputIntoAuxFile();
 extern void getLineBuffer();
+extern void deleteAuxFile();
 
 extern char wrongToken[32];
 extern int wrongTokenLine;
@@ -22,7 +24,7 @@ int erroAux = 0;
 int semanticError = 0;
 int CURRENT_TYPE, AUX_CURRENT_TYPE = -1;
 int paramsQntd = 0;
-int auxPosIncrement;
+int dimenQntd = 0;
 int dimensionError = 0;
 char bufferAux[128];
 char printDimen[1024];
@@ -30,6 +32,7 @@ int defineAux = 0;
 int dimensionAux = 0;
 int funcAux = 0;
 int auxColumnAssign;
+int posFixaAux = -1;
 
 void *prototypeParam = NULL;
 
@@ -121,7 +124,7 @@ void printLineError(int line, int column);
 %type <prog> Programa
 %type <func> DeclaracaoOUFuncao
 %type <func> ListaFuncoes
-%type <token> Declaracoes
+%type <func> Declaracoes
 %type <func> Funcao
 %type <token> DeclaraVariaveisFuncao
 %type <ptr> Ponteiro
@@ -183,6 +186,7 @@ Start: Programa MyEOF {
 Programa: { 
         void **hash = createHash();
         globalHash = hash;
+        // printf("criou hash global %p\n", globalHash);
     } 
     DeclaracaoOUFuncao ListaFuncoes {
         Program *aux = createProgram(globalHash, $2, NULL); // $2 should be a list of functions, therefore Function *
@@ -206,7 +210,7 @@ ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes {
     | { $$ = NULL; } ;
 
 Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
-        // printf("tipo da expressaao do define %d\n", $4->type);
+        // printf("\ntipo da expressao do define %s %d\n", $3.valor, $4->type);
         if ($4->value->type == STRING) {
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: string type is not compatible with define", $4->value->line, $4->value->column);
@@ -215,17 +219,20 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             if (globalHash) freeHash(globalHash);
             exit(1);
         }
+
         if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, INT, &textBefore, &semanticError)) {
             void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, INT, 0);
+            setKind(node, VAR);
             setIsConstant(node);
             defineAux = 1;
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
-            // printf("result do define %d %d\n", result->type, result->value);
+            // printf("\nresult do define %d %d\n", result->typeVar, result->assign);
             setAssign(node, result->assign);
         }
+        $$ = NULL;
     }
-    | DeclaraVariaveis { 
+    | DeclaraVariaveis {
         if (strlen(printDimen) > 0) {
             printf("%s", printDimen);
             printLineError($1.line, $1.column);
@@ -234,14 +241,16 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             exit(1);
         }
         currentHash = NULL;
+        $$ = NULL;
     }
-    | DeclaraPrototipos { /* Adicionar isso na hash */ } ;
+    | DeclaraPrototipos { $$ = NULL; } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
         // vendo se a funcao ja foi declarada
         if (!lookForPrototypeInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $4, paramsQntd, &textBefore, &semanticError)) {
             if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
                 void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $2);
+                setKind(node, FUNCTION);
                 setQntdParams(node, paramsQntd);
                 setParam(node, $4);
             } 
@@ -296,6 +305,11 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
+            if (!$3) {
+                setKind(node, VAR);
+            } else {
+                setKind(node, VECTOR);
+            }
 
             if (dimensionError != 0) {
                 // printf("dimension error\n");
@@ -317,7 +331,9 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 }
                 $$ = $2;
             }
-            setDimensions(node, $3);
+            setDimensions(node, $3, dimenQntd);
+            dimenQntd = 0;
+
             if ($4) {
                 ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
                 int assignType, assignPointer = result->pointer;
@@ -352,6 +368,7 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
 
         ResultExpression *result = NULL;
         dimensionAux = 1;
+        dimenQntd++;
         if ($2) result = evalExpression($2, globalHash, currentHash, NULL);
         if (result) {
             // printf("result->assign %d %d\n", result->assign, result->typeVar);
@@ -381,6 +398,7 @@ RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
         // colocar na hash global e ver se bate com as funcoes ?
         void *node = insertHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $2);
+        setKind(node, FUNCTION);
         setPrototype(node);
         setQntdParams(node, paramsQntd);
         setParam(node, $4);
@@ -435,7 +453,8 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
                     strcat(printDimen, "' is negative");
                 }
             }
-            setDimensions(node, $4);
+            setDimensions(node, $4, dimenQntd);
+            dimenQntd = 0;
         }
 
         $$ = aux;
@@ -694,13 +713,11 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     | INC ExpressaoUnaria {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, INC);
         Expression *aux = createExpression(UNARIA, INC, auxToken, $2, NULL);
-        $2->preIncrement = INC; 
         $$ = aux;
     }
     | DEC ExpressaoUnaria {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
         Expression *aux = createExpression(UNARIA, DEC, auxToken, $2, NULL);
-        $2->preIncrement = DEC; 
         $$ = aux;
     }
     | OpUnario ExpressaoCast {
@@ -712,16 +729,40 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
 
 ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
     | ExpressaoPosFixa AuxPosFixa {
+        // if (posFixaAux == -1) {
+        //     printf("fiz alguma merda na pos fixa 719\n");
+        //     exit(1);
+        // }
+        // AuxToken *auxToken = createAuxToken($2->value->valor, $2->value->line, $2->value->column, $2->value->type);
+        // Expression *aux = createExpression(POS_FIXA, posFixaAux, auxToken, $1, $2);
+        // printf("Criada pos fixa %d %p %p\n", posFixaAux, $1, $2);
+        // posFixaAux = -1;
+        // $$ = aux;
+
         $1->right = $2;
-        $1->posIncrement = auxPosIncrement;
-        auxPosIncrement = 0;
         $$ = $1; 
     } ;
 
-AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { $$ = $2; }
-    | L_PAREN PulaExpressaoAtribuicao R_PAREN { $$ = $2; }
-    | INC { auxPosIncrement = INC; }
-    | DEC { auxPosIncrement = DEC; } ;
+AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { 
+        posFixaAux = L_SQUARE_BRACKET;
+        $$ = $2; 
+    }
+    | L_PAREN PulaExpressaoAtribuicao R_PAREN { 
+        posFixaAux = L_PAREN;
+        $$ = $2; 
+    }
+    | INC { 
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, INC);
+        Expression *aux = createExpression(UNARIA, INC, auxToken, NULL, NULL);
+        posFixaAux = INC;
+        $$ = aux;
+    }
+    | DEC { 
+        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
+        Expression *aux = createExpression(UNARIA, DEC, auxToken, NULL, NULL);
+        posFixaAux = DEC;
+        $$ = aux;
+    } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
         $1->right = $2; 
@@ -777,17 +818,17 @@ void yyerror(void *s) {}
 
 void printLineError(int line, int column) {
     getLineBuffer(line);
-        
     printf("\n%s\n", lineBuffer);
     for (int i = 0; i < column - 1; i++) printf(" ");
     printf("^");
 }
 
 int main(int argc, char *argv[]) {
+    readInputIntoAuxFile();
     yyparse();
 
-    if (textBefore) printf("\n");
     if (erroAux) {
+        if (textBefore) printf("\n");
         int localColumn = yylval.token.column;
         if (yychar == 0 || yychar == MyEOF) {
             printf("error:syntax:%d:%d: expected declaration or statement at end of input", yylval.token.line, yylval.token.column);
@@ -807,6 +848,7 @@ int main(int argc, char *argv[]) {
         if (textBefore) printf("\n");
         printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
     }
-    freeAST(AST);   
+    freeAST(AST);
+    deleteAuxFile();
     return 0;
 }

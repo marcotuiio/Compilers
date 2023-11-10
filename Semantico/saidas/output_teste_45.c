@@ -1,9 +1,16 @@
 warning:3:10: cast from 'int' to 'void' of different size
     if(3?(void)4:(void)5)
          ^
+
+castando result 277 0
+
 warning:3:18: cast from 'int' to 'void' of different size
     if(3?(void)4:(void)5)
                  ^
-error:semantic:7:5: incompatible types when returning type 'int' but 'int' was expected
-    return 0;
+
+castando result 277 0
+resultValue 4
+
+error:semantic:3:5: void value not ignored as it ought to be
+    if(3?(void)4:(void)5)
     ^

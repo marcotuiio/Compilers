@@ -125,8 +125,6 @@ typedef struct expression {
     int pointer;
     int operator;
     AuxToken *value;
-    int preIncrement;
-    int posIncrement;
     int unario;
     int assign;
     Dimension *dimension;
@@ -167,8 +165,9 @@ typedef struct resultExpression {
     int typeVar;
     int pointer;
     int assign;
-    char string[256];
     char id[256];
+    int auxLine;
+    int auxColumn;
 } ResultExpression;
 
 Program *createProgram(void **hash, void *functionsList, void *main);
