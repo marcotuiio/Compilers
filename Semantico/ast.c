@@ -1008,7 +1008,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (expr->operator == INC || expr->operator == DEC) {
                 if (!left->auxIdNode) {
                     if (textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
+                    printf("error:semantic:%d:%d: lvalue required as increment operand", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
                     deleteAuxFile();
@@ -1078,7 +1078,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             // printf("dimensao atrib = %d dimensao maxima = %d\n", dimenResult->assign, dimenEsperada->size);
                             if (dimenResult->assign >= dimenEsperada->size || dimenResult->assign < 0) {
                                 if (textBefore) printf("\n");
-                                printf("warning:semantic:%d:%d: array index out of bounds", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                                printf("warning:%d:%d: array index out of bounds", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                                 printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                                 textBefore = 1;
                             }

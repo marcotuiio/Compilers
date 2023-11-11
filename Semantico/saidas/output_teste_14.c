@@ -1,3 +1,3 @@
-error:semantic:3:8: lvalue required as left operand of assignment
+error:semantic:3:8: lvalue required as increment operand
     666++;
        ^
