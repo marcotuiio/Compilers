@@ -39,6 +39,13 @@ AuxToken *createAuxToken(char *valor, int line, int column, int type) {
     return newAux;
 }
 
+ExpParam *createExpParam(Expression *exp, ExpParam *next) {
+    ExpParam *newExpParam = calloc(1, sizeof(ExpParam));
+    newExpParam->exp = exp;
+    newExpParam->next = next;
+    return newExpParam;
+}
+
 Expression *createExpression(int type, int operator, void *value, void *left, void *right) {
     Expression *newExp = calloc(1, sizeof(Expression));
     newExp->type = type;
@@ -990,11 +997,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case POS_FIXA:
-            if (expr->value->type == L_PAREN) {
-                printf("\npos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
-                printf("hihi ainda nao fizzzz funcao 968\n");
-                exit(0);
-            }
+            // if (expr->value->type == L_PAREN) {
+            //     printf("\npos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
+            //     printf("hihi ainda nao fizzzz funcao 968\n");
+            //     exit(0);
+            // }
             left = evalExpression(expr->left, globalHash, localHash, program);
             // printf("left %p %d %d %p\n", left, left->typeVar, left->pointer, left->auxIdNode);
 
@@ -1088,8 +1095,84 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 return result;
             
             } else if (expr->operator == L_PAREN) {
-                printf("%p hihi ainda nao fizzzz\n", left);
-                exit(0);
+                HashNode *auxIdNode = left->auxIdNode;
+                // printf("%p hihi ainda nao fizzzz %p %d\n", left, auxIdNode, expr->operator);
+                if (auxIdNode->kind != FUNCTION) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: called object '%s' is not a function or function pointer", expr->value->line, expr->value->column, auxIdNode->varId);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+                }
+
+                // verificar se a quantidade de parametros bate
+                ExpParam *auxParamRecebido = expr->param;
+                int qntdParamRecebido = 0;
+                while (auxParamRecebido) {
+                    qntdParamRecebido++;
+                    auxParamRecebido = auxParamRecebido->next;
+                }
+                if (qntdParamRecebido != auxIdNode->qntdParams) {
+                    if (textBefore) printf("\n");
+                    if (qntdParamRecebido > auxIdNode->qntdParams) {
+                        printf("error:semantic:%d:%d: too many arguments to function '%s'", expr->value->line, expr->value->column, auxIdNode->varId);
+                    } else {
+                        printf("error:semantic:%d:%d: too few arguments to function '%s'", expr->value->line, expr->value->column, auxIdNode->varId);
+                    }
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+                }
+                Param *auxParam = auxIdNode->param;
+                auxParamRecebido = expr->param;
+                ResultExpression *resultParam = NULL;
+                // printf("--------- %p \n", auxParam);
+                int i = 1;
+                while (auxParamRecebido && auxParam) {
+                    resultParam = evalExpression(auxParamRecebido->exp, globalHash, localHash, program);
+
+                    auxLeftPointer = auxParam->pointer;
+                    if (auxParam->type == INT || auxParam->type == NUM_INT) auxLeftType = NUM_INT;
+                    else if (auxParam->type == CHAR || auxParam->type == CHARACTER) auxLeftType = CHARACTER;
+                    else if (auxParam->type == VOID) auxLeftType = VOID;
+
+                    auxRightPointer = resultParam->pointer;
+                    if (resultParam->typeVar == VOID) auxRightType = VOID;
+                    else if (resultParam->typeVar == INT || resultParam->typeVar == NUM_INT) auxRightType = NUM_INT;
+                    else if (resultParam->typeVar == CHAR || resultParam->typeVar == CHARACTER) auxRightType = CHARACTER;
+                    else if (resultParam->typeVar == STRING) {
+                        auxRightType = CHARACTER;
+                        auxRightPointer = 1;
+                    } 
+
+                    // printf("argumentos esperados %s %d %d %d x %d %d = %d\n", auxParam->identifier, auxLeftType, auxLeftPointer, auxParam->kindParam, auxRightType, auxRightPointer, resultParam->assign);
+                    if (auxParam->kindParam == VECTOR && auxRightType == auxLeftType) {
+                        // printf("ok\n");
+                    } else if (auxRightType != auxLeftType) {
+                        if (textBefore) printf("\n");
+                        char *type1 = getExactType(auxRightType, auxRightPointer);
+                        char *type2 = getExactType(auxLeftType, auxLeftPointer);
+                        printf("error:semantic:%d:%d: incompatible type for argument '%d' of 'foo' expected '%s' but argument is of type '%s'", expr->value->line, expr->value->column, i, type2, type1);
+                        free(type1);
+                        free(type2);
+                        printLineError(expr->value->line, expr->value->column);
+                        freeAST(program);
+                        deleteAuxFile();
+                        exit(0);
+                    }
+                    
+                    auxParam = auxParam->next;
+                    auxParamRecebido = auxParamRecebido->next;
+                    i++;
+                }
+                result = createResultExpression(auxIdNode->typeVar, auxIdNode->pointer, 0);
+                result->auxLine = expr->value->line;
+                result->auxColumn = expr->value->column;
+                // printf("result %p %d %d = %d\n", result, result->typeVar, result->pointer, 0);
+                // exit(1);
+                return result;
             }
             break;
         

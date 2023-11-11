@@ -122,6 +122,14 @@ typedef struct dimension {
     AuxToken *dimenAuxToken;
 } Dimension;
 
+typedef struct expParam {
+    int type;
+    int pointer;
+    void *exp;
+    char *identifier;
+    struct expParam *next;
+} ExpParam;
+
 typedef struct expression {
     int type;
     int pointer;
@@ -129,7 +137,7 @@ typedef struct expression {
     AuxToken *value;
     int assign;
     Dimension *dimension;
-    // Param *param;
+    ExpParam *param;
     void *extra;
 
     struct expression *ternary;
@@ -185,6 +193,8 @@ int countDimension(void *d);
 Dimension *createDimensionWithExp(Expression *exp, AuxToken *auxToken);
 
 void setDimensionExpression(Expression *expression, Dimension *dimension);
+
+ExpParam *createExpParam(Expression *exp, ExpParam *next);
 
 Expression *createExpression(int type, int operator, void *value, void *left, void *right);
 

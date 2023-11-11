@@ -127,6 +127,7 @@ union YYSTYPE
     Expression *expr;
     Command *cmd;
     void *param;
+    void *paramExp;
     int ptr;
     struct {
         char *valor;
@@ -135,7 +136,7 @@ union YYSTYPE
         int type;
     } token;
 
-#line 139 "sintatico.tab.h"
+#line 140 "sintatico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

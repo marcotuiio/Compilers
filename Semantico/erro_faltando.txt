@@ -1,12 +1,5 @@
-    erros:
-"called object ’<nome-do-identificador>’ is not a function or function pointer"
 
-"too few arguments to function ’<nome-da-funcao>’"
+Faltando -> atencao aos 49, 50
 
-"too many arguments to function ’<nome-da-funcao>’"
-
-"incompatible type for argument ’<numero-do-argumento>’ of ’<nome-da-funcao>’ expected ’<nome-do-tipo>’ but argument is of type ’<nome-do-tipo>’"
-
-"void value not ignored as it ought to be"    em funçoes ta com defeito
-
-atencao aos 21, 22, 24, 26, 27, 49, 50
+muito cuidado com prototipo de função
+alternação entre declarações globais (variaveis e defines) e funçoes = TOTALMENTE NAO DETERMINISTICO

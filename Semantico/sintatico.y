@@ -55,6 +55,7 @@ void printLineError(int line, int column);
     Expression *expr;
     Command *cmd;
     void *param;
+    void *paramExp;
     int ptr;
     struct {
         char *valor;
@@ -167,8 +168,8 @@ void printLineError(int line, int column);
 %type <expr> ExpressaoCast
 %type <expr> ExpressaoUnaria
 %type <expr> ExpressaoPosFixa
-%type <expr> PulaExpressaoAtribuicao
-%type <expr> AuxPula
+%type <paramExp> PulaExpressaoAtribuicao
+%type <paramExp> AuxPula
 %type <expr> ExpressaoPrimaria
 %type <expr> Numero
 
@@ -449,7 +450,9 @@ DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON {
 
 Parametros: L_PAREN BlocoParametros R_PAREN {
         funcAux = 1;
-        $$ = prototypeParam;
+        // printf("parametros %p x %p\n", $2, prototypeParam);
+        $$ = $2;
+        // $$ = prototypeParam;
     } ;
 
 BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
@@ -457,7 +460,6 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             void **hash = createHash();
             currentHash = hash;
         }
-
         if ($1.type == 277 && $2 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: parameter '%s' declared void", $3.line, $3.column, $3.valor);
@@ -469,6 +471,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
         }
         paramsQntd++;
         Param *aux = createParam($1.type, $3.valor, $2, $3.line, $3.column+1, $5);
+        // printf("tipo param %p %d %s %p\n", aux, aux->type, aux->identifier, aux->next);
         if (!prototypeParam) prototypeParam = aux;
 
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
@@ -495,8 +498,10 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             }
             if (!$4) {
                 setKind(node, VAR);
+                aux->kindParam = VAR; 
             } else {
                 setKind(node, VECTOR);
+                aux->kindParam = VECTOR;
             }
             setDimensions(node, $4);
         }
@@ -786,8 +791,10 @@ ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
         }
     }
     | ExpressaoPosFixa L_PAREN PulaExpressaoAtribuicao R_PAREN {
-        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_PAREN);
-        Expression *aux = createExpression(POS_FIXA, $1->type, auxToken, $1, $3);
+        // printf("chegou aqui %p %p %p\n", $3, ((ExpParam *)$3)->next, ((ExpParam *)$3)->next->next);
+        AuxToken *auxToken = createAuxToken($1->value->valor, $1->value->line, $1->value->column, $1->value->type);
+        Expression *aux = createExpression(POS_FIXA, $2.type, auxToken, $1, NULL);
+        aux->param = $3;
         $$ = aux;
     }
     | ExpressaoPosFixa INC {
@@ -802,14 +809,14 @@ ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
     } ;
 
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
-        // $1->next = $2; 
-        $$ = $1;
+        ExpParam *aux = createExpParam($1, $2);
+        $$ = aux;
     }
     | { $$ = NULL; } ;
 
 AuxPula: COMMA ExpressaoAtribuicao AuxPula {
-        // $2->next = $3;
-        $$ = $2;
+        ExpParam *aux = createExpParam($2, $3);
+        $$ = aux;
     }
     | { $$ = NULL; } ;
 

@@ -1,3 +1,3 @@
-
-pos fixa 0x55e3bdcef230 1016 264
-hihi ainda nao fizzzz funcao 968
+error:semantic:5:5: too few arguments to function 'foo'
+    foo(3);
+    ^

@@ -1,3 +1,3 @@
-
-pos fixa 0x559074bcfa20 1016 264
-hihi ainda nao fizzzz funcao 968
+error:semantic:4:8: void value not ignored as it ought to be
+    if(f()) { i++; }    
+       ^

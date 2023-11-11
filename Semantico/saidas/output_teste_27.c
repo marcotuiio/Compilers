@@ -1,3 +1,3 @@
-
-pos fixa 0x55dc74810520 1016 264
-hihi ainda nao fizzzz funcao 968
+error:semantic:6:5: incompatible type for argument '2' of 'foo' expected 'int' but argument is of type 'char*'
+    foo(3,&c);
+    ^

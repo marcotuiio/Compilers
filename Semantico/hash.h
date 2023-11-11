@@ -33,6 +33,7 @@ typedef struct param {
     int pointer;
     int line;
     int column;
+    int kindParam;
     char *identifier;
     struct param *next;
 } Param;

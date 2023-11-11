@@ -1,3 +1,3 @@
-
-pos fixa 0x56416e94daf0 1016 264
-hihi ainda nao fizzzz funcao 968
+error:semantic:4:7: void value not ignored as it ought to be
+    i = f();    
+      ^
