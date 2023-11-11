@@ -206,15 +206,22 @@ DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apare
         $$ = NULL;
     }
     | Funcao { 
-        // printf("1 retornando funcao %p\n", $1);
+        // printf("1 retornando funcao %p %p\n", $1, auxFunctionList);
+        if (!auxFunctionList) {
+            auxFunctionList = $1;
+        } else {
+            auxFunctionList->next = $1;
+        }
+        // auxFunctionList = $1;
+        // $1->next = auxFunctionList;
         $$ = $1;  // should return a list of functions
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
         if ($1) {  // se for uma funcao e nao uma declaracao
+            // printf("2 retornando lista funcoes %p %p | %p\n", $1, $2, auxFunctionList);
             $1->next = $2;  // devia linkar as funcoes, sera se ta certo?
             auxFunctionList = $1;
-            // printf("2 retornando lista funcoes %p %p %p\n", $1, $2, auxFunctionList);
             // printf("auxFunctionList %p\n", auxFunctionList);
             $$ = $1;  // devia retornar aa lista de funcoes
         } else {
@@ -280,7 +287,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
-        // printf("criou funcao %p comando %p\n", func, $7);
+        // printf("criou funcao %s %p comando %p\n", $3.valor, func, $7);
         paramsQntd = 0;
         currentHash = NULL;
         funcAux = 0;
@@ -298,6 +305,7 @@ Ponteiro: MULTIPLY Ponteiro {
 
 DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { 
         CURRENT_TYPE = $1.type;
+        //// printf("o que acontece aqui %d\n", $1.type);
         $$ = $2;  // retornando id da declaracao
     } ;
 
@@ -310,6 +318,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 currentHash = globalHash;
             }
         } 
+        //// printf("\n==> variavel %s tipo %d %d || linha %d\n", $2.valor, CURRENT_TYPE, $1, $2.line);
         if (CURRENT_TYPE == 277 && $1 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: variable '%s' declared void", $2.line, $2.column, $2.valor);
@@ -432,7 +441,7 @@ ExpressaoAssign: ASSIGN ExpressaoAtribuicao {
     }
     | { $$ = NULL; } ;
 
-RetornoVariavel: COMMA BlocoVariaveis { /* colocar na hash */ }
+RetornoVariavel: COMMA BlocoVariaveis { AUX_CURRENT_TYPE = -1; }
     | { } ; 
 
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
@@ -534,6 +543,7 @@ Tipo: INT {
             AUX_CURRENT_TYPE = CURRENT_TYPE;
         }
         CURRENT_TYPE = VOID;
+        //// printf("tipo void %d %d || %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE, $1.line);
         $$ = yylval.token;
     } ;
 
@@ -753,7 +763,9 @@ ExpressaoCast: ExpressaoUnaria { $$ = $1; }
         AuxToken *auxToken = createAuxToken($2.valor, $1.line, $1.column, $2.type);
         auxToken->pointer = $3;
         Expression *aux = createExpression(CASTING, $2.type, auxToken, NULL, $5);
+        //// printf("tipo atual antes %d %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE);
         CURRENT_TYPE = AUX_CURRENT_TYPE;
+        //// printf("tipo atual depois %d\n", CURRENT_TYPE);
         AUX_CURRENT_TYPE = -1;
         aux->pointer = $3;
         $$ = aux;

@@ -824,6 +824,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 auxRightPointer = right->pointer;
                 if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
+                else if (right->typeVar == VOID) auxRightType = VOID;
             }            
 
             int auxLeftSize = 0;
@@ -1191,6 +1192,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
 
     if (command->type == 9802) {
+        // printf("commandExp %p %d %s\n", command->condition, command->condition->type, command->condition->value->valor);
         evalExpression(command->condition, globalHash, localHash, program);
     }
 
@@ -1295,7 +1297,7 @@ int traverseAST(Program *program) {
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
 
-        // printf("Function: %s\n", currentFunction->name);
+        // printf("Function: %s %p\n", currentFunction->name, currentFunction);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
         while (command != NULL) {
