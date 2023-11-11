@@ -173,7 +173,7 @@ Command *createCommandExpression(Expression *expression, void *next) {
     newCommand->type = 9802;
     newCommand->condition = expression;
     newCommand->next = next;
-    printf("commandExpression %p %p\n", expression, newCommand);
+    // printf("commandExpression %p %p\n", expression, newCommand);
     return newCommand;
 }
 
@@ -271,10 +271,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case ATRIBUICAO:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
-            // printf("left %p right %p\n", left, right);
-            printf("assign left %p %d %d \nright %p %d %d \n", left, left->typeVar, left->pointer, right, right->typeVar, right->pointer);
+            // printf("assign left %p %d %d \nright %p %d %d \n", left, left->typeVar, left->pointer, right, right->typeVar, right->pointer);
 
-            if (left->typeVar == VOID || right->typeVar == VOID) {
+            if ((left->typeVar == VOID && left->pointer == 0) || (right->typeVar == VOID && right->pointer == 0)) {
                 if (textBefore) printf("\n");
                 printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
@@ -653,13 +652,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
                 auxRightValor = right->assign; 
             }
-
-            // se tem tipo diferente de char e int ou sao dois pointers
-            if ((auxLeftPointer == 0 || auxRightPointer == 0) && 
-                (auxLeftType == NUM_INT || auxLeftType == CHARACTER) &&
-                (auxRightType == NUM_INT || auxRightType == CHARACTER)) {
-                    // printf("certo!\n");
-            } else {
+            // printf("\naditivia left %d %d \naditiva right %d %d\n", auxLeftType, auxLeftPointer, auxRightType, auxRightPointer);
+            // se sao dois pointers nao pode
+            if (auxLeftPointer != 0 && auxRightPointer != 0) { // ALERTA MUDEI
                 char *type1 = getExactType(auxLeftType, auxLeftPointer);
                 char *type2 = getExactType(auxRightType, auxRightPointer);
                 if (textBefore) printf("\n");
@@ -809,18 +804,47 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 exit(0);                
             }
 
-            if ((right->typeVar == NUM_INT || right->typeVar == INT) 
-                && (expr->value->type != NUM_INT && expr->value->type != INT)) {
+            // para serem de tamanhos diferentes deve:
+            // a) na direita ter um int e na esquerda um char sem ponteiro (8) 32
+            // b) na direita ter um char* e na esquerda um char sem ponteiro (8) 32
+            // c) na direita ter um int* e na esquerda um char sem ponteiro (8) 32
+
+            auxLeftPointer = expr->value->pointer;
+            if (expr->value->type == INT || expr->value->type == NUM_INT) auxLeftType = NUM_INT;
+            else if (expr->value->type == CHAR || expr->value->type == CHARACTER) auxLeftType = CHARACTER;
+            else if (expr->value->type == VOID) auxLeftType = VOID;
+            if (right) {
+                auxRightPointer = right->pointer;
+                if (right->typeVar == INT || right->typeVar == NUM_INT) auxRightType = NUM_INT;
+                else if (right->typeVar == CHAR || right->typeVar == CHARACTER) auxRightType = CHARACTER;
+            }            
+
+            int auxLeftSize = 0;
+            int auxRightSize = 0;
+
+            if (auxLeftType == NUM_INT) auxLeftSize = 32;
+            else if (auxLeftType == CHARACTER) auxLeftSize = 8;
+            else if (auxLeftType == VOID) auxLeftSize = 8;
+
+            if (auxRightType == NUM_INT) auxRightSize = 32;
+            else if (auxRightType == CHARACTER) auxRightSize = 8;
+            else if (auxRightType == VOID) auxRightSize = 8;
+
+            if (auxLeftPointer != 0) auxLeftSize = 32;
+            if (auxRightPointer != 0) auxRightSize = 32;
+            
+            if (auxLeftSize < auxRightSize) {
+            // printf("\ncasting %d %d %d %d\n", auxLeftType, auxLeftPointer, auxRightType, auxRightPointer);
                 if (textBefore) printf("\n");
-                char *type1 = getExactType(right->typeVar, right->pointer);
-                char *type2 = getExactType(expr->value->type, expr->value->pointer);
+                char *type1 = getExactType(auxRightType, auxRightPointer);
+                char *type2 = getExactType(auxLeftType, auxLeftPointer);
                 printf("warning:%d:%d: cast from '%s' to '%s' of different size", expr->value->line, expr->value->column, type1, type2);
                 free(type1);
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 textBefore = 1;
             }
-            result = createResultExpression(expr->value->type, expr->value->pointer, right->assign);
+            result = createResultExpression(auxLeftType, auxLeftPointer, right->assign);
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -967,7 +991,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
         case POS_FIXA:
             if (expr->value->type == L_PAREN) {
-                printf("pos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
+                printf("\npos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
                 printf("hihi ainda nao fizzzz funcao 968\n");
                 exit(0);
             }
@@ -1083,7 +1107,6 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
 
-    printf("cuzin2 %p %d\n", command, command->type);
     if (command->type == 9802) {
         evalExpression(command->condition, globalHash, localHash, program);
     }
@@ -1187,13 +1210,11 @@ int traverseAST(Program *program) {
     if (!program) return -1;
     // Percorra as funções na lista de funções
     Function *currentFunction = program->functionsList;
-    printf("cpreuzin %p \n", currentFunction);
     while (currentFunction != NULL) {
 
         // printf("Function: %s\n", currentFunction->name);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
-            printf("cuzin %p \n", command);
         while (command != NULL) {
             traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             command = command->next;

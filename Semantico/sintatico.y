@@ -33,6 +33,9 @@ int funcAux = 0;
 int auxLineAssign, auxColumnAssign;
 int auxPosFixa = -1;
 
+Function *auxFunctionList = NULL;
+int wasThereDeclarations = 0;
+
 void *prototypeParam = NULL;
 
 
@@ -187,27 +190,34 @@ Programa: {
         // printf("criou hash global %p\n", globalHash);
     } 
     DeclaracaoOUFuncao ListaFuncoes {
-        Program *aux = createProgram(globalHash, $2, NULL); // $2 should be a list of functions, therefore Function *
-        printf("retornando programa %p com lista %p\n", aux, $2);
+        Program *aux = NULL;
+        if (wasThereDeclarations == 1) {
+            aux = createProgram(globalHash, auxFunctionList, NULL); // $2 should be a list of functions, therefore Function *
+        } else {
+            aux = createProgram(globalHash, $2, NULL);
+        }
+        // printf("retornando programa %p com lista %p\n", aux, aux->functionsList);
         $$ = aux; 
     } ;
 
 DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apareça aqui */
-        // currentHash = globalHash;
+        wasThereDeclarations = 1;
         $$ = NULL;
     }
     | Funcao { 
-        printf("1 retornando funcao %p\n", $1);
+        // printf("1 retornando funcao %p\n", $1);
         $$ = $1;  // should return a list of functions
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
         if ($1) {  // se for uma funcao e nao uma declaracao
             $1->next = $2;  // devia linkar as funcoes, sera se ta certo?
-            printf(" 2 retornando lista funcoes %p %p\n", $1, $2);
+            auxFunctionList = $1;
+            // printf("2 retornando lista funcoes %p %p %p\n", $1, $2, auxFunctionList);
+            // printf("auxFunctionList %p\n", auxFunctionList);
             $$ = $1;  // devia retornar aa lista de funcoes
         } else {
-            printf("chegaaaa %p\n", $1);
+            // printf("chegaaaa %p %p\n", $1, auxFunctionList);
         }
     }
     | { $$ = NULL; } ;
@@ -229,9 +239,10 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             setKind(node, VAR);
             setIsConstant(node);
             defineAux = 1;
+            // printf("expressao do define %d %p %p\n", $4->type, $4->left, $4->right);
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
-            // printf("\nresult do define %d %d\n", result->typeVar, result->assign);
+            // printf("\nresult do define %s %d %d\n", $3.valor, result->typeVar, result->assign);
             setAssign(node, result->assign);
         }
     }
@@ -268,7 +279,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
-        printf("criou funcao %p comando %p\n", func, $7);
+        // printf("criou funcao %p comando %p\n", func, $7);
         paramsQntd = 0;
         currentHash = NULL;
         funcAux = 0;
@@ -351,8 +362,10 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 } else if (result->typeVar == STRING) {
                     assignType = CHAR;
                     assignPointer = 1;
+                } else {
+                    assignType = VOID;
                 }
-                if (result->typeVar == VOID) {
+                if (result->typeVar == VOID && result->pointer == 0) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: void value not ignored as it ought to be", auxLineAssign, auxColumnAssign);
                     printLineError(auxLineAssign, auxColumnAssign);
@@ -519,11 +532,11 @@ Tipo: INT {
         $$ = yylval.token;
     } ;
 
-Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { printf("agr é definitivo %p\n", $2); $$ = $2; } ;
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { $$ = $2; } ;
 
 Comandos: ListaComandos RetornoComandos {
         $1->next = $2;
-        printf("retornando comandos %p %p\n", $1, $2);
+        // printf("retornando comandos %p %p\n", $1, $2);
         $$ = $1;
     } ;
 

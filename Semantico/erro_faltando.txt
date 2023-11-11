@@ -9,4 +9,4 @@
 
 "void value not ignored as it ought to be"    em funçoes ta com defeito
 
-atencao aos 21, 22, 24, 26, 27, '44', 49, 50
+atencao aos 21, 22, 24, 26, 27, 49, 50
