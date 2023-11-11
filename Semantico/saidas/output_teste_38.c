@@ -1,4 +1,4 @@
-pos fixa
-error:semantic:4:18: invalid operands to binary '+' (have ' 3æý' and 'int')
+warning:semantic:4:10: array index out of bounds
 int i = v[c1*c2] + c1;
-                 ^
+         ^
+SUCCESSFUL COMPILATION.

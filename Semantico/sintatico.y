@@ -24,14 +24,13 @@ int erroAux = 0;
 int semanticError = 0;
 int CURRENT_TYPE, AUX_CURRENT_TYPE = -1;
 int paramsQntd = 0;
-int dimenQntd = 0;
 int dimensionError = 0;
 char bufferAux[128];
 char printDimen[1024];
 int defineAux = 0;
 int dimensionAux = 0;
 int funcAux = 0;
-int auxColumnAssign;
+int auxLineAssign, auxColumnAssign;
 int auxPosFixa = -1;
 
 void *prototypeParam = NULL;
@@ -124,7 +123,7 @@ void printLineError(int line, int column);
 %type <prog> Programa
 %type <func> DeclaracaoOUFuncao
 %type <func> ListaFuncoes
-%type <func> Declaracoes
+%type Declaracoes
 %type <func> Funcao
 %type <token> DeclaraVariaveisFuncao
 %type <ptr> Ponteiro
@@ -189,6 +188,7 @@ Programa: {
     } 
     DeclaracaoOUFuncao ListaFuncoes {
         Program *aux = createProgram(globalHash, $2, NULL); // $2 should be a list of functions, therefore Function *
+        printf("retornando programa %p com lista %p\n", aux, $2);
         $$ = aux; 
     } ;
 
@@ -197,13 +197,17 @@ DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apare
         $$ = NULL;
     }
     | Funcao { 
+        printf("1 retornando funcao %p\n", $1);
         $$ = $1;  // should return a list of functions
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
-        if (((Function *) $1) != NULL) {  // se for uma funcao e nao uma declaracao
+        if ($1) {  // se for uma funcao e nao uma declaracao
             $1->next = $2;  // devia linkar as funcoes, sera se ta certo?
+            printf(" 2 retornando lista funcoes %p %p\n", $1, $2);
             $$ = $1;  // devia retornar aa lista de funcoes
+        } else {
+            printf("chegaaaa %p\n", $1);
         }
     }
     | { $$ = NULL; } ;
@@ -230,7 +234,6 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             // printf("\nresult do define %d %d\n", result->typeVar, result->assign);
             setAssign(node, result->assign);
         }
-        $$ = NULL;
     }
     | DeclaraVariaveis {
         if (strlen(printDimen) > 0) {
@@ -242,9 +245,8 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             exit(1);
         }
         currentHash = NULL;
-        $$ = NULL;
     }
-    | DeclaraPrototipos { $$ = NULL; } ;
+    | DeclaraPrototipos { } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
         // vendo se a funcao ja foi declarada
@@ -266,6 +268,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
+        printf("criou funcao %p comando %p\n", func, $7);
         paramsQntd = 0;
         currentHash = NULL;
         funcAux = 0;
@@ -308,6 +311,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
         // considerar o ponteiro, dimensoes e atribuicao se existirem
         if (!lookForValueInHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
+            // printf("\n----- %s %p node %p \n\n", $2.valor, $3, node);
             if (!$3) {
                 setKind(node, VAR);
             } else {
@@ -334,12 +338,12 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 }
                 $$ = $2;
             }
-            setDimensions(node, $3, dimenQntd);
-            dimenQntd = 0;
+            setDimensions(node, $3);
 
             if ($4) {
                 ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
                 int assignType, assignPointer = result->pointer;
+                // printf("\nassignType %d %d\n", result->typeVar, result->assign);
                 if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
                     assignType = CHAR;
                 } else if (result->typeVar == INT || result->typeVar == NUM_INT) {
@@ -348,6 +352,15 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                     assignType = CHAR;
                     assignPointer = 1;
                 }
+                if (result->typeVar == VOID) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: void value not ignored as it ought to be", auxLineAssign, auxColumnAssign);
+                    printLineError(auxLineAssign, auxColumnAssign);
+                    if (currentHash) freeHash(currentHash);
+                    // if (globalHash) freeHash(globalHash);
+                    deleteAuxFile();
+                    exit(0);
+                }
 
                 if (((CURRENT_TYPE == CHAR || CURRENT_TYPE == CHARACTER) && assignType == CHAR) 
                     || ((CURRENT_TYPE == INT || CURRENT_TYPE == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
@@ -355,8 +368,8 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                         if (textBefore) printf("\n");
                         char *type1 = getExactType(CURRENT_TYPE, $1);
                         char *type2 = getExactType(assignType, assignPointer);
-                        printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", $2.line, auxColumnAssign, type1, type2);
-                        printLineError($2.line, auxColumnAssign);
+                        printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", auxLineAssign, auxColumnAssign, type1, type2);
+                        printLineError(auxLineAssign, auxColumnAssign);
                         if (currentHash) freeHash(currentHash);
                         // if (globalHash) freeHash(globalHash);
                         deleteAuxFile();
@@ -372,10 +385,18 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
 
         ResultExpression *result = NULL;
         dimensionAux = 1;
-        dimenQntd++;
         if ($2) result = evalExpression($2, globalHash, currentHash, NULL);
         if (result) {
             // printf("result->assign %d %d\n", result->assign, result->typeVar);
+            if ((result->typeVar != NUM_INT && result->typeVar != INT) || result->pointer != 0) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: array subscript is not an integer", $1.line, $1.column);
+                printLineError($1.line, $1.column);
+                if (currentHash) freeHash(currentHash);
+                // if (globalHash) freeHash(globalHash);
+                deleteAuxFile();
+                exit(1);
+            }
             if (result->assign == 0) {
                 dimensionError = 1;
             } else if (result->assign < 0) {
@@ -391,6 +412,7 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
 
 ExpressaoAssign: ASSIGN ExpressaoAtribuicao { 
         $2->assign = ASSIGN;
+        auxLineAssign = $1.line;
         auxColumnAssign = $1.column;
         $$ = $2;
     }
@@ -458,8 +480,12 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
                     strcat(printDimen, "' is negative");
                 }
             }
-            setDimensions(node, $4, dimenQntd);
-            dimenQntd = 0;
+            if (!$4) {
+                setKind(node, VAR);
+            } else {
+                setKind(node, VECTOR);
+            }
+            setDimensions(node, $4);
         }
 
         $$ = aux;
@@ -493,10 +519,11 @@ Tipo: INT {
         $$ = yylval.token;
     } ;
 
-Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { $$ = $2; } ;
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { printf("agr é definitivo %p\n", $2); $$ = $2; } ;
 
 Comandos: ListaComandos RetornoComandos {
         $1->next = $2;
+        printf("retornando comandos %p %p\n", $1, $2);
         $$ = $1;
     } ;
 
@@ -732,14 +759,22 @@ ExpressaoUnaria: ExpressaoPosFixa { $$ = $1; }
     } ;
 
 ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
-    | ExpressaoPosFixa L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET { 
-        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_SQUARE_BRACKET);
-        Expression *aux = createExpression(POS_FIXA, L_SQUARE_BRACKET, auxToken, $1, $3);
-        $$ = aux;
+    | ExpressaoPosFixa L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET {
+        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $2.type);
+        Dimension *dimen = createDimensionWithExp($3, auxToken);
+        if ($1->type != POS_FIXA) {
+            auxToken = createAuxToken($1->value->valor, $1->value->line, $1->value->column, $1->value->type);
+            Expression *aux = createExpression(POS_FIXA, $2.type, auxToken, $1, NULL);
+            setDimensionExpression(aux, dimen);
+            $$ = aux;
+        } else {
+            setDimensionExpression($1, dimen);
+            $$ = $1;
+        }
     }
     | ExpressaoPosFixa L_PAREN PulaExpressaoAtribuicao R_PAREN {
         AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, L_PAREN);
-        Expression *aux = createExpression(POS_FIXA, L_PAREN, auxToken, $1, $3);
+        Expression *aux = createExpression(POS_FIXA, $1->type, auxToken, $1, $3);
         $$ = aux;
     }
     | ExpressaoPosFixa INC {
@@ -753,49 +788,14 @@ ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
         $$ = aux;
     } ;
 
-
-/* ExpressaoPosFixa: ExpressaoPrimaria { $$ = $1; }
-    | ExpressaoPosFixa AuxPosFixa {
-        AuxToken *decoy = createAuxToken($2->value->valor, $2->value->line, $2->value->column, $2->value->type);
-        printf("Criada pos fixa %d %p %p\n", $2->value->type, $1, $2);
-        if ($2->value->type == DEC || $2->value->type == INC) {
-            Expression *aux = createExpression(POS_FIXA, $2->value->type, decoy, $1, NULL);
-            $$ = aux;
-        }
-
-        // $1->right = $2;
-        // $$ = $1; 
-    } ;
-
-AuxPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET {
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, L_SQUARE_BRACKET);
-        $2->value = auxToken;
-        $$ = $2; 
-    }
-    | L_PAREN PulaExpressaoAtribuicao R_PAREN { 
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, L_PAREN);
-        $2->value = auxToken;
-        $$ = $2; 
-    }
-    | INC {
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, INC);
-        Expression *decoy = createExpression(POS_FIXA, INC, auxToken, NULL, NULL);
-        $$ = decoy;
-    }
-    | DEC {
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, DEC);
-        Expression *decoy = createExpression(POS_FIXA, DEC, auxToken, NULL, NULL);
-        $$ = decoy;
-    } ; */
-
 PulaExpressaoAtribuicao: ExpressaoAtribuicao AuxPula { 
-        $1->right = $2; 
+        // $1->next = $2; 
         $$ = $1;
     }
     | { $$ = NULL; } ;
 
 AuxPula: COMMA ExpressaoAtribuicao AuxPula {
-        $2->right = $3;
+        // $2->next = $3;
         $$ = $2;
     }
     | { $$ = NULL; } ;

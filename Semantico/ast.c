@@ -57,6 +57,36 @@ Dimension *createDimension(int size) {
     return newDim;
 }
 
+int countDimension(void *d) {
+    Dimension *dimen = d;
+    if (!dimen) return 0;
+    int count = 1;
+    Dimension *aux = dimen;
+    while (aux->next) {
+        count++;
+        aux = aux->next;
+    }
+    return count;
+}
+
+Dimension *createDimensionWithExp(Expression *exp, AuxToken *auxToken) {
+    Dimension *newDim = calloc(1, sizeof(Dimension));
+    newDim->exp = exp;
+    newDim->dimenAuxToken = auxToken;
+    return newDim;
+}
+
+void setDimensionExpression(Expression *expression, Dimension *dimension) {
+    if (!expression) return;
+    if (!expression->dimension) {
+        expression->dimension = dimension;
+    } else {
+        Dimension *aux = expression->dimension;
+        while (aux->next) aux = aux->next;
+        aux->next = dimension;
+    }
+}
+
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next) {
     Command *newIf = calloc(1, sizeof(Command));
     newIf->type = IF;
@@ -143,6 +173,7 @@ Command *createCommandExpression(Expression *expression, void *next) {
     newCommand->type = 9802;
     newCommand->condition = expression;
     newCommand->next = next;
+    printf("commandExpression %p %p\n", expression, newCommand);
     return newCommand;
 }
 
@@ -166,6 +197,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     int auxLeftPointer, auxRightPointer;
     int auxLeftType, auxRightType;
     int auxLeftValor, auxRightValor;
+
+    // printf("evalExpression %p %d %d %d\n", expr, expr->type, expr->operator, expr->value->type);
 
     switch (expr->type) {
         case NUMEROS:
@@ -199,26 +232,29 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
-                // printf("Achei %s %d %d = %d\n", hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->assign);
+                // printf("Achei %p %s %d %d (kind = %d) = %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign);
 
                 if (hashNode->typeVar == VOID) {
-                    if (textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
-                    printLineError(expr->value->line, expr->value->column);
-                    freeAST(program);
-                    deleteAuxFile();
-                    exit(0);
+                    // if (textBefore) printf("\n");
+                    // printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                    // printLineError(expr->value->line, expr->value->column);
+                    // freeAST(program);
+                    // deleteAuxFile();
+                    // exit(0);
+                    result = createResultExpression(VOID, hashNode->pointer, hashNode->assign);
+                    result->auxIdNode = hashNode;
+                    return result;
                 } else if (hashNode->typeVar == NUM_INT || hashNode->typeVar == INT) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
-                    strcpy(result->id, expr->value->valor);
+                    result->auxIdNode = hashNode;
                     return result;
                 } else if (hashNode->typeVar == CHARACTER || hashNode->typeVar == CHAR) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
-                    strcpy(result->id, expr->value->valor);
+                    result->auxIdNode = hashNode;
                     return result;
                 } else if (hashNode->typeVar == STRING) {
                     result = createResultExpression(CHAR, 1, 0);
-                    strcpy(result->id, expr->value->valor);
+                    result->auxIdNode = hashNode;
                     return result;
                 }
             
@@ -229,12 +265,23 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             } else if (expr->operator == STRING) {
                 result = createResultExpression(STRING, 0, 0);
                 return result;
-            } 
+            }
             break;
         
         case ATRIBUICAO:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
+            // printf("left %p right %p\n", left, right);
+            printf("assign left %p %d %d \nright %p %d %d \n", left, left->typeVar, left->pointer, right, right->typeVar, right->pointer);
+
+            if (left->typeVar == VOID || right->typeVar == VOID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                deleteAuxFile();
+                exit(0);
+            }
 
             // atribuindo para constante
             if (left->typeVar == STRING || left->typeVar == CHARACTER) {
@@ -484,6 +531,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case SHIFT:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
+            
+            if (left->typeVar == VOID || right->typeVar == VOID) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+                printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                deleteAuxFile();
+                exit(0);
+            }
             int leftBits = 0;
 
             auxLeftPointer = expr->left->value->pointer;
@@ -561,6 +617,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case ADITIVIVA:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
+
+            // if (left->typeVar == VOID || right->typeVar == VOID) {
+            //     if (textBefore) printf("\n");
+            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+            //     printLineError(expr->value->line, expr->value->column);
+            //     freeAST(program);
+            //     deleteAuxFile();
+            //     exit(0);
+            // }
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
@@ -640,6 +705,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case AND_BIT:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
+
+            // if (left->typeVar == VOID || right->typeVar == VOID) {
+            //     if (textBefore) printf("\n");
+            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+            //     printLineError(expr->value->line, expr->value->column);
+            //     freeAST(program);
+            //     deleteAuxFile();
+            //     exit(0);
+            // }
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
@@ -753,6 +827,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         
         case UNARIA:
             left = evalExpression(expr->left, globalHash, localHash, program);
+
+            // if (left->typeVar == VOID) {
+            //     if (textBefore) printf("\n");
+            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
+            //     printLineError(expr->value->line, expr->value->column);
+            //     freeAST(program);
+            //     deleteAuxFile();
+            //     exit(0);
+            // }
             
             if (expr->operator == PLUS || expr->operator == MINUS || expr->operator == BITWISE_NOT) {
 
@@ -829,7 +912,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             } else if (expr->operator == BITWISE_AND || expr->operator == NOT || expr->operator == INC || expr->operator == DEC) {
 
-                if (expr->operator != NOT && expr->left->value->type != ID) {
+                // printf("unaria expr->left->value->type %d %p %s\n", expr->left->value->type, expr->left, expr->left->value->valor);
+                // printf("%d left %p %d %d\n", expr->operator, left, left->typeVar, left->pointer);
+                // printf("auxIdNode %d\n", ((HashNode*) left->auxIdNode)->typeVar);
+                if (expr->operator != NOT && left->typeVar != ID && !left->auxIdNode) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
@@ -837,16 +923,25 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     deleteAuxFile();
                     exit(0);
                 }
-
-                if (left->typeVar != NUM_INT && left->typeVar != CHARACTER 
-                    && left->typeVar != INT && left->typeVar != CHAR) {
+                
+                auxLeftType = left->typeVar;
+                auxLeftPointer = left->pointer;
+                auxLeftValor = left->assign;
+                if (left->typeVar == ID) {
+                    auxLeftType = ((HashNode*)left->auxIdNode)->typeVar;
+                    auxLeftPointer = ((HashNode*)left->auxIdNode)->pointer;
+                    auxLeftValor = ((HashNode*)left->auxIdNode)->assign;
+                }
+                
+                if (auxLeftType != NUM_INT && auxLeftType != CHARACTER 
+                    && auxLeftType != INT && auxLeftType != CHAR) {
 
                     char t[3];
                     if (expr->operator == BITWISE_AND) strcpy(t, "&");
                     else if (expr->operator == NOT) strcpy(t, "!");
                     else if (expr->operator == INC) strcpy(t, "++");
                     else if (expr->operator == DEC) strcpy(t, "--");
-                    char *type1 = getExactType(left->typeVar, left->pointer);
+                    char *type1 = getExactType(auxLeftType, auxLeftPointer);
                     printf("error:semantic:%d:%d: invalid type argument of unary '%s' (have '%s')", expr->value->line, expr->value->column, t, type1);
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
@@ -856,13 +951,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
 
                 if (expr->operator == BITWISE_AND) {
-                    result = createResultExpression(left->typeVar, 1, *(&left->assign));
+                    result = createResultExpression(auxLeftType, 1, *(&auxLeftValor));
                 } else if (expr->operator == NOT) {
-                    result = createResultExpression(left->typeVar, left->pointer, !left->assign);
+                    result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
                 } else if (expr->operator == INC) {
-                    result = createResultExpression(left->typeVar, left->pointer, ++left->assign);
+                    result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
                 } else if (expr->operator == DEC) {
-                    result = createResultExpression(left->typeVar, left->pointer, --left->assign);
+                    result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
                 } 
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
@@ -871,15 +966,16 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case POS_FIXA:
-            printf("pos fixa\n");
+            if (expr->value->type == L_PAREN) {
+                printf("pos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
+                printf("hihi ainda nao fizzzz funcao 968\n");
+                exit(0);
+            }
             left = evalExpression(expr->left, globalHash, localHash, program);
-            // right = evalExpression(expr->right, globalHash, localHash, program);
-            // printf("testando pos fixa left %p %d %d\n", left, expr->value->type, expr->value->pointer);
-            // printf("testando pos fixa right %p %d %d\n", right, expr->value->type, expr->value->pointer);
-            // deleteAuxFile();
-            // exit(0);
+            // printf("left %p %d %d %p\n", left, left->typeVar, left->pointer, left->auxIdNode);
+
             if (expr->operator == INC || expr->operator == DEC) {
-                if (expr->left->value->type != ID) {
+                if (!left->auxIdNode) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
@@ -899,7 +995,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // set assign do id referente ao left
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                printf("pos fixa result %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
+                // printf("pos fixa result %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
                 
                 HashNode *hashNodeTemp = getIdentifierNode(localHash, expr->left->value->valor);
                 if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->left->value->valor);
@@ -907,6 +1003,69 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 hashNodeTemp = NULL;
                 return result;
 
+            } else if (expr->operator == L_SQUARE_BRACKET) {
+                HashNode *auxIdNode = left->auxIdNode;
+                // printf("pos fixa l square %p %d %d %d\n", left, left->typeVar, left->pointer, auxIdNode->kind);
+                // vendo se de fato é um array
+                if (auxIdNode->kind != VECTOR) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: subscripted value is neither array nor pointer", expr->value->line, expr->value->column);
+                    printLineError(expr->value->line, expr->value->column);
+                    freeAST(program);
+                    deleteAuxFile();
+                    exit(0);
+
+                } else {
+                    // printf("qntd dimensoes esperadas %d\n", auxIdNode->qntdDimen);
+                    int qntdDimenRecebidas = 0;
+                    Dimension *dimenRecebidas = expr->dimension;
+                    Dimension *dimenEsperada = auxIdNode->dimensions;
+                    ResultExpression *dimenResult = NULL;
+                    // percorrer as dimensoes recebidas e verificar se sao inteiros e se a qntd bate
+                    while (dimenRecebidas) {
+                        qntdDimenRecebidas++;
+                        // printf("\n\nline column dimen %d %d\n\n", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                        // printf("qntd dimensoes recebidas %d\n", qntdDimenRecebidas);
+                        if (qntdDimenRecebidas != auxIdNode->qntdDimen) {
+                            if (textBefore) printf("\n");
+                            printf("error:semantic:%d:%d: subscripted value is neither array nor pointer", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                            printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                            freeAST(program);
+                            deleteAuxFile();
+                            exit(0);
+                        }
+
+                        dimenResult = evalExpression(dimenRecebidas->exp, globalHash, localHash, program);
+                        if ((dimenResult->typeVar != NUM_INT && dimenResult->typeVar != INT) || dimenResult->pointer != 0) {
+                            if (textBefore) printf("\n");
+                            printf("error:semantic:%d:%d: array subscript is not an integer", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                            printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                            freeAST(program);
+                            deleteAuxFile();
+                            exit(0);
+                        } else {
+                            // printf("dimensao atrib = %d dimensao maxima = %d\n", dimenResult->assign, dimenEsperada->size);
+                            if (dimenResult->assign >= dimenEsperada->size || dimenResult->assign < 0) {
+                                if (textBefore) printf("\n");
+                                printf("warning:semantic:%d:%d: array index out of bounds", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                                printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
+                                textBefore = 1;
+                            }
+                        }
+                        
+                        dimenEsperada = dimenEsperada->next;
+                        dimenRecebidas = dimenRecebidas->next;
+                    }
+                    
+                }
+                result = createResultExpression(auxIdNode->typeVar, 0, 0); 
+                result->auxIdNode = auxIdNode;
+                // printf("pos fixa result %p %d %d = %d\n", result, result->typeVar, result->pointer, result->assign);
+                return result;
+            
+            } else if (expr->operator == L_PAREN) {
+                printf("%p hihi ainda nao fizzzz\n", left);
+                exit(0);
             }
             break;
         
@@ -924,6 +1083,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
 
+    printf("cuzin2 %p %d\n", command, command->type);
     if (command->type == 9802) {
         evalExpression(command->condition, globalHash, localHash, program);
     }
@@ -1027,11 +1187,13 @@ int traverseAST(Program *program) {
     if (!program) return -1;
     // Percorra as funções na lista de funções
     Function *currentFunction = program->functionsList;
+    printf("cpreuzin %p \n", currentFunction);
     while (currentFunction != NULL) {
 
         // printf("Function: %s\n", currentFunction->name);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
+            printf("cuzin %p \n", command);
         while (command != NULL) {
             traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             command = command->next;

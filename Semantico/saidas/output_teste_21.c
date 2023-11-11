@@ -1,4 +1,2 @@
-pos fixa
-error:semantic:4:9: void value not ignored as it ought to be
-    i = f();    
-        ^
+pos fixa 0x5571dfa3daf0 1016 264
+hihi ainda nao fizzzz funcao 968

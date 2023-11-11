@@ -47,7 +47,7 @@ void setPrototype(void *node);
 void setQntdParams(void *node, int qntdParams);
 void setParam(void *node, Param *p);
 void setAssign(void *node, int assign);
-void setDimensions(void *node, void *dimensions, int qntdDimen);
+void setDimensions(void *node, void *dimensions);
 void setKind(void *node, int kind);
 
 int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError);

@@ -1,3 +1,1 @@
-pos fixa
-pos fixa result 0x5651d45d1040 275 0 = 2
 SUCCESSFUL COMPILATION.

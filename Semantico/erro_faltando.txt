@@ -7,12 +7,6 @@
 
 "incompatible type for argument ’<numero-do-argumento>’ of ’<nome-da-funcao>’ expected ’<nome-do-tipo>’ but argument is of type ’<nome-do-tipo>’"
 
-"subscripted value is neither array nor pointer"
+"void value not ignored as it ought to be"    em funçoes ta com defeito
 
-"array subscript is not an integer"
-
-    warnings :  
-"array index out of bounds"
-
-
-atencao aos 23, 24, 26, 27, '31', '38', '40', '44', '47', 48, 49, 50
+atencao aos 21, 22, 24, 26, 27, '44', 49, 50

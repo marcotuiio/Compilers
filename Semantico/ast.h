@@ -117,7 +117,9 @@ typedef struct auxtoken {
 
 typedef struct dimension {
     int size;
+    void *exp;
     struct dimension *next;
+    AuxToken *dimenAuxToken;
 } Dimension;
 
 typedef struct expression {
@@ -127,6 +129,7 @@ typedef struct expression {
     AuxToken *value;
     int assign;
     Dimension *dimension;
+    // Param *param;
     void *extra;
 
     struct expression *ternary;
@@ -164,9 +167,9 @@ typedef struct resultExpression {
     int typeVar;
     int pointer;
     int assign;
-    char id[256];
     int auxLine;
     int auxColumn;
+    void *auxIdNode;
 } ResultExpression;
 
 Program *createProgram(void **hash, void *functionsList, void *main);
@@ -176,6 +179,12 @@ Function *createFunction(void **hash, int returnType, int pointer, char *name, v
 AuxToken *createAuxToken(char *valor, int line, int column, int type);
 
 Dimension *createDimension(int size);
+
+int countDimension(void *d);
+
+Dimension *createDimensionWithExp(Expression *exp, AuxToken *auxToken);
+
+void setDimensionExpression(Expression *expression, Dimension *dimension);
 
 Expression *createExpression(int type, int operator, void *value, void *left, void *right);
 

@@ -1,6 +1,7 @@
 #include "hash.h"
 extern void printLineError(int line, int column);
 extern void deleteAuxFile();
+extern int countDimension(void *dimensions);
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
@@ -66,18 +67,21 @@ void setAssign(void *node, int assign) {
     aux->assign = assign;
 }
 
-void setDimensions(void *node, void *dimensions, int qntdDimen) {
+void setDimensions(void *node, void *dimensions) {
     HashNode *aux = node;
     aux->dimensions = dimensions;
+    int qntdDimen = countDimension(dimensions);
     aux->qntdDimen = qntdDimen;
-    if (qntdDimen == 0)
-        aux->kind = VAR;
-    else
+    if (qntdDimen > 0) {
         aux->kind = VECTOR;
+    } else {
+        aux->kind = VAR;
+    }
 }
 
 void setKind(void *node, int kind) {
     HashNode *aux = node;
+    // printf("setting kind %s = %d %p\n", aux->varId, kind, node);
     aux->kind = kind;
 }
 
