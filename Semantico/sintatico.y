@@ -38,7 +38,6 @@ int wasThereDeclarations = 0;
 
 void *prototypeParam = NULL;
 
-
 void **globalHash = NULL;
 void **currentHash = NULL;
 
@@ -197,7 +196,6 @@ Programa: {
         } else {
             aux = createProgram(globalHash, $2, NULL);
         }
-        // printf("retornando programa %p com lista %p\n", aux, aux->functionsList);
         $$ = aux; 
     } ;
 
@@ -206,24 +204,23 @@ DeclaracaoOUFuncao: Declaracoes { /* inserir na hash global o que quer que apare
         $$ = NULL;
     }
     | Funcao { 
-        // printf("1 retornando funcao %p %p\n", $1, auxFunctionList);
         if (!auxFunctionList) {
             auxFunctionList = $1;
         } else {
+            // auxFunctionList->next = $1;
+            Function *aux = auxFunctionList;
+            while (auxFunctionList->next) {
+                auxFunctionList = auxFunctionList->next;
+            }
             auxFunctionList->next = $1;
+            auxFunctionList = aux;
         }
-        // auxFunctionList = $1;
-        // $1->next = auxFunctionList;
         $$ = $1;  // should return a list of functions
     } ;
     
 ListaFuncoes: DeclaracaoOUFuncao ListaFuncoes { 
         if ($1) {  // se for uma funcao e nao uma declaracao
-            // printf("2 retornando lista funcoes %p %p | %p\n", $1, $2, auxFunctionList);
-            $1->next = $2;  // devia linkar as funcoes, sera se ta certo?
-            auxFunctionList = $1;
-            // printf("auxFunctionList %p\n", auxFunctionList);
-            $$ = $1;  // devia retornar aa lista de funcoes
+            $$ = auxFunctionList;
         } else {
             // printf("chegaaaa %p %p\n", $1, auxFunctionList);
         }
@@ -287,7 +284,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             exit(1);
         }
         Function *func = createFunction(currentHash, $1.type, $2, $3.valor, $7, NULL);
-        // printf("criou funcao %s %p comando %p\n", $3.valor, func, $7);
+        // printf("\ncriou funcao %s %p comando %p\n", $3.valor, func, $7);
         paramsQntd = 0;
         currentHash = NULL;
         funcAux = 0;
@@ -303,9 +300,9 @@ Ponteiro: MULTIPLY Ponteiro {
     }
     | { $$ = 0; } ; 
 
-DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON { 
+DeclaraVariaveis: Tipo BlocoVariaveis SEMICOLON {
         CURRENT_TYPE = $1.type;
-        //// printf("o que acontece aqui %d\n", $1.type);
+        // printf("o que acontece aqui %d\n", $1.type);
         $$ = $2;  // retornando id da declaracao
     } ;
 
@@ -318,7 +315,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                 currentHash = globalHash;
             }
         } 
-        //// printf("\n==> variavel %s tipo %d %d || linha %d\n", $2.valor, CURRENT_TYPE, $1, $2.line);
+        // printf("\n==> variavel %s tipo %d (%d) %d || linha %d\n", $2.valor, CURRENT_TYPE, AUX_CURRENT_TYPE, $1, $2.line);
         if (CURRENT_TYPE == 277 && $1 == 0) { // variables of type void not allowed
             if (textBefore) printf("\n");
             printf("error:semantic:%d:%d: variable '%s' declared void", $2.line, $2.column, $2.valor);
@@ -405,7 +402,6 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
     } ;
 
 ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete {
-
         ResultExpression *result = NULL;
         dimensionAux = 1;
         if ($2) result = evalExpression($2, globalHash, currentHash, NULL);
@@ -441,7 +437,7 @@ ExpressaoAssign: ASSIGN ExpressaoAtribuicao {
     }
     | { $$ = NULL; } ;
 
-RetornoVariavel: COMMA BlocoVariaveis { AUX_CURRENT_TYPE = -1; }
+RetornoVariavel: COMMA BlocoVariaveis { if (AUX_CURRENT_TYPE == 0) AUX_CURRENT_TYPE = CURRENT_TYPE; $$ = $2; }
     | { } ; 
 
 DeclaraPrototipos: Tipo Ponteiro ID Parametros SEMICOLON { 
@@ -525,38 +521,60 @@ RetornaParametros: COMMA BlocoParametros {
     | { $$ = NULL; } ;
 
 Tipo: INT {
-        if (AUX_CURRENT_TYPE == -1) {
+        // if (AUX_CURRENT_TYPE == -1) 
             AUX_CURRENT_TYPE = CURRENT_TYPE;
-        }
         CURRENT_TYPE = INT; 
         $$ = yylval.token; 
     }
     | CHAR { 
-        if (AUX_CURRENT_TYPE == -1) {
+        // if (AUX_CURRENT_TYPE == -1) 
             AUX_CURRENT_TYPE = CURRENT_TYPE;
-        }
         CURRENT_TYPE = CHAR;
         $$ = yylval.token;
     }
     | VOID {
-        if (AUX_CURRENT_TYPE == -1) {
+        // if (AUX_CURRENT_TYPE == -1) 
             AUX_CURRENT_TYPE = CURRENT_TYPE;
-        }
         CURRENT_TYPE = VOID;
-        //// printf("tipo void %d %d || %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE, $1.line);
+        // printf("tipo void %d %d || %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE, $1.line);
         $$ = yylval.token;
     } ;
 
-Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { $$ = $2; } ;
+Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { 
+    Command *aux = $2;
+        while (aux) {
+            // printf("comando %p\n", aux);
+            aux = aux->next;
+        }
+        // printf("comando %p\n", aux);
+        $$ = $2; 
+    }
 
 Comandos: ListaComandos RetornoComandos {
-        $1->next = $2;
-        // printf("retornando comandos %p %p\n", $1, $2);
+        Command *aux = $1;
+        while ($1) {
+            if ($1->next == NULL) {
+                // printf("2 comando %p %p\n", $1, $2);
+                $1->next = $2;
+                break;
+            }
+            $1 = $1->next;
+        }
+        $1 = aux;
         $$ = $1;
     } ;
 
 RetornoComandos: ListaComandos RetornoComandos { 
-        $1->next = $2;
+        Command *aux = $1;
+        while ($1) {
+            if ($1->next == NULL) {
+                // printf("1 comando %p %p\n", $1, $2);
+                $1->next = $2;
+                break;
+            }
+            $1 = $1->next;
+        }
+        $1 = aux;
         $$ = $1;
     }
     | { $$ = NULL; } ;
@@ -759,14 +777,13 @@ ExpressaoMultiplicativa: ExpressaoCast { $$ = $1; }
 
 ExpressaoCast: ExpressaoUnaria { $$ = $1; }
     | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast {
-        // tem qua tratar o ponteiro e fazer alguma coisa com essa expressao
         AuxToken *auxToken = createAuxToken($2.valor, $1.line, $1.column, $2.type);
         auxToken->pointer = $3;
         Expression *aux = createExpression(CASTING, $2.type, auxToken, NULL, $5);
-        //// printf("tipo atual antes %d %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE);
+        // printf("tipo atual antes %d %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE);
         CURRENT_TYPE = AUX_CURRENT_TYPE;
-        //// printf("tipo atual depois %d\n", CURRENT_TYPE);
-        AUX_CURRENT_TYPE = -1;
+        // AUX_CURRENT_TYPE = -1;
+        // printf("tipo atual depois %d %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE);
         aux->pointer = $3;
         $$ = aux;
     } ;

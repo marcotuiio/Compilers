@@ -1,5 +1,0 @@
-Faltando -> atencao aos 50
-
-muito cuidado com prototipo de função
-alternação entre declarações globais (variaveis e defines) e funçoes = TOTALMENTE NAO DETERMINISTICO
-arrumar um jeito de salvor o tipo correto da variavel na declaração, mesmo apos um cast
