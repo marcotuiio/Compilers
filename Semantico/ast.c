@@ -1266,16 +1266,11 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
 
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
-    // printf("comando %p %p\n", command, command->condition);
+    // printf("\ncomando %p %d\n", command, command->type);
     if (command->type == 9802) {
-        // traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
-        // evalExpression(command->condition, globalHash, localHash, program);
-        Command *aux = command;
-        while (aux) {
-            // printf("\ncomando %p %p %d\n", aux, aux->condition, aux->condition->type);
-            evalExpression(aux->condition, globalHash, localHash, program);
-            aux = aux->next;
-        }
+        // printf("\ncomando %p %d %p %d\n", command, command->type, command->condition, command->condition->type);
+        evalExpression(command->condition, globalHash, localHash, program);
+        traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
     }
 
     if (command->type == IF || command->type == ELSE) {
@@ -1328,6 +1323,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == RETURN) {
+        // printf("\nreturn %p %d\n", command->condition, command->condition->type);
         functionWithNoReturn = 1;
         if (currentFunction->returnType == VOID && currentFunction->pointer == 0) {
             if (command->condition) {
@@ -1373,7 +1369,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
     }
 
-    command = command->next;
+    // command = command->next;
 }
 
 int traverseAST(Program *program) {

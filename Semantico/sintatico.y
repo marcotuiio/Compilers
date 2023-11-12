@@ -541,11 +541,11 @@ Tipo: INT {
     } ;
 
 Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { 
-    Command *aux = $2;
-        while (aux) {
-            // printf("comando %p\n", aux);
-            aux = aux->next;
-        }
+    // Command *aux = $2;
+        // while (aux) {
+        //     printf("comando %p\n", aux);
+        //     aux = aux->next;
+        // }
         // printf("comando %p\n", aux);
         $$ = $2; 
     }

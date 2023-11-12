@@ -1,3 +1,0 @@
-warning:39:69: cast from 'int' to 'char' of different size
-                *i/*666*/; *i/ 666/*Porta para o mundo invertido*/; (char)CALL_ELEVEN;
-                                                                    ^
