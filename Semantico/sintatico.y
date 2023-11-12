@@ -521,60 +521,58 @@ RetornaParametros: COMMA BlocoParametros {
     | { $$ = NULL; } ;
 
 Tipo: INT {
-        // if (AUX_CURRENT_TYPE == -1) 
-            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        AUX_CURRENT_TYPE = CURRENT_TYPE;
         CURRENT_TYPE = INT; 
         $$ = yylval.token; 
     }
     | CHAR { 
-        // if (AUX_CURRENT_TYPE == -1) 
-            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        AUX_CURRENT_TYPE = CURRENT_TYPE;
         CURRENT_TYPE = CHAR;
         $$ = yylval.token;
     }
     | VOID {
-        // if (AUX_CURRENT_TYPE == -1) 
-            AUX_CURRENT_TYPE = CURRENT_TYPE;
+        AUX_CURRENT_TYPE = CURRENT_TYPE;
         CURRENT_TYPE = VOID;
-        // printf("tipo void %d %d || %d\n", CURRENT_TYPE, AUX_CURRENT_TYPE, $1.line);
         $$ = yylval.token;
     } ;
 
 Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET { 
-    // Command *aux = $2;
-        // while (aux) {
-        //     printf("comando %p\n", aux);
-        //     aux = aux->next;
-        // }
+    Command *aux = $2;
+        while (aux) {
+            // printf("comando %p\n", aux);
+            aux = aux->next;
+        }
         // printf("comando %p\n", aux);
         $$ = $2; 
     }
 
 Comandos: ListaComandos RetornoComandos {
-        Command *aux = $1;
-        while ($1) {
-            if ($1->next == NULL) {
-                // printf("2 comando %p %p\n", $1, $2);
-                $1->next = $2;
-                break;
-            }
-            $1 = $1->next;
-        }
-        $1 = aux;
+        // Command *aux = $1;
+        // while ($1) {
+        //     if ($1->next == NULL) {
+        //         printf("2 comando %p %p\n", $1, $2);
+        //         $1->next = $2;
+        //         break;
+        //     }
+        //     $1 = $1->next;
+        // }
+        // $1 = aux;
+        $1->next = $2;
         $$ = $1;
     } ;
 
 RetornoComandos: ListaComandos RetornoComandos { 
-        Command *aux = $1;
-        while ($1) {
-            if ($1->next == NULL) {
-                // printf("1 comando %p %p\n", $1, $2);
-                $1->next = $2;
-                break;
-            }
-            $1 = $1->next;
-        }
-        $1 = aux;
+        // Command *aux = $1;
+        // while ($1) {
+        //     if ($1->next == NULL) {
+        //         printf("\n1 comando %p %p\n", $1, $2);
+        //         $1->next = $2;
+        //         break;
+        //     }
+        //     $1 = $1->next;
+        // }
+        // $1 = aux;
+        $1->next = $2;
         $$ = $1;
     }
     | { $$ = NULL; } ;
@@ -629,7 +627,6 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
     }
     | Expressao SEMICOLON {
         Command *aux = createCommandExpression($1, NULL);
-        // printf("%d %s\n", aux->condition->type, aux->condition->value->valor);
         $$ = aux;
     }
     | SEMICOLON { }

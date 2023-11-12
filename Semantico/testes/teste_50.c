@@ -22,7 +22,7 @@ char g()
     void* v = (void*) "DDominar o mundo\n" + 1;
     printf("%s",((char*)v) >> 666);
     v=(void*)(v?((void*)((char)((char)(int*)666<(char)(void*)11))):(char*)"Mundo Invertido");
-    return 'a';
+    return (char)vetor[1 << 1];
 }
 
 int main()

@@ -24,6 +24,7 @@ enum expressionTypes {
     PRIMARIA,
     NUMEROS
 };
+#define LISTA_EXP_COMANDO 9802
 
 // enum tokens {
 //     YYEMPTY = -2,

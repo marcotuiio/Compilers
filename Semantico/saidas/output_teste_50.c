@@ -37,12 +37,6 @@ warning:25:23: array index out of bounds
 warning:25:12: cast from 'char*' to 'char' of different size
     return (char)vetor[1 << 1];
            ^
-warning:25:23: array index out of bounds
-    return (char)vetor[1 << 1];
-                      ^
-warning:25:12: cast from 'char*' to 'char' of different size
-    return (char)vetor[1 << 1];
-           ^
 warning:32:23: cast from 'int' to 'char' of different size
     for(ptr = (void*)((char)((int)666)); ptr;ptr++)
                       ^

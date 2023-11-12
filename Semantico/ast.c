@@ -9,6 +9,7 @@ extern void deleteAuxFile();
 extern int textBefore;
 extern int defineAux;
 extern int dimensionAux;
+int teveReturn = 0;
 
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
@@ -177,7 +178,7 @@ Command *createExitStatement(Expression *expression, void *next) {
 
 Command *createCommandExpression(Expression *expression, void *next) {
     Command *newCommand = calloc(1, sizeof(Command));
-    newCommand->type = 9802;
+    newCommand->type = LISTA_EXP_COMANDO;
     newCommand->condition = expression;
     newCommand->next = next;
     // printf("commandExpression %p %p\n", expression, newCommand);
@@ -1263,12 +1264,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
 void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
     if (!command) return;
+    if (teveReturn) return;
 
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
-    // printf("\ncomando %p %d\n", command, command->type);
-    if (command->type == 9802) {
-        // printf("\ncomando %p %d %p %d\n", command, command->type, command->condition, command->condition->type);
+    if (command->type == LISTA_EXP_COMANDO) {
         evalExpression(command->condition, globalHash, localHash, program);
         traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
     }
@@ -1363,13 +1363,13 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 exit(0);
             }
         }
+        if (!command->next)
+            teveReturn = 1;
     }
 
     if (command->type == EXIT) {
         if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
     }
-
-    // command = command->next;
 }
 
 int traverseAST(Program *program) {
@@ -1377,7 +1377,7 @@ int traverseAST(Program *program) {
     // Percorra as funções na lista de funções
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
-
+        teveReturn = 0;
         // printf("Function: %s %p\n", currentFunction->name, currentFunction);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
