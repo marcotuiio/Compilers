@@ -267,7 +267,7 @@ int main() {
                     backupIndex = index;
                 }
 
-                if (end != -1) {                // if the end state is not -1, token is printed because at some point it went to a final state
+                if (end != -1) {                                       // if the end state is not -1, token is printed because at some point it went to a final state
                     if (end != COMENT_LINHA && end != COMENT_BLOCO) {  // comments must be ignored in the syntax analysis
                         insertNode(cadeia, end, lineno, index, tokenContents);
                         free(tokenContents);

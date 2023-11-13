@@ -197,7 +197,7 @@ void setDimensionExpression(Expression *expression, Dimension *dimension);
 
 ExpParam *createExpParam(Expression *exp, ExpParam *next);
 
-Expression *createExpression(int type, int operator, void *value, void *left, void *right);
+Expression *createExpression(int type, int operator, void * value, void *left, void *right);
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next);
 

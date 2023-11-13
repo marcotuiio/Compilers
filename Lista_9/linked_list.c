@@ -5,13 +5,13 @@ void *createList() {
     return l;
 }
 
-void insertNode(listHeader *list, int value) { // sempre insere no final
+void insertNode(listHeader *list, int value) {  // sempre insere no final
     nodeList *node = calloc(1, sizeof(nodeList));
     node->value = value;
 
     if (list->head == NULL) {
         list->head = node;
-        
+
     } else {
         nodeList *aux = list->head;
         while (aux->next != NULL) {
@@ -21,7 +21,7 @@ void insertNode(listHeader *list, int value) { // sempre insere no final
     }
 }
 
-void removeNode(listHeader *list) { // sempre remove do inicio
+void removeNode(listHeader *list) {  // sempre remove do inicio
     if (list->head == NULL) {
         return;
     } else {

@@ -161,7 +161,6 @@ bool isFinal(int *finals, int current) {
     return false;
 }
 
-
 void resetVariables(int *index, int indexToSet, int *backupIndex, int *end, int *currentState) {
     *index = indexToSet;
     *backupIndex = *index;
