@@ -6,6 +6,16 @@
 
 #define HASH_SIZE 211
 
+#define H_VIEW_LO -6.500000
+#define H_VIEW_HI 6.500000
+#define V_VIEW_LO -3.500000
+#define V_VIEW_HI 3.500000
+#define FLOAT_PRECISION 6
+#define INTEGRAL_STEPS 1000
+#define DRAW_AXIS true
+#define ERASE_PLOT true
+#define CONNECT_DOTS false
+
 extern int yylex();
 void yyerror(void *s);
 
@@ -27,17 +37,14 @@ void insertHash();
 int lookForValueInHash();
 void freeHash();
 
-void **myHashTable = NULL;
+// void **myHashTable = NULL;
+
+void showSettings() {
+
+}
 
 %}
 
-%union {
-    struct {
-        char *valor;
-        int column;
-        int line;
-    } token;
-}
 
 %token PLUS
 %token MINUS
@@ -59,7 +66,7 @@ void **myHashTable = NULL;
 %token AXIS
 %token CONNECT_DOTS
 %token COS
-%token DETEMINANT
+%token DETERMINANT
 %token ERASE
 %token EULER
 %token FLOAT
@@ -94,13 +101,13 @@ void **myHashTable = NULL;
 
 %%
 
-S: Programa EOL { erroAux = 0; return 0; }
-    | error { erroAux = 1; return 0; } ;
+S: Programa EOL { }
+    | error { } ;
 
 Programa: Comandos SEMICOLON { } 
     | Expressao { } ;
 
-Comandos: SHOW SETTINGS { } 
+Comandos: SHOW SETTINGS { showSetting(); } 
     | RESET SETTINGS { } 
     | SET H_VIEW NUM_FLOAT COLON NUM_FLOAT { }
     | SET V_VIEW NUM_FLOAT COLON NUM_FLOAT { }
@@ -116,7 +123,7 @@ Comandos: SHOW SETTINGS { }
     | SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN { } 
     | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET { }
     | SHOW MATRIX { }
-    | SOLVE DETEMINANT { }
+    | SOLVE DETERMINANT { }
     | SOLVE LINEAR_SYSTEM { }
     | ABOUT { }
     | ID COLON_ASSIGN Expressao { }
@@ -169,9 +176,11 @@ ExpressaoPrimaria: ID { }
 
 %%
 
-void yyerror(void *s) {}
+void yyerror(void *s) {
+    printf("SYNTAX ERROR: NAO SEI AINDA");
+}
 
-int hash() {
+/* int hash() {
     int hash = 0;
     for (int i = 0; i < strlen(yylval.token.valor); i++)
         hash += yylval.token.valor[i];
@@ -238,27 +247,11 @@ void freeHash() {
         }
         myHashTable[i] = NULL; 
     }
-}
+} */
 
 int main(int argc, char *argv[]) {
-    myHashTable = calloc(HASH_SIZE, sizeof(HashNode));
-    while (!myEof) {
-        yyparse();
-
-        if (yychar == 0) break;
-        if (semanticError == 0) {
-            if (textBefore) printf("\n");
-            printf("%d: All Identifiers on Hash.", yylval.token.line);
-            textBefore = 1;
-            freeHash();
-        } else {
-            semanticError = 0;
-            freeHash();
-        }        
-    }
-    if (myHashTable) {
-        freeHash(myHashTable);
-        free(myHashTable);
+    while (yyparse()) {
+        if (yychar == QUIT) break;
     }
     return 0;
 }
