@@ -5,9 +5,6 @@
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
-int textBefore = 0;
-int yycolumn = 1;
-
 int syntaxError = 0;
 char wrongToken[32] = "";
 int wrongTokenLine;
@@ -22,6 +19,7 @@ void assignWrongToken() {
 %}
 
 %%
+
 " " { }
 "+" { return PLUS; }
 "-" { return MINUS; }
@@ -75,9 +73,9 @@ void assignWrongToken() {
 
 \n { return EOL; }
 
-([a-zA-Z]+[_a-zA-Z0-9]*) { return ID; }
-[0-9]+ { return NUM_INT; }
-([0-9]+"."[0-9]+) { return NUM_FLOAT; }
+([a-zA-Z]+[_a-zA-Z0-9]*) { yylval.v_string = yytext; return ID; }
+([0-9]+"."[0-9]+) { yylval.v_float = atof(yytext); return NUM_FLOAT; }
+[0-9]+ { yylval.v_int = atoi(yytext); return NUM_INT; }
 
 . { 
     // if (textBefore) printf("\n");
