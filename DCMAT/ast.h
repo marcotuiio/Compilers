@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "hash.h"
+#include <math.h>
 
 enum expressionTypes {
     ADITIVA = 1001,
@@ -13,8 +15,7 @@ enum expressionTypes {
 
 typedef struct expression {
     int type;
-    int e_int;    
-    float e_float;
+    int operator;
     char *e_string;
     struct expression *left;
     struct expression *right;
@@ -22,11 +23,14 @@ typedef struct expression {
 
 typedef struct resultExpression {
     int type;
-    int r_int;
     float r_float;
     char *r_string;
 } ResultExpression;
 
-Expression *createExpression(int type, int i, float f, char *s, Expression *left, Expression *right);
+Expression *createExpression(int type, int op, char *s, Expression *left, Expression *right);
+
+ResultExpression *createResultExpression(int type, float r_float, char *r_string);
+
+ResultExpression *evalExpression(Expression *expr, void **hash);
 
 #endif

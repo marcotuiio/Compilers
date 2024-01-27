@@ -2,6 +2,7 @@
 %option yylineno
 
 %{
+#include "ast.h"
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
@@ -73,10 +74,10 @@ void assignWrongToken() {
 
 "x" { return VAR_X; }
 
-([a-zA-Z]+[_a-zA-Z0-9]*) { yylval.v_string = yytext; return ID; }
-([0-9]+"."[0-9]+) { yylval.v_float = atof(yytext); return NUM_FLOAT; }
-[0-9]+ { yylval.v_int = atoi(yytext); return NUM_INT; }
+([a-zA-Z]+[_a-zA-Z0-9]*) { yylval.value = yytext; return ID; }
+([0-9]+"."[0-9]+) { yylval.value = yytext; return NUM_FLOAT; }
+[0-9]+ { yylval.value = yytext; return NUM_INT; }
 
-. { printf("\nInvalid Symbol: %s\n\n", yytext); }
+. { printf("\nInvalid Symbol: %s\n\n", yytext); /*return ERROR;*/ }
 
 %%

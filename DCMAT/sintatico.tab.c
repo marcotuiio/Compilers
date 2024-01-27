@@ -74,8 +74,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#define HASH_SIZE 211
+#include "ast.h"
+#include "hash.h"
 
 #define H_VIEW_LO -6.500000
 #define H_VIEW_HI 6.500000
@@ -91,10 +91,6 @@ extern int yylex();
 void yyerror(void *s);
 
 extern int yychar;
-extern int myEof;
-
-int erroAux = 0;
-int semanticError = 0;
 
 float h_view_lo = H_VIEW_LO;
 float h_view_hi = H_VIEW_HI;
@@ -106,11 +102,7 @@ bool draw_axis = DRAW_AXIS;
 bool erase_plot = ERASE_PLOT;
 bool connect_dots_op = CONNECT_DOTS_OP;
 
-typedef struct node {
-    int key;
-    char *value;
-    struct node *next;
-} HashNode;
+void **myHashTable = NULL;
 
 void showSettings();
 void resetSettings();
@@ -124,7 +116,7 @@ void showAbout();
 // void **myHashTable = NULL;
 
 
-#line 128 "sintatico.tab.c"
+#line 120 "sintatico.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -212,9 +204,9 @@ enum yysymbol_kind_t
   YYSYMBOL_Repet_Matrix = 57,              /* Repet_Matrix  */
   YYSYMBOL_Repet_Dimen = 58,               /* Repet_Dimen  */
   YYSYMBOL_Funcao = 59,                    /* Funcao  */
-  YYSYMBOL_Expressao = 60,                 /* Expressao  */
-  YYSYMBOL_OpUnario = 61,                  /* OpUnario  */
-  YYSYMBOL_OpMult = 62,                    /* OpMult  */
+  YYSYMBOL_OpUnario = 60,                  /* OpUnario  */
+  YYSYMBOL_OpMult = 61,                    /* OpMult  */
+  YYSYMBOL_Expressao = 62,                 /* Expressao  */
   YYSYMBOL_ExpressaoAditiva = 63,          /* ExpressaoAditiva  */
   YYSYMBOL_ExpressaoMultiplicativa = 64,   /* ExpressaoMultiplicativa  */
   YYSYMBOL_ExpressaoUnaria = 65,           /* ExpressaoUnaria  */
@@ -544,18 +536,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  36
+#define YYFINAL  53
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   175
+#define YYLAST   180
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  54
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  56
+#define YYNRULES  59
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  160
+#define YYNSTATES  164
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   308
@@ -607,14 +599,14 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,   122,   122,   123,   125,   126,   127,   135,   143,   144,
-     145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
-     155,   156,   157,   158,   159,   160,   161,   162,   163,   164,
-     167,   168,   170,   171,   173,   174,   175,   176,   178,   179,
-     181,   182,   184,   185,   186,   187,   189,   190,   192,   193,
-     195,   196,   198,   199,   200,   201,   204
+       0,   120,   120,   121,   122,   124,   125,   126,   134,   142,
+     143,   144,   145,   146,   147,   148,   149,   156,   157,   158,
+     159,   160,   161,   162,   163,   166,   167,   168,   169,   170,
+     171,   172,   175,   176,   178,   179,   181,   182,   183,   184,
+     186,   187,   189,   190,   191,   192,   194,   220,   221,   226,
+     227,   232,   233,   238,   242,   246,   250,   254,   258,   262
 };
 #endif
 
@@ -639,8 +631,8 @@ static const char *const yytname[] =
   "OFF", "ON", "PI", "PLOT", "PRECISION", "QUIT", "RESET", "RPN", "SEN",
   "SET", "SETTINGS", "SHOW", "SOLVE", "SUM", "SYMBOLS", "TAN", "V_VIEW",
   "VAR_X", "ID", "NUM_INT", "NUM_FLOAT", "EOL", "$accept", "S", "Comandos",
-  "Repet_Matrix", "Repet_Dimen", "Funcao", "Expressao", "OpUnario",
-  "OpMult", "ExpressaoAditiva", "ExpressaoMultiplicativa",
+  "Repet_Matrix", "Repet_Dimen", "Funcao", "OpUnario", "OpMult",
+  "Expressao", "ExpressaoAditiva", "ExpressaoMultiplicativa",
   "ExpressaoUnaria", "ExpressaoPrimaria", YY_NULLPTR
 };
 
@@ -651,7 +643,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-137)
+#define YYPACT_NINF (-142)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -665,22 +657,23 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      42,    -5,    -7,    32,     9,   -24,    73,   -22,   -17,    37,
-      15,  -137,    45,    19,  -137,    -6,    54,  -137,    62,    64,
-      -3,     1,    41,    46,     7,    38,    74,     7,    80,    81,
-      86,    88,    93,    55,  -137,    -2,  -137,  -137,    92,    90,
-      94,    96,    97,    99,   100,  -137,   104,   106,   107,   109,
-      10,    56,  -137,  -137,     7,  -137,  -137,  -137,  -137,  -137,
-     108,    17,    75,    31,  -137,  -137,   112,     7,   111,  -137,
-    -137,  -137,  -137,  -137,   113,   110,   115,    76,    77,     7,
-       7,     7,     7,   117,  -137,  -137,  -137,  -137,   120,   121,
-     122,   118,     7,  -137,    12,  -137,  -137,  -137,  -137,    12,
-    -137,   119,     7,    83,    84,  -137,   126,   127,   124,   125,
-     128,   129,  -137,  -137,  -137,  -137,  -137,   131,    31,  -137,
-     132,   135,   134,   127,    62,    95,   133,  -137,  -137,  -137,
-    -137,  -137,  -137,  -137,   101,   137,   136,   127,   138,   141,
-     138,   145,  -137,   140,   142,     7,   143,  -137,   105,   148,
-     146,   152,   127,  -137,   153,  -137,   147,  -137,   138,  -137
+       2,  -142,  -142,    61,    32,  -142,    -2,    25,  -142,     8,
+    -142,   -25,    94,   -23,   -21,    34,  -142,    63,  -142,  -142,
+    -142,    50,     5,    49,    13,     7,    62,  -142,  -142,  -142,
+      64,  -142,    26,    65,  -142,   -15,    70,    -4,    24,    47,
+      48,    61,    36,    71,    61,    78,    79,    80,    86,    87,
+      52,  -142,    10,  -142,  -142,  -142,  -142,    61,  -142,  -142,
+    -142,  -142,    61,  -142,    92,    89,    93,    95,   102,   103,
+     104,  -142,    98,   113,   114,   115,    39,    75,   116,   117,
+      61,   118,  -142,  -142,  -142,  -142,  -142,   120,   119,   122,
+      62,  -142,    77,    82,    61,    61,    61,    61,   126,  -142,
+    -142,  -142,  -142,   127,   128,   129,    61,  -142,   125,    61,
+      91,    96,  -142,   130,   133,   132,   134,   135,   136,  -142,
+    -142,  -142,  -142,   142,   143,   144,   145,   133,   -15,   106,
+     138,  -142,  -142,  -142,  -142,  -142,  -142,  -142,   107,   139,
+     146,   133,   149,   151,   149,   153,  -142,   148,   150,    61,
+     152,  -142,   121,   155,   156,   158,   133,  -142,   160,  -142,
+     157,  -142,   149,  -142
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -688,36 +681,37 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
+       0,    40,    41,     0,     0,    58,     0,     0,    57,     0,
+      31,     0,     0,     0,     0,     0,    54,    53,    55,    56,
+       4,     0,     0,     0,     0,    46,    47,    49,    51,    53,
+       0,    23,     0,     0,    11,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     3,     0,     0,    22,     0,     0,    10,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,    25,     0,     1,     2,     0,     0,
-       0,     0,     0,     0,     0,     5,     0,     0,     0,     0,
-       0,     0,    40,    41,     0,    38,    53,    52,    54,    55,
-       0,     0,    39,    46,    48,    50,     0,     0,     0,    19,
-       4,    26,    20,    21,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     9,     8,    29,    28,     0,     0,
-       0,     0,     0,    51,     0,    42,    43,    45,    44,     0,
-      15,     0,     0,     0,     0,    23,     0,    31,     0,     0,
-       0,     0,    11,    12,    13,    27,    56,     0,    47,    49,
-       0,     0,     0,    31,     0,     0,     0,    37,    35,    34,
-      36,     6,    14,     7,     0,     0,     0,    31,    33,     0,
-      33,     0,    30,     0,     0,     0,     0,    16,     0,     0,
-       0,     0,    31,    18,     0,    24,     0,    17,    33,    32
+       0,    26,     0,     1,     2,    52,     3,     0,    42,    43,
+      45,    44,     0,    59,     0,     0,     0,     0,     0,     0,
+       0,     6,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    20,     5,    27,    21,    22,     0,     0,     0,
+      48,    50,     0,     0,     0,     0,     0,     0,     0,    10,
+       9,    30,    29,     0,     0,     0,     0,    16,     0,     0,
+       0,     0,    24,     0,    33,     0,     0,     0,     0,    12,
+      13,    14,    28,     0,     0,     0,     0,    33,     0,     0,
+       0,    39,    37,    36,    38,     7,    15,     8,     0,     0,
+       0,    33,    35,     0,    35,     0,    32,     0,     0,     0,
+       0,    17,     0,     0,     0,     0,    33,    19,     0,    25,
+       0,    18,    35,    34
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -137,  -137,  -137,  -120,  -136,    24,   -27,   103,  -137,  -137,
-      72,    68,   114
+    -142,  -142,  -142,  -126,  -141,    17,   141,  -142,    -3,  -142,
+     123,   110,   154
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,    12,    13,   126,   144,    44,    60,    61,    99,    62,
-      63,    64,    65
+       0,    21,    22,   130,   148,    70,    23,    62,    24,    25,
+      26,    27,    28
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -725,90 +719,93 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      68,    52,    53,   135,   146,    14,    31,    15,    76,    28,
-      52,    53,    54,    32,    75,    52,    53,   142,    19,    17,
-      29,    54,   159,    18,    30,    34,    54,    91,    35,    46,
-      47,    54,   156,    48,    49,    55,    95,    96,    97,    98,
-     101,    16,    88,    89,    55,    36,    38,    56,    57,    58,
-      59,    33,   108,   109,   110,   111,    56,    57,    58,    59,
-       1,    56,    57,    58,    59,   117,    56,    57,    58,    59,
-      39,     2,    37,     3,    45,   121,    50,     4,    52,    53,
-       5,    40,    51,     6,    41,     7,     8,     9,    67,    66,
-      69,    70,    10,    20,    21,    11,    71,    22,    72,    23,
-      24,    25,    42,    73,    77,    74,    78,    90,    79,    43,
-      80,    81,    26,    82,    84,    83,    85,    86,   150,    87,
-      92,    27,   100,   102,   103,   105,   104,   112,   106,   107,
-     113,   114,   115,   116,   120,   122,   123,   124,   125,   127,
-     128,   131,   132,   129,   130,   133,   134,   137,   136,   143,
-     138,   141,   145,   139,   140,   147,   148,   152,   153,   149,
-     151,   154,   155,   157,   158,    94,   118,   119,     0,     0,
-       0,     0,     0,     0,     0,    93
+      30,   139,    48,   150,    66,     1,     2,    67,    45,    49,
+       1,     2,    32,     1,     2,   146,     3,    36,    34,    46,
+       4,   163,    35,    47,     3,    68,    88,     5,    72,    73,
+     160,     6,    69,     7,    33,     5,     8,     9,    78,    10,
+      11,    81,    31,    12,     8,    13,    14,    15,    50,    89,
+      53,    16,    17,    18,    19,    20,    74,    75,    54,    16,
+      29,    18,    19,     3,     1,     2,    56,    58,    59,    60,
+      61,   103,   104,    51,     5,     3,    52,   108,    64,    63,
+      71,    65,    76,     8,    77,    80,     5,    79,    82,    83,
+      84,   115,   116,   117,   118,     8,    85,    86,    16,    29,
+      18,    19,    87,   123,    92,    93,   125,    94,    99,    95,
+      16,    29,    18,    19,    37,    38,    96,    97,    39,    98,
+      40,    41,    42,   100,   101,   102,   105,   107,   106,   113,
+     109,   110,   112,    43,   114,   111,   119,   120,   121,   122,
+     124,   128,    44,   126,   129,   140,   154,   131,   127,   132,
+     133,   134,   135,   136,   137,   142,   144,   138,   141,   143,
+     147,   145,   149,   151,   152,   157,    57,   153,   159,   155,
+     161,   158,    91,   156,   162,     0,     0,    55,     0,     0,
+      90
 };
 
 static const yytype_int16 yycheck[] =
 {
-      27,     3,     4,   123,   140,    10,    23,    14,    35,    31,
-       3,     4,    14,    30,    16,     3,     4,   137,    42,    10,
-      42,    14,   158,    14,    46,    10,    14,    54,    13,    32,
-      33,    14,   152,    32,    33,    37,     5,     6,     7,     8,
-      67,     9,    32,    33,    37,     0,    52,    49,    50,    51,
-      52,    14,    79,    80,    81,    82,    49,    50,    51,    52,
-      18,    49,    50,    51,    52,    92,    49,    50,    51,    52,
-      16,    29,    53,    31,    10,   102,    35,    35,     3,     4,
-      38,    19,    36,    41,    22,    43,    44,    45,    14,    51,
-      10,    10,    50,    20,    21,    53,    10,    24,    10,    26,
-      27,    28,    40,    10,    12,    50,    16,    51,    14,    47,
-      14,    14,    39,    14,    10,    15,    10,    10,   145,    10,
-      12,    48,    10,    12,    11,    10,    16,    10,    52,    52,
-      10,    10,    10,    15,    15,    52,    52,    11,    11,    15,
-      15,    10,    10,    15,    15,    10,    12,    52,   124,    11,
-      17,    15,    11,    52,    17,    10,    16,    52,    10,    17,
-      17,    15,    10,    10,    17,    62,    94,    99,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    61
+       3,   127,    23,   144,    19,     3,     4,    22,    31,    30,
+       3,     4,    14,     3,     4,   141,    14,    42,    10,    42,
+      18,   162,    14,    46,    14,    40,    16,    25,    32,    33,
+     156,    29,    47,    31,     9,    25,    34,    35,    41,    37,
+      38,    44,    10,    41,    34,    43,    44,    45,    14,    52,
+       0,    49,    50,    51,    52,    53,    32,    33,    53,    49,
+      50,    51,    52,    14,     3,     4,    53,     5,     6,     7,
+       8,    32,    33,    10,    25,    14,    13,    80,    52,    15,
+      10,    16,    35,    34,    36,    14,    25,    51,    10,    10,
+      10,    94,    95,    96,    97,    34,    10,    10,    49,    50,
+      51,    52,    50,   106,    12,    16,   109,    14,    10,    14,
+      49,    50,    51,    52,    20,    21,    14,    14,    24,    15,
+      26,    27,    28,    10,    10,    10,    51,    10,    12,    52,
+      12,    11,    10,    39,    52,    16,    10,    10,    10,    10,
+      15,    11,    48,    52,    11,   128,   149,    15,    52,    15,
+      15,    15,    10,    10,    10,    17,    17,    12,    52,    52,
+      11,    15,    11,    10,    16,    10,    25,    17,    10,    17,
+      10,    15,    62,    52,    17,    -1,    -1,    23,    -1,    -1,
+      57
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    18,    29,    31,    35,    38,    41,    43,    44,    45,
-      50,    53,    55,    56,    10,    14,     9,    10,    14,    42,
-      20,    21,    24,    26,    27,    28,    39,    48,    31,    42,
-      46,    23,    30,    14,    10,    13,     0,    53,    52,    16,
-      19,    22,    40,    47,    59,    10,    32,    33,    32,    33,
-      35,    36,     3,     4,    14,    37,    49,    50,    51,    52,
-      60,    61,    63,    64,    65,    66,    51,    14,    60,    10,
-      10,    10,    10,    10,    50,    16,    60,    12,    16,    14,
-      14,    14,    14,    15,    10,    10,    10,    10,    32,    33,
-      51,    60,    12,    66,    61,     5,     6,     7,     8,    62,
-      10,    60,    12,    11,    16,    10,    52,    52,    60,    60,
-      60,    60,    10,    10,    10,    10,    15,    60,    64,    65,
-      15,    60,    52,    52,    11,    11,    57,    15,    15,    15,
-      15,    10,    10,    10,    12,    57,    59,    52,    17,    52,
-      17,    15,    57,    11,    58,    11,    58,    10,    16,    17,
-      60,    17,    52,    10,    15,    10,    57,    10,    17,    58
+       0,     3,     4,    14,    18,    25,    29,    31,    34,    35,
+      37,    38,    41,    43,    44,    45,    49,    50,    51,    52,
+      53,    55,    56,    60,    62,    63,    64,    65,    66,    50,
+      62,    10,    14,     9,    10,    14,    42,    20,    21,    24,
+      26,    27,    28,    39,    48,    31,    42,    46,    23,    30,
+      14,    10,    13,     0,    53,    66,    53,    60,     5,     6,
+       7,     8,    61,    15,    52,    16,    19,    22,    40,    47,
+      59,    10,    32,    33,    32,    33,    35,    36,    62,    51,
+      14,    62,    10,    10,    10,    10,    10,    50,    16,    62,
+      64,    65,    12,    16,    14,    14,    14,    14,    15,    10,
+      10,    10,    10,    32,    33,    51,    12,    10,    62,    12,
+      11,    16,    10,    52,    52,    62,    62,    62,    62,    10,
+      10,    10,    10,    62,    15,    62,    52,    52,    11,    11,
+      57,    15,    15,    15,    15,    10,    10,    10,    12,    57,
+      59,    52,    17,    52,    17,    15,    57,    11,    58,    11,
+      58,    10,    16,    17,    62,    17,    52,    10,    15,    10,
+      57,    10,    17,    58
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    54,    55,    55,    56,    56,    56,    56,    56,    56,
+       0,    54,    55,    55,    55,    56,    56,    56,    56,    56,
       56,    56,    56,    56,    56,    56,    56,    56,    56,    56,
       56,    56,    56,    56,    56,    56,    56,    56,    56,    56,
-      57,    57,    58,    58,    59,    59,    59,    59,    60,    60,
-      61,    61,    62,    62,    62,    62,    63,    63,    64,    64,
-      65,    65,    66,    66,    66,    66,    66
+      56,    56,    57,    57,    58,    58,    59,    59,    59,    59,
+      60,    60,    61,    61,    61,    61,    62,    63,    63,    64,
+      64,    65,    65,    66,    66,    66,    66,    66,    66,    66
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     2,     1,     3,     3,     6,     6,     4,     4,
-       2,     5,     5,     5,     6,     4,     9,    11,    10,     3,
-       3,     3,     2,     4,    10,     2,     3,     5,     4,     4,
-       3,     0,     6,     0,     4,     4,     4,     4,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     3,     1,     3,
-       1,     2,     1,     1,     1,     1,     3
+       0,     2,     2,     2,     1,     3,     3,     6,     6,     4,
+       4,     2,     5,     5,     5,     6,     4,     9,    11,    10,
+       3,     3,     3,     2,     4,    10,     2,     3,     5,     4,
+       4,     1,     3,     0,     6,     0,     4,     4,     4,     4,
+       1,     1,     1,     1,     1,     1,     1,     1,     3,     1,
+       3,     1,     2,     1,     1,     1,     1,     1,     1,     3
 };
 
 
@@ -1272,31 +1269,37 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: Comandos EOL  */
-#line 122 "sintatico.y"
+#line 120 "sintatico.y"
                 { return 0; }
-#line 1278 "sintatico.tab.c"
+#line 1275 "sintatico.tab.c"
     break;
 
-  case 3: /* S: EOL  */
-#line 123 "sintatico.y"
+  case 3: /* S: Expressao EOL  */
+#line 121 "sintatico.y"
+                    { return 0; }
+#line 1281 "sintatico.tab.c"
+    break;
+
+  case 4: /* S: EOL  */
+#line 122 "sintatico.y"
           { return 0; }
-#line 1284 "sintatico.tab.c"
+#line 1287 "sintatico.tab.c"
     break;
 
-  case 4: /* Comandos: SHOW SETTINGS SEMICOLON  */
-#line 125 "sintatico.y"
+  case 5: /* Comandos: SHOW SETTINGS SEMICOLON  */
+#line 124 "sintatico.y"
                                   { showSettings(); }
-#line 1290 "sintatico.tab.c"
+#line 1293 "sintatico.tab.c"
     break;
 
-  case 5: /* Comandos: RESET SETTINGS SEMICOLON  */
-#line 126 "sintatico.y"
+  case 6: /* Comandos: RESET SETTINGS SEMICOLON  */
+#line 125 "sintatico.y"
                                { resetSettings(); }
-#line 1296 "sintatico.tab.c"
+#line 1299 "sintatico.tab.c"
     break;
 
-  case 6: /* Comandos: SET H_VIEW Expressao COLON Expressao SEMICOLON  */
-#line 127 "sintatico.y"
+  case 7: /* Comandos: SET H_VIEW Expressao COLON Expressao SEMICOLON  */
+#line 126 "sintatico.y"
                                                      { 
         // if ($3 > $5) {
         //     printf("\nERROR: h_view_lo must be less than h_view_hi\n");
@@ -1305,11 +1308,11 @@ yyreduce:
         //     h_view_hi = $5;
         // }
     }
-#line 1309 "sintatico.tab.c"
+#line 1312 "sintatico.tab.c"
     break;
 
-  case 7: /* Comandos: SET V_VIEW Expressao COLON Expressao SEMICOLON  */
-#line 135 "sintatico.y"
+  case 8: /* Comandos: SET V_VIEW Expressao COLON Expressao SEMICOLON  */
+#line 134 "sintatico.y"
                                                      {
         // if ($3 > $5) {
         //     printf("\nERROR: v_view_lo must be less than v_view_hi\n");
@@ -1318,305 +1321,378 @@ yyreduce:
         //     v_view_hi = $5;
         // }
     }
-#line 1322 "sintatico.tab.c"
+#line 1325 "sintatico.tab.c"
     break;
 
-  case 8: /* Comandos: SET AXIS ON SEMICOLON  */
+  case 9: /* Comandos: SET AXIS ON SEMICOLON  */
+#line 142 "sintatico.y"
+                            { draw_axis = true; }
+#line 1331 "sintatico.tab.c"
+    break;
+
+  case 10: /* Comandos: SET AXIS OFF SEMICOLON  */
 #line 143 "sintatico.y"
-                            { }
-#line 1328 "sintatico.tab.c"
+                             { draw_axis = false; }
+#line 1337 "sintatico.tab.c"
     break;
 
-  case 9: /* Comandos: SET AXIS OFF SEMICOLON  */
+  case 11: /* Comandos: PLOT SEMICOLON  */
 #line 144 "sintatico.y"
-                             { }
-#line 1334 "sintatico.tab.c"
-    break;
-
-  case 10: /* Comandos: PLOT SEMICOLON  */
-#line 145 "sintatico.y"
                      { }
-#line 1340 "sintatico.tab.c"
+#line 1343 "sintatico.tab.c"
     break;
 
-  case 11: /* Comandos: PLOT L_PAREN Funcao R_PAREN SEMICOLON  */
+  case 12: /* Comandos: PLOT L_PAREN Funcao R_PAREN SEMICOLON  */
+#line 145 "sintatico.y"
+                                            { }
+#line 1349 "sintatico.tab.c"
+    break;
+
+  case 13: /* Comandos: SET ERASE PLOT OFF SEMICOLON  */
 #line 146 "sintatico.y"
-                                            { }
-#line 1346 "sintatico.tab.c"
+                                   { erase_plot = false; }
+#line 1355 "sintatico.tab.c"
     break;
 
-  case 12: /* Comandos: SET ERASE PLOT OFF SEMICOLON  */
+  case 14: /* Comandos: SET ERASE PLOT ON SEMICOLON  */
 #line 147 "sintatico.y"
-                                   { }
-#line 1352 "sintatico.tab.c"
+                                  { erase_plot = true; }
+#line 1361 "sintatico.tab.c"
     break;
 
-  case 13: /* Comandos: SET ERASE PLOT ON SEMICOLON  */
+  case 15: /* Comandos: SET RPN L_PAREN Expressao R_PAREN SEMICOLON  */
 #line 148 "sintatico.y"
-                                  { }
-#line 1358 "sintatico.tab.c"
-    break;
-
-  case 14: /* Comandos: SET RPN L_PAREN Expressao R_PAREN SEMICOLON  */
-#line 149 "sintatico.y"
                                                   { }
-#line 1364 "sintatico.tab.c"
+#line 1367 "sintatico.tab.c"
     break;
 
-  case 15: /* Comandos: SET INTEGRAL_STEPS NUM_INT SEMICOLON  */
-#line 150 "sintatico.y"
-                                           { }
-#line 1370 "sintatico.tab.c"
+  case 16: /* Comandos: SET INTEGRAL_STEPS NUM_INT SEMICOLON  */
+#line 149 "sintatico.y"
+                                           { 
+        if (atoi((yyvsp[-1].value)) < 1) {
+            printf("\nERROR: integral_steps must be a positive non-zero integer\n");
+        } else {
+            integral_steps_value = atoi((yyvsp[-1].value));
+        }
+    }
+#line 1379 "sintatico.tab.c"
     break;
 
-  case 16: /* Comandos: INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON  */
-#line 151 "sintatico.y"
-                                                                                 { }
-#line 1376 "sintatico.tab.c"
-    break;
-
-  case 17: /* Comandos: SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN SEMICOLON  */
-#line 152 "sintatico.y"
-                                                                                       { }
-#line 1382 "sintatico.tab.c"
-    break;
-
-  case 18: /* Comandos: MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON  */
-#line 153 "sintatico.y"
-                                                                                                                                     { }
-#line 1388 "sintatico.tab.c"
-    break;
-
-  case 19: /* Comandos: SHOW MATRIX SEMICOLON  */
-#line 154 "sintatico.y"
-                            { }
-#line 1394 "sintatico.tab.c"
-    break;
-
-  case 20: /* Comandos: SOLVE DETERMINANT SEMICOLON  */
-#line 155 "sintatico.y"
-                                  { }
-#line 1400 "sintatico.tab.c"
-    break;
-
-  case 21: /* Comandos: SOLVE LINEAR_SYSTEM SEMICOLON  */
+  case 17: /* Comandos: INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON  */
 #line 156 "sintatico.y"
-                                    { }
-#line 1406 "sintatico.tab.c"
+                                                                                 { }
+#line 1385 "sintatico.tab.c"
     break;
 
-  case 22: /* Comandos: ABOUT SEMICOLON  */
+  case 18: /* Comandos: SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN SEMICOLON  */
 #line 157 "sintatico.y"
-                      { showAbout(); }
-#line 1412 "sintatico.tab.c"
+                                                                                       { }
+#line 1391 "sintatico.tab.c"
     break;
 
-  case 23: /* Comandos: ID COLON_ASSIGN Expressao SEMICOLON  */
+  case 19: /* Comandos: MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON  */
 #line 158 "sintatico.y"
-                                          { }
-#line 1418 "sintatico.tab.c"
+                                                                                                                                     { }
+#line 1397 "sintatico.tab.c"
     break;
 
-  case 24: /* Comandos: ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON  */
+  case 20: /* Comandos: SHOW MATRIX SEMICOLON  */
 #line 159 "sintatico.y"
-                                                                                                                                       { }
-#line 1424 "sintatico.tab.c"
+                            { }
+#line 1403 "sintatico.tab.c"
     break;
 
-  case 25: /* Comandos: ID SEMICOLON  */
+  case 21: /* Comandos: SOLVE DETERMINANT SEMICOLON  */
 #line 160 "sintatico.y"
-                   { }
-#line 1430 "sintatico.tab.c"
+                                  { }
+#line 1409 "sintatico.tab.c"
     break;
 
-  case 26: /* Comandos: SHOW SYMBOLS SEMICOLON  */
+  case 22: /* Comandos: SOLVE LINEAR_SYSTEM SEMICOLON  */
 #line 161 "sintatico.y"
-                             { }
-#line 1436 "sintatico.tab.c"
+                                    { }
+#line 1415 "sintatico.tab.c"
     break;
 
-  case 27: /* Comandos: SET FLOAT PRECISION NUM_INT SEMICOLON  */
+  case 23: /* Comandos: ABOUT SEMICOLON  */
 #line 162 "sintatico.y"
-                                            { }
-#line 1442 "sintatico.tab.c"
+                      { showAbout(); }
+#line 1421 "sintatico.tab.c"
     break;
 
-  case 28: /* Comandos: SET CONNECT_DOTS ON SEMICOLON  */
+  case 24: /* Comandos: ID COLON_ASSIGN Expressao SEMICOLON  */
 #line 163 "sintatico.y"
-                                    { }
-#line 1448 "sintatico.tab.c"
+                                          {
+
+    }
+#line 1429 "sintatico.tab.c"
     break;
 
-  case 29: /* Comandos: SET CONNECT_DOTS OFF SEMICOLON  */
-#line 164 "sintatico.y"
-                                     { }
-#line 1454 "sintatico.tab.c"
+  case 25: /* Comandos: ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON  */
+#line 166 "sintatico.y"
+                                                                                                                                       { }
+#line 1435 "sintatico.tab.c"
     break;
 
-  case 30: /* Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix  */
+  case 26: /* Comandos: ID SEMICOLON  */
 #line 167 "sintatico.y"
-                                           { }
-#line 1460 "sintatico.tab.c"
+                   { }
+#line 1441 "sintatico.tab.c"
     break;
 
-  case 31: /* Repet_Matrix: %empty  */
+  case 27: /* Comandos: SHOW SYMBOLS SEMICOLON  */
 #line 168 "sintatico.y"
-      { }
-#line 1466 "sintatico.tab.c"
+                             { }
+#line 1447 "sintatico.tab.c"
     break;
 
-  case 32: /* Repet_Dimen: COMMA L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen  */
+  case 28: /* Comandos: SET FLOAT PRECISION NUM_INT SEMICOLON  */
+#line 169 "sintatico.y"
+                                            { float_precision = atoi((yyvsp[-1].value)); }
+#line 1453 "sintatico.tab.c"
+    break;
+
+  case 29: /* Comandos: SET CONNECT_DOTS ON SEMICOLON  */
 #line 170 "sintatico.y"
-                                                                                        { }
-#line 1472 "sintatico.tab.c"
+                                    { connect_dots_op = true; /*connectDots();*/ }
+#line 1459 "sintatico.tab.c"
     break;
 
-  case 33: /* Repet_Dimen: %empty  */
+  case 30: /* Comandos: SET CONNECT_DOTS OFF SEMICOLON  */
 #line 171 "sintatico.y"
-      { }
-#line 1478 "sintatico.tab.c"
+                                     { connect_dots_op = false; }
+#line 1465 "sintatico.tab.c"
     break;
 
-  case 34: /* Funcao: SEN L_PAREN Expressao R_PAREN  */
-#line 173 "sintatico.y"
-                                      { }
-#line 1484 "sintatico.tab.c"
+  case 31: /* Comandos: QUIT  */
+#line 172 "sintatico.y"
+           { return QUIT; }
+#line 1471 "sintatico.tab.c"
     break;
 
-  case 35: /* Funcao: COS L_PAREN Expressao R_PAREN  */
-#line 174 "sintatico.y"
-                                    { }
-#line 1490 "sintatico.tab.c"
-    break;
-
-  case 36: /* Funcao: TAN L_PAREN Expressao R_PAREN  */
+  case 32: /* Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix  */
 #line 175 "sintatico.y"
-                                    { }
-#line 1496 "sintatico.tab.c"
+                                           { }
+#line 1477 "sintatico.tab.c"
     break;
 
-  case 37: /* Funcao: ABS L_PAREN Expressao R_PAREN  */
+  case 33: /* Repet_Matrix: %empty  */
 #line 176 "sintatico.y"
-                                    { }
-#line 1502 "sintatico.tab.c"
+      { }
+#line 1483 "sintatico.tab.c"
     break;
 
-  case 38: /* Expressao: QUIT  */
+  case 34: /* Repet_Dimen: COMMA L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen  */
 #line 178 "sintatico.y"
-                { return QUIT; }
-#line 1508 "sintatico.tab.c"
+                                                                                        { }
+#line 1489 "sintatico.tab.c"
     break;
 
-  case 39: /* Expressao: ExpressaoAditiva  */
+  case 35: /* Repet_Dimen: %empty  */
 #line 179 "sintatico.y"
-                       { }
-#line 1514 "sintatico.tab.c"
+      { }
+#line 1495 "sintatico.tab.c"
+    break;
+
+  case 36: /* Funcao: SEN L_PAREN Expressao R_PAREN  */
+#line 181 "sintatico.y"
+                                      { }
+#line 1501 "sintatico.tab.c"
+    break;
+
+  case 37: /* Funcao: COS L_PAREN Expressao R_PAREN  */
+#line 182 "sintatico.y"
+                                    { }
+#line 1507 "sintatico.tab.c"
+    break;
+
+  case 38: /* Funcao: TAN L_PAREN Expressao R_PAREN  */
+#line 183 "sintatico.y"
+                                    { }
+#line 1513 "sintatico.tab.c"
+    break;
+
+  case 39: /* Funcao: ABS L_PAREN Expressao R_PAREN  */
+#line 184 "sintatico.y"
+                                    { }
+#line 1519 "sintatico.tab.c"
     break;
 
   case 40: /* OpUnario: PLUS  */
-#line 181 "sintatico.y"
-               { }
-#line 1520 "sintatico.tab.c"
+#line 186 "sintatico.y"
+               { (yyval.op) = PLUS; }
+#line 1525 "sintatico.tab.c"
     break;
 
   case 41: /* OpUnario: MINUS  */
-#line 182 "sintatico.y"
-            { }
-#line 1526 "sintatico.tab.c"
+#line 187 "sintatico.y"
+            { (yyval.op) = MINUS; }
+#line 1531 "sintatico.tab.c"
     break;
 
   case 42: /* OpMult: MULTIPLY  */
-#line 184 "sintatico.y"
-                 { }
-#line 1532 "sintatico.tab.c"
+#line 189 "sintatico.y"
+                 { (yyval.op) = MULTIPLY; }
+#line 1537 "sintatico.tab.c"
     break;
 
   case 43: /* OpMult: DIVIDE  */
-#line 185 "sintatico.y"
-             { }
-#line 1538 "sintatico.tab.c"
+#line 190 "sintatico.y"
+             { (yyval.op) = DIVIDE; }
+#line 1543 "sintatico.tab.c"
     break;
 
   case 44: /* OpMult: REMAINDER  */
-#line 186 "sintatico.y"
-                { }
-#line 1544 "sintatico.tab.c"
+#line 191 "sintatico.y"
+                { (yyval.op) = REMAINDER; }
+#line 1549 "sintatico.tab.c"
     break;
 
   case 45: /* OpMult: POWER  */
-#line 187 "sintatico.y"
-            { }
-#line 1550 "sintatico.tab.c"
-    break;
-
-  case 46: /* ExpressaoAditiva: ExpressaoMultiplicativa  */
-#line 189 "sintatico.y"
-                                          { }
-#line 1556 "sintatico.tab.c"
-    break;
-
-  case 47: /* ExpressaoAditiva: ExpressaoAditiva OpUnario ExpressaoMultiplicativa  */
-#line 190 "sintatico.y"
-                                                        { }
-#line 1562 "sintatico.tab.c"
-    break;
-
-  case 48: /* ExpressaoMultiplicativa: ExpressaoUnaria  */
 #line 192 "sintatico.y"
-                                         { }
-#line 1568 "sintatico.tab.c"
+            { (yyval.op) = POWER; }
+#line 1555 "sintatico.tab.c"
     break;
 
-  case 49: /* ExpressaoMultiplicativa: ExpressaoMultiplicativa OpMult ExpressaoUnaria  */
-#line 193 "sintatico.y"
-                                                     { }
-#line 1574 "sintatico.tab.c"
+  case 46: /* Expressao: ExpressaoAditiva  */
+#line 194 "sintatico.y"
+                            { 
+        ResultExpression *result = evalExpression((yyvsp[0].expr), myHashTable); 
+        printf("Testando eval2\n");
+        if (!result) {
+            printf("ERROR: Invalid Expression\n");
+            return 0;
+        }
+        switch (result->type) {
+            case NUM_INT:
+                printf("NUM_INT: %d\n", (int)result->r_float);
+                break;
+            case NUM_FLOAT:
+                printf("NUM_FLOAT: %f\n", result->r_float);
+                break;
+            case ID:
+                printf("ID: %s\n", result->r_string);
+                break;
+            case VAR_X:
+                printf("VAR_X: %s\n", result->r_string);
+                break;
+            default:
+                printf("ERROR: Invalid Expression\n");
+                break;
+        }
+    }
+#line 1585 "sintatico.tab.c"
     break;
 
-  case 50: /* ExpressaoUnaria: ExpressaoPrimaria  */
-#line 195 "sintatico.y"
-                                   { }
-#line 1580 "sintatico.tab.c"
+  case 47: /* ExpressaoAditiva: ExpressaoMultiplicativa  */
+#line 220 "sintatico.y"
+                                          { (yyval.expr) = (yyvsp[0].expr); }
+#line 1591 "sintatico.tab.c"
     break;
 
-  case 51: /* ExpressaoUnaria: OpUnario ExpressaoPrimaria  */
-#line 196 "sintatico.y"
-                                 { }
-#line 1586 "sintatico.tab.c"
+  case 48: /* ExpressaoAditiva: ExpressaoAditiva OpUnario ExpressaoMultiplicativa  */
+#line 221 "sintatico.y"
+                                                        {
+        Expression *expr = createExpression(ADITIVA, (yyvsp[-1].op), NULL, (yyvsp[-2].expr), (yyvsp[0].expr));
+        (yyval.expr) = expr;
+    }
+#line 1600 "sintatico.tab.c"
     break;
 
-  case 52: /* ExpressaoPrimaria: ID  */
-#line 198 "sintatico.y"
-                      { }
-#line 1592 "sintatico.tab.c"
+  case 49: /* ExpressaoMultiplicativa: ExpressaoUnaria  */
+#line 226 "sintatico.y"
+                                         { (yyval.expr) = (yyvsp[0].expr); }
+#line 1606 "sintatico.tab.c"
     break;
 
-  case 53: /* ExpressaoPrimaria: VAR_X  */
-#line 199 "sintatico.y"
-            { }
-#line 1598 "sintatico.tab.c"
+  case 50: /* ExpressaoMultiplicativa: ExpressaoMultiplicativa OpMult ExpressaoUnaria  */
+#line 227 "sintatico.y"
+                                                     {
+        Expression *expr = createExpression(MULTIPLICATIVA, (yyvsp[-1].op), NULL, (yyvsp[-2].expr), (yyvsp[0].expr));
+        (yyval.expr) = expr;
+    }
+#line 1615 "sintatico.tab.c"
     break;
 
-  case 54: /* ExpressaoPrimaria: NUM_INT  */
-#line 200 "sintatico.y"
-              { }
-#line 1604 "sintatico.tab.c"
+  case 51: /* ExpressaoUnaria: ExpressaoPrimaria  */
+#line 232 "sintatico.y"
+                                   { (yyval.expr) = (yyvsp[0].expr); }
+#line 1621 "sintatico.tab.c"
     break;
 
-  case 55: /* ExpressaoPrimaria: NUM_FLOAT  */
-#line 201 "sintatico.y"
-                { }
-#line 1610 "sintatico.tab.c"
+  case 52: /* ExpressaoUnaria: OpUnario ExpressaoPrimaria  */
+#line 233 "sintatico.y"
+                                 {
+        Expression *expr = createExpression(UNARIA, (yyvsp[-1].op), NULL, (yyvsp[0].expr), NULL);
+        (yyval.expr) = expr;
+    }
+#line 1630 "sintatico.tab.c"
     break;
 
-  case 56: /* ExpressaoPrimaria: L_PAREN Expressao R_PAREN  */
-#line 204 "sintatico.y"
-                                { }
-#line 1616 "sintatico.tab.c"
+  case 53: /* ExpressaoPrimaria: ID  */
+#line 238 "sintatico.y"
+                      {
+        Expression *expr = createExpression(PRIMARIA, ID, (yyvsp[0].value), NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1639 "sintatico.tab.c"
+    break;
+
+  case 54: /* ExpressaoPrimaria: VAR_X  */
+#line 242 "sintatico.y"
+            {
+        Expression *expr = createExpression(PRIMARIA, VAR_X, "x", NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1648 "sintatico.tab.c"
+    break;
+
+  case 55: /* ExpressaoPrimaria: NUM_INT  */
+#line 246 "sintatico.y"
+              {
+        Expression *expr = createExpression(PRIMARIA, NUM_INT, (yyvsp[0].value), NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1657 "sintatico.tab.c"
+    break;
+
+  case 56: /* ExpressaoPrimaria: NUM_FLOAT  */
+#line 250 "sintatico.y"
+                {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, (yyvsp[0].value), NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1666 "sintatico.tab.c"
+    break;
+
+  case 57: /* ExpressaoPrimaria: PI  */
+#line 254 "sintatico.y"
+         {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "3.14159265", NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1675 "sintatico.tab.c"
+    break;
+
+  case 58: /* ExpressaoPrimaria: EULER  */
+#line 258 "sintatico.y"
+            {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "2.71828182", NULL, NULL);
+        (yyval.expr) = expr;
+    }
+#line 1684 "sintatico.tab.c"
+    break;
+
+  case 59: /* ExpressaoPrimaria: L_PAREN Expressao R_PAREN  */
+#line 262 "sintatico.y"
+                                {
+        (yyval.expr) = (yyvsp[-1].expr);
+    }
+#line 1692 "sintatico.tab.c"
     break;
 
 
-#line 1620 "sintatico.tab.c"
+#line 1696 "sintatico.tab.c"
 
       default: break;
     }
@@ -1809,11 +1885,11 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 206 "sintatico.y"
+#line 266 "sintatico.y"
 
 
 void yyerror(void *s) {
-    if (yychar = EOL) {
+    if (yychar == EOL) {
         printf("\nSYNTAX ERROR: Incomplete Command\n\n");
         return;
     }
@@ -1854,76 +1930,8 @@ void showAbout() {
     printf("+-------------------------------------------------------+\n\n");
 }   
 
-/* int hash() {
-    int hash = 0;
-    for (int i = 0; i < strlen(yylval.token.valor); i++)
-        hash += yylval.token.valor[i];
-    return hash % HASH_SIZE;
-}
-
-void insertHash() {
-    int index = hash(yylval.token.valor);
-    HashNode *aux = calloc(1, sizeof(HashNode));
-    aux->key = currentType;
-    aux->value = calloc(strlen(yylval.token.valor) + 1, sizeof(char));
-    strcpy(aux->value, yylval.token.valor);
-
-    HashNode *head = (HashNode *) myHashTable[index];
-    if (!head) {
-        myHashTable[index] = aux;
-    } else {
-        while (head->next) 
-            head = head->next;
-        head->next = aux;
-    }
-
-}
-
-int lookForValueInHash() {
-    if (!myHashTable) return 0;
-    int index = hash(yylval.token.valor);
-    int ocorrencias = 0;
-    HashNode *head = (HashNode *) myHashTable[index];
-
-    while (head) {
-        if (!strcmp(yylval.token.valor, head->value)) { // existe outro daquele identificador na hash
-            ocorrencias++;
-            if (ocorrencias == 1) continue;  // se for o primeiro, continua 
-            if (currentType == head->key) {  // se for do mesmo tipo
-                if (textBefore) printf("\n");
-                printf("%d: identifier '%s' already declared", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-
-            } else {  // se for de tipo diferente
-                if (textBefore) printf("\n");
-                printf("%d: redefinition of identifier '%s'", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-            }
-        }
-        head = head->next;
-    }
-    return 0;
-}
-
-void freeHash() {
-    for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *head = myHashTable[i];
-        while (head) {
-            HashNode *aux = head->next;
-            if (head->value) 
-                free(head->value);
-            free(head);
-            head = aux;
-        }
-        myHashTable[i] = NULL; 
-    }
-} */
-
 int main(int argc, char *argv[]) {
+    myHashTable = createHash();
     while (true) {
         printf(">");
         if (yyparse() == QUIT) break;

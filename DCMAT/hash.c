@@ -4,7 +4,6 @@ void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
     if (!hashTable) {
         printf("Erro ao alocar memoria para hash\n");
-        deleteAuxFile();
         exit(1);
     }
     return hashTable;

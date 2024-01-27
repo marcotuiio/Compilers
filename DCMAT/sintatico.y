@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#define HASH_SIZE 211
+#include "ast.h"
+#include "hash.h"
 
 #define H_VIEW_LO -6.500000
 #define H_VIEW_HI 6.500000
@@ -21,10 +21,6 @@ extern int yylex();
 void yyerror(void *s);
 
 extern int yychar;
-extern int myEof;
-
-int erroAux = 0;
-int semanticError = 0;
 
 float h_view_lo = H_VIEW_LO;
 float h_view_hi = H_VIEW_HI;
@@ -36,11 +32,7 @@ bool draw_axis = DRAW_AXIS;
 bool erase_plot = ERASE_PLOT;
 bool connect_dots_op = CONNECT_DOTS_OP;
 
-typedef struct node {
-    int key;
-    char *value;
-    struct node *next;
-} HashNode;
+void **myHashTable = NULL;
 
 void showSettings();
 void resetSettings();
@@ -56,10 +48,9 @@ void showAbout();
 %}
 
 %union {
-    int v_int;
-    float v_float;
-    char *v_string;
-    void *teste;
+    int op;
+    char *value;
+    Expression *expr;
 }
 
 %token PLUS
@@ -109,17 +100,25 @@ void showAbout();
 %token TAN
 %token V_VIEW
 %token VAR_X
-%token <v_string> ID
-%token <v_int> NUM_INT
-%token <v_float> NUM_FLOAT
+%token <value> ID
+%token <value> NUM_INT
+%token <value> NUM_FLOAT
 %token EOL
+/* %token ERROR */
 %start S
 
-%type <teste> ExpressaoPrimaria
+%type <op> OpUnario
+%type <op> OpMult
+%type <expr> Expressao
+%type <expr> ExpressaoAditiva
+%type <expr> ExpressaoMultiplicativa
+%type <expr> ExpressaoUnaria
+%type <expr> ExpressaoPrimaria
 
 %%
 
 S: Comandos EOL { return 0; }
+    | Expressao EOL { return 0; }
     | EOL { return 0; } ;
 
 Comandos: SHOW SETTINGS SEMICOLON { showSettings(); } 
@@ -148,10 +147,10 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
     | SET RPN L_PAREN Expressao R_PAREN SEMICOLON { }
     | SET INTEGRAL_STEPS NUM_INT SEMICOLON { 
-        if ($3 < 1) {
+        if (atoi($3) < 1) {
             printf("\nERROR: integral_steps must be a positive non-zero integer\n");
         } else {
-            integral_steps_value = $3;
+            integral_steps_value = atoi($3);
         }
     }
     | INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON { }
@@ -161,13 +160,16 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SOLVE DETERMINANT SEMICOLON { }
     | SOLVE LINEAR_SYSTEM SEMICOLON { }
     | ABOUT SEMICOLON { showAbout(); }
-    | ID COLON_ASSIGN Expressao SEMICOLON { }
+    | ID COLON_ASSIGN Expressao SEMICOLON {
+
+    }
     | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
     | ID SEMICOLON { }
     | SHOW SYMBOLS SEMICOLON { }
-    | SET FLOAT PRECISION NUM_INT SEMICOLON { float_precision = $3; }
+    | SET FLOAT PRECISION NUM_INT SEMICOLON { float_precision = atoi($4); }
     | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
+    | QUIT { return QUIT; }
 ;
 
 Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix { }
@@ -180,39 +182,91 @@ Funcao: SEN L_PAREN Expressao R_PAREN { }
     | COS L_PAREN Expressao R_PAREN { }
     | TAN L_PAREN Expressao R_PAREN { }
     | ABS L_PAREN Expressao R_PAREN { } ;
- 
-Expressao: QUIT { return QUIT; }
-    | ExpressaoAditiva { } ;
 
-OpUnario: PLUS { }
-    | MINUS { } ;
+OpUnario: PLUS { $$ = PLUS; }
+    | MINUS { $$ = MINUS; } ;
 
-OpMult: MULTIPLY { }
-    | DIVIDE { }
-    | REMAINDER { } 
-    | POWER { } ;
+OpMult: MULTIPLY { $$ = MULTIPLY; }
+    | DIVIDE { $$ = DIVIDE; }
+    | REMAINDER { $$ = REMAINDER; } 
+    | POWER { $$ = POWER; } ;
 
-ExpressaoAditiva: ExpressaoMultiplicativa { }
-    | ExpressaoAditiva OpUnario ExpressaoMultiplicativa { } ;
+Expressao: ExpressaoAditiva { 
+        ResultExpression *result = evalExpression($1, myHashTable); 
+        printf("Testando eval2\n");
+        if (!result) {
+            printf("ERROR: Invalid Expression\n");
+            return 0;
+        }
+        switch (result->type) {
+            case NUM_INT:
+                printf("NUM_INT: %d\n", (int)result->r_float);
+                break;
+            case NUM_FLOAT:
+                printf("NUM_FLOAT: %f\n", result->r_float);
+                break;
+            case ID:
+                printf("ID: %s\n", result->r_string);
+                break;
+            case VAR_X:
+                printf("VAR_X: %s\n", result->r_string);
+                break;
+            default:
+                printf("ERROR: Invalid Expression\n");
+                break;
+        }
+    } ;
 
-ExpressaoMultiplicativa: ExpressaoUnaria { }
-    | ExpressaoMultiplicativa OpMult ExpressaoUnaria { } ;
+ExpressaoAditiva: ExpressaoMultiplicativa { $$ = $1; }
+    | ExpressaoAditiva OpUnario ExpressaoMultiplicativa {
+        Expression *expr = createExpression(ADITIVA, $2, NULL, $1, $3);
+        $$ = expr;
+    } ;
 
-ExpressaoUnaria: ExpressaoPrimaria { }
-    | OpUnario ExpressaoPrimaria { } ;
+ExpressaoMultiplicativa: ExpressaoUnaria { $$ = $1; }
+    | ExpressaoMultiplicativa OpMult ExpressaoUnaria {
+        Expression *expr = createExpression(MULTIPLICATIVA, $2, NULL, $1, $3);
+        $$ = expr;
+    } ;
 
-ExpressaoPrimaria: ID { }
-    | VAR_X { }
-    | NUM_INT { }
-    | NUM_FLOAT { }    
-    /* | PI { $$ = 3.14159265; }
-    | EULER { $$ = 2.71828182; }  */
-    | L_PAREN Expressao R_PAREN { } ;
+ExpressaoUnaria: ExpressaoPrimaria { $$ = $1; }
+    | OpUnario ExpressaoPrimaria {
+        Expression *expr = createExpression(UNARIA, $1, NULL, $2, NULL);
+        $$ = expr;
+    } ;
+
+ExpressaoPrimaria: ID {
+        Expression *expr = createExpression(PRIMARIA, ID, $1, NULL, NULL);
+        $$ = expr;
+    }
+    | VAR_X {
+        Expression *expr = createExpression(PRIMARIA, VAR_X, "x", NULL, NULL);
+        $$ = expr;
+    }
+    | NUM_INT {
+        Expression *expr = createExpression(PRIMARIA, NUM_INT, $1, NULL, NULL);
+        $$ = expr;
+    }
+    | NUM_FLOAT {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, $1, NULL, NULL);
+        $$ = expr;
+    }    
+    | PI {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "3.14159265", NULL, NULL);
+        $$ = expr;
+    }
+    | EULER {
+        Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "2.71828182", NULL, NULL);
+        $$ = expr;
+    } 
+    | L_PAREN Expressao R_PAREN {
+        $$ = $2;
+    } ;
 
 %%
 
 void yyerror(void *s) {
-    if (yychar = EOL) {
+    if (yychar == EOL) {
         printf("\nSYNTAX ERROR: Incomplete Command\n\n");
         return;
     }
@@ -254,6 +308,7 @@ void showAbout() {
 }   
 
 int main(int argc, char *argv[]) {
+    myHashTable = createHash();
     while (true) {
         printf(">");
         if (yyparse() == QUIT) break;
