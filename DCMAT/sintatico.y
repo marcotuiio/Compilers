@@ -33,6 +33,7 @@ bool erase_plot = ERASE_PLOT;
 bool connect_dots_op = CONNECT_DOTS_OP;
 
 void **myHashTable = NULL;
+ResultExpression *result = NULL;
 
 void showSettings();
 void resetSettings();
@@ -51,6 +52,7 @@ void showAbout();
     int op;
     char *value;
     Expression *expr;
+    ResultExpression *result;
 }
 
 %token PLUS
@@ -109,7 +111,7 @@ void showAbout();
 
 %type <op> OpUnario
 %type <op> OpMult
-%type <expr> Expressao
+%type <result> Expressao
 %type <expr> ExpressaoAditiva
 %type <expr> ExpressaoMultiplicativa
 %type <expr> ExpressaoUnaria
@@ -117,27 +119,49 @@ void showAbout();
 
 %%
 
-S: Comandos EOL { return 0; }
-    | Expressao EOL { return 0; }
-    | EOL { return 0; } ;
+S: Comandos EOL { printf(">"); return 0; }
+    | Expressao EOL {
+        switch ($1->type) {
+            case NUM_INT:
+                printf("\nNUM_INT: %d\n\n", (int)$1->r_float);
+                break;
+            case NUM_FLOAT:
+                printf("\nNUM_FLOAT: %f\n\n", $1->r_float);
+                break;
+            case ID:
+                printf("\nID: %s\n\n", $1->r_string);
+                break;
+            case VAR_X:
+                printf("\nVAR_X: %s\n\n", $1->r_string);
+                break;
+            default:
+                printf("\nERROR: Invalid Expression\n\n");
+                break;
+        }
+        printf(">");
+        return 0;   
+    }
+    | EOL { printf(">"); return 0; } ;
 
 Comandos: SHOW SETTINGS SEMICOLON { showSettings(); } 
     | RESET SETTINGS SEMICOLON { resetSettings(); } 
     | SET H_VIEW Expressao COLON Expressao SEMICOLON { 
-        // if ($3 > $5) {
-        //     printf("\nERROR: h_view_lo must be less than h_view_hi\n");
-        // } else {
-        //     h_view_lo = $3;
-        //     h_view_hi = $5;
-        // }
+        if ($3->r_float > $5->r_float) {
+            printf("\nERROR: h_view_lo must be less than h_view_hi\n\n");
+            return 0;
+        } else {
+            h_view_lo = $3->r_float;
+            h_view_hi = $5->r_float;
+        }
     }
     | SET V_VIEW Expressao COLON Expressao SEMICOLON {
-        // if ($3 > $5) {
-        //     printf("\nERROR: v_view_lo must be less than v_view_hi\n");
-        // } else {
-        //     v_view_lo = $3;
-        //     v_view_hi = $5;
-        // }
+        if ($3->r_float > $5->r_float) {
+            printf("\nERROR: v_view_lo must be less than v_view_hi\n\n");
+            return 0;
+        } else {
+            v_view_lo = $3->r_float;
+            v_view_hi = $5->r_float;
+        }
     }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
     | SET AXIS OFF SEMICOLON { draw_axis = false; }
@@ -146,11 +170,12 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
     | SET RPN L_PAREN Expressao R_PAREN SEMICOLON { }
-    | SET INTEGRAL_STEPS NUM_INT SEMICOLON { 
-        if (atoi($3) < 1) {
-            printf("\nERROR: integral_steps must be a positive non-zero integer\n");
+    | SET INTEGRAL_STEPS Expressao SEMICOLON { 
+        if ((int) $3->r_float < 1) {
+            printf("\nERROR: integral_steps must be a positive non-zero integer\n\n");
+            return 0;
         } else {
-            integral_steps_value = atoi($3);
+            integral_steps_value = (int) $3->r_float;
         }
     }
     | INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON { }
@@ -166,7 +191,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
     | ID SEMICOLON { }
     | SHOW SYMBOLS SEMICOLON { }
-    | SET FLOAT PRECISION NUM_INT SEMICOLON { float_precision = atoi($4); }
+    | SET FLOAT PRECISION Expressao SEMICOLON { float_precision = (int) $4->r_float; }
     | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
     | QUIT { return QUIT; }
@@ -192,29 +217,12 @@ OpMult: MULTIPLY { $$ = MULTIPLY; }
     | POWER { $$ = POWER; } ;
 
 Expressao: ExpressaoAditiva { 
-        ResultExpression *result = evalExpression($1, myHashTable); 
-        printf("Testando eval2\n");
+        result = evalExpression($1, myHashTable); 
         if (!result) {
-            printf("ERROR: Invalid Expression\n");
+            printf("\nERROR: Invalid Expression NULL\n\n");
             return 0;
         }
-        switch (result->type) {
-            case NUM_INT:
-                printf("NUM_INT: %d\n", (int)result->r_float);
-                break;
-            case NUM_FLOAT:
-                printf("NUM_FLOAT: %f\n", result->r_float);
-                break;
-            case ID:
-                printf("ID: %s\n", result->r_string);
-                break;
-            case VAR_X:
-                printf("VAR_X: %s\n", result->r_string);
-                break;
-            default:
-                printf("ERROR: Invalid Expression\n");
-                break;
-        }
+        $$ = result;
     } ;
 
 ExpressaoAditiva: ExpressaoMultiplicativa { $$ = $1; }
@@ -259,7 +267,7 @@ ExpressaoPrimaria: ID {
         Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "2.71828182", NULL, NULL);
         $$ = expr;
     } 
-    | L_PAREN Expressao R_PAREN {
+    | L_PAREN ExpressaoAditiva R_PAREN {
         $$ = $2;
     } ;
 
@@ -271,7 +279,6 @@ void yyerror(void *s) {
         return;
     }
     printf("\nSYNTAX ERROR: [%d]\n\n", yychar);
-    
 }
 
 void showSettings() {
@@ -309,8 +316,8 @@ void showAbout() {
 
 int main(int argc, char *argv[]) {
     myHashTable = createHash();
+    printf(">");
     while (true) {
-        printf(">");
         if (yyparse() == QUIT) break;
     }
     return 0;

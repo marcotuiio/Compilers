@@ -46,7 +46,12 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
             
             } else if (expr->operator == NUM_FLOAT) {
                 result = createResultExpression(NUM_FLOAT, atof(expr->e_string), NULL);
+            
+            } else if (expr->operator == VAR_X) {
+                result = createResultExpression(VAR_X, 0, expr->e_string);
             }
+
+
 
             return result;
             break;

@@ -113,13 +113,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 50 "sintatico.y"
+#line 51 "sintatico.y"
 
     int op;
     char *value;
     Expression *expr;
+    ResultExpression *result;
 
-#line 123 "sintatico.tab.h"
+#line 124 "sintatico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
