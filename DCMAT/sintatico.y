@@ -119,14 +119,12 @@ void showAbout();
 
 %%
 
-S: Programa EOL { return 0; }
+S: Comandos EOL { return 0; }
+    | EOL { return 0; } ;
 
-Programa: Comandos SEMICOLON { } 
-    | Expressao { } ;
-
-Comandos: SHOW SETTINGS { showSettings(); } 
-    | RESET SETTINGS { resetSettings(); } 
-    | SET H_VIEW Expressao COLON Expressao { 
+Comandos: SHOW SETTINGS SEMICOLON { showSettings(); } 
+    | RESET SETTINGS SEMICOLON { resetSettings(); } 
+    | SET H_VIEW Expressao COLON Expressao SEMICOLON { 
         // if ($3 > $5) {
         //     printf("\nERROR: h_view_lo must be less than h_view_hi\n");
         // } else {
@@ -134,7 +132,7 @@ Comandos: SHOW SETTINGS { showSettings(); }
         //     h_view_hi = $5;
         // }
     }
-    | SET V_VIEW Expressao COLON Expressao {
+    | SET V_VIEW Expressao COLON Expressao SEMICOLON {
         // if ($3 > $5) {
         //     printf("\nERROR: v_view_lo must be less than v_view_hi\n");
         // } else {
@@ -142,28 +140,34 @@ Comandos: SHOW SETTINGS { showSettings(); }
         //     v_view_hi = $5;
         // }
     }
-    | SET AXIS ON { } 
-    | SET AXIS OFF { }
-    | PLOT { }
-    | PLOT L_PAREN Funcao R_PAREN { }
-    | SET ERASE PLOT OFF { }
-    | SET ERASE PLOT ON { }
-    | SET RPN L_PAREN Expressao R_PAREN { }
-    | SET INTEGRAL_STEPS NUM_INT { }
-    | INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN { }
-    | SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN { } 
-    | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET { }
-    | SHOW MATRIX { }
-    | SOLVE DETERMINANT { }
-    | SOLVE LINEAR_SYSTEM { }
-    | ABOUT { showAbout(); }
-    | ID COLON_ASSIGN Expressao { }
-    | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET { }
-    | ID { }
-    | SHOW SYMBOLS { }
-    | SET FLOAT PRECISION NUM_INT { }
-    | SET CONNECT_DOTS ON { }
-    | SET CONNECT_DOTS OFF { }
+    | SET AXIS ON SEMICOLON { draw_axis = true; } 
+    | SET AXIS OFF SEMICOLON { draw_axis = false; }
+    | PLOT SEMICOLON { }
+    | PLOT L_PAREN Funcao R_PAREN SEMICOLON { }
+    | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
+    | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
+    | SET RPN L_PAREN Expressao R_PAREN SEMICOLON { }
+    | SET INTEGRAL_STEPS NUM_INT SEMICOLON { 
+        if ($3 < 1) {
+            printf("\nERROR: integral_steps must be a positive non-zero integer\n");
+        } else {
+            integral_steps_value = $3;
+        }
+    }
+    | INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON { }
+    | SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN SEMICOLON { } 
+    | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
+    | SHOW MATRIX SEMICOLON { }
+    | SOLVE DETERMINANT SEMICOLON { }
+    | SOLVE LINEAR_SYSTEM SEMICOLON { }
+    | ABOUT SEMICOLON { showAbout(); }
+    | ID COLON_ASSIGN Expressao SEMICOLON { }
+    | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
+    | ID SEMICOLON { }
+    | SHOW SYMBOLS SEMICOLON { }
+    | SET FLOAT PRECISION NUM_INT SEMICOLON { float_precision = $3; }
+    | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
+    | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
 ;
 
 Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix { }
@@ -201,14 +205,19 @@ ExpressaoPrimaria: ID { }
     | VAR_X { }
     | NUM_INT { }
     | NUM_FLOAT { }    
-    | PI { $$ = 3.14159265; }
-    | EULER { $$ = 2.71828182; } 
+    /* | PI { $$ = 3.14159265; }
+    | EULER { $$ = 2.71828182; }  */
     | L_PAREN Expressao R_PAREN { } ;
 
 %%
 
 void yyerror(void *s) {
-    printf("\nSYNTAX ERROR: NAO SEI AINDA\n");
+    if (yychar = EOL) {
+        printf("\nSYNTAX ERROR: Incomplete Command\n\n");
+        return;
+    }
+    printf("\nSYNTAX ERROR: [%d]\n\n", yychar);
+    
 }
 
 void showSettings() {
@@ -243,75 +252,6 @@ void showAbout() {
     printf("|                                                       |\n");
     printf("+-------------------------------------------------------+\n\n");
 }   
-
-/* int hash() {
-    int hash = 0;
-    for (int i = 0; i < strlen(yylval.token.valor); i++)
-        hash += yylval.token.valor[i];
-    return hash % HASH_SIZE;
-}
-
-void insertHash() {
-    int index = hash(yylval.token.valor);
-    HashNode *aux = calloc(1, sizeof(HashNode));
-    aux->key = currentType;
-    aux->value = calloc(strlen(yylval.token.valor) + 1, sizeof(char));
-    strcpy(aux->value, yylval.token.valor);
-
-    HashNode *head = (HashNode *) myHashTable[index];
-    if (!head) {
-        myHashTable[index] = aux;
-    } else {
-        while (head->next) 
-            head = head->next;
-        head->next = aux;
-    }
-
-}
-
-int lookForValueInHash() {
-    if (!myHashTable) return 0;
-    int index = hash(yylval.token.valor);
-    int ocorrencias = 0;
-    HashNode *head = (HashNode *) myHashTable[index];
-
-    while (head) {
-        if (!strcmp(yylval.token.valor, head->value)) { // existe outro daquele identificador na hash
-            ocorrencias++;
-            if (ocorrencias == 1) continue;  // se for o primeiro, continua 
-            if (currentType == head->key) {  // se for do mesmo tipo
-                if (textBefore) printf("\n");
-                printf("%d: identifier '%s' already declared", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-
-            } else {  // se for de tipo diferente
-                if (textBefore) printf("\n");
-                printf("%d: redefinition of identifier '%s'", yylval.token.line, yylval.token.valor);
-                semanticError = 1;
-                textBefore = 1;
-                return 1;
-            }
-        }
-        head = head->next;
-    }
-    return 0;
-}
-
-void freeHash() {
-    for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *head = myHashTable[i];
-        while (head) {
-            HashNode *aux = head->next;
-            if (head->value) 
-                free(head->value);
-            free(head);
-            head = aux;
-        }
-        myHashTable[i] = NULL; 
-    }
-} */
 
 int main(int argc, char *argv[]) {
     while (true) {

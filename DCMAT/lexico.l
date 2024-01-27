@@ -20,6 +20,8 @@ void assignWrongToken() {
 
 %%
 
+\n { return EOL; }
+
 " " { }
 "+" { return PLUS; }
 "-" { return MINUS; }
@@ -71,16 +73,10 @@ void assignWrongToken() {
 
 "x" { return VAR_X; }
 
-\n { return EOL; }
-
 ([a-zA-Z]+[_a-zA-Z0-9]*) { yylval.v_string = yytext; return ID; }
 ([0-9]+"."[0-9]+) { yylval.v_float = atof(yytext); return NUM_FLOAT; }
 [0-9]+ { yylval.v_int = atoi(yytext); return NUM_INT; }
 
-. { 
-    // if (textBefore) printf("\n");
-    printf("Invalid Symbol: %s", yytext);
-    // exit(1);
-}
+. { printf("\nInvalid Symbol: %s\n\n", yytext); }
 
 %%
