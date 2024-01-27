@@ -39,12 +39,6 @@ void showSettings();
 void resetSettings();
 void showAbout();
 
-// int hash();
-// void insertHash();
-// int lookForValueInHash();
-// void freeHash();
-
-// void **myHashTable = NULL;
 
 %}
 
@@ -55,53 +49,53 @@ void showAbout();
     ResultExpression *result;
 }
 
-%token PLUS
-%token MINUS
-%token MULTIPLY
-%token DIVIDE
-%token POWER
-%token REMAINDER
-%token ASSIGN
-%token SEMICOLON
-%token COMMA
-%token COLON
-%token COLON_ASSIGN
-%token L_PAREN
-%token R_PAREN
-%token L_SQUARE_BRACKET
-%token R_SQUARE_BRACKET
-%token ABOUT
-%token ABS
-%token AXIS
-%token CONNECT_DOTS
-%token COS
-%token DETERMINANT
-%token ERASE
-%token EULER
-%token FLOAT
-%token H_VIEW
-%token INTEGRAL_STEPS
-%token INTEGRATE
-%token LINEAR_SYSTEM
-%token MATRIX
-%token OFF
-%token ON
-%token PI
-%token PLOT
-%token PRECISION
-%token QUIT
-%token RESET
-%token RPN
-%token SEN
-%token SET
-%token SETTINGS
-%token SHOW
-%token SOLVE
-%token SUM
-%token SYMBOLS
-%token TAN
-%token V_VIEW
-%token VAR_X
+%token <value> PLUS
+%token <value> MINUS
+%token <value> MULTIPLY
+%token <value> DIVIDE
+%token <value> POWER
+%token <value> REMAINDER
+%token <value> ASSIGN
+%token <value> SEMICOLON
+%token <value> COMMA
+%token <value> COLON
+%token <value> COLON_ASSIGN
+%token <value> L_PAREN
+%token <value> R_PAREN
+%token <value> L_SQUARE_BRACKET
+%token <value> R_SQUARE_BRACKET
+%token <value> ABOUT
+%token <value> ABS
+%token <value> AXIS
+%token <value> CONNECT_DOTS
+%token <value> COS
+%token <value> DETERMINANT
+%token <value> ERASE
+%token <value> EULER
+%token <value> FLOAT
+%token <value> H_VIEW
+%token <value> INTEGRAL_STEPS
+%token <value> INTEGRATE
+%token <value> LINEAR_SYSTEM
+%token <value> MATRIX
+%token <value> OFF
+%token <value> ON
+%token <value> PI
+%token <value> PLOT
+%token <value> PRECISION
+%token <value> QUIT
+%token <value> RESET
+%token <value> RPN
+%token <value> SEN
+%token <value> SET
+%token <value> SETTINGS
+%token <value> SHOW
+%token <value> SOLVE
+%token <value> SUM
+%token <value> SYMBOLS
+%token <value> TAN
+%token <value> V_VIEW
+%token <value> VAR_X
 %token <value> ID
 %token <value> NUM_INT
 %token <value> NUM_FLOAT
@@ -131,9 +125,9 @@ S: Comandos EOL { printf(">"); return 0; }
             case ID:
                 printf("\nID: %s\n\n", $1->r_string);
                 break;
-            case VAR_X:
-                printf("\nVAR_X: %s\n\n", $1->r_string);
-                break;
+            // case VAR_X:
+            //     printf("\nVAR_X: %s\n\n", $1->r_string);
+            //     break;
             default:
                 printf("\nERROR: Invalid Expression\n\n");
                 break;
@@ -178,7 +172,15 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             integral_steps_value = (int) $3->r_float;
         }
     }
-    | INTEGRATE L_PAREN NUM_FLOAT COLON NUM_FLOAT COMMA Funcao R_PAREN SEMICOLON { }
+    | INTEGRATE L_PAREN Expressao COLON Expressao COMMA Funcao R_PAREN SEMICOLON {
+        if ($3->r_float > $5->r_float) {
+            printf("\nERROR: integral lower limit must be smaller than upper limit\n\n");
+            return 0;
+        } else {
+            // float integral = integrate($3->r_float, $5->r_float, $7, integral_steps_value);
+            // printf("\nINTEGRAL: %f\n\n", integral);
+        }
+    }
     | SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN SEMICOLON { } 
     | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
     | SHOW MATRIX SEMICOLON { }
@@ -186,15 +188,29 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SOLVE LINEAR_SYSTEM SEMICOLON { }
     | ABOUT SEMICOLON { showAbout(); }
     | ID COLON_ASSIGN Expressao SEMICOLON {
-
+        if ($3) {   
+            insertHash(myHashTable, $1, $3->r_float, NUM_FLOAT);
+            printf("\n%f\n\n", $3->r_float);
+        } else {
+            printf("\n\n");
+        }
+        return 0;
     }
     | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
-    | ID SEMICOLON { }
+    | ID SEMICOLON {
+        HashNode *node = getIdentifierNode(myHashTable, $1);
+        if (!node) {
+            printf("\nUndefined symbol [%s]\n\n", $1);
+            return 0;
+        }
+        printf("\n%f\n\n", node->valueId);
+        return 0;
+    }
     | SHOW SYMBOLS SEMICOLON { }
     | SET FLOAT PRECISION Expressao SEMICOLON { float_precision = (int) $4->r_float; }
     | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
-    | QUIT { return QUIT; }
+    | QUIT { freeHash(myHashTable); return QUIT; }
 ;
 
 Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix { }
@@ -218,10 +234,10 @@ OpMult: MULTIPLY { $$ = MULTIPLY; }
 
 Expressao: ExpressaoAditiva { 
         result = evalExpression($1, myHashTable); 
-        if (!result) {
-            printf("\nERROR: Invalid Expression NULL\n\n");
-            return 0;
-        }
+        // if (!result) {
+        //     printf("\nMY ERROR: Invalid Expression NULL\n\n");
+        //     return 0;
+        // }
         $$ = result;
     } ;
 
@@ -275,10 +291,12 @@ ExpressaoPrimaria: ID {
 
 void yyerror(void *s) {
     if (yychar == EOL) {
-        printf("\nSYNTAX ERROR: Incomplete Command\n\n");
+        printf("\nSYNTAX ERROR: Incomplete Command\n\n>");
         return;
     }
-    printf("\nSYNTAX ERROR: [%d]\n\n", yychar);
+    if (yychar != 0) {
+        printf("\nSYNTAX ERROR: [%s]\n\n", yylval.value);
+    }
 }
 
 void showSettings() {
@@ -318,7 +336,7 @@ int main(int argc, char *argv[]) {
     myHashTable = createHash();
     printf(">");
     while (true) {
-        if (yyparse() == QUIT) break;
+        if (yyparse() == QUIT || yychar == 0) break;
     }
     return 0;
 }

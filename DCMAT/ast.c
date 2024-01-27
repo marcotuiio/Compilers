@@ -36,10 +36,10 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
             if (expr->operator == ID) {
                 hashNode = getIdentifierNode(hash, expr->e_string);
                 if (!hashNode) {
-                    printf("Erro: variavel %s nao declarada\n", expr->e_string);
+                    printf("\nUndefined symbol [%s]", expr->e_string);
                     return NULL;
                 }
-                result = createResultExpression(hashNode->typeVar, 0, NULL); //preciso arrumar
+                result = createResultExpression(hashNode->typeVar, hashNode->valueId, NULL); //preciso arrumar
 
             } else if (expr->operator == NUM_INT) {
                 result = createResultExpression(NUM_INT, atof(expr->e_string), NULL);
@@ -51,14 +51,14 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                 result = createResultExpression(VAR_X, 0, expr->e_string);
             }
 
-
-
             return result;
             break;
 
         case ADITIVA:
             left = evalExpression(expr->left, hash);
             right = evalExpression(expr->right, hash);
+
+            if (!left || !right) return NULL;
 
             resultType = NUM_INT;
             if (left->type == NUM_FLOAT || right->type == NUM_FLOAT) {
@@ -79,6 +79,8 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
         case MULTIPLICATIVA:
             left = evalExpression(expr->left, hash);
             right = evalExpression(expr->right, hash);
+
+            if (!left || !right) return NULL;
 
             resultType = NUM_INT;
             if (left->type == NUM_FLOAT || right->type == NUM_FLOAT) {
@@ -108,6 +110,8 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
 
         case UNARIA:
             left = evalExpression(expr->left, hash);
+
+            if (!left) return NULL;
 
             if (expr->operator == PLUS) {
                 result = createResultExpression(left->type, +left->r_float, NULL);

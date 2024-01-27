@@ -10,6 +10,7 @@
 typedef struct node {
     int typeVar;
     char *varId;
+    float valueId;
     void *dimensions;
     int qntdDimen;
     struct node *next;
@@ -17,7 +18,7 @@ typedef struct node {
 
 void **createHash();
 int hash(char *value);
-void *insertHash(void **hashTable, char *varId, int currentType);
+void *insertHash(void **hashTable, char *varId, float valueId, int currentType);
 HashNode *getIdentifierNode(void **hashTable, char *id);
 void freeHash(void **hashTable);
 

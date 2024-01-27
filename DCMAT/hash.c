@@ -16,12 +16,13 @@ int hash(char *value) {
     return hash % HASH_SIZE;
 }
 
-void *insertHash(void **hashTable, char *varId, int currentType) {
+void *insertHash(void **hashTable, char *varId, float valueId, int currentType) {
     int index = hash(varId);
     HashNode *aux = calloc(1, sizeof(HashNode));
     aux->typeVar = currentType;
     aux->varId = calloc(strlen(varId) + 1, sizeof(char));
     strcpy(aux->varId, varId);
+    aux->valueId = valueId;
 
     HashNode *head = (HashNode *)hashTable[index];
     if (!head) {
