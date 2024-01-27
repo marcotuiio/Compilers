@@ -1,4 +1,5 @@
 #include "hash.h"
+#include "sintatico.tab.h"
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
@@ -45,6 +46,27 @@ HashNode *getIdentifierNode(void **hashTable, char *id) {
         head = head->next;
     }
     return NULL;
+}
+
+void showSymbols(void **hashTable) {
+    if (!hashTable) return;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        if (!hashTable[i]) continue;
+        HashNode *head = hashTable[i];
+        while (head) {
+            char type[30];
+            if (head->typeVar == NUM_INT) {
+                strcpy(type, "INT");
+            } else if (head->typeVar == NUM_FLOAT){
+                strcpy(type, "FLOAT");
+            } else if (head->typeVar == MATRIX) {
+                strcpy(type, "MATRIX[][]");
+            }
+            printf("\n%s - %s", head->varId);
+            head = head->next;
+        }
+    }
+    printf("\n\n");
 }
 
 void freeHash(void **hashTable) {
