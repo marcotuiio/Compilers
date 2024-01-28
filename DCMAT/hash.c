@@ -112,11 +112,13 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
         printf("\nNo Matrix defined!\n\n");
         return;
     }
-    printf("\n+-");
-    // for (int j = 0; j < line; j++) {
-    //     printf(" ");
-    // }
-    printf("-+\n");
+
+    printf("\n");
+    // printf("\n+-");
+    // // for (int j = 0; j < line; j++) {
+    // //     printf(" ");
+    // // }
+    // printf("-+\n");
 
     for (int i = 0; i < line; i++) {
         printf("| ");
@@ -126,11 +128,12 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
         printf("|\n");
     }
 
-    printf("+-");
+    // printf("+-");
     // for (int j = 0; j < column; j++) {
     //     printf(" ");
     // }
-    printf("-+\n\n");
+    // printf("-+\n\n");
+    printf("\n");
 }
 
 void freeMatrix(float **m) {
@@ -170,7 +173,7 @@ void showSymbols(void **hashTable) {
             if (head->typeVar == NUM_FLOAT || head->typeVar == NUM_INT) {
                 strcpy(type, "FLOAT");
             } else if (head->typeVar == MATRIX) {
-                strcpy(type, "MATRIX[][]");
+                sprintf(type, "MATRIX[%d][%d]", head->lineMatrix, head->columnMatrix);
             }
             printf("\n%s - %s", head->varId, type);
             head = head->next;

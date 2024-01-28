@@ -48,7 +48,12 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                     printf("\nUndefined symbol [%s]", expr->e_string);
                     return NULL;
                 }
-                result = createResultExpression(hashNode->typeVar, hashNode->valueId, NULL);  // preciso arrumar
+                result = createResultExpression(hashNode->typeVar, hashNode->valueId, NULL);
+                if (hashNode->typeVar == MATRIX) {
+                    result->matrix = hashNode->matrix;
+                    result->line = hashNode->lineMatrix;
+                    result->column = hashNode->columnMatrix;
+                }
 
             } else if (expr->operator== NUM_INT) {
                 result = createResultExpression(NUM_INT, atof(expr->e_string), NULL);
@@ -78,12 +83,28 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
 
             if (!left || !right) return NULL;
 
+            if (left->type == MATRIX && right->type != MATRIX) {
+                printf("\nIncorrect type for operator '%s' - have MATRIX and FLOAT", (expr->operator== PLUS) ? "+" : "-");
+                return NULL;
+
+            } else if (left->type != MATRIX && right->type == MATRIX) {
+                printf("\nIncorrect type for operator '%s' - have FLOAT and MATRIX", (expr->operator== PLUS) ? "+" : "-");
+                return NULL;
+
+            } else if (left->type == MATRIX && right->type == MATRIX) {
+                float **middleMatrix = sumMatrix(left->matrix, right->matrix, left->line, left->column, right->line, right->column, expr->operator, hash);
+                if (!middleMatrix) return NULL;
+                result = createResultExpression(MATRIX, 0, NULL);
+                result->matrix = middleMatrix;
+                result->line = left->line;
+                result->column = left->column;
+                return result;
+            }
+
             resultType = NUM_INT;
             if (left->type == NUM_FLOAT || right->type == NUM_FLOAT) {
                 resultType = NUM_FLOAT;
             }
-
-            // check if theres no matrix + int or float
 
             if (expr->operator== PLUS) {
                 result = createResultExpression(resultType, left->r_float + right->r_float, NULL);
@@ -153,8 +174,14 @@ ResultExpression *evalFunction(Function *func, void **hash) {
     isFunction = 1;
     ResultExpression *expr = evalExpression(func->expression, hash);
     // printf("evalFunc %f\n", expr->r_float);
-
     if (!expr) return NULL;
+
+    if (expr->type == MATRIX) {
+        printf("\nIncorrect type for operator '%s' - have MATRIX",
+               (func->type == SEN) ? "SEN" : (func->type == COS) ? "COS" : (func->type == TAN) ? "TAN" : "ABS");
+        return NULL;
+    }
+
     switch (func->type) {
         case SEN:
             isFunction = 0;
@@ -178,4 +205,25 @@ ResultExpression *evalFunction(Function *func, void **hash) {
             break;
     }
     return NULL;
+}
+
+float **sumMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, int op, void **hash) {
+    if (!a || !b) return NULL;
+    if (aLin != bLin || aCol != bCol) {
+        printf("\nIncorrect dimensions for operator '%s' - have MATRIX [%d][%d] and MATRIX [%d][%d]",
+               (op == PLUS) ? "+" : "-", aLin, aCol, bLin, bCol);
+        return NULL;
+    }
+
+    float **m = createMatrix();
+    for (int i = 0; i < aLin; i++) {
+        for (int j = 0; j < aCol; j++) {
+            if (op == PLUS) {
+                m[i][j] = a[i][j] + b[i][j];
+            } else {
+                m[i][j] = a[i][j] - b[i][j];
+            }
+        }
+    }
+    return m;
 }

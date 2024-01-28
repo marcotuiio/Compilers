@@ -109,7 +109,7 @@ void showAbout();
 %token <value> NUM_INT
 %token <value> NUM_FLOAT
 %token EOL
-/* %token ERROR */
+
 %start S
 
 %type <func> Funcao
@@ -136,6 +136,9 @@ S: Comandos EOL { printf(">"); return 0; }
                     break;
                 case ID:
                     printf("\n%s\n\n", $1->r_string);
+                    break;
+                case MATRIX:
+                    showMatrix($1->matrix, $1->line, $1->column, float_precision);
                     break;
                 default:
                     printf("\nERROR: Invalid Expression\n\n");
@@ -288,6 +291,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         node->lineMatrix = lineMat;
         node->columnMatrix = colMat;
         fixMatrix(myMatrix, lineMat, colMat);
+        showMatrix(myMatrix, node->lineMatrix, node->columnMatrix, float_precision);
         myMatrix = myMatrixAux;
     }
     | ID SEMICOLON {

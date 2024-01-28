@@ -27,6 +27,9 @@ typedef struct resultExpression {
     int type;
     float r_float;
     char *r_string;
+    float **matrix;
+    int line;
+    int column;
 } ResultExpression;
 
 typedef struct function {
@@ -43,5 +46,7 @@ Function *createFunction(int type, Expression *expression);
 ResultExpression *evalExpression(Expression *expr, void **hash);
 
 ResultExpression *evalFunction(Function *func, void **hash);
+
+float **sumMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, int op, void **hash);
 
 #endif
