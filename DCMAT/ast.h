@@ -13,12 +13,14 @@ enum expressionTypes {
     PRIMARIA
 };
 
+#define FUNCTION 6666
 typedef struct expression {
     int type;
     int operator;
     char *e_string;
     struct expression *left;
     struct expression *right;
+    void *func;
 } Expression;
 
 typedef struct resultExpression {

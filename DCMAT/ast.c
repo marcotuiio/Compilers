@@ -62,6 +62,10 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                 }
                 hashNode = getIdentifierNode(hash, "x");
                 result = createResultExpression(NUM_FLOAT, hashNode->valueId, NULL);
+                // printf("\nVAR_X %f\n", result->r_float);
+
+            } else if (expr->operator== FUNCTION) {
+                result = evalFunction(expr->func, hash);
             }
 
             return result;
@@ -147,21 +151,28 @@ ResultExpression *evalFunction(Function *func, void **hash) {
     if (!func) return NULL;
     isFunction = 1;
     ResultExpression *expr = evalExpression(func->expression, hash);
+    // printf("evalFunc %f\n", expr->r_float);
+
     if (!expr) return NULL;
     switch (func->type) {
         case SEN:
+            isFunction = 0;
             return createResultExpression(NUM_FLOAT, sin(expr->r_float), NULL);
             break;
         case COS:
+            isFunction = 0;
             return createResultExpression(NUM_FLOAT, cos(expr->r_float), NULL);
             break;
         case TAN:
+            isFunction = 0;
             return createResultExpression(NUM_FLOAT, tan(expr->r_float), NULL);
             break;
         case ABS:
+            isFunction = 0;
             return createResultExpression(NUM_FLOAT, fabs(expr->r_float), NULL);
             break;
         default:
+            isFunction = 0;
             printf("Erro ao avaliar funcao\n");
             break;
     }

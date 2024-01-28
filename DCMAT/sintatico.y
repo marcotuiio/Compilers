@@ -162,7 +162,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
     | SET AXIS OFF SEMICOLON { draw_axis = false; }
     | PLOT SEMICOLON { }
-    | PLOT L_PAREN Funcao R_PAREN SEMICOLON { }
+    | PLOT L_PAREN ExpressaoAditiva R_PAREN SEMICOLON { }
     | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
     | SET RPN L_PAREN Expressao R_PAREN SEMICOLON { }
@@ -174,22 +174,29 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             integral_steps_value = (int) $3->r_float;
         }
     }
-    | INTEGRATE L_PAREN Expressao COLON Expressao COMMA Funcao R_PAREN SEMICOLON {
+    | INTEGRATE L_PAREN Expressao COLON Expressao COMMA ExpressaoAditiva R_PAREN SEMICOLON {
         if (!$3 || !$5) {
             printf("\n\n");
             return 0;
         }
+
         if ($3->r_float > $5->r_float) {
             printf("\nERROR: integral lower limit must be smaller than upper limit\n\n");
             return 0;
+        
         } else {
             float integral = 0;
-            ResultExpression *integrand = NULL;
             float step = ($5->r_float - $3->r_float) / integral_steps_value;
+            ResultExpression *integrand = NULL;
+            
+            HashNode *xVar = getIdentifierNode(myHashTable, "x");
+            xVar->valueId = $3->r_float;
+
             for (int i = 0; i < integral_steps_value; i++) {
-                printf("funct type %d\n", $7->type);
-                integrand = evalFunction($7, myHashTable);
+                integrand = evalExpression($7, myHashTable);
                 integral += integrand->r_float * step;
+                // printf("x %f funcValue %f e integral %f\n", xVar->valueId, integrand->r_float, integral);
+                xVar->valueId = xVar->valueId + step;
             }
             printf("\n%f\n\n", integral);
         }
@@ -219,7 +226,9 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         }
         return 0;
     }
-    | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
+    | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON {
+        
+    }
     | ID SEMICOLON {
         HashNode *node = getIdentifierNode(myHashTable, $1);
         if (!node) {
@@ -240,8 +249,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     }
     | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
-    | QUIT { freeHash(myHashTable); return QUIT; }
-;
+    | QUIT { freeHash(myHashTable); return QUIT; } ;
 
 Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix { }
     | { } ;
@@ -323,6 +331,11 @@ ExpressaoPrimaria: ID {
     } 
     | L_PAREN ExpressaoAditiva R_PAREN {
         $$ = $2;
+    } 
+    | Funcao {
+        Expression *expr = createExpression(PRIMARIA, FUNCTION, NULL, NULL, NULL);
+        expr->func = $1;
+        $$ = expr;
     } ;
 
 %%

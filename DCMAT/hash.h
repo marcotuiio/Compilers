@@ -20,9 +20,9 @@ void **createHash();
 
 int hash(char *value);
 
-void *insertHash(void **hashTable, char *varId, float valueId, int currentType);
+HashNode *lookForValueInHash(void **hashTable, char *value);
 
-void fixVarXHash(void **hashTable, float valueId);
+void *insertHash(void **hashTable, char *varId, float valueId, int currentType);
 
 HashNode *getIdentifierNode(void **hashTable, char *id);
 
