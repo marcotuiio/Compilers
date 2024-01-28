@@ -194,6 +194,10 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
 
             for (int i = 0; i < integral_steps_value; i++) {
                 integrand = evalExpression($7, myHashTable);
+                if (!integrand) {
+                    printf("\n\n");
+                    return 0;
+                }
                 integral += integrand->r_float * step;
                 // printf("x %f funcValue %f e integral %f\n", xVar->valueId, integrand->r_float, integral);
                 xVar->valueId = xVar->valueId + step;
@@ -202,15 +206,24 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         }
     }
     | SUM L_PAREN ID COMMA Expressao COLON Expressao COMMA ExpressaoAditiva R_PAREN SEMICOLON {
-        insertHash(myHashTable, $3, $5->r_float, NUM_FLOAT);
-        HashNode *node = getIdentifierNode(myHashTable, $3);
         float sum = 0;
+        insertHash(myHashTable, $3, $5->r_float, NUM_FLOAT);
+        ResultExpression *summand = NULL;
+        
+        HashNode *node = getIdentifierNode(myHashTable, $3);
+
         for (int i = (int) node->valueId; i <= (int) $7->r_float; i++) {
-            ResultExpression *summand = evalExpression($9, myHashTable);
+            summand = evalExpression($9, myHashTable);
+            if (!summand) {
+                printf("\n\n");
+                removeNode(myHashTable, $3);
+                return 0;
+            }
             sum += summand->r_float;
             node->valueId++;
         }
         printf("\n%f\n\n", sum);
+        removeNode(myHashTable, $3);
     } 
     | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
     | SHOW MATRIX SEMICOLON { }

@@ -1,6 +1,7 @@
 FLEX = flex
 BISON = bison
 CC = gcc
+CFLAGS_BISON = -Wno-unused-function
 CFLAGS = -Wall
 
 PROGRAMA = dcmat
@@ -12,7 +13,7 @@ OBJS = ast.o hash.o
 $(PROGRAMA): $(OBJS) $(LEXICO) $(SINTATICO)
 	$(FLEX) -o lex.yy.c $(LEXICO)
 	$(BISON) -o sintatico.tab.c -d $(SINTATICO)
-	$(CC) -g *.c $(CFLAGS) -o $(PROGRAMA) -lm
+	$(CC) -g *.c $(CFLAGS_BISON) -o $(PROGRAMA) -lm
 
 ast.o: ast.c ast.h
 	$(CC) $(CFLAGS) -c ast.c

@@ -43,6 +43,7 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
         case PRIMARIA:
             if (expr->operator== ID) {
                 hashNode = getIdentifierNode(hash, expr->e_string);
+                // printf("\nID: %s %p", expr->e_string, hashNode);
                 if (!hashNode) {
                     printf("\nUndefined symbol [%s]", expr->e_string);
                     return NULL;

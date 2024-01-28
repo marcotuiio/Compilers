@@ -28,6 +28,8 @@ HashNode *getIdentifierNode(void **hashTable, char *id);
 
 void showSymbols(void **hashTable);
 
+void removeNode(void **hashTable, char *id);
+
 void freeHash(void **hashTable);
 
 #endif

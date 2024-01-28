@@ -96,6 +96,27 @@ void showSymbols(void **hashTable) {
     printf("\n\n");
 }
 
+void removeNode(void **hashTable, char *id) {
+    if (!hashTable) return;
+    int index = hash(id);
+    HashNode *head = (HashNode *)hashTable[index];
+    HashNode *prev = NULL;
+    while (head) {
+        if (!strcmp(id, head->varId)) {
+            if (!prev) {
+                hashTable[index] = head->next;
+            } else {
+                prev->next = head->next;
+            }
+            if (head->valueId) free(head->varId);
+            free(head);
+            return;
+        }
+        prev = head;
+        head = head->next;
+    }
+}
+
 void freeHash(void **hashTable) {
     if (!hashTable) return;
     for (int i = 0; i < HASH_SIZE; i++) {
