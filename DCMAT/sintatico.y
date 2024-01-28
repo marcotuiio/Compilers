@@ -45,8 +45,8 @@ int lineBack = 0;
 
 void showSettings();
 void resetSettings();
+float gaussDeterminant(float **a, int line);
 void showAbout();
-
 
 %}
 
@@ -263,7 +263,19 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         HashNode *node = getIdentifierNode(myHashTable, "matrix");
         showMatrix(myMatrix, node->lineMatrix, node->columnMatrix, float_precision); 
     }
-    | SOLVE DETERMINANT SEMICOLON { }
+    | SOLVE DETERMINANT SEMICOLON {
+        if (!myMatrix) {
+            printf("\nNo Matrix defined!\n\n");
+            return 0;
+        }
+        HashNode *node = getIdentifierNode(myHashTable, "matrix");
+        if (node->lineMatrix != node->columnMatrix) {
+            printf("\nMatrix format incorrect\n\n");
+            return 0;
+        }
+        float det = gaussDeterminant(myMatrix, node->lineMatrix);
+        printf("\n%.*f\n\n", float_precision, det);
+    }
     | SOLVE LINEAR_SYSTEM SEMICOLON { }
     | ABOUT SEMICOLON { showAbout(); }
     | ID COLON_ASSIGN Expressao SEMICOLON {
@@ -547,6 +559,51 @@ void resetSettings() {
     erase_plot = ERASE_PLOT;
     connect_dots_op = CONNECT_DOTS_OP;
 }
+
+void swap(float *a, float *b) {
+    float aux = *a;
+    *a = *b;
+    *b = aux;
+}
+
+float gaussDeterminant(float **a, int line) {
+    int i, j, j1, j2;
+    float det = 1;
+    float temp[line][line];
+
+    // copy matrix
+    for (i = 0; i < line; i++)
+        for (j = 0; j < line; j++)
+            temp[i][j] = a[i][j];
+
+    // pivoting
+    for (j = 0; j < line; j++) {
+        if (temp[j][j] == 0) {  // if pivot is zero
+
+            // basically trying to turn it into a upper triangular matrix
+            for (i = j + 1; i < line; i++)  // find non-zero element in the same column below and swaps the rows
+                if (temp[i][j] != 0)
+                    break;
+
+            if (i == line)  // if no non-zero element is found, determinant is zero
+                return 0;
+
+            for (j1 = j; j1 < line; j1++)
+                swap(&temp[j][j1], &temp[i][j1]);
+            det *= -1;  // if row was swapped, multiply determinant by -1
+        }
+
+        det *= temp[j][j];
+
+        // subtracting multiples of the pivot row from all the rows below it to create zeros below the diagonal
+        for (i = j + 1; i < line; i++) {
+            for (j1 = line - 1; j1 >= j; j1--)
+                temp[i][j1] -= temp[j][j1] * temp[i][j] / temp[j][j];
+        }
+    }
+    return det;
+}
+
 
 void showAbout() {
     printf("\n+-------------------------------------------------------+\n");

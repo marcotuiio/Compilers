@@ -136,6 +136,7 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                     result->line = left->line;
                     result->column = right->column;
                     return result;
+
                 } else if (left->type == MATRIX && right->type != MATRIX) {
                     float **middleMatrix = createMatrix();
                     for (int i = 0; i < left->line; i++) {
@@ -148,6 +149,7 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                     result->line = left->line;
                     result->column = left->column;
                     return result;
+                
                 } else if (left->type != MATRIX && right->type == MATRIX) {
                     float **middleMatrix = createMatrix();
                     for (int i = 0; i < right->line; i++) {
