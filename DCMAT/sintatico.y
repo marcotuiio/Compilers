@@ -34,10 +34,13 @@ bool connect_dots_op = CONNECT_DOTS_OP;
 
 void **myHashTable = NULL;
 float **myMatrix = NULL;
+float **myMatrixAux = NULL;
 
 int lineMat = 0;
 int colMat = 1;
 int auxColMat = 1;
+
+int lineBack = 0;
 
 void showSettings();
 void resetSettings();
@@ -246,9 +249,15 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
                 break;
             }
         }
+        HashNode *node = getIdentifierNode(myHashTable, "matrix");
+        node->lineMatrix = lineMat;
+        node->columnMatrix = colMat;
         fixMatrix(myMatrix, lineMat, colMat);
     }
-    | SHOW MATRIX SEMICOLON { showMatrix(myMatrix, lineMat, colMat, float_precision); }
+    | SHOW MATRIX SEMICOLON {
+        HashNode *node = getIdentifierNode(myHashTable, "matrix");
+        showMatrix(myMatrix, node->lineMatrix, node->columnMatrix, float_precision); 
+    }
     | SOLVE DETERMINANT SEMICOLON { }
     | SOLVE LINEAR_SYSTEM SEMICOLON { }
     | ABOUT SEMICOLON { showAbout(); }
@@ -261,8 +270,24 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         }
         return 0;
     }
-    | ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET Expressao Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON {
-        
+    | Token_Matrix_Id Expressao Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON {
+        if (auxColMat > colMat) {
+            colMat = auxColMat; 
+        }
+        if (lineMat > MAX_MATRIX_SIZE || colMat > MAX_MATRIX_SIZE) {
+            printf("\nERROR: Matrix limits out of boundaries.\n\n");
+            return 0;
+        }
+        // printf("dimensoes [%d][%d]\n", lineMat, colMat);
+        for (int j = 0; j < colMat; j++) {
+            if (myMatrix[0][j] == DECOY && myMatrix[0][j-1] != DECOY) {
+                myMatrix[0][j] = $2->r_float;
+                // printf("inserting first in matrix: %f 0-%d\n", $5->r_float, j);
+                break;
+            }
+        }
+        fixMatrix(myMatrix, lineMat, colMat);
+        myMatrix = myMatrixAux;
     }
     | ID SEMICOLON {
         HashNode *node = getIdentifierNode(myHashTable, $1);
@@ -294,21 +319,34 @@ Token_Matrix: MATRIX {
         colMat = 1;
     } ;
 
+Token_Matrix_Id: ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET {
+    myMatrixAux = myMatrix;
+    float **matrix = createMatrix();
+    insertHash(myHashTable, $1, 0, MATRIX);
+    HashNode *node = getIdentifierNode(myHashTable, $1);
+    node->matrix = matrix;
+    auxColMat = 1;
+    lineMat = 0;
+    colMat = 1;
+    myMatrix = matrix;
+}
+
 Repet_Matrix: COMMA Expressao Repet_Matrix {
         auxColMat++;
         if (auxColMat > colMat) {
             colMat = auxColMat; 
         }
         myMatrix[lineMat-1][auxColMat-2] = $2->r_float;
-        // printf("1 inserting in matrix: %f = [%d][%d]\n", $2->r_float, lineMat-1, auxColMat-2);
+        // printf("0 inserting in matrix: %f = [%d][%d]\n", $2->r_float, lineMat-1, auxColMat-2);
     }
     | { lineMat++; auxColMat = 1; } ;
 
 Repet_Dimen: COMMA L_SQUARE_BRACKET Expressao Repet_Matrix R_SQUARE_BRACKET Repet_Dimen {
-        myMatrix[lineMat-1][colMat-1] = $3->r_float;
-        // printf("2 inserting in matrix: %f = [%d][%d]\n", $3->r_float, lineMat-1, colMat-1);
+        myMatrix[lineBack][colMat-1] = $3->r_float;
+        // printf("2 inserting in matrix: %f = [%d][%d]\n", $3->r_float, lineBack, colMat-1);
+        lineBack--;
     }
-    | { } ;
+    | { lineBack = lineMat - 1; } ;
 
 Funcao: SEN L_PAREN ExpressaoAditiva R_PAREN {
         Function *func = createFunction(SEN, $3);

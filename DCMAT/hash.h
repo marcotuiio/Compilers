@@ -7,6 +7,7 @@
 
 #define HASH_SIZE 221
 #define MAX_MATRIX_SIZE 10
+#define MAX_MATRIX_CREATABLE 20
 #define DECOY 999999.0
 
 typedef struct node {

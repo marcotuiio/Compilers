@@ -64,12 +64,12 @@ void *insertHash(void **hashTable, char *varId, float valueId, int currentType) 
 }
 
 float **createMatrix() {
-    float **m = calloc(MAX_MATRIX_SIZE, sizeof(float *));
-    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
-        m[i] = calloc(MAX_MATRIX_SIZE, sizeof(float));
+    float **m = calloc(MAX_MATRIX_CREATABLE, sizeof(float *));
+    for (int i = 0; i < MAX_MATRIX_CREATABLE; i++) {
+        m[i] = calloc(MAX_MATRIX_CREATABLE, sizeof(float));
     }
-    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
-        for (int j = 0; j < MAX_MATRIX_SIZE; j++) {
+    for (int i = 0; i < MAX_MATRIX_CREATABLE; i++) {
+        for (int j = 0; j < MAX_MATRIX_CREATABLE; j++) {
             m[i][j] = DECOY;
         }
     }
@@ -84,9 +84,11 @@ void fixMatrix(float **m, int line, int column) {
     for (int i = 0; i < line; i++) {
         for (int j = 0; j < column; j++) {
             aux[i][auxColumn] = m[i][j];
+            // printf("(%f) ", aux[i][auxColumn]);
             auxColumn--;
         }
         auxColumn = column - 1;
+        // printf("\nauxColumn: %d\n", auxColumn);
     }
 
     // atribui os valores da matriz auxiliar na matriz original, colocando os valores DECOY no final substituindo os valores 0.0
@@ -133,8 +135,8 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
 
 void freeMatrix(float **m) {
     if (!m) return;
-    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
-        for (int j = 0; j < MAX_MATRIX_SIZE; j++) {
+    for (int i = 0; i < MAX_MATRIX_CREATABLE; i++) {
+        for (int j = 0; j < MAX_MATRIX_CREATABLE; j++) {
             m[i][j] = 0.0;
         }
         if (m[i]) free(m[i]);
