@@ -268,8 +268,18 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | ABOUT SEMICOLON { showAbout(); }
     | ID COLON_ASSIGN Expressao SEMICOLON {
         if ($3) {   
-            insertHash(myHashTable, $1, $3->r_float, NUM_FLOAT);
-            printf("\n%.*f\n\n", float_precision, $3->r_float);
+            if ($3->type == MATRIX) {
+                showMatrix($3->matrix, $3->line, $3->column, float_precision);
+                insertHash(myHashTable, $1, 0, MATRIX);
+                HashNode *node = getIdentifierNode(myHashTable, $1);
+                node->matrix = $3->matrix;
+                node->lineMatrix = $3->line;
+                node->columnMatrix = $3->column;
+            } else {
+                insertHash(myHashTable, $1, $3->r_float, NUM_FLOAT);
+                printf("\n%.*f\n\n", float_precision, $3->r_float);
+            }
+            
         } else {
             printf("\n\n");
         }

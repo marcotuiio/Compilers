@@ -127,6 +127,41 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
             }
 
             if (expr->operator== MULTIPLY) {
+                
+                if (left->type == MATRIX && right->type == MATRIX) {
+                    float **middleMatrix = multMatrix(left->matrix, right->matrix, left->line, left->column, right->line, right->column, hash);
+                    if (!middleMatrix) return NULL;
+                    result = createResultExpression(MATRIX, 0, NULL);
+                    result->matrix = middleMatrix;
+                    result->line = left->line;
+                    result->column = right->column;
+                    return result;
+                } else if (left->type == MATRIX && right->type != MATRIX) {
+                    float **middleMatrix = createMatrix();
+                    for (int i = 0; i < left->line; i++) {
+                        for (int j = 0; j < left->column; j++) {
+                            middleMatrix[i][j] = left->matrix[i][j] * right->r_float;
+                        }
+                    }
+                    result = createResultExpression(MATRIX, 0, NULL);
+                    result->matrix = middleMatrix;
+                    result->line = left->line;
+                    result->column = left->column;
+                    return result;
+                } else if (left->type != MATRIX && right->type == MATRIX) {
+                    float **middleMatrix = createMatrix();
+                    for (int i = 0; i < right->line; i++) {
+                        for (int j = 0; j < right->column; j++) {
+                            middleMatrix[i][j] = right->matrix[i][j] * left->r_float;
+                        }
+                    }
+                    result = createResultExpression(MATRIX, 0, NULL);
+                    result->matrix = middleMatrix;
+                    result->line = right->line;
+                    result->column = right->column;
+                    return result;
+                }
+
                 result = createResultExpression(resultType, left->r_float * right->r_float, NULL);
 
             } else if (expr->operator== DIVIDE) {
@@ -223,6 +258,32 @@ float **sumMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, 
             } else {
                 m[i][j] = a[i][j] - b[i][j];
             }
+        }
+    }
+    return m;
+}
+
+// CURIOSIDADES INUTEIS!!!
+// codigo historico diretamente das aulas de algoritmo com sakuray no 1º semestre
+// aqui esta adaptado, mas foi o primeiro codigo que fiz e fique orgulhoso dele
+float **multMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, void **hash) {
+    if (!a || !b) return NULL;
+
+    if (aCol != bLin) {
+        printf("\nIncorrect dimensions for operator '*' - have MATRIX [%d][%d] and MATRIX [%d][%d]", aLin, aCol, bLin, bCol);
+        return NULL;
+    }
+
+    float **m = createMatrix();
+    float soma = 0;
+
+    for (int j = 0; j < aLin; j++) {          // j controla linha da matriz produto C e linha de A
+        for (int n = 0; n < bCol; n++) {     // n controla coluna da matriz produto C e coluna de B
+            for (int i = 0; i < aCol; i++) {  // i controla colunas da matriz A e linhas da matriz B
+                soma = soma + a[j][i] * b[i][n];
+            }
+            m[j][n] = soma;
+            soma = 0;
         }
     }
     return m;

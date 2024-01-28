@@ -49,4 +49,6 @@ ResultExpression *evalFunction(Function *func, void **hash);
 
 float **sumMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, int op, void **hash);
 
+float **multMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol, void **hash);
+
 #endif
