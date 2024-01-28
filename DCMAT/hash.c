@@ -1,8 +1,9 @@
 #include "hash.h"
 
-int NUM_INT = 306;
-int NUM_FLOAT = 307;
-int MATRIX = 286;
+const int VAR_X = 304;
+const int NUM_INT = 306;
+const int NUM_FLOAT = 307;
+const int MATRIX = 286;
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
@@ -10,7 +11,8 @@ void **createHash() {
         printf("Erro ao alocar memoria para hash\n");
         exit(1);
     }
-    insertHash(hashTable, "x", 0, 304);
+    insertHash(hashTable, "x", 0, VAR_X);
+    insertHash(hashTable, "matrix", 0, MATRIX);
     return hashTable;
 }
 
@@ -34,7 +36,7 @@ HashNode *lookForValueInHash(void **hashTable, char *value) {
 
 void *insertHash(void **hashTable, char *varId, float valueId, int currentType) {
     if (!hashTable) return NULL;
-    
+
     HashNode *aux = lookForValueInHash(hashTable, varId);
     if (aux) {
         aux->typeVar = currentType;
@@ -61,6 +63,85 @@ void *insertHash(void **hashTable, char *varId, float valueId, int currentType) 
     return aux;
 }
 
+float **createMatrix() {
+    float **m = calloc(MAX_MATRIX_SIZE, sizeof(float *));
+    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
+        m[i] = calloc(MAX_MATRIX_SIZE, sizeof(float));
+    }
+    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
+        for (int j = 0; j < MAX_MATRIX_SIZE; j++) {
+            m[i][j] = DECOY;
+        }
+    }
+    return m;
+}
+
+void fixMatrix(float **m, int line, int column) {
+    float aux[line][column];
+    int auxColumn = column - 1;
+
+    // atribui os valores da matriz original na matriz auxiliar na ordem inversa
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < column; j++) {
+            aux[i][auxColumn] = m[i][j];
+            auxColumn--;
+        }
+        auxColumn = column - 1;
+    }
+
+    // atribui os valores da matriz auxiliar na matriz original, colocando os valores DECOY no final substituindo os valores 0.0
+    int decoyCount = 0;
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < column; j++) {
+            m[i][j] = aux[i][j];
+            if (m[i][j] != DECOY) {
+                m[i][decoyCount++] = m[i][j];
+            }
+        }
+        while (decoyCount < column) {
+            m[i][decoyCount++] = 0.0;
+        }
+        decoyCount = 0;
+    }
+}
+
+void showMatrix(float **m, int line, int column, int floatPrecision) {
+    if (!m) {
+        printf("\nNo Matrix defined!\n\n");
+        return;
+    }
+    printf("\n+-");
+    // for (int j = 0; j < line; j++) {
+    //     printf(" ");
+    // }
+    printf("-+\n");
+
+    for (int i = 0; i < line; i++) {
+        printf("| ");
+        for (int j = 0; j < column; j++) {
+            printf("%.*f ", floatPrecision, m[i][j]);
+        }
+        printf("|\n");
+    }
+
+    printf("+-");
+    // for (int j = 0; j < column; j++) {
+    //     printf(" ");
+    // }
+    printf("-+\n\n");
+}
+
+void freeMatrix(float **m) {
+    if (!m) return;
+    for (int i = 0; i < MAX_MATRIX_SIZE; i++) {
+        for (int j = 0; j < MAX_MATRIX_SIZE; j++) {
+            m[i][j] = 0.0;
+        }
+        if (m[i]) free(m[i]);
+    }
+    free(m);
+}
+
 HashNode *getIdentifierNode(void **hashTable, char *id) {
     if (!hashTable) return NULL;
     int index = hash(id);
@@ -79,7 +160,7 @@ void showSymbols(void **hashTable) {
         if (!hashTable[i]) continue;
         HashNode *head = hashTable[i];
         while (head) {
-            if (!strcmp(head->varId, "x")) {
+            if (!strcmp(head->varId, "x") || !strcmp(head->varId, "matrix")) {
                 head = head->next;
                 continue;
             }
@@ -129,9 +210,9 @@ void freeHash(void **hashTable) {
             if (head) free(head);
             head = aux;
         }
+        // if (hashTable[i]) free(hashTable[i]);
         hashTable[i] = NULL;
     }
-    
-    free(hashTable);
+    if (hashTable) free(hashTable);
     hashTable = NULL;
 }

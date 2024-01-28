@@ -6,13 +6,16 @@
 #include <string.h>
 
 #define HASH_SIZE 221
+#define MAX_MATRIX_SIZE 10
+#define DECOY 999999.0
 
 typedef struct node {
     int typeVar;
     char *varId;
     float valueId;
-    void *dimensions;
-    int qntdDimen;
+    int lineMatrix;
+    int columnMatrix;
+    float **matrix;
     struct node *next;
 } HashNode;
 
@@ -23,6 +26,14 @@ int hash(char *value);
 HashNode *lookForValueInHash(void **hashTable, char *value);
 
 void *insertHash(void **hashTable, char *varId, float valueId, int currentType);
+
+float **createMatrix();
+
+void fixMatrix(float **m, int line, int column);
+
+void showMatrix(float **m, int line, int column, int floatPrecision);
+
+void freeMatrix(float **m);
 
 HashNode *getIdentifierNode(void **hashTable, char *id);
 
