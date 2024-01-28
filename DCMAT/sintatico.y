@@ -36,10 +36,11 @@ void **myHashTable = NULL;
 float **myMatrix = NULL;
 float **myMatrixAux = NULL;
 
+int isRpn = 0;
+
 int lineMat = 0;
 int colMat = 1;
 int auxColMat = 1;
-
 int lineBack = 0;
 
 void showSettings();
@@ -114,6 +115,7 @@ void showAbout();
 %type <func> Funcao
 %type <op> OpUnario
 %type <op> OpMult
+%type <value> Token_Matrix_Id
 %type <result> Expressao
 %type <expr> ExpressaoAditiva
 %type <expr> ExpressaoMultiplicativa
@@ -173,7 +175,10 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | PLOT L_PAREN ExpressaoAditiva R_PAREN SEMICOLON { }
     | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
-    | SET RPN L_PAREN Expressao R_PAREN SEMICOLON { }
+    | Token_Rpn ExpressaoAditiva R_PAREN SEMICOLON {
+        isRpn = 0;
+        printf("\n\n");
+    }
     | SET INTEGRAL_STEPS Expressao SEMICOLON { 
         if ((int) $3->r_float < 1) {
             printf("\nERROR: integral_steps must be a positive non-zero integer\n\n");
@@ -242,13 +247,10 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             return 0;
         }
         // printf("dimensoes [%d][%d]\n", lineMat, colMat);
-        for (int j = 0; j < colMat; j++) {
-            if (myMatrix[0][j] == DECOY && myMatrix[0][j-1] != DECOY) {
-                myMatrix[0][j] = $5->r_float;
-                // printf("inserting first in matrix: %f 0-%d\n", $5->r_float, j);
-                break;
-            }
-        }
+ 
+        myMatrix[0][colMat-1] = $5->r_float;
+        // printf("inserting first in matrix: %f 0-%d\n", $5->r_float, colMat-1);
+
         HashNode *node = getIdentifierNode(myHashTable, "matrix");
         node->lineMatrix = lineMat;
         node->columnMatrix = colMat;
@@ -279,13 +281,12 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             return 0;
         }
         // printf("dimensoes [%d][%d]\n", lineMat, colMat);
-        for (int j = 0; j < colMat; j++) {
-            if (myMatrix[0][j] == DECOY && myMatrix[0][j-1] != DECOY) {
-                myMatrix[0][j] = $2->r_float;
-                // printf("inserting first in matrix: %f 0-%d\n", $5->r_float, j);
-                break;
-            }
-        }
+        myMatrix[0][colMat-1] = $2->r_float;
+        // printf("inserting first in matrix: %f 0-%d\n", $2->r_float, colMat-1);
+
+        HashNode *node = getIdentifierNode(myHashTable, $1);
+        node->lineMatrix = lineMat;
+        node->columnMatrix = colMat;
         fixMatrix(myMatrix, lineMat, colMat);
         myMatrix = myMatrixAux;
     }
@@ -295,7 +296,11 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             printf("\nUndefined symbol [%s]\n\n", $1);
             return 0;
         }
-        printf("\n%f\n\n", node->valueId);
+        if (node->typeVar == NUM_FLOAT || node->typeVar == NUM_INT) {
+            printf("\n%f\n\n", node->valueId);
+        } else if (node->typeVar == MATRIX) {
+            showMatrix(node->matrix, node->lineMatrix, node->columnMatrix, float_precision);
+        }
         return 0;
     }
     | SHOW SYMBOLS SEMICOLON { showSymbols(myHashTable); return 0; }
@@ -311,6 +316,11 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
     | QUIT { freeHash(myHashTable); return QUIT; } ;
 
+Token_Rpn: RPN L_PAREN {
+        printf("\nExpression in RPN format:\n\n");
+        isRpn = 1;
+    };
+
 Token_Matrix: MATRIX { 
         freeMatrix(myMatrix); 
         myMatrix = createMatrix(); 
@@ -320,16 +330,17 @@ Token_Matrix: MATRIX {
     } ;
 
 Token_Matrix_Id: ID COLON_ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET {
-    myMatrixAux = myMatrix;
-    float **matrix = createMatrix();
-    insertHash(myHashTable, $1, 0, MATRIX);
-    HashNode *node = getIdentifierNode(myHashTable, $1);
-    node->matrix = matrix;
-    auxColMat = 1;
-    lineMat = 0;
-    colMat = 1;
-    myMatrix = matrix;
-}
+        myMatrixAux = myMatrix;
+        float **matrix = createMatrix();
+        insertHash(myHashTable, $1, 0, MATRIX);
+        HashNode *node = getIdentifierNode(myHashTable, $1);
+        node->matrix = matrix;
+        auxColMat = 1;
+        lineMat = 0;
+        colMat = 1;
+        myMatrix = matrix;
+        $$ = $1;
+    };
 
 Repet_Matrix: COMMA Expressao Repet_Matrix {
         auxColMat++;
@@ -349,18 +360,28 @@ Repet_Dimen: COMMA L_SQUARE_BRACKET Expressao Repet_Matrix R_SQUARE_BRACKET Repe
     | { lineBack = lineMat - 1; } ;
 
 Funcao: SEN L_PAREN ExpressaoAditiva R_PAREN {
+        if (isRpn)
+            printf("SEN ");
+    
         Function *func = createFunction(SEN, $3);
         $$ = func;
     }
     | COS L_PAREN ExpressaoAditiva R_PAREN { 
+        if (isRpn)
+            printf("COS ");
+
         Function *func = createFunction(COS, $3);
         $$ = func;
     }
     | TAN L_PAREN ExpressaoAditiva R_PAREN {
+        if (isRpn)
+            printf("TAN ");
         Function *func = createFunction(TAN, $3);
         $$ = func;
     }
     | ABS L_PAREN ExpressaoAditiva R_PAREN {
+        if (isRpn)
+            printf("ABS ");
         Function *func = createFunction(ABS, $3);
         $$ = func;
     } ;
@@ -380,43 +401,91 @@ Expressao: ExpressaoAditiva {
 
 ExpressaoAditiva: ExpressaoMultiplicativa { $$ = $1; }
     | ExpressaoAditiva OpUnario ExpressaoMultiplicativa {
+        if (isRpn) {
+            switch ($2) {
+                case PLUS:
+                    printf("+ ");
+                    break;
+                case MINUS:
+                    printf("- ");
+                    break;
+            }
+        }
         Expression *expr = createExpression(ADITIVA, $2, NULL, $1, $3);
         $$ = expr;
     } ;
 
 ExpressaoMultiplicativa: ExpressaoUnaria { $$ = $1; }
     | ExpressaoMultiplicativa OpMult ExpressaoUnaria {
+        if (isRpn) {
+            switch ($2) {
+                case MULTIPLY:
+                    printf("* ");
+                    break;
+                case DIVIDE:
+                    printf("/ ");
+                    break;
+                case REMAINDER:
+                    printf("%% ");
+                    break;
+                case POWER:
+                    printf("^ ");
+                    break;
+            }
+        }
         Expression *expr = createExpression(MULTIPLICATIVA, $2, NULL, $1, $3);
         $$ = expr;
     } ;
 
 ExpressaoUnaria: ExpressaoPrimaria { $$ = $1; }
     | OpUnario ExpressaoPrimaria {
+        if (isRpn) {
+            switch ($1) {
+                case PLUS:
+                    printf("+ ");
+                    break;
+                case MINUS:
+                    printf("- ");
+                    break;
+            }
+        }
         Expression *expr = createExpression(UNARIA, $1, NULL, $2, NULL);
         $$ = expr;
     } ;
 
 ExpressaoPrimaria: ID {
+        if (isRpn)
+            printf("%s ", $1);
         Expression *expr = createExpression(PRIMARIA, ID, $1, NULL, NULL);
         $$ = expr;
     }
     | VAR_X {
+        if (isRpn)
+            printf("x ");
         Expression *expr = createExpression(PRIMARIA, VAR_X, "x", NULL, NULL);
         $$ = expr;
     }
     | NUM_INT {
+        if (isRpn)
+            printf("%.*f ", float_precision, atof($1));
         Expression *expr = createExpression(PRIMARIA, NUM_INT, $1, NULL, NULL);
         $$ = expr;
     }
     | NUM_FLOAT {
+        if (isRpn)
+            printf("%.*f ", float_precision, atof($1));
         Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, $1, NULL, NULL);
         $$ = expr;
     }    
     | PI {
+        if (isRpn)
+            printf("%.*f ", float_precision, 3.14159265);
         Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "3.14159265", NULL, NULL);
         $$ = expr;
     }
     | EULER {
+        if (isRpn)
+            printf("%.*f ", float_precision, 2.71828182);
         Expression *expr = createExpression(PRIMARIA, NUM_FLOAT, "2.71828182", NULL, NULL);
         $$ = expr;
     } 
