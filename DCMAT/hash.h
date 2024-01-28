@@ -17,9 +17,17 @@ typedef struct node {
 } HashNode;
 
 void **createHash();
+
 int hash(char *value);
+
 void *insertHash(void **hashTable, char *varId, float valueId, int currentType);
+
+void fixVarXHash(void **hashTable, float valueId);
+
 HashNode *getIdentifierNode(void **hashTable, char *id);
+
+void showSymbols(void **hashTable);
+
 void freeHash(void **hashTable);
 
 #endif

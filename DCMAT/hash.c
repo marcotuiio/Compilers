@@ -1,5 +1,8 @@
 #include "hash.h"
-#include "sintatico.tab.h"
+
+int NUM_INT = 306;
+int NUM_FLOAT = 307;
+int MATRIX = 286;
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
@@ -7,6 +10,7 @@ void **createHash() {
         printf("Erro ao alocar memoria para hash\n");
         exit(1);
     }
+    insertHash(hashTable, "x", 0, 304);
     return hashTable;
 }
 
@@ -36,6 +40,21 @@ void *insertHash(void **hashTable, char *varId, float valueId, int currentType) 
     return aux;
 }
 
+void fixVarXHash(void **hashTable, float valueId) {
+    if (!hashTable) return;
+    int index = hash("x");
+
+    HashNode *head = (HashNode *)hashTable[index];
+    if (head) {
+        while (strcmp(head->varId, "x") && head->next)
+            head = head->next;
+
+        if (head && !strcmp(head->varId, "x")) {
+            head->valueId = valueId;
+        }
+    }
+}
+
 HashNode *getIdentifierNode(void **hashTable, char *id) {
     if (!hashTable) return NULL;
     int index = hash(id);
@@ -55,14 +74,12 @@ void showSymbols(void **hashTable) {
         HashNode *head = hashTable[i];
         while (head) {
             char type[30];
-            if (head->typeVar == NUM_INT) {
-                strcpy(type, "INT");
-            } else if (head->typeVar == NUM_FLOAT){
+            if (head->typeVar == NUM_FLOAT || head->typeVar == NUM_INT) {
                 strcpy(type, "FLOAT");
             } else if (head->typeVar == MATRIX) {
                 strcpy(type, "MATRIX[][]");
             }
-            printf("\n%s - %s", head->varId);
+            printf("\n%s - %s", head->varId, type);
             head = head->next;
         }
     }
@@ -78,11 +95,12 @@ void freeHash(void **hashTable) {
             HashNode *aux = head->next;
             if (head->varId) free(head->varId);
             head->varId = NULL;
-            free(head);
+            if (head) free(head);
             head = aux;
         }
         hashTable[i] = NULL;
     }
+    
     free(hashTable);
     hashTable = NULL;
 }

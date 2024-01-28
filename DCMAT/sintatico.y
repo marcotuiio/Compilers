@@ -33,7 +33,6 @@ bool erase_plot = ERASE_PLOT;
 bool connect_dots_op = CONNECT_DOTS_OP;
 
 void **myHashTable = NULL;
-ResultExpression *result = NULL;
 
 void showSettings();
 void resetSettings();
@@ -47,6 +46,7 @@ void showAbout();
     char *value;
     Expression *expr;
     ResultExpression *result;
+    Function *func;
 }
 
 %token <value> PLUS
@@ -103,6 +103,7 @@ void showAbout();
 /* %token ERROR */
 %start S
 
+%type <func> Funcao
 %type <op> OpUnario
 %type <op> OpMult
 %type <result> Expressao
@@ -115,22 +116,23 @@ void showAbout();
 
 S: Comandos EOL { printf(">"); return 0; }
     | Expressao EOL {
-        switch ($1->type) {
-            case NUM_INT:
-                printf("\nNUM_INT: %d\n\n", (int)$1->r_float);
-                break;
-            case NUM_FLOAT:
-                printf("\nNUM_FLOAT: %f\n\n", $1->r_float);
-                break;
-            case ID:
-                printf("\nID: %s\n\n", $1->r_string);
-                break;
-            // case VAR_X:
-            //     printf("\nVAR_X: %s\n\n", $1->r_string);
-            //     break;
-            default:
-                printf("\nERROR: Invalid Expression\n\n");
-                break;
+        if ($1) {
+            switch ($1->type) {
+                case NUM_INT:
+                    printf("\n%d\n\n", (int) $1->r_float);
+                    break;
+                case NUM_FLOAT:
+                    printf("\n%f\n\n", $1->r_float);
+                    break;
+                case ID:
+                    printf("\n%s\n\n", $1->r_string);
+                    break;
+                default:
+                    printf("\nERROR: Invalid Expression\n\n");
+                    break;
+            }
+        } else {
+            printf("\n\n");
         }
         printf(">");
         return 0;   
@@ -173,15 +175,36 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         }
     }
     | INTEGRATE L_PAREN Expressao COLON Expressao COMMA Funcao R_PAREN SEMICOLON {
+        if (!$3 || !$5) {
+            printf("\n\n");
+            return 0;
+        }
         if ($3->r_float > $5->r_float) {
             printf("\nERROR: integral lower limit must be smaller than upper limit\n\n");
             return 0;
         } else {
-            // float integral = integrate($3->r_float, $5->r_float, $7, integral_steps_value);
-            // printf("\nINTEGRAL: %f\n\n", integral);
+            float integral = 0;
+            ResultExpression *integrand = NULL;
+            float step = ($5->r_float - $3->r_float) / integral_steps_value;
+            for (int i = 0; i < integral_steps_value; i++) {
+                printf("funct type %d\n", $7->type);
+                integrand = evalFunction($7, myHashTable);
+                integral += integrand->r_float * step;
+            }
+            printf("\n%f\n\n", integral);
         }
     }
-    | SUM L_PAREN ID COMMA NUM_FLOAT COLON NUM_FLOAT COMMA Expressao R_PAREN SEMICOLON { } 
+    | SUM L_PAREN ID COMMA Expressao COLON Expressao COMMA ExpressaoAditiva R_PAREN SEMICOLON {
+        insertHash(myHashTable, $3, $5->r_float, NUM_FLOAT);
+        HashNode *node = getIdentifierNode(myHashTable, $3);
+        float sum = 0;
+        for (int i = (int) node->valueId; i <= (int) $7->r_float; i++) {
+            ResultExpression *summand = evalExpression($9, myHashTable);
+            sum += summand->r_float;
+            node->valueId++;
+        }
+        printf("\n%f\n\n", sum);
+    } 
     | MATRIX ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON { }
     | SHOW MATRIX SEMICOLON { }
     | SOLVE DETERMINANT SEMICOLON { }
@@ -206,8 +229,15 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         printf("\n%f\n\n", node->valueId);
         return 0;
     }
-    | SHOW SYMBOLS SEMICOLON { }
-    | SET FLOAT PRECISION Expressao SEMICOLON { float_precision = (int) $4->r_float; }
+    | SHOW SYMBOLS SEMICOLON { showSymbols(myHashTable); return 0; }
+    | SET FLOAT PRECISION Expressao SEMICOLON {
+        if ((int) $4->r_float < 0 || (int) $4->r_float > 8) {
+            printf("\nERROR: float_precision must be from 0 to 8\n\n");
+            return 0;
+        } 
+        float_precision = (int) $4->r_float; 
+        return 0;
+    }
     | SET CONNECT_DOTS ON SEMICOLON { connect_dots_op = true; /*connectDots();*/ }
     | SET CONNECT_DOTS OFF SEMICOLON { connect_dots_op = false; }
     | QUIT { freeHash(myHashTable); return QUIT; }
@@ -219,10 +249,22 @@ Repet_Matrix: COMMA NUM_FLOAT Repet_Matrix { }
 Repet_Dimen: COMMA L_SQUARE_BRACKET NUM_FLOAT Repet_Matrix R_SQUARE_BRACKET Repet_Dimen { }
     | { } ;
 
-Funcao: SEN L_PAREN Expressao R_PAREN { }
-    | COS L_PAREN Expressao R_PAREN { }
-    | TAN L_PAREN Expressao R_PAREN { }
-    | ABS L_PAREN Expressao R_PAREN { } ;
+Funcao: SEN L_PAREN ExpressaoAditiva R_PAREN {
+        Function *func = createFunction(SEN, $3);
+        $$ = func;
+    }
+    | COS L_PAREN ExpressaoAditiva R_PAREN { 
+        Function *func = createFunction(COS, $3);
+        $$ = func;
+    }
+    | TAN L_PAREN ExpressaoAditiva R_PAREN {
+        Function *func = createFunction(TAN, $3);
+        $$ = func;
+    }
+    | ABS L_PAREN ExpressaoAditiva R_PAREN {
+        Function *func = createFunction(ABS, $3);
+        $$ = func;
+    } ;
 
 OpUnario: PLUS { $$ = PLUS; }
     | MINUS { $$ = MINUS; } ;
@@ -233,11 +275,7 @@ OpMult: MULTIPLY { $$ = MULTIPLY; }
     | POWER { $$ = POWER; } ;
 
 Expressao: ExpressaoAditiva { 
-        result = evalExpression($1, myHashTable); 
-        // if (!result) {
-        //     printf("\nMY ERROR: Invalid Expression NULL\n\n");
-        //     return 0;
-        // }
+        ResultExpression *result = evalExpression($1, myHashTable); 
         $$ = result;
     } ;
 

@@ -27,10 +27,19 @@ typedef struct resultExpression {
     char *r_string;
 } ResultExpression;
 
+typedef struct function {
+    int type;
+    Expression *expression;
+} Function;
+
 Expression *createExpression(int type, int op, char *s, Expression *left, Expression *right);
 
 ResultExpression *createResultExpression(int type, float r_float, char *r_string);
 
+Function *createFunction(int type, Expression *expression);
+
 ResultExpression *evalExpression(Expression *expr, void **hash);
+
+ResultExpression *evalFunction(Function *func, void **hash);
 
 #endif
