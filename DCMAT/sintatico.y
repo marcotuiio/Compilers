@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "ast.h"
 #include "hash.h"
+#include "graphs_manager.h"
 
 #define H_VIEW_LO -6.500000
 #define H_VIEW_HI 6.500000
@@ -35,6 +36,7 @@ bool connect_dots_op = CONNECT_DOTS_OP;
 void **myHashTable = NULL;
 float **myMatrix = NULL;
 float **myMatrixAux = NULL;
+Expression *myExpression = NULL;
 
 int isRpn = 0;
 
@@ -175,8 +177,15 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
     | SET AXIS OFF SEMICOLON { draw_axis = false; }
-    | PLOT SEMICOLON { }
-    | PLOT L_PAREN ExpressaoAditiva R_PAREN SEMICOLON { }
+    | PLOT SEMICOLON {
+        if (!myExpression) {
+            printf("\nNo Function defined!\n\n");
+            return 0;
+        }
+    }
+    | PLOT L_PAREN ExpressaoAditiva R_PAREN SEMICOLON {
+        drawAxis(draw_axis);
+    }
     | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
     | Token_Rpn ExpressaoAditiva R_PAREN SEMICOLON {
@@ -342,7 +351,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             return 0;
         }
         if (node->typeVar == NUM_FLOAT || node->typeVar == NUM_INT) {
-            printf("\n%f\n\n", node->valueId);
+            printf("\n%s = %.*f\n\n", node->varId, float_precision, node->valueId);
         } else if (node->typeVar == MATRIX) {
             showMatrix(node->matrix, node->lineMatrix, node->columnMatrix, float_precision);
         }
@@ -667,7 +676,7 @@ float *gaussLinearSystem(float **m, int line) {
 
         // SPI: if at any point of the triangularization, a line is all zeros except for the last element,
         // the system has infinitely many solutions eg: 0x + 0y + 0z = 0
-        
+
         if (j == line && a[i][line] != 0) { //
             printf("\nSI - The Linear System has no solution\n\n");
             return NULL;
@@ -692,8 +701,8 @@ float *gaussLinearSystem(float **m, int line) {
 void showAbout() {
     printf("\n+-------------------------------------------------------+\n");
     printf("|                                                       |\n");
-    printf("|              Marco Tulio Alves de Barros              |\n");
     printf("|                     202100560105                      |\n");
+    printf("|              Marco Tulio Alves de Barros              |\n");
     printf("|                                                       |\n");
     printf("+-------------------------------------------------------+\n\n");
 }   

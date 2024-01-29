@@ -113,27 +113,29 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
         return;
     }
 
-    printf("\n");
-    // printf("\n+-");
-    // // for (int j = 0; j < line; j++) {
-    // //     printf(" ");
-    // // }
-    // printf("-+\n");
+    printf("\n+- ");
+    for (int j = 0; j < column; j++) {
+        for (int k = 0; k < floatPrecision + 3; k++) {
+            printf(" ");
+        }
+    }
+    printf("-+\n");
 
     for (int i = 0; i < line; i++) {
-        printf("| ");
+        printf("|");
         for (int j = 0; j < column; j++) {
-            printf("%.*f ", floatPrecision, m[i][j]);
+            printf("%*.*f ", floatPrecision + 3, floatPrecision, m[i][j]);
         }
         printf("|\n");
     }
 
-    // printf("+-");
-    // for (int j = 0; j < column; j++) {
-    //     printf(" ");
-    // }
-    // printf("-+\n\n");
-    printf("\n");
+    printf("+- ");
+    for (int j = 0; j < column; j++) {
+        for (int k = 0; k < floatPrecision + 3; k++) {
+            printf(" ");
+        }
+    }
+    printf("-+\n\n");
 }
 
 void freeMatrix(float **m) {

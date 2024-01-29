@@ -127,7 +127,6 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
             }
 
             if (expr->operator== MULTIPLY) {
-                
                 if (left->type == MATRIX && right->type == MATRIX) {
                     float **middleMatrix = multMatrix(left->matrix, right->matrix, left->line, left->column, right->line, right->column, hash);
                     if (!middleMatrix) return NULL;
@@ -149,7 +148,7 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                     result->line = left->line;
                     result->column = left->column;
                     return result;
-                
+
                 } else if (left->type != MATRIX && right->type == MATRIX) {
                     float **middleMatrix = createMatrix();
                     for (int i = 0; i < right->line; i++) {
@@ -193,7 +192,21 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                 result = createResultExpression(left->type, +left->r_float, NULL);
 
             } else if (expr->operator== MINUS) {
-                result = createResultExpression(left->type, -left->r_float, NULL);
+                if (left->type == MATRIX) {
+                    float **middleMatrix = createMatrix();
+                    for (int i = 0; i < left->line; i++) {
+                        for (int j = 0; j < left->column; j++) {
+                            middleMatrix[i][j] = -left->matrix[i][j];
+                        }
+                    }
+                    result = createResultExpression(MATRIX, 0, NULL);
+                    result->matrix = middleMatrix;
+                    result->line = left->line;
+                    result->column = left->column;
+
+                } else {
+                    result = createResultExpression(left->type, -left->r_float, NULL);
+                }
             }
 
             return result;
@@ -215,7 +228,9 @@ ResultExpression *evalFunction(Function *func, void **hash) {
 
     if (expr->type == MATRIX) {
         printf("\nIncorrect type for operator '%s' - have MATRIX",
-               (func->type == SEN) ? "SEN" : (func->type == COS) ? "COS" : (func->type == TAN) ? "TAN" : "ABS");
+               (func->type == SEN) ? "SEN" : (func->type == COS) ? "COS"
+                                         : (func->type == TAN)   ? "TAN"
+                                                                 : "ABS");
         return NULL;
     }
 
@@ -280,7 +295,7 @@ float **multMatrix(float **a, float **b, int aLin, int aCol, int bLin, int bCol,
     float soma = 0;
 
     for (int j = 0; j < aLin; j++) {          // j controla linha da matriz produto C e linha de A
-        for (int n = 0; n < bCol; n++) {     // n controla coluna da matriz produto C e coluna de B
+        for (int n = 0; n < bCol; n++) {      // n controla coluna da matriz produto C e coluna de B
             for (int i = 0; i < aCol; i++) {  // i controla colunas da matriz A e linhas da matriz B
                 soma = soma + a[j][i] * b[i][n];
             }
