@@ -46,6 +46,7 @@ int lineBack = 0;
 void showSettings();
 void resetSettings();
 float gaussDeterminant(float **a, int line);
+float *gaussLinearSystem(float **m, int line);
 void showAbout();
 
 %}
@@ -270,13 +271,31 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         }
         HashNode *node = getIdentifierNode(myHashTable, "matrix");
         if (node->lineMatrix != node->columnMatrix) {
-            printf("\nMatrix format incorrect\n\n");
+            printf("\nMatrix format incorrect!\n\n");
             return 0;
         }
         float det = gaussDeterminant(myMatrix, node->lineMatrix);
         printf("\n%.*f\n\n", float_precision, det);
     }
-    | SOLVE LINEAR_SYSTEM SEMICOLON { }
+    | SOLVE LINEAR_SYSTEM SEMICOLON {
+        if (!myMatrix) {
+            printf("\nNo Matrix defined!\n\n");
+            return 0;
+        }
+        HashNode *node = getIdentifierNode(myHashTable, "matrix");
+        if (node->columnMatrix != node->lineMatrix + 1) {
+            printf("\nMatrix format incorrect!\n\n");
+            return 0;
+        }
+        float *x = gaussLinearSystem(myMatrix, lineMat);
+        if (x) {
+            printf("\nMatrix x:\n");
+            for (int i = 0; i < lineMat; i++) {
+                printf("\n%.*f ", float_precision, x[i]);
+            }
+            printf("\n\n");
+        }
+    }
     | ABOUT SEMICOLON { showAbout(); }
     | ID COLON_ASSIGN Expressao SEMICOLON {
         if ($3) {   
@@ -604,6 +623,71 @@ float gaussDeterminant(float **a, int line) {
     return det;
 }
 
+float *gaussLinearSystem(float **m, int line) {
+    // copy matrix so main matrix is not changed
+    float a[line][line + 1];
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < line + 1; j++) {
+            a[i][j] = m[i][j];
+        }
+    }
+
+    // triangularization
+    for (int i = 0; i < line - 1; i++) {
+        for (int j = i + 1; j < line; j++) {
+            
+            // pivoting
+            if (a[i][i] == 0) {
+                for (int k = i + 1; k < line; k++) {
+                    if (a[k][i] != 0) {
+                        for (int l = i; l < line; l++) {
+                            swap(&a[i][l], &a[k][l]);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            float pivot = a[i][i];
+            float m = a[j][i] / pivot;
+            for (int k = 0; k < line + 1; k++) {
+                a[j][k] = a[j][k] - m * a[i][k];
+            }
+        }
+    }
+
+    for (int i = 0; i < line; i++) {
+        int j;
+        for (j = 0; j < line; j++) {
+            if (a[i][j] != 0)
+                break;
+        }
+        // SI: if at any point of the triangularization, a line is all zeros except for the last element, 
+        // the system has no solution eg: 0x + 0y + 0z = 1
+
+        // SPI: if at any point of the triangularization, a line is all zeros except for the last element,
+        // the system has infinitely many solutions eg: 0x + 0y + 0z = 0
+        
+        if (j == line && a[i][line] != 0) { //
+            printf("\nSI - The Linear System has no solution\n\n");
+            return NULL;
+        } else if (j == line) {
+            printf("\nSPI - The Linear System has infinitely many solutions\n\n");
+            return NULL;
+        }
+    }
+
+    // retrosubstitution
+    float *x = calloc(line, sizeof(float));
+    for (int i = line - 1; i >= 0; i--) {
+        x[i] = a[i][line];
+        for (int j = i + 1; j < line; j++) {
+            x[i] = x[i] - a[i][j] * x[j];
+        }
+        x[i] = x[i] / a[i][i];
+    }
+    return x;
+}
 
 void showAbout() {
     printf("\n+-------------------------------------------------------+\n");
