@@ -17,7 +17,8 @@ Comandos -> SET INTEGRAL_STEPS Expressao SEMICOLON
 Comandos -> INTEGRATE ( Expressao COLON Expressao COMMA ExpressaoAditiva ) SEMICOLON
 Comandos -> SUM ( ID COMMA Expressao COLON Expressao COMMA ExpressaoAditiva ) SEMICOLON
 
-Comandos -> MATRIX ASSIGN [ [ NUM_FLOAT Repet_Matrix ] Repet_Dimen ] SEMICOLON
+Comandos -> Token_Matrix ASSIGN [ [ NUM_FLOAT Repet_Matrix ] Repet_Dimen ] SEMICOLON
+Token_Matrix -> MATRIX
 Repet_Matrix -> COMMA NUM_FLOAT Repet_Matrix SEMICOLON
 Repet_Matrix ->
 Repet_Dimen -> COMMA [ NUM_FLOAT Repet_Matrix ] Repet_Dimen
@@ -29,7 +30,8 @@ Comandos -> SOLVE LINEAR_SYSTEM SEMICOLON
 Comandos -> ABOUT SEMICOLON
 
 Comandos -> ID COLON_ASSIGN Expressao SEMICOLON
-Comandos -> ID COLON_ASSIGN [ [ NUM_FLOAT Repet_Matrix ] Repet_Dimen ] SEMICOLON
+Comandos ->  Token_Matrix_Id Expressao Repet_Matrix ] Repet_Dimen ] SEMICOLON
+Token_Matrix_Id -> ID COLON_ASSIGN [ [
 Comandos -> ID SEMICOLON
 Comandos -> SHOW SYMBOLS SEMICOLON
 

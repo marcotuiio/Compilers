@@ -12,5 +12,6 @@
 
 void drawAxis(bool hasAxis);
 void clearAxis();
+void insertPoint(int column, float xValue, float yValue, float h_view_lo, float h_view_hi, float v_view_lo, float v_view_hi);
 
 #endif

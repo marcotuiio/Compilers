@@ -36,9 +36,11 @@ bool connect_dots_op = CONNECT_DOTS_OP;
 void **myHashTable = NULL;
 float **myMatrix = NULL;
 float **myMatrixAux = NULL;
-Expression *myExpression = NULL;
 
 int isRpn = 0;
+
+int hasFunction;
+Expression *myFunction = NULL;
 
 int lineMat = 0;
 int colMat = 1;
@@ -47,6 +49,7 @@ int lineBack = 0;
 
 void showSettings();
 void resetSettings();
+void plotGraph(Expression *expr);
 float gaussDeterminant(float **a, int line);
 float *gaussLinearSystem(float **m, int line);
 void showAbout();
@@ -129,26 +132,27 @@ void showAbout();
 
 S: Comandos EOL { printf(">"); return 0; }
     | Expressao EOL {
-        if ($1) {
-            switch ($1->type) {
-                case NUM_INT:
-                    printf("\n%d\n\n", (int) $1->r_float);
-                    break;
-                case NUM_FLOAT:
-                    printf("\n%.*f\n\n", float_precision, $1->r_float);
-                    break;
-                case ID:
-                    printf("\n%s\n\n", $1->r_string);
-                    break;
-                case MATRIX:
-                    showMatrix($1->matrix, $1->line, $1->column, float_precision);
-                    break;
-                default:
-                    printf("\nERROR: Invalid Expression\n\n");
-                    break;
-            }
+        if (hasFunction) {
+            hasFunction = 0;
         } else {
-            printf("\n\n");
+            if ($1) {
+                switch ($1->type) {
+                    case NUM_INT:
+                        printf("\n%d\n\n", (int) $1->r_float);
+                        break;
+                    case NUM_FLOAT:
+                        printf("\n%.*f\n\n", float_precision, $1->r_float);
+                        break;
+                    case MATRIX:
+                        showMatrix($1->matrix, $1->line, $1->column, float_precision);
+                        break;
+                    default:
+                        printf("\nERROR: Invalid Expression\n\n");
+                        break;
+                }
+            } else {
+                printf("\n\n");
+            }
         }
         printf(">");
         return 0;   
@@ -178,13 +182,20 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
     | SET AXIS OFF SEMICOLON { draw_axis = false; }
     | PLOT SEMICOLON {
-        if (!myExpression) {
+        if (!myFunction) {
             printf("\nNo Function defined!\n\n");
             return 0;
         }
+        plotGraph(myFunction);
+        hasFunction = 0;
     }
     | PLOT L_PAREN ExpressaoAditiva R_PAREN SEMICOLON {
-        drawAxis(draw_axis);
+        if (!$3) {
+            printf("\n\n");
+            return 0;
+        }
+        plotGraph($3);
+        hasFunction = 0;
     }
     | SET ERASE PLOT OFF SEMICOLON { erase_plot = false; }
     | SET ERASE PLOT ON SEMICOLON { erase_plot = true; }
@@ -450,6 +461,8 @@ OpMult: MULTIPLY { $$ = MULTIPLY; }
 
 Expressao: ExpressaoAditiva { 
         ResultExpression *result = evalExpression($1, myHashTable); 
+        if (hasFunction)
+            myFunction = $1;
         $$ = result;
     } ;
 
@@ -517,6 +530,7 @@ ExpressaoPrimaria: ID {
         if (isRpn)
             printf("x ");
         Expression *expr = createExpression(PRIMARIA, VAR_X, "x", NULL, NULL);
+        hasFunction = 1;
         $$ = expr;
     }
     | NUM_INT {
@@ -586,6 +600,28 @@ void resetSettings() {
     draw_axis = DRAW_AXIS;
     erase_plot = ERASE_PLOT;
     connect_dots_op = CONNECT_DOTS_OP;
+}
+
+void plotGraph(Expression *expr) {
+    if (erase_plot) clearAxis();
+    float xStep = (h_view_hi - h_view_lo) / (float) (X_AXIS_SIZE + 1);
+
+    HashNode *xVar = getIdentifierNode(myHashTable, "x");
+    xVar->valueId = h_view_lo;
+
+    ResultExpression *result = NULL;
+    for (int i = 0; i < X_AXIS_SIZE + 1; i++) {
+        result = evalExpression(expr, myHashTable);
+        if (!result) {
+            printf("\n\n");
+            return;
+        }
+        float xValue = xVar->valueId;
+        float yValue = result->r_float;
+        insertPoint(i, xValue, yValue, h_view_lo, h_view_hi, v_view_lo, v_view_hi);
+        xVar->valueId += xStep;
+    }
+    drawAxis(draw_axis);
 }
 
 void swap(float *a, float *b) {
