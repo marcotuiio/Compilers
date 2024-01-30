@@ -63,10 +63,10 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                 result = createResultExpression(NUM_FLOAT, atof(expr->e_string), NULL);
 
             } else if (expr->operator== VAR_X) {
-                if (!isFunction && !isPlot) {
-                    printf("\nThe x variable cannot be present on expressions.\n\n");
-                    return NULL;
-                }
+                // if (!isFunction && !isPlot) {
+                //     printf("\nThe x variable cannot be present on expressions.\n\n");
+                //     return NULL;
+                // }
                 hashNode = getIdentifierNode(hash, "x");
                 result = createResultExpression(NUM_FLOAT, hashNode->valueId, NULL);
                 // printf("\nVAR_X %f\n", result->r_float);
@@ -168,7 +168,10 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
 
             } else if (expr->operator== DIVIDE) {
                 if (right->r_float == 0) {
-                    result = createResultExpression(ID, 0, "inf");
+                    // result = createResultExpression(ID, 0, "inf");
+                    printf("\ninf");
+                    return NULL;
+
                 } else {
                     if ((int)left->r_float % (int)right->r_float != 0) resultType = NUM_FLOAT;
                     result = createResultExpression(resultType, left->r_float / right->r_float, NULL);

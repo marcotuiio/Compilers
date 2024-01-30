@@ -134,7 +134,8 @@ void showAbout();
 S: Comandos EOL { printf(">"); return 0; }
     | Expressao EOL {
         if (hasFunction) {
-            // hasFunction = 0;
+            hasFunction = 0;
+            printf("\nThe x variable cannot be present on expressions.\n\n");
         } else {
             if ($1) {
                 switch ($1->type) {
@@ -147,6 +148,7 @@ S: Comandos EOL { printf(">"); return 0; }
                     case MATRIX:
                         showMatrix($1->matrix, $1->line, $1->column, float_precision);
                         break;
+                    case ID:
                     default:
                         printf("\nERROR: Invalid Expression\n\n");
                         break;
