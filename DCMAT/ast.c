@@ -2,6 +2,7 @@
 
 #include "sintatico.tab.h"
 
+extern int isPlot;
 int isFunction = 0;
 
 Expression *createExpression(int type, int op, char *s, Expression *left, Expression *right) {
@@ -62,10 +63,10 @@ ResultExpression *evalExpression(Expression *expr, void **hash) {
                 result = createResultExpression(NUM_FLOAT, atof(expr->e_string), NULL);
 
             } else if (expr->operator== VAR_X) {
-                // if (!isFunction) {
-                //     printf("\nThe x variable cannot be present on expressions.\n\n");
-                //     return NULL;
-                // }
+                if (!isFunction && !isPlot) {
+                    printf("\nThe x variable cannot be present on expressions.\n\n");
+                    return NULL;
+                }
                 hashNode = getIdentifierNode(hash, "x");
                 result = createResultExpression(NUM_FLOAT, hashNode->valueId, NULL);
                 // printf("\nVAR_X %f\n", result->r_float);

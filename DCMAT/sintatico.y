@@ -39,7 +39,8 @@ float **myMatrixAux = NULL;
 
 int isRpn = 0;
 
-int hasFunction;
+int isPlot = 0;
+int hasFunction = 0;
 Expression *myFunction = NULL;
 
 int lineMat = 0;
@@ -133,7 +134,7 @@ void showAbout();
 S: Comandos EOL { printf(">"); return 0; }
     | Expressao EOL {
         if (hasFunction) {
-            hasFunction = 0;
+            // hasFunction = 0;
         } else {
             if ($1) {
                 switch ($1->type) {
@@ -202,6 +203,8 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
     | Token_Rpn ExpressaoAditiva R_PAREN SEMICOLON {
         isRpn = 0;
         printf("\n\n");
+        // hasFunction = 0;
+        // myFunction = NULL;
     }
     | SET INTEGRAL_STEPS Expressao SEMICOLON { 
         if ((int) $3->r_float < 1) {
@@ -461,8 +464,10 @@ OpMult: MULTIPLY { $$ = MULTIPLY; }
 
 Expressao: ExpressaoAditiva { 
         ResultExpression *result = evalExpression($1, myHashTable); 
-        if (hasFunction)
+        if (hasFunction) {
+            // printf("has function\n");
             myFunction = $1;
+        }
         $$ = result;
     } ;
 
@@ -609,6 +614,7 @@ void plotGraph(Expression *expr) {
     HashNode *xVar = getIdentifierNode(myHashTable, "x");
     xVar->valueId = h_view_lo;
 
+    isPlot = 1;
     ResultExpression *result = NULL;
     for (int i = 0; i < X_AXIS_SIZE + 1; i++) {
         result = evalExpression(expr, myHashTable);
@@ -621,7 +627,8 @@ void plotGraph(Expression *expr) {
         insertPoint(i, xValue, yValue, h_view_lo, h_view_hi, v_view_lo, v_view_hi);
         xVar->valueId += xStep;
     }
-    drawAxis(draw_axis);
+    isPlot = 0;
+    if (result) drawAxis(draw_axis);
 }
 
 void swap(float *a, float *b) {
