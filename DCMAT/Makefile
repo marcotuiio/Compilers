@@ -1,3 +1,5 @@
+# Author: Marco Tulio Alves de Barros
+
 FLEX = flex
 BISON = bison
 CC = gcc

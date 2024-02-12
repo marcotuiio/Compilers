@@ -1,3 +1,5 @@
+// Author: Marco Tulio Alves de Barros
+
 #ifndef _GRAPHS_MANAGER_H_
 #define _GRAPHS_MANAGER_H_
 

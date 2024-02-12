@@ -113,27 +113,47 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
         return;
     }
 
-    printf("\n+- ");
-    for (int j = 0; j < column; j++) {
-        for (int k = 0; k < floatPrecision + 3; k++) {
-            printf(" ");
+    // Calculate the maximum number of digits before the decimal point
+    int maxDigits = 1;
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < column; j++) {
+            int numDigits = snprintf(NULL, 0, "%.0f", m[i][j]);
+            if (numDigits > maxDigits) {
+                maxDigits = numDigits;
+            }
         }
+    }
+
+    // Adjust total width if there are negative numbers
+    int totalWidth = column * (maxDigits + floatPrecision + 3) - column + 2;
+
+    int floatCorrection = floatPrecision == 0 ? column : 0;
+    printf("\n+-");
+    for (int j = 0; j < totalWidth - 3 - floatCorrection; j++) {
+        printf(" ");
     }
     printf("-+\n");
 
     for (int i = 0; i < line; i++) {
-        printf("|");
+        printf("| ");
         for (int j = 0; j < column; j++) {
-            printf("%*.*f ", floatPrecision + 3, floatPrecision, m[i][j]);
+            // admito que esse padding da minha função NAO funcionava para numeros
+            // com quantidades diferentes de digitos antes do ponto
+            // entao o chatgpt me ajudou legal com esse padding maldito
+            int numDigits = snprintf(NULL, 0, "%.0f", m[i][j]);
+            int padding = maxDigits - numDigits;
+            for (int k = 0; k < padding - 1; k++) {
+                printf(" ");
+            }
+            int beforeDecimal = floatPrecision == 0 ? maxDigits + floatPrecision : maxDigits + floatPrecision + 1;
+            printf("%*.*f ", beforeDecimal, floatPrecision, m[i][j]);
         }
         printf("|\n");
     }
 
-    printf("+- ");
-    for (int j = 0; j < column; j++) {
-        for (int k = 0; k < floatPrecision + 3; k++) {
-            printf(" ");
-        }
+    printf("+-");
+    for (int j = 0; j < totalWidth - 3 - floatCorrection; j++) {
+        printf(" ");
     }
     printf("-+\n\n");
 }

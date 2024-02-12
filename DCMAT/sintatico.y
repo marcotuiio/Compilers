@@ -1,4 +1,6 @@
 %{
+    
+// Author: Marco Tulio Alves de Barros
 
 #include <stdio.h>
 #include <string.h>
@@ -140,8 +142,6 @@ S: Comandos EOL { printf(">"); return 0; }
             if ($1) {
                 switch ($1->type) {
                     case NUM_INT:
-                        printf("\n%d\n\n", (int) $1->r_float);
-                        break;
                     case NUM_FLOAT:
                         printf("\n%.*f\n\n", float_precision, $1->r_float);
                         break;
@@ -149,6 +149,7 @@ S: Comandos EOL { printf(">"); return 0; }
                         showMatrix($1->matrix, $1->line, $1->column, float_precision);
                         break;
                     case ID:
+                        break;
                     default:
                         printf("\nERROR: Invalid Expression\n\n");
                         break;
@@ -241,7 +242,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
                     return 0;
                 }
                 integral += integrand->r_float * step;
-                // printf("x %f funcValue %f e integral %f\n", xVar->valueId, integrand->r_float, integral);
+                // printf("%d - x %f funcValue %f e integral %f\n", i, xVar->valueId, integrand->r_float, integral);
                 xVar->valueId = xVar->valueId + step;
             }
             printf("\n%.*f\n\n", float_precision, integral);
@@ -265,7 +266,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
             node->valueId++;
         }
         printf("\n%.*f\n\n", float_precision, sum);
-        removeNode(myHashTable, $3);
+        removeNode(myHashTable, $3); // opção de remover a variável do hash pois trata-se de um iterador e nao de uma variável
     } 
     | Token_Matrix ASSIGN L_SQUARE_BRACKET L_SQUARE_BRACKET Expressao Repet_Matrix R_SQUARE_BRACKET Repet_Dimen R_SQUARE_BRACKET SEMICOLON {
         if (auxColMat > colMat) {

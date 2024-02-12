@@ -2,6 +2,9 @@
 %option yylineno
 
 %{
+
+// Author: Marco Tulio Alves de Barros
+
 #include "ast.h"
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
