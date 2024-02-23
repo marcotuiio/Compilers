@@ -241,10 +241,10 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
                     printf("\n\n");
                     return 0;
                 }
-                integral += integrand->r_float * step;
-                // printf("%d - x %f funcValue %f e integral %f\n", i, xVar->valueId, integrand->r_float, integral);
-                xVar->valueId = xVar->valueId + step;
+                integral += integrand->r_float;
+                xVar->valueId += step;
             }
+            integral *= step;
             printf("\n%.*f\n\n", float_precision, integral);
         }
     }
