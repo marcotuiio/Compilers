@@ -163,13 +163,11 @@ typedef struct command {
     Expression *init;
     Expression *increment;
 
-    // print
+    // print, scan
     char *string;
     Expression *auxPrint;
-
-    // scan
     char *identifier;
-    char *format;
+
 } Command;
 
 typedef struct resultExpression {
@@ -211,7 +209,7 @@ Command *createForStatement(Expression *init, Expression *condition, Expression 
 
 Command *createPrintStatement(char *string, Expression *auxPrint, void *next);
 
-Command *createScanStatement(char *string, char *identifier, char *format, void *next);
+Command *createScanStatement(char *string, char *identifier, void *next);
 
 Command *createReturnStatement(Expression *expression, void *next);
 

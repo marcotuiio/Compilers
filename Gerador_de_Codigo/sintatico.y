@@ -613,7 +613,7 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
     }
     | SCANF L_PAREN STRING COMMA BITWISE_AND ID R_PAREN SEMICOLON {
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, SCANF);
-        Command *aux = createScanStatement($3.valor, $6.valor, $3.valor, NULL);
+        Command *aux = createScanStatement($3.valor, $6.valor, NULL);
         aux->auxToken = auxToken;
         $$ = aux;
     }

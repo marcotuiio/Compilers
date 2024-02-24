@@ -1,11 +1,22 @@
 #include "asm.h"
 
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 int getSRegister() {
     for (int i = 0; i < 8; i++) {
         if (sRegister[i] == 0) {
             sRegister[i] = 1;
+            return i;
+        }
+    }
+    return -1;
+}
+
+int getTRegister() {
+    for (int i = 0; i < 10; i++) {
+        if (tRegister[i] == 0) {
+            tRegister[i] = 1;
             return i;
         }
     }
@@ -24,35 +35,55 @@ FILE *createAsmFile(char *fileName) {
 }
 
 void printAddition(FILE *mips, int left, int right) {
-    fprintf(mips, "\taddi $t0, $zero, %d\n", left);
-    fprintf(mips, "\taddi $t1, $zero, %d\n", right);
-    fprintf(mips, "\tadd $t0, $t0, $t1\n");
+    int first = getTRegister();
+    int second = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
+    fprintf(mips, "\tadd $t%d, $t%d, $t%d\n", getTRegister(), first, second);
+    tRegister[first] = 0;
+    tRegister[second] = 0;
 }
 
 void printSubtraction(FILE *mips, int left, int right) {
-    fprintf(mips, "\taddi $t0, $zero, %d\n", left);
-    fprintf(mips, "\taddi $t1, $zero, %d\n", right);
-    fprintf(mips, "\tsub $t0, $t0, $t1\n");
+    int first = getTRegister();
+    int second = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
+    fprintf(mips, "\tsub $t%d, $t%d, $t%d\n", getTRegister(), first, second);
+    tRegister[first] = 0;
+    tRegister[second] = 0;
 }
 
 void printMultiplication(FILE *mips, int left, int right) {
-    fprintf(mips, "\taddi $t0, $zero, %d\n", left);
-    fprintf(mips, "\taddi $t1, $zero, %d\n", right);
-    fprintf(mips, "\tmul $t0, $t0, $t1\n");
+    int first = getTRegister();
+    int second = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
+    fprintf(mips, "\tmul $t%d, $t%d, $t%d\n", getTRegister(), first, second);
+    tRegister[first] = 0;
+    tRegister[second] = 0;
 }
 
 void printDivision(FILE *mips, int left, int right) {
-    fprintf(mips, "\taddi $t0, $zero, %d\n", left);
-    fprintf(mips, "\taddi $t1, $zero, %d\n", right);
-    fprintf(mips, "\tdiv $t0, $t1\n");
-    fprintf(mips, "\tmflo $t0\n");
+    int first = getTRegister();
+    int second = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
+    fprintf(mips, "\tdiv $t%d, $t%d\n", first, second);
+    tRegister[first] = 0;
+    tRegister[second] = 0;
+    fprintf(mips, "\tmflo $t%d\n", getTRegister());
 }
 
 void printRemainder(FILE *mips, int left, int right) {
-    fprintf(mips, "\taddi $t0, $zero, %d\n", left);
-    fprintf(mips, "\taddi $t1, $zero, %d\n", right);
-    fprintf(mips, "\tdiv $t0, $t1\n");
-    fprintf(mips, "\tmfhi $t0\n");
+    int first = getTRegister();
+    int second = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
+    fprintf(mips, "\tdiv $t%d, $t%d\n", first, second);
+    tRegister[first] = 0;
+    tRegister[second] = 0;
+    fprintf(mips, "\tmfhi $t%d\n", getTRegister());
 }
 
 void printAssignment(FILE *mips, int value) {
@@ -104,13 +135,37 @@ void printReturn(FILE *mips) {
 }
 
 void storeInStack(FILE *mips, int value) {
-    fprintf(mips, "\taddi $sp, $sp, -4\n");
-    fprintf(mips, "\tsw $t0, 0($sp)\n");
+    fprintf(mips, "\taddi $sp, $sp, -52\n");
+    fprintf(mips, "\tsw $a0, 0($sp)\n");
+    fprintf(mips, "\tsw $a1, 4($sp)\n");
+    fprintf(mips, "\tsw $a2, 8($sp)\n");
+    fprintf(mips, "\tsw $a3, 12($sp)\n");
+    fprintf(mips, "\tsw $s0, 16($sp)\n");
+    fprintf(mips, "\tsw $s1, 20($sp)\n");
+    fprintf(mips, "\tsw $s2, 24($sp)\n");
+    fprintf(mips, "\tsw $s3, 28($sp)\n");
+    fprintf(mips, "\tsw $s4, 32($sp)\n");
+    fprintf(mips, "\tsw $s5, 36($sp)\n");
+    fprintf(mips, "\tsw $s6, 40($sp)\n");
+    fprintf(mips, "\tsw $s7, 44($sp)\n");
+    fprintf(mips, "\tsw $ra, 48($sp)\n");
 }
 
 void loadFromStack(FILE *mips) {
-    fprintf(mips, "\tlw $t0, 0($sp)\n");
-    fprintf(mips, "\taddi $sp, $sp, 4\n");
+    fprintf(mips, "\tlw $a0, 0($sp)\n");
+    fprintf(mips, "\tlw $a1, 4($sp)\n");
+    fprintf(mips, "\tlw $a2, 8($sp)\n");
+    fprintf(mips, "\tlw $a3, 12($sp)\n");
+    fprintf(mips, "\tlw $s0, 16($sp)\n");
+    fprintf(mips, "\tlw $s1, 20($sp)\n");
+    fprintf(mips, "\tlw $s2, 24($sp)\n");
+    fprintf(mips, "\tlw $s3, 28($sp)\n");
+    fprintf(mips, "\tlw $s4, 32($sp)\n");
+    fprintf(mips, "\tlw $s5, 36($sp)\n");
+    fprintf(mips, "\tlw $s6, 40($sp)\n");
+    fprintf(mips, "\tlw $s7, 44($sp)\n");
+    fprintf(mips, "\tlw $ra, 48($sp)\n");
+    fprintf(mips, "\taddi $sp, $sp, 52\n");
 }
 
 void printEnd(FILE *mips) {

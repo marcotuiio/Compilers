@@ -1,4 +1,5 @@
 #include "ast.h"
+
 #include "asm.h"
 #include "hash.h"
 #include "sintatico.tab.h"
@@ -155,12 +156,11 @@ Command *createPrintStatement(char *string, Expression *auxPrint, void *next) {
     return newPrint;
 }
 
-Command *createScanStatement(char *string, char *identifier, char *format, void *next) {
+Command *createScanStatement(char *string, char *identifier, void *next) {
     Command *newScan = calloc(1, sizeof(Command));
     newScan->type = SCANF;
     newScan->string = string;
     newScan->identifier = identifier;
-    newScan->format = format;
     newScan->next = next;
     return newScan;
 }
@@ -889,6 +889,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->operator== MULTIPLY) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
+                printMultiplication(mipsFile, auxLeftValor, auxRightValor);
             } else if (expr->operator== DIVIDE) {
                 if (right->assign == 0 || auxRightValor == 0) {
                     if (textBefore) printf("\n");
@@ -899,8 +900,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
+                printDivision(mipsFile, auxLeftValor, auxRightValor);
             } else if (expr->operator== REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
+                printRemainder(mipsFile, auxLeftValor, auxRightValor);
             } else if (expr->operator== OR_BIT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
             } else if (expr->operator== XOR_BIT) {
@@ -1334,7 +1337,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     if (command->type == LISTA_EXP_COMANDO) {
         evalExpression(command->condition, globalHash, localHash, program);
         traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
-    } 
+    }
 
     if (command->type == IF || command->type == ELSE) {
         ResultExpression *ifResult = NULL;
@@ -1386,21 +1389,24 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         if (command->type == PRINTF) {
             if (command->auxPrint) {
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, command->string+1);
+                strcpy(stringWithoutFormat, command->string + 1);
                 strtok(stringWithoutFormat, "%d");
                 strcat(stringWithoutFormat, "\0");
                 printString(mipsFile, stringWithoutFormat);
                 printInteger(mipsFile, toPrint->assign);
+                if (command->string[strlen(command->string) - 2] == 'n' && command->string[strlen(command->string) - 3] == '\\')
+                    printString(mipsFile, "\\n");
                 free(stringWithoutFormat++);
             } else {
                 printString(mipsFile, command->string);
             }
-        
-        } else {
-            printString(mipsFile, command->string);
-            printScanInt(mipsFile);
-        } 
 
+        } else {
+            printScanInt(mipsFile);
+            // how do i say ther variable id = command->identifier has the value of what was read by scanf?
+            // cause if in another moment of the code it uses the value of this var to make a adition, i wont hava any value and
+            // i wont even know what register this value should be
+        }
     }
 
     if (command->type == RETURN) {

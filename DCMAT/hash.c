@@ -130,8 +130,9 @@ void showMatrix(float **m, int line, int column, int floatPrecision) {
     // Acumulated width of the matrix
     int totalWidth = 0;
     for (int i = 0; i < column; i++) {
-        totalWidth += maxDigits[i] + floatPrecision + 2;
+        totalWidth += maxDigits[i] + (floatPrecision > 0 ? floatPrecision + 2 : 1);
     }
+    printf("%d\n", totalWidth);
 
     printf("\n+-");
     for (int j = 0; j < totalWidth - 1; j++) {
