@@ -5,10 +5,15 @@ main:
 	move $s0, $t0
 	li $t0, 40
 	move $s1, $t0
-	slt $t0, $s0, $s1
-	beqz $t0, else_linha_12
+	li $t0, 2
+	mul $t1, $s1, $t0
+	# assignment na ast
+	move $s2, $t1
+	add $t0, $s1, $s2
+	slt $t1, $s0, $t0
+	beqz $t1, else_linha_12
 	.data
-		string10: .asciiz "b maior que a\n"
+		string10: .asciiz "a menor b+c\n"
 	.text
 	la $a0, string10
 	li $v0, 4
@@ -16,7 +21,7 @@ main:
 	j exit_if_10
 	else_linha_12:
 	.data
-		string12: .asciiz "a menor que b\n"
+		string12: .asciiz "a maior b+c\n"
 	.text
 	la $a0, string12
 	li $v0, 4

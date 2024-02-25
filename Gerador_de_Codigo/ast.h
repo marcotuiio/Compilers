@@ -168,6 +168,7 @@ typedef struct command {
     Expression *auxPrint;
     char *identifier;
 
+    int visited;
 } Command;
 
 typedef struct resultExpression {

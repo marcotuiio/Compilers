@@ -1375,9 +1375,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 }
 
 void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
-    if (!command) return;
+    if (!command || command->visited) return;
     if (teveReturn) return;
     if (command == last) return;
+    command->visited = 1;
     last = command;
     // printf("traverseASTCommand %d %p %p %p\n",command->type, command, command->next, last);
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
