@@ -5,26 +5,23 @@ main:
 	move $s0, $t0
 	li $t0, 40
 	move $s1, $t0
-	li $t0, 2
-	mul $t1, $s1, $t0
-	add $t0, $s0, $t1
-	# assignment na ast
-	move $s2, $t0
+	slt $t0, $s0, $s1
+	beqz $t0, else_linha_12
 	.data
-		string83: .asciiz "valor "
+		string10: .asciiz "b maior que a\n"
 	.text
-	la $a0, string83
+	la $a0, string10
 	li $v0, 4
 	syscall
-	move $a0, $s2
-	li $v0, 1
-	syscall
+	j exit_if_10
+	else_linha_12:
 	.data
-		string86: .asciiz "\n"
+		string12: .asciiz "a menor que b\n"
 	.text
-	la $a0, string86
+	la $a0, string12
 	li $v0, 4
 	syscall
+	exit_if_10:
 	li $t0, 0
 	li $v0, 10
 	syscall

@@ -106,19 +106,83 @@ void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg) 
     if (rightType == 0) tRegister[rightReg] = 0;
 }
 
+int printGreaterThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tsgt $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printGreaterEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tsge $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printLessThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tslt $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printLessEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tsle $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tseq $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printNotEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tsne $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+void printIf(FILE *mips, int conditionType, int conditionReg, int label) {
+    char c = conditionType == 0 ? 't' : 's';
+    fprintf(mips, "\tbeqz $%c%d, else_linha_%d\n", c, conditionReg, label);
+    if (conditionType == 0) tRegister[conditionReg] = 0;
+}
+
+void printJump(FILE *mips, char *label, int labelID) {
+    fprintf(mips, "\tj %s%d\n", label, labelID);
+}
+
+void printLabel(FILE *mips, char *label, int labelId) {
+    fprintf(mips, "\t%s%d:\n", label, labelId);
+}
+
 void printGlobalVariable(FILE *mips, char *name, int value) {
     fprintf(mips, ".data\n");
     fprintf(mips, "%s: .word %d\n", name, value);
-}
-
-void printStart(FILE *mips) {
-    fprintf(mips, ".text\n");
-    fprintf(mips, ".globl main\n");
-    fprintf(mips, "main:\n");
-}
-
-void printFunction(FILE *mips, char *name) {
-    fprintf(mips, "%s:\n", name);
 }
 
 void printInteger(FILE *mips, int regType, int RegNumber) {
@@ -129,8 +193,7 @@ void printInteger(FILE *mips, int regType, int RegNumber) {
     if (regType == 0) tRegister[RegNumber] = 0;
 }
 
-void printString(FILE *mips, char *value) {
-    int stringID = rand() % 100;
+void printString(FILE *mips, char *value, int stringID) {
     fprintf(mips, "\t.data\n");
     fprintf(mips, "\t\tstring%d: .asciiz \"%s\"\n", stringID, value);
     fprintf(mips, "\t.text\n");
@@ -185,6 +248,12 @@ void loadFromStack(FILE *mips) {
     fprintf(mips, "\tlw $s7, 44($sp)\n");
     fprintf(mips, "\tlw $ra, 48($sp)\n");
     fprintf(mips, "\taddi $sp, $sp, 52\n");
+}
+
+void printStart(FILE *mips) {
+    fprintf(mips, ".text\n");
+    fprintf(mips, ".globl main\n");
+    fprintf(mips, "main:\n");
 }
 
 void printEnd(FILE *mips) {

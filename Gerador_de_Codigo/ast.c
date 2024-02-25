@@ -564,8 +564,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
                 auxRightValor = right->assign;
             }
-            if (expr->type == OR_LOGICO) result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
-            // else if (expr->type == AND_LOGICO) result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+
+            if (expr->type == OR_LOGICO) {
+                result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
+            
+            } else if (expr->type == AND_LOGICO) {
+                result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+            }
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -636,18 +641,32 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 deleteAuxFile();
                 exit(0);
             }
+            int reg = -1;
             if (expr->operator== LESS_THAN) {
                 result = createResultExpression(INT, 0, left->assign < right->assign);
+                reg = printLessThan(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
             } else if (expr->operator== GREATER_THAN) {
                 result = createResultExpression(INT, 0, left->assign > right->assign);
+                reg = printGreaterThan(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
             } else if (expr->operator== LESS_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign <= right->assign);
+                reg = printLessEqual(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
             } else if (expr->operator== GREATER_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign >= right->assign);
+                reg = printGreaterEqual(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
             } else if (expr->operator== EQUAL) {
                 result = createResultExpression(INT, 0, left->assign == right->assign);
+                reg = printEquals(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
             } else if (expr->operator== NOT_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign != right->assign);
+                reg = printNotEquals(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+            }
+            if (reg != -1) {
+                result->registerType = 0;
+                result->registerNumber = reg;
+            } else {
+                printf("Erro ao gerar codigo para comparacao\n");
+                exit(-1);
             }
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
@@ -1379,8 +1398,14 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
+        int ifLine = ((Command*)command->then)->auxToken->line;
+        int elseLine = ((Command*)command->elseStatement)->auxToken->line;
+        printIf(mipsFile, ifResult->registerType, ifResult->registerNumber, elseLine);
         traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        printJump(mipsFile, "exit_if_", ifLine);
+        printLabel(mipsFile, "else_linha_", elseLine);
         traverseASTCommand(command->elseStatement, globalHash, localHash, program, currentFunction);
+        printLabel(mipsFile, "exit_if_", ifLine);
     }
 
     if (command->type == WHILE || command->type == DO) {
@@ -1422,13 +1447,18 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 strcpy(stringWithoutFormat, command->string + 1);
                 strtok(stringWithoutFormat, "%d");
                 strcat(stringWithoutFormat, "\0");
-                printString(mipsFile, stringWithoutFormat);
+                printString(mipsFile, stringWithoutFormat, command->auxToken->line);
                 printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
                 if (command->string[strlen(command->string) - 2] == 'n' && command->string[strlen(command->string) - 3] == '\\')
-                    printString(mipsFile, "\\n");
+                    printString(mipsFile, "\\n", rand() % 100);
                 free(stringWithoutFormat++);
             } else {
-                printString(mipsFile, command->string);
+                // remove the " " from the string
+                char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
+                strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
+                strcat(fixedString, "\0");
+                printString(mipsFile, fixedString, command->auxToken->line);
+                free(fixedString);
             }
 
         } else {
