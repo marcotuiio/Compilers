@@ -25,6 +25,9 @@ typedef struct node {
     int prototype;
     int qntdParams;
     int qntdDimen;
+
+    int sRegister;
+
     struct node *next;
 } HashNode;
 
@@ -50,6 +53,9 @@ void setParam(void *node, Param *p);
 void setAssign(void *node, int assign);
 void setDimensions(void *node, void *dimensions);
 void setKind(void *node, int kind);
+
+void setSRegisterInHash(void *node, int sRegister);
+int getSRegisterFromHash(void *node);
 
 int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError);
 

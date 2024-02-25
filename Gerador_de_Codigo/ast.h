@@ -176,6 +176,10 @@ typedef struct resultExpression {
     int assign;
     int auxLine;
     int auxColumn;
+
+    int registerType; // 0 = t, 1 = s
+    int registerNumber;
+
     void *auxIdNode;
 } ResultExpression;
 

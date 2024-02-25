@@ -34,60 +34,76 @@ FILE *createAsmFile(char *fileName) {
     return file;
 }
 
-void printAddition(FILE *mips, int left, int right) {
-    int first = getTRegister();
-    int second = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
-    fprintf(mips, "\tadd $t%d, $t%d, $t%d\n", getTRegister(), first, second);
-    tRegister[first] = 0;
-    tRegister[second] = 0;
+int printConstant(FILE *mips, int value) {
+    int t = getTRegister();
+    fprintf(mips, "\tli $t%d, %d\n", t, value);
+    return t;
 }
 
-void printSubtraction(FILE *mips, int left, int right) {
-    int first = getTRegister();
-    int second = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
-    fprintf(mips, "\tsub $t%d, $t%d, $t%d\n", getTRegister(), first, second);
-    tRegister[first] = 0;
-    tRegister[second] = 0;
+int printAddition(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tadd $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
 }
 
-void printMultiplication(FILE *mips, int left, int right) {
-    int first = getTRegister();
-    int second = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
-    fprintf(mips, "\tmul $t%d, $t%d, $t%d\n", getTRegister(), first, second);
-    tRegister[first] = 0;
-    tRegister[second] = 0;
+int printSubtraction(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tsub $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
 }
 
-void printDivision(FILE *mips, int left, int right) {
-    int first = getTRegister();
-    int second = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
-    fprintf(mips, "\tdiv $t%d, $t%d\n", first, second);
-    tRegister[first] = 0;
-    tRegister[second] = 0;
-    fprintf(mips, "\tmflo $t%d\n", getTRegister());
+int printMultiplication(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tmul $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
 }
 
-void printRemainder(FILE *mips, int left, int right) {
-    int first = getTRegister();
-    int second = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", first, left);
-    fprintf(mips, "\taddi $t%d, $zero, %d\n", second, right);
-    fprintf(mips, "\tdiv $t%d, $t%d\n", first, second);
-    tRegister[first] = 0;
-    tRegister[second] = 0;
-    fprintf(mips, "\tmfhi $t%d\n", getTRegister());
+int printDivision(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    fprintf(mips, "\tdiv $%c%d, $%c%d\n", l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    int t = getTRegister();
+    fprintf(mips, "\tmflo $t%d\n", t);
+    return t;
 }
 
-void printAssignment(FILE *mips, int value) {
-    fprintf(mips, "\taddi $s%d, $zero, %d\n", getSRegister(), value);
+int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    fprintf(mips, "\tdiv $%c%d, $%c%d\n", l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    int t = getTRegister();
+    fprintf(mips, "\tmfhi $t%d\n", t);
+    return t;
+}
+
+int printAssignment(FILE *mips, int rightType, int rightReg) {
+    char r = rightType == 0 ? 't' : 's';
+    int s = getSRegister();
+    fprintf(mips, "\tmove $s%d, $%c%d\n", s, r, rightReg);
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return s;
+}
+
+void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg) {
+    char r = rightType == 0 ? 't' : 's';
+    fprintf(mips, "\tmove $s%d, $%c%d\n", leftReg, r, rightReg);
+    if (rightType == 0) tRegister[rightReg] = 0;
 }
 
 void printGlobalVariable(FILE *mips, char *name, int value) {
@@ -105,17 +121,20 @@ void printFunction(FILE *mips, char *name) {
     fprintf(mips, "%s:\n", name);
 }
 
-void printInteger(FILE *mips, int value) {
-    fprintf(mips, "\taddi $a0, $zero, %d\n", value);
+void printInteger(FILE *mips, int regType, int RegNumber) {
+    char r = regType == 0 ? 't' : 's';
+    fprintf(mips, "\tmove $a0, $%c%d\n", r, RegNumber);
     fprintf(mips, "\tli $v0, 1\n");
     fprintf(mips, "\tsyscall\n");
+    if (regType == 0) tRegister[RegNumber] = 0;
 }
 
 void printString(FILE *mips, char *value) {
+    int stringID = rand() % 100;
     fprintf(mips, "\t.data\n");
-    fprintf(mips, "\t\tstring: .asciiz \"%s\"\n", value);
+    fprintf(mips, "\t\tstring%d: .asciiz \"%s\"\n", stringID, value);
     fprintf(mips, "\t.text\n");
-    fprintf(mips, "\tla $a0, string\n");
+    fprintf(mips, "\tla $a0, string%d\n", stringID);
     fprintf(mips, "\tli $v0, 4\n");
     fprintf(mips, "\tsyscall\n");
 }
@@ -172,5 +191,3 @@ void printEnd(FILE *mips) {
     fprintf(mips, "\tli $v0, 10\n");
     fprintf(mips, "\tsyscall\n");
 }
-
-

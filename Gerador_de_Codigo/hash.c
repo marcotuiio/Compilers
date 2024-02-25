@@ -30,6 +30,7 @@ void *insertHash(void **hashTable, char *varId, int line, int column, int curren
     aux->column = column;
     aux->pointer = pointer;
     aux->assign = 1;
+    aux->sRegister = -1;
 
     HashNode *head = (HashNode *)hashTable[index];
     if (!head) {
@@ -83,6 +84,16 @@ void setKind(void *node, int kind) {
     HashNode *aux = node;
     // printf("setting kind %s = %d %p\n", aux->varId, kind, node);
     aux->kind = kind;
+}
+
+void setSRegisterInHash(void *node, int sRegister) {
+    HashNode *aux = node;
+    aux->sRegister = sRegister;
+}
+
+int getSRegisterFromHash(void *node) {
+    HashNode *aux = node;
+    return aux->sRegister;
 }
 
 int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError) {

@@ -195,6 +195,8 @@ ResultExpression *createResultExpression(int type, int pointer, int value) {
     newResult->typeVar = type;
     newResult->pointer = pointer;
     newResult->assign = value;
+    newResult->registerType = -1;
+    newResult->registerNumber = -1;
     return newResult;
 }
 
@@ -217,6 +219,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case NUMEROS:
             if (expr->value->type == NUM_INT) {
                 result = createResultExpression(expr->value->type, expr->value->pointer, atoi(expr->value->valor));
+                int regT = printConstant(mipsFile, result->assign);
+                result->registerType = 0;
+                result->registerNumber = regT;
                 return result;
             }
             printf("Numero que nao e int\n");
@@ -242,7 +247,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     freeAST(program);
                     deleteAuxFile();
                     exit(0);
-                }
+                }       
 
                 // printf("Achei %p %s %d %d (kind = %d) = %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign);
 
@@ -261,6 +266,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
+                    result->registerType = 1;
+                    result->registerNumber = hashNode->sRegister;
                     return result;
                 } else if (hashNode->typeVar == CHARACTER || hashNode->typeVar == CHAR) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
@@ -388,6 +395,20 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxRightValor);
+                fprintf(mipsFile, "\t# assignment na ast\n");
+                int regS = -1;
+                // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
+                if (left->registerNumber == -1) {
+                    regS = printAssignment(mipsFile, right->registerType, right->registerNumber);
+                    ((HashNode*)left->auxIdNode)->sRegister = regS;
+                
+                } else {
+                    regS = left->registerNumber;
+                    printAssignmentToReg(mipsFile, right->registerType, right->registerNumber, regS);
+                }
+
+                result->registerType = 1;
+                result->registerNumber = regS;
 
             } else if (expr->operator== ADD_ASSIGN || expr->operator== MINUS_ASSIGN) {
                 if (right) {
@@ -434,8 +455,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
-            fprintf(mipsFile, "\t# assignment na ast\n");
-            printAssignment(mipsFile, result->assign);
             return result;
             break;
 
@@ -787,7 +806,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                printAddition(mipsFile, auxLeftValor, auxRightValor);
+                int tReg = printAddition(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                result->registerType = 0;
+                result->registerNumber = tReg;
                 return result;
 
             } else if (expr->operator== MINUS) {
@@ -806,7 +827,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                printSubtraction(mipsFile, auxLeftValor, auxRightValor);
+                int tReg = printSubtraction(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                result->registerType = 0;
+                result->registerNumber = tReg;
                 return result;
             }
             break;
@@ -889,7 +912,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->operator== MULTIPLY) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
-                printMultiplication(mipsFile, auxLeftValor, auxRightValor);
+                int tReg = printMultiplication(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                result->registerType = 0;
+                result->registerNumber = tReg;
             } else if (expr->operator== DIVIDE) {
                 if (right->assign == 0 || auxRightValor == 0) {
                     if (textBefore) printf("\n");
@@ -900,10 +925,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
-                printDivision(mipsFile, auxLeftValor, auxRightValor);
+                int tReg = printDivision(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                result->registerType = 0;
+                result->registerNumber = tReg;
             } else if (expr->operator== REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
-                printRemainder(mipsFile, auxLeftValor, auxRightValor);
+                int tReg = printRemainder(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                result->registerType = 0;
+                result->registerNumber = tReg;
             } else if (expr->operator== OR_BIT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
             } else if (expr->operator== XOR_BIT) {
@@ -1386,6 +1415,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
 
     if (command->type == PRINTF || command->type == SCANF) {
         ResultExpression *toPrint = evalExpression(command->auxPrint, globalHash, localHash, program);
+        // printf("Return aux print: reg %d %d value %d var %s \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId);
         if (command->type == PRINTF) {
             if (command->auxPrint) {
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
@@ -1393,7 +1423,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 strtok(stringWithoutFormat, "%d");
                 strcat(stringWithoutFormat, "\0");
                 printString(mipsFile, stringWithoutFormat);
-                printInteger(mipsFile, toPrint->assign);
+                printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
                 if (command->string[strlen(command->string) - 2] == 'n' && command->string[strlen(command->string) - 3] == '\\')
                     printString(mipsFile, "\\n");
                 free(stringWithoutFormat++);

@@ -399,7 +399,8 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                         exit(1);
                     }
                 }
-                printAssignment(mipsFile, result->assign);
+                int regS = printAssignment(mipsFile, result->registerType, result->registerNumber);
+                setSRegisterInHash(node, regS); 
                 setAssign(node, result->assign);
             }
         }

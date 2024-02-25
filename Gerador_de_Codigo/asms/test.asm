@@ -1,30 +1,30 @@
 .text
 .globl main
 main:
-	addi $s0, $zero, 10
-	addi $s1, $zero, 40
-	addi $t0, $zero, 40
-	addi $t1, $zero, 2
-	mul $t2, $t0, $t1
-	addi $t0, $zero, 10
-	addi $t1, $zero, 80
-	add $t3, $t0, $t1
+	li $t0, 10
+	move $s0, $t0
+	li $t0, 40
+	move $s1, $t0
+	li $t0, 2
+	mul $t1, $s1, $t0
+	add $t0, $s0, $t1
 	# assignment na ast
-	addi $s2, $zero, 90
+	move $s2, $t0
 	.data
-		string: .asciiz "valor "
+		string83: .asciiz "valor "
 	.text
-	la $a0, string
+	la $a0, string83
 	li $v0, 4
 	syscall
-	addi $a0, $zero, 90
+	move $a0, $s2
 	li $v0, 1
 	syscall
 	.data
-		string: .asciiz "\n"
+		string86: .asciiz "\n"
 	.text
-	la $a0, string
+	la $a0, string86
 	li $v0, 4
 	syscall
+	li $t0, 0
 	li $v0, 10
 	syscall
