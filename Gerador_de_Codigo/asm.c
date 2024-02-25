@@ -166,6 +166,34 @@ int printNotEquals(FILE *mips, int leftType, int leftReg, int rightType, int rig
     return t;
 }
 
+int printLogicalAnd(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tli $t%d, 0\n", t);
+    fprintf(mips, "\tbeqz $%c%d, %s%d_%d\n", l, leftReg, "f_logical_and_", labelLineID, labelColumnID);
+    fprintf(mips, "\tbeqz $%c%d, %s%d_%d\n", r, rightReg, "f_logical_and_", labelLineID, labelColumnID);
+    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\t%s%d_%d:\n", "f_logical_and_", labelLineID, labelColumnID);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
+int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, l, leftReg, "t_logical_or_", labelLineID, labelColumnID);
+    fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, r, rightReg, "t_logical_or_", labelLineID, labelColumnID);
+    fprintf(mips, "\tli $t%d, 0\n", t);
+    fprintf(mips, "\t%s%d_%d:\n", "t_logical_or_", labelLineID, labelColumnID);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+    return t;
+}
+
 void printIf(FILE *mips, int conditionType, int conditionReg, int label) {
     char c = conditionType == 0 ? 't' : 's';
     fprintf(mips, "\tbeqz $%c%d, else_linha_%d\n", c, conditionReg, label);

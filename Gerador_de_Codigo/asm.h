@@ -28,6 +28,8 @@ int printEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightR
 int printNotEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
 
 // Control structures
+int printLogicalAnd(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);
+int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);
 void printIf(FILE *mips, int conditionType, int conditionReg, int label);
 
 // Labels and jumps

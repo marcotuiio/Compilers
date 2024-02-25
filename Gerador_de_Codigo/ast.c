@@ -14,8 +14,6 @@ extern int defineAux;
 extern int dimensionAux;
 int teveReturn = 0;
 
-void *last = NULL;
-
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
     newProg->hashTable = hash;
@@ -443,10 +441,20 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
 
-                if (expr->operator== ADD_ASSIGN)
+                if (expr->operator== ADD_ASSIGN) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
-                else if (expr->operator== MINUS_ASSIGN)
+                    int tReg = printAddition(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                    printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
+                    result->registerNumber = left->registerNumber;
+                    result->registerType = left->registerType;
+                
+                } else if (expr->operator== MINUS_ASSIGN) {
                     result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
+                    int tReg = printSubtraction(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                    printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
+                    result->registerNumber = left->registerNumber;
+                    result->registerType = left->registerType;
+                }
             }
             HashNode *hashNodeTemp = getIdentifierNode(localHash, expr->left->value->valor);
             if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->left->value->valor);
@@ -567,10 +575,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->type == OR_LOGICO) {
                 result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
+                int tReg = printLogicalOr(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken*)expr->value)->line, ((AuxToken*)expr->value)->column);
+                result->registerNumber = tReg;
             
             } else if (expr->type == AND_LOGICO) {
                 result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+                int tReg = printLogicalAnd(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken*)expr->value)->line, ((AuxToken*)expr->value)->column);
+                result->registerNumber = tReg;
             }
+            result->registerType = 0;
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -1377,9 +1390,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
     if (!command || command->visited) return;
     if (teveReturn) return;
-    if (command == last) return;
     command->visited = 1;
-    last = command;
+
     // printf("traverseASTCommand %d %p %p %p\n",command->type, command, command->next, last);
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
