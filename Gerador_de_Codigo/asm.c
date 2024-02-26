@@ -92,6 +92,12 @@ int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rig
     return t;
 }
 
+int printAutoIncrements(FILE *mips, int leftType, int leftReg, char *op) {
+    char l = leftType == 0 ? 't' : 's';
+    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg);
+    return leftReg;
+}
+
 int printAssignment(FILE *mips, int rightType, int rightReg) {
     char r = rightType == 0 ? 't' : 's';
     int s = getSRegister();
@@ -104,6 +110,40 @@ void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg) 
     char r = rightType == 0 ? 't' : 's';
     fprintf(mips, "\tadd $s%d, $zero, $%c%d\n", leftReg, r, rightReg);
     if (rightType == 0) tRegister[rightReg] = 0;
+}
+
+int printUnaryPlusMinus(FILE *mips, int leftType, int leftReg, char *op) {
+    char r = leftType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\t%s $t%d, $zero, $%c%d\n", op, t, r, leftReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    return t;
+}
+
+int printBitwiseNot(FILE *mips, int leftType, int leftReg) {
+    char r = leftType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tnot $t%d, $%c%d\n", t, r, leftReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    return t;
+}
+
+int printBitwiseOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\t%s $t%d, $%c%d, $%c%d\n", op, t, l, leftReg, r, rightReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    return t;
+}
+
+int printLogicalNot(FILE *mips, int leftType, int leftReg) {
+    char r = leftType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
+    fprintf(mips, "\tslt $t%d, $%c%d, $zero\n", t, r, leftReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    return t;
 }
 
 int printGreaterThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
@@ -310,4 +350,10 @@ void printStart(FILE *mips) {
 void printEnd(FILE *mips) {
     fprintf(mips, "\taddi $v0, $zero, 10\n");
     fprintf(mips, "\tsyscall\n");
+    fclose(mips);
+}
+
+void failedToGenerateMips(FILE *mips, char *path) {
+    fclose(mips);
+    remove(path);
 }

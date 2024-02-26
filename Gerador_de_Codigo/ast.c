@@ -771,9 +771,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
             if (expr->operator== R_SHIFT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
+                int tReg = printBitwiseOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "srlv");
+                result->registerNumber = tReg;
             } else if (expr->operator== L_SHIFT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
+                int tReg = printBitwiseOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sllv");
+                result->registerNumber = tReg;
             }
+            result->registerType = 0;
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -927,11 +932,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     c = '/';
                 else if (expr->operator== REMAINDER)
                     c = '%';
-                else if (expr->operator== OR_BIT)
+                else if (expr->operator== BITWISE_OR)
                     c = '|';
-                else if (expr->operator== XOR_BIT)
+                else if (expr->operator== BITWISE_XOR)
                     c = '^';
-                else if (expr->operator== AND_BIT)
+                else if (expr->operator== BITWISE_AND)
                     c = '&';
                 char *type1 = getExactType(auxLeftType, auxLeftPointer);
                 char *type2 = getExactType(auxRightType, auxRightPointer);
@@ -961,20 +966,25 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
                 int tReg = printDivision(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
-                result->registerType = 0;
                 result->registerNumber = tReg;
             } else if (expr->operator== REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
                 int tReg = printRemainder(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
-                result->registerType = 0;
                 result->registerNumber = tReg;
-            } else if (expr->operator== OR_BIT) {
+            } else if (expr->operator== BITWISE_OR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
-            } else if (expr->operator== XOR_BIT) {
+                int tReg = printBitwiseOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "or");
+                result->registerNumber = tReg;
+            } else if (expr->operator== BITWISE_XOR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
-            } else if (expr->operator== AND_BIT) {
+                int tReg = printBitwiseOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "xor");
+                result->registerNumber = tReg;
+            } else if (expr->operator== BITWISE_AND) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor & auxRightValor);
+                int tReg = printBitwiseOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "and");
+                result->registerNumber = tReg;
             }
+            result->registerType = 0;
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -1105,11 +1115,18 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                 if (expr->operator== PLUS) {
                     result = createResultExpression(left->typeVar, left->pointer, +left->assign);
+                    int reg = printUnaryPlusMinus(mipsFile, left->registerType, left->registerNumber, "add");
+                    result->registerNumber = reg;
                 } else if (expr->operator== MINUS) {
                     result = createResultExpression(left->typeVar, left->pointer, -left->assign);
+                    int reg = printUnaryPlusMinus(mipsFile, left->registerType, left->registerNumber, "sub");
+                    result->registerNumber = reg;
                 } else if (expr->operator== BITWISE_NOT) {
                     result = createResultExpression(left->typeVar, left->pointer, ~left->assign);
+                    int reg = printBitwiseNot(mipsFile, left->registerType, left->registerNumber);
+                    result->registerNumber = reg;
                 }
+                result->registerType = 0;
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
                 return result;
@@ -1183,13 +1200,22 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
 
                 if (expr->operator== BITWISE_AND) {
-                    result = createResultExpression(auxLeftType, 1, *(&auxLeftValor));
+                    result = createResultExpression(auxLeftType, 1, *(&auxLeftValor)); // acesso do valor em memoria
                 } else if (expr->operator== NOT) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
+                    int reg = printLogicalNot(mipsFile, left->registerType, left->registerNumber);
+                    result->registerType = 0;
+                    result->registerNumber = reg;
                 } else if (expr->operator== INC) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
+                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
+                    result->registerType = left->registerType;
+                    result->registerNumber = r;
                 } else if (expr->operator== DEC) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
+                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
+                    result->registerType = left->registerType;
+                    result->registerNumber = r;
                 }
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
@@ -1220,9 +1246,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 if (expr->operator== INC) {
                     auxAssign = left->assign + 1;
                     result = createResultExpression(left->typeVar, left->pointer, auxAssign);
+                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
+                    result->registerType = left->registerType;
+                    result->registerNumber = r;
                 } else if (expr->operator== DEC) {
                     auxAssign = left->assign - 1;
                     result = createResultExpression(left->typeVar, left->pointer, auxAssign);
+                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
+                    result->registerType = left->registerType;
+                    result->registerNumber = r;
                 }
                 // set assign do id referente ao left
                 result->auxLine = expr->value->line;
@@ -1489,13 +1521,16 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 // printf("1.String original: %s\n", command->string);
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
                 strcpy(stringWithoutFormat, command->string + 1);  // copy the string without the "
-                char *formatSpecifier = strstr(stringWithoutFormat, "%d");
+                char *formatSpecifier = strstr(stringWithoutFormat, "%d"); // pointer to the first occurrence of %d
+                char *restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
+                strcpy(restOfString, formatSpecifier + 2);
+                restOfString[strlen(restOfString) - 1] = '\0';  // remove the " and null terminate
                 if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
                 printString(mipsFile, stringWithoutFormat, command->auxToken->line);
                 printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
                 // printf("after %s\n", stringWithoutFormat);
-                if (command->string[strlen(command->string) - 2] == 'n' && command->string[strlen(command->string) - 3] == '\\')
-                    printString(mipsFile, "\\n", rand() % 100);
+                if (strlen(restOfString) > 0) 
+                    printString(mipsFile, restOfString, rand() % 1000);
                 free(stringWithoutFormat);
             } else {
                 // remove the " " from the string

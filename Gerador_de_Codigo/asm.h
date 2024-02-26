@@ -14,10 +14,17 @@ int printSubtraction(FILE *mips, int leftType, int leftReg, int rightType, int r
 int printMultiplication(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
 int printDivision(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
 int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
+int printAutoIncrements(FILE *mips, int leftType, int leftReg, char *op);
 
 // Assigns
 int printAssignment(FILE *mips, int rightType, int rightReg);
 void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg);
+
+// Unary operations (+, -, ~) + logical not (!) + bitwise ops (&, |, ^) + shifts (<<, >>)
+int printUnaryPlusMinus(FILE *mips, int leftType, int leftReg, char *op);
+int printBitwiseNot(FILE *mips, int leftType, int leftReg);
+int printBitwiseOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
+int printLogicalNot(FILE *mips, int leftType, int leftReg);
 
 // Relational expressions
 int printGreaterThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
@@ -55,5 +62,7 @@ void printReturn(FILE *mips);
 // Stack
 void printStart(FILE *mips);
 void printEnd(FILE *mips);
+
+void failedToGenerateMips(FILE *mips, char *path);
 
 #endif
