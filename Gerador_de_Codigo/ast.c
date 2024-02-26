@@ -1423,6 +1423,12 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == WHILE || command->type == DO) {
+        int whileLine = command->auxToken->line;
+        if (command->type == WHILE)
+            printJump(mipsFile, "while_teste_", whileLine);
+        printLabel(mipsFile, "while_corpo_", whileLine);
+        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        printLabel(mipsFile, "while_teste_", whileLine);
         ResultExpression *whileResult = NULL;
         whileResult = evalExpression(command->condition, globalHash, localHash, program);
         if (whileResult->typeVar == VOID && whileResult->pointer == 0) {
@@ -1433,7 +1439,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        printWhile(mipsFile, whileResult->registerType, whileResult->registerNumber, whileLine);
     }
 
     if (command->type == FOR) {
@@ -1479,7 +1485,6 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             }
 
         } else {
-            // printScanInt(mipsFile);
             HashNode *node = getIdentifierNode(localHash, command->identifier);
             if (!node) node = getIdentifierNode(globalHash, command->identifier);
             if (!node) {
@@ -1492,10 +1497,6 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             }
             int sReg = printScanInt(mipsFile, node->sRegister);
             node->sRegister = sReg;
-
-            // how do i say ther variable id = command->identifier has the value of what was read by scanf?
-            // cause if in another moment of the code it uses the value of this var to make a adition, i wont hava any value and
-            // i wont even know what register this value should be
         }
     }
 

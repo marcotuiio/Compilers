@@ -194,10 +194,19 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
     return t;
 }
 
-void printIf(FILE *mips, int conditionType, int conditionReg, int label) {
+void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
-    fprintf(mips, "\tbeqz $%c%d, else_linha_%d\n", c, conditionReg, label);
+    fprintf(mips, "\tbeqz $%c%d, else_linha_%d\n", c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
+}
+
+void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID) {
+    char c = conditionType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, while_corpo_%d\n", t, c, conditionReg, labelID);
+    if (conditionType == 0) tRegister[conditionReg] = 0;
+    tRegister[t] = 0;
 }
 
 void printJump(FILE *mips, char *label, int labelID) {

@@ -1,12 +1,16 @@
+// #include <stdio.h>
 int main() {
-    int a;
-    int b;
-    printf("Digite um valor para a: ");
-    scanf("%d", &a);
+    int a = 5;
+    do {
+        printf("a = %d\n", a);
+        a = a + 1;
+    } while (a < 10);
+    // printf("Digite um valor para a: ");
+    // scanf("%d", &a);
 
-    b = a * 2;
-    printf("Valor lido de a = %d\n", a);
-    printf("Valor de b = %d\n", b);
+    // b = a * 2;
+    // printf("Valor lido de a = %d\n", a);
+    // printf("Valor de b = %d\n", b);
     // int b = 40;
     // int c;
     // c = a + b * 2;
