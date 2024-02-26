@@ -263,6 +263,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 } else if (hashNode->typeVar == NUM_INT || hashNode->typeVar == INT) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) result->pointer = 1;
+                    // printf("AAAAA id %s reg %d = fake %d\n", hashNode->varId, hashNode->sRegister, hashNode->assign);
                     result->auxIdNode = hashNode;
                     result->registerType = 1;
                     result->registerNumber = hashNode->sRegister;
@@ -393,7 +394,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxRightValor);
-                fprintf(mipsFile, "\t# assignment na ast\n");
+                // fprintf(mipsFile, "\t# assignment na ast\n");
                 int regS = -1;
                 // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
                 if (left->registerNumber == -1) {
@@ -1456,26 +1457,42 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         // printf("Return aux print: reg %d %d value %d var %s \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId);
         if (command->type == PRINTF) {
             if (command->auxPrint) {
+                // printf("1.String original: %s\n", command->string);
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, command->string + 1);
-                strtok(stringWithoutFormat, "%d");
-                strcat(stringWithoutFormat, "\0");
+                strcpy(stringWithoutFormat, command->string+1); // copy the string without the "
+                char *formatSpecifier = strstr(stringWithoutFormat, "%d");
+                if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
                 printString(mipsFile, stringWithoutFormat, command->auxToken->line);
                 printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                // printf("after %s\n", stringWithoutFormat);
                 if (command->string[strlen(command->string) - 2] == 'n' && command->string[strlen(command->string) - 3] == '\\')
                     printString(mipsFile, "\\n", rand() % 100);
-                free(stringWithoutFormat++);
+                free(stringWithoutFormat);
             } else {
                 // remove the " " from the string
+                // printf("2.String original %s\n", command->string);
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
-                strcat(fixedString, "\0");
+                fixedString[strlen(command->string) - 2] = '\0'; // Null-terminate the string
                 printString(mipsFile, fixedString, command->auxToken->line);
                 free(fixedString);
             }
 
         } else {
-            printScanInt(mipsFile);
+            // printScanInt(mipsFile);
+            HashNode *node = getIdentifierNode(localHash, command->identifier);
+            if (!node) node = getIdentifierNode(globalHash, command->identifier);
+            if (!node) {
+                if (textBefore) printf("\n");
+                printf("error:semantic::: '%s' undeclared", command->identifier);
+                // printLineError(expr->value->line, expr->value->column);
+                freeAST(program);
+                deleteAuxFile();
+                exit(0);
+            }
+            int sReg = printScanInt(mipsFile, node->sRegister);
+            node->sRegister = sReg;
+
             // how do i say ther variable id = command->identifier has the value of what was read by scanf?
             // cause if in another moment of the code it uses the value of this var to make a adition, i wont hava any value and
             // i wont even know what register this value should be

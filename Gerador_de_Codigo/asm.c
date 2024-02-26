@@ -230,10 +230,12 @@ void printString(FILE *mips, char *value, int stringID) {
     fprintf(mips, "\tsyscall\n");
 }
 
-void printScanInt(FILE *mips) {
+int printScanInt(FILE *mips, int sReg) {
+    if (sReg == -1) sReg = getSRegister();
     fprintf(mips, "\tli $v0, 5\n");
     fprintf(mips, "\tsyscall\n");
-    fprintf(mips, "\tmove $a0, $v0\n");
+    fprintf(mips, "\tmove $s%d, $v0\n", sReg);
+    return sReg;
 }
 
 void printCallFunction(FILE *mips, char *name) {

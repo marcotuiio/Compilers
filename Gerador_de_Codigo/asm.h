@@ -44,7 +44,7 @@ void printInteger(FILE *mips, int regType, int RegNumber);
 void printString(FILE *mips, char *value, int stringID);
 
 // Input scan
-void printScanInt(FILE *mips);
+int printScanInt(FILE *mips, int sReg);
 
 // Function call
 void printCallFunction(FILE *mips, char *name);

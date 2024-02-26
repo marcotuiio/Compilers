@@ -1,75 +1,48 @@
 .text
 .globl main
 main:
-	li $t0, 5
-	move $s0, $t0
-	li $t0, 10
-	move $s1, $t0
 	.data
-		string97: .asciiz "Testing assignment expressions...\n"
+		string4: .asciiz "Digite um valor para a: "
 	.text
-	la $a0, string97
+	la $a0, string4
 	li $v0, 4
 	syscall
-	# assignment na ast
-	move $s0, $s1
-	seq $t0, $s0, $s1
-	beqz $t0, else_linha_104
-	.data
-		string102: .asciiz "Test 1 passed: a is equal to b after assignment\n"
-	.text
-	la $a0, string102
-	li $v0, 4
+	li $v0, 5
 	syscall
-	j exit_if_102
-	else_linha_104:
-	.data
-		string104: .asciiz "Test 1 failed: a is not equal to b after assignment\n"
-	.text
-	la $a0, string104
-	li $v0, 4
-	syscall
-	exit_if_102:
-	add $t0, $s0, $s1
-	move $s0, $t0
+	move $s0, $v0
 	li $t0, 2
-	mul $t1, $t0, $s1
-	seq $t0, $s0, $t1
-	beqz $t0, else_linha_112
+	mul $t1, $s0, $t0
+	move $s1, $t1
 	.data
-		string110: .asciiz "Test 2 passed: a is equal to 2*b after add assignment\n"
+		string8: .asciiz "Valor lido de a = "
 	.text
-	la $a0, string110
+	la $a0, string8
 	li $v0, 4
 	syscall
-	j exit_if_110
-	else_linha_112:
+	move $a0, $s0
+	li $v0, 1
+	syscall
 	.data
-		string112: .asciiz "Test 2 failed: a is not equal to 2*b after add assignment\n"
+		string83: .asciiz "\n"
 	.text
-	la $a0, string112
+	la $a0, string83
 	li $v0, 4
 	syscall
-	exit_if_110:
-	sub $t0, $s0, $s1
-	move $s0, $t0
-	seq $t0, $s0, $s1
-	beqz $t0, else_linha_120
 	.data
-		string118: .asciiz "Test 3 passed: a is equal to b after subtract assignment\n"
+		string9: .asciiz "Valor de b = "
 	.text
-	la $a0, string118
+	la $a0, string9
 	li $v0, 4
 	syscall
-	j exit_if_118
-	else_linha_120:
+	move $a0, $s1
+	li $v0, 1
+	syscall
 	.data
-		string120: .asciiz "Test 3 failed: a is not equal to b after subtract assignment\n"
+		string86: .asciiz "\n"
 	.text
-	la $a0, string120
+	la $a0, string86
 	li $v0, 4
 	syscall
-	exit_if_118:
 	li $t0, 0
 	li $v0, 10
 	syscall

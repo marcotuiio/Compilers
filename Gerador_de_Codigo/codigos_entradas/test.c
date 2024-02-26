@@ -1,18 +1,24 @@
-// int main() {
-//     int a = 3;
-//     // // scanf("%d", &a);
-//     int b = 40;
-//     int c;
-//     c = a + b * 2;
-//     // printf("valor %d\n", c);
-//     // return 0;
-//     if (a < b && a < 4) {
-//         printf("a menor que b E a < 4\n");
-//     } else {
-//         printf("a maior que b OU a >= 4\n");
-//     }
-//     return 0;
-// }
+int main() {
+    int a;
+    int b;
+    printf("Digite um valor para a: ");
+    scanf("%d", &a);
+
+    b = a * 2;
+    printf("Valor lido de a = %d\n", a);
+    printf("Valor de b = %d\n", b);
+    // int b = 40;
+    // int c;
+    // c = a + b * 2;
+    // // printf("valor %d\n", c);
+    // // return 0;
+    // if (a < b && a < 4) {
+    //     printf("a menor que b E a < 4\n");
+    // } else {
+    //     printf("a maior que b OU a >= 4\n");
+    // }
+    return 0;
+}
 
 // TEST: relational expressions
 // int main() {
@@ -90,35 +96,35 @@
 // }
 
 // TEST Assign, ADD_Assign and SUB_Assign
-int main() {
-    int a = 5;
-    int b = 10;
+// int main() {
+//     int a = 5;
+//     int b = 10;
 
-    printf("Testing assignment expressions...\n");
+//     printf("Testing assignment expressions...\n");
 
-    // Test assignment
-    a = b;
-    if (a == b) {
-        printf("Test 1 passed: a is equal to b after assignment\n");
-    } else {
-        printf("Test 1 failed: a is not equal to b after assignment\n");
-    }
+//     // Test assignment
+//     a = b;
+//     if (a == b) {
+//         printf("Test 1 passed: a is equal to b after assignment\n");
+//     } else {
+//         printf("Test 1 failed: a is not equal to b after assignment\n");
+//     }
 
-    // Test add assignment
-    a += b;
-    if (a == 2*b) {
-        printf("Test 2 passed: a is equal to 2*b after add assignment\n");
-    } else {
-        printf("Test 2 failed: a is not equal to 2*b after add assignment\n");
-    }
+//     // Test add assignment
+//     a += b;
+//     if (a == 2*b) {
+//         printf("Test 2 passed: a is equal to 2*b after add assignment\n");
+//     } else {
+//         printf("Test 2 failed: a is not equal to 2*b after add assignment\n");
+//     }
 
-    // Test subtract assignment
-    a -= b;
-    if (a == b) {
-        printf("Test 3 passed: a is equal to b after subtract assignment\n");
-    } else {
-        printf("Test 3 failed: a is not equal to b after subtract assignment\n");
-    }
+//     // Test subtract assignment
+//     a -= b;
+//     if (a == b) {
+//         printf("Test 3 passed: a is equal to b after subtract assignment\n");
+//     } else {
+//         printf("Test 3 failed: a is not equal to b after subtract assignment\n");
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
