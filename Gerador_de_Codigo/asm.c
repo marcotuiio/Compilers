@@ -36,7 +36,7 @@ FILE *createAsmFile(char *fileName) {
 
 int printConstant(FILE *mips, int value) {
     int t = getTRegister();
-    fprintf(mips, "\tli $t%d, %d\n", t, value);
+    fprintf(mips, "\taddi $t%d, $zero, %d\n", t, value);
     return t;
 }
 
@@ -95,14 +95,14 @@ int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rig
 int printAssignment(FILE *mips, int rightType, int rightReg) {
     char r = rightType == 0 ? 't' : 's';
     int s = getSRegister();
-    fprintf(mips, "\tmove $s%d, $%c%d\n", s, r, rightReg);
+    fprintf(mips, "\tadd $s%d, $zero, $%c%d\n", s, r, rightReg);
     if (rightType == 0) tRegister[rightReg] = 0;
     return s;
 }
 
 void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg) {
     char r = rightType == 0 ? 't' : 's';
-    fprintf(mips, "\tmove $s%d, $%c%d\n", leftReg, r, rightReg);
+    fprintf(mips, "\tadd $s%d, $zero, $%c%d\n", leftReg, r, rightReg);
     if (rightType == 0) tRegister[rightReg] = 0;
 }
 
@@ -170,10 +170,10 @@ int printLogicalAnd(FILE *mips, int leftType, int leftReg, int rightType, int ri
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tli $t%d, 0\n", t);
-    fprintf(mips, "\tbeqz $%c%d, %s%d_%d\n", l, leftReg, "f_logical_and_", labelLineID, labelColumnID);
-    fprintf(mips, "\tbeqz $%c%d, %s%d_%d\n", r, rightReg, "f_logical_and_", labelLineID, labelColumnID);
-    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, l, leftReg, "f_logical_and_", labelLineID, labelColumnID);
+    fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, r, rightReg, "f_logical_and_", labelLineID, labelColumnID);
+    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
     fprintf(mips, "\t%s%d_%d:\n", "f_logical_and_", labelLineID, labelColumnID);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
@@ -184,10 +184,10 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
     fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, l, leftReg, "t_logical_or_", labelLineID, labelColumnID);
     fprintf(mips, "\tbeq $t%d, $%c%d, %s%d_%d\n", t, r, rightReg, "t_logical_or_", labelLineID, labelColumnID);
-    fprintf(mips, "\tli $t%d, 0\n", t);
+    fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
     fprintf(mips, "\t%s%d_%d:\n", "t_logical_or_", labelLineID, labelColumnID);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
@@ -196,15 +196,27 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
 
 void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
-    fprintf(mips, "\tbeqz $%c%d, else_linha_%d\n", c, conditionReg, labelID);
+    int t = getTRegister();
+    fprintf(mips, "addi $t%d, $zero, 0\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, else_linha_%d\n", t, c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
+    tRegister[t] = 0;
 }
 
 void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tli $t%d, 1\n", t);
+    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
     fprintf(mips, "\tbeq $t%d, $%c%d, while_corpo_%d\n", t, c, conditionReg, labelID);
+    if (conditionType == 0) tRegister[conditionReg] = 0;
+    tRegister[t] = 0;
+}
+
+void printFor(FILE *mips, int conditionType, int conditionReg, int labelID) {
+    char c = conditionType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, for_corpo_%d\n", t, c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
     tRegister[t] = 0;
 }
@@ -224,8 +236,8 @@ void printGlobalVariable(FILE *mips, char *name, int value) {
 
 void printInteger(FILE *mips, int regType, int RegNumber) {
     char r = regType == 0 ? 't' : 's';
-    fprintf(mips, "\tmove $a0, $%c%d\n", r, RegNumber);
-    fprintf(mips, "\tli $v0, 1\n");
+    fprintf(mips, "\tadd $a0, $zero, $%c%d\n", r, RegNumber);
+    fprintf(mips, "\taddi $v0, $zero, 1\n");
     fprintf(mips, "\tsyscall\n");
     if (regType == 0) tRegister[RegNumber] = 0;
 }
@@ -235,15 +247,15 @@ void printString(FILE *mips, char *value, int stringID) {
     fprintf(mips, "\t\tstring%d: .asciiz \"%s\"\n", stringID, value);
     fprintf(mips, "\t.text\n");
     fprintf(mips, "\tla $a0, string%d\n", stringID);
-    fprintf(mips, "\tli $v0, 4\n");
+    fprintf(mips, "\taddi $v0, $zero, 4\n");
     fprintf(mips, "\tsyscall\n");
 }
 
 int printScanInt(FILE *mips, int sReg) {
     if (sReg == -1) sReg = getSRegister();
-    fprintf(mips, "\tli $v0, 5\n");
+    fprintf(mips, "\taddi $v0, $zero, 5\n");
     fprintf(mips, "\tsyscall\n");
-    fprintf(mips, "\tmove $s%d, $v0\n", sReg);
+    fprintf(mips, "\tadd $s%d, $zero, $v0\n", sReg);
     return sReg;
 }
 
@@ -296,6 +308,6 @@ void printStart(FILE *mips) {
 }
 
 void printEnd(FILE *mips) {
-    fprintf(mips, "\tli $v0, 10\n");
+    fprintf(mips, "\taddi $v0, $zero, 10\n");
     fprintf(mips, "\tsyscall\n");
 }

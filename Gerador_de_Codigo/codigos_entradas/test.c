@@ -1,10 +1,12 @@
 // #include <stdio.h>
-int main() {
-    int a = 5;
-    do {
-        printf("a = %d\n", a);
-        a = a + 1;
-    } while (a < 10);
+// int main() {
+//     int a;
+//     printf("Informe a: ");
+//     scanf("%d", &a);
+//     while (a < 14) {
+//         printf("a = %d\n", a);
+//         a = a + 1;
+//     }
     // printf("Digite um valor para a: ");
     // scanf("%d", &a);
 
@@ -21,8 +23,8 @@ int main() {
     // } else {
     //     printf("a maior que b OU a >= 4\n");
     // }
-    return 0;
-}
+//     return 0;
+// }
 
 // TEST: relational expressions
 // int main() {
@@ -132,3 +134,14 @@ int main() {
 
 //     return 0;
 // }
+
+// TEST: loops
+int main() {
+    int i = 1;
+    for (i = 1; i <= 10; i++) {
+        printf("%d ", i);
+    }
+    printf("\n");
+
+    return 0;
+}

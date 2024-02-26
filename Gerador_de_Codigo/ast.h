@@ -165,6 +165,7 @@ typedef struct command {
 
     // print, scan
     char *string;
+    int idLin, idCol;
     Expression *auxPrint;
     char *identifier;
 
@@ -214,7 +215,7 @@ Command *createForStatement(Expression *init, Expression *condition, Expression 
 
 Command *createPrintStatement(char *string, Expression *auxPrint, void *next);
 
-Command *createScanStatement(char *string, char *identifier, void *next);
+Command *createScanStatement(char *string, char *identifier, int idLin, int idCol, void *next);
 
 Command *createReturnStatement(Expression *expression, void *next);
 

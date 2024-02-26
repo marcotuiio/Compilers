@@ -32,6 +32,7 @@ int printLogicalAnd(FILE *mips, int leftType, int leftReg, int rightType, int ri
 int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);
 void printIf(FILE *mips, int conditionType, int conditionReg, int labelID);
 void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID);
+void printFor(FILE *mips, int conditionType, int conditionReg, int labelID);
 
 // Labels and jumps
 void printJump(FILE *mips, char *label, int labelID);

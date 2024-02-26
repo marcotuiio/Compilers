@@ -154,10 +154,12 @@ Command *createPrintStatement(char *string, Expression *auxPrint, void *next) {
     return newPrint;
 }
 
-Command *createScanStatement(char *string, char *identifier, void *next) {
+Command *createScanStatement(char *string, char *identifier, int idLin, int idCol, void *next) {
     Command *newScan = calloc(1, sizeof(Command));
     newScan->type = SCANF;
     newScan->string = string;
+    newScan->idLin = idLin;
+    newScan->idCol = idCol;
     newScan->identifier = identifier;
     newScan->next = next;
     return newScan;
@@ -245,7 +247,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     freeAST(program);
                     deleteAuxFile();
                     exit(0);
-                }       
+                }
 
                 // printf("Achei %p %s %d %d (kind = %d) = %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign);
 
@@ -399,8 +401,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
                 if (left->registerNumber == -1) {
                     regS = printAssignment(mipsFile, right->registerType, right->registerNumber);
-                    ((HashNode*)left->auxIdNode)->sRegister = regS;
-                
+                    ((HashNode *)left->auxIdNode)->sRegister = regS;
+
                 } else {
                     regS = left->registerNumber;
                     printAssignmentToReg(mipsFile, right->registerType, right->registerNumber, regS);
@@ -448,7 +450,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
                     result->registerNumber = left->registerNumber;
                     result->registerType = left->registerType;
-                
+
                 } else if (expr->operator== MINUS_ASSIGN) {
                     result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
                     int tReg = printSubtraction(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
@@ -576,12 +578,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->type == OR_LOGICO) {
                 result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
-                int tReg = printLogicalOr(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken*)expr->value)->line, ((AuxToken*)expr->value)->column);
+                int tReg = printLogicalOr(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken *)expr->value)->line, ((AuxToken *)expr->value)->column);
                 result->registerNumber = tReg;
-            
+
             } else if (expr->type == AND_LOGICO) {
                 result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
-                int tReg = printLogicalAnd(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken*)expr->value)->line, ((AuxToken*)expr->value)->column);
+                int tReg = printLogicalAnd(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, ((AuxToken *)expr->value)->line, ((AuxToken *)expr->value)->column);
                 result->registerNumber = tReg;
             }
             result->registerType = 0;
@@ -1389,6 +1391,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 }
 
 void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
+    // printf("AST Comando %d %p\n", command ? command->type : -1, command);
     if (!command || command->visited) return;
     if (teveReturn) return;
     command->visited = 1;
@@ -1412,13 +1415,21 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        int ifLine = ((Command*)command->then)->auxToken->line;
-        int elseLine = ((Command*)command->elseStatement)->auxToken->line;
+        int ifLine = ((Command *)command->then)->auxToken->line;
+        int elseLine = ((Command *)command->elseStatement)->auxToken->line;
         printIf(mipsFile, ifResult->registerType, ifResult->registerNumber, elseLine);
-        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        Command *t = command->then;
+        while (t) {
+            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+            t = t->next;
+        }
         printJump(mipsFile, "exit_if_", ifLine);
         printLabel(mipsFile, "else_linha_", elseLine);
-        traverseASTCommand(command->elseStatement, globalHash, localHash, program, currentFunction);
+        Command *t2 = command->elseStatement;
+        while (t2) {
+            traverseASTCommand(t2, globalHash, localHash, program, currentFunction);
+            t2 = t2->next;
+        }
         printLabel(mipsFile, "exit_if_", ifLine);
     }
 
@@ -1427,7 +1438,11 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         if (command->type == WHILE)
             printJump(mipsFile, "while_teste_", whileLine);
         printLabel(mipsFile, "while_corpo_", whileLine);
-        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        Command *t = command->then;
+        while (t) {
+            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+            t = t->next;
+        }
         printLabel(mipsFile, "while_teste_", whileLine);
         ResultExpression *whileResult = NULL;
         whileResult = evalExpression(command->condition, globalHash, localHash, program);
@@ -1443,8 +1458,17 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == FOR) {
-        ResultExpression *forResult = NULL;
         evalExpression(command->init, globalHash, localHash, program);
+        printJump(mipsFile, "for_teste_", command->auxToken->line);
+        printLabel(mipsFile, "for_corpo_", command->auxToken->line);
+        Command *t = command->then;
+        while (t) {
+            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+            t = t->next;
+        }
+        evalExpression(command->increment, globalHash, localHash, program);
+        printLabel(mipsFile, "for_teste_", command->auxToken->line);
+        ResultExpression *forResult = NULL;
         forResult = evalExpression(command->condition, globalHash, localHash, program);
         if (forResult->typeVar == VOID && forResult->pointer == 0) {
             if (textBefore) printf("\n");
@@ -1454,8 +1478,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        evalExpression(command->increment, globalHash, localHash, program);
-        traverseASTCommand(command->then, globalHash, localHash, program, currentFunction);
+        printFor(mipsFile, forResult->registerType, forResult->registerNumber, command->auxToken->line);
     }
 
     if (command->type == PRINTF || command->type == SCANF) {
@@ -1465,7 +1488,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             if (command->auxPrint) {
                 // printf("1.String original: %s\n", command->string);
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, command->string+1); // copy the string without the "
+                strcpy(stringWithoutFormat, command->string + 1);  // copy the string without the "
                 char *formatSpecifier = strstr(stringWithoutFormat, "%d");
                 if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
                 printString(mipsFile, stringWithoutFormat, command->auxToken->line);
@@ -1479,7 +1502,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 // printf("2.String original %s\n", command->string);
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
-                fixedString[strlen(command->string) - 2] = '\0'; // Null-terminate the string
+                fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
                 printString(mipsFile, fixedString, command->auxToken->line);
                 free(fixedString);
             }
@@ -1489,8 +1512,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             if (!node) node = getIdentifierNode(globalHash, command->identifier);
             if (!node) {
                 if (textBefore) printf("\n");
-                printf("error:semantic::: '%s' undeclared", command->identifier);
-                // printLineError(expr->value->line, expr->value->column);
+                printf("error:semantic:%d:%d: '%s' undeclared", command->idLin, command->idCol, command->identifier);
+                printLineError(command->idLin, command->idCol);
                 freeAST(program);
                 deleteAuxFile();
                 exit(0);
