@@ -166,23 +166,23 @@ S: Comandos EOL { printf(">"); return 0; }
 Comandos: SHOW SETTINGS SEMICOLON { showSettings(); } 
     | RESET SETTINGS SEMICOLON { resetSettings(); } 
     | SET H_VIEW Expressao COLON Expressao SEMICOLON { 
-        if ($3->r_float > $5->r_float) {
+        if ($3->r_float >= $5->r_float) {
             printf("\nERROR: h_view_lo must be less than h_view_hi\n\n");
             return 0;
         } else {
             h_view_lo = $3->r_float;
             h_view_hi = $5->r_float;
-            clearAxis();
+            clearAxis(v_view_lo, v_view_hi, h_view_lo, h_view_hi);
         }
     }
     | SET V_VIEW Expressao COLON Expressao SEMICOLON {
-        if ($3->r_float > $5->r_float) {
+        if ($3->r_float >= $5->r_float) {
             printf("\nERROR: v_view_lo must be less than v_view_hi\n\n");
             return 0;
         } else {
             v_view_lo = $3->r_float;
             v_view_hi = $5->r_float;
-            clearAxis();
+            clearAxis(v_view_lo, v_view_hi, h_view_lo, h_view_hi);
         }
     }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
@@ -613,7 +613,7 @@ void resetSettings() {
 }
 
 void plotGraph(Expression *expr) {
-    if (erase_plot) clearAxis();
+    if (erase_plot) clearAxis(v_view_lo, v_view_hi, h_view_lo, h_view_hi);
     float xStep = (h_view_hi - h_view_lo) / (float) (X_AXIS_SIZE + 1);
 
     HashNode *xVar = getIdentifierNode(myHashTable, "x");
@@ -633,7 +633,7 @@ void plotGraph(Expression *expr) {
         xVar->valueId += xStep;
     }
     isPlot = 0;
-    if (result) drawAxis(draw_axis, v_view_lo, v_view_hi, h_view_lo, h_view_hi);
+    if (result) drawAxis(draw_axis);
 }
 
 void swap(float *a, float *b) {
@@ -757,6 +757,7 @@ void showAbout() {
 
 int main(int argc, char *argv[]) {
     myHashTable = createHash();
+    setAxis(v_view_lo, v_view_hi, h_view_lo, h_view_hi);
     printf(">");
     while (true) {
         if (yyparse() == QUIT || yychar == 0) break;
