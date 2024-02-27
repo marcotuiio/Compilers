@@ -172,6 +172,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         } else {
             h_view_lo = $3->r_float;
             h_view_hi = $5->r_float;
+            clearAxis();
         }
     }
     | SET V_VIEW Expressao COLON Expressao SEMICOLON {
@@ -181,6 +182,7 @@ Comandos: SHOW SETTINGS SEMICOLON { showSettings(); }
         } else {
             v_view_lo = $3->r_float;
             v_view_hi = $5->r_float;
+            clearAxis();
         }
     }
     | SET AXIS ON SEMICOLON { draw_axis = true; } 
@@ -631,7 +633,7 @@ void plotGraph(Expression *expr) {
         xVar->valueId += xStep;
     }
     isPlot = 0;
-    if (result) drawAxis(draw_axis);
+    if (result) drawAxis(draw_axis, v_view_lo, v_view_hi, h_view_lo, h_view_hi);
 }
 
 void swap(float *a, float *b) {
