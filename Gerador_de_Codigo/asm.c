@@ -40,55 +40,24 @@ int printConstant(FILE *mips, int value) {
     return t;
 }
 
-int printAddition(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+int printArithmeticsOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tadd $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    fprintf(mips, "\t%s $t%d, $%c%d, $%c%d\n", op, t, l, leftReg, r, rightReg);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
     return t;
 }
 
-int printSubtraction(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tsub $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printMultiplication(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tmul $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printDivision(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     fprintf(mips, "\tdiv $%c%d, $%c%d\n", l, leftReg, r, rightReg);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
     int t = getTRegister();
-    fprintf(mips, "\tmflo $t%d\n", t);
-    return t;
-}
-
-int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    fprintf(mips, "\tdiv $%c%d, $%c%d\n", l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    int t = getTRegister();
-    fprintf(mips, "\tmfhi $t%d\n", t);
+    fprintf(mips, "\t%s $t%d\n", op, t);
     return t;
 }
 
@@ -146,61 +115,11 @@ int printLogicalNot(FILE *mips, int leftType, int leftReg) {
     return t;
 }
 
-int printGreaterThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+int printRelationalOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tsgt $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printGreaterEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tsge $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printLessThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tslt $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printLessEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tsle $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tseq $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
-    if (leftType == 0) tRegister[leftReg] = 0;
-    if (rightType == 0) tRegister[rightReg] = 0;
-    return t;
-}
-
-int printNotEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
-    char l = leftType == 0 ? 't' : 's';
-    char r = rightType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\tsne $t%d, $%c%d, $%c%d\n", t, l, leftReg, r, rightReg);
+    fprintf(mips, "\t%s $t%d, $%c%d, $%c%d\n", op, t, l, leftReg, r, rightReg);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
     return t;

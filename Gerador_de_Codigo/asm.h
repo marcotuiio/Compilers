@@ -9,11 +9,8 @@ FILE *createAsmFile(char *fileName);
 
 // Arithmetic operations
 int printConstant(FILE *mips, int value);
-int printAddition(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printSubtraction(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printMultiplication(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printDivision(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printRemainder(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
+int printArithmeticsOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
+int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
 int printAutoIncrements(FILE *mips, int leftType, int leftReg, char *op);
 
 // Assigns
@@ -27,12 +24,7 @@ int printBitwiseOps(FILE *mips, int leftType, int leftReg, int rightType, int ri
 int printLogicalNot(FILE *mips, int leftType, int leftReg);
 
 // Relational expressions
-int printGreaterThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printGreaterEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printLessThan(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printLessEqual(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
-int printNotEquals(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
+int printRelationalOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
 
 // Control structures
 int printLogicalAnd(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);

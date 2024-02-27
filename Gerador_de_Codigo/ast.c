@@ -446,14 +446,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                 if (expr->operator== ADD_ASSIGN) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
-                    int tReg = printAddition(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                    int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
                     printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
                     result->registerNumber = left->registerNumber;
                     result->registerType = left->registerType;
 
                 } else if (expr->operator== MINUS_ASSIGN) {
                     result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
-                    int tReg = printSubtraction(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                    int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sub");
                     printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
                     result->registerNumber = left->registerNumber;
                     result->registerType = left->registerType;
@@ -657,33 +657,33 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 deleteAuxFile();
                 exit(0);
             }
-            int reg = -1;
+     
             if (expr->operator== LESS_THAN) {
                 result = createResultExpression(INT, 0, left->assign < right->assign);
-                reg = printLessThan(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "slt");
+                result->registerNumber = reg;
             } else if (expr->operator== GREATER_THAN) {
                 result = createResultExpression(INT, 0, left->assign > right->assign);
-                reg = printGreaterThan(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sgt");
+                result->registerNumber = reg;
             } else if (expr->operator== LESS_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign <= right->assign);
-                reg = printLessEqual(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sle");
+                result->registerNumber = reg;
             } else if (expr->operator== GREATER_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign >= right->assign);
-                reg = printGreaterEqual(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sge");
+                result->registerNumber = reg;
             } else if (expr->operator== EQUAL) {
                 result = createResultExpression(INT, 0, left->assign == right->assign);
-                reg = printEquals(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "seq");
+                result->registerNumber = reg;
             } else if (expr->operator== NOT_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign != right->assign);
-                reg = printNotEquals(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
-            }
-            if (reg != -1) {
-                result->registerType = 0;
+                int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sne");
                 result->registerNumber = reg;
-            } else {
-                printf("Erro ao gerar codigo para comparacao\n");
-                exit(-1);
             }
+            
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -846,7 +846,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                int tReg = printAddition(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
                 result->registerType = 0;
                 result->registerNumber = tReg;
                 return result;
@@ -867,7 +867,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                int tReg = printSubtraction(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sub");
                 result->registerType = 0;
                 result->registerNumber = tReg;
                 return result;
@@ -952,7 +952,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             if (expr->operator== MULTIPLY) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
-                int tReg = printMultiplication(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "mul");
                 result->registerType = 0;
                 result->registerNumber = tReg;
             } else if (expr->operator== DIVIDE) {
@@ -965,11 +965,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
-                int tReg = printDivision(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int tReg = printDivisionOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "mflo");
                 result->registerNumber = tReg;
             } else if (expr->operator== REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
-                int tReg = printRemainder(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber);
+                int tReg = printDivisionOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "mfhi");
                 result->registerNumber = tReg;
             } else if (expr->operator== BITWISE_OR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
