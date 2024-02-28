@@ -25,8 +25,10 @@ void setAxis(float lowV, float highV, float lowH, float highH) {
     }
     // printf("X: %d Y: %d\n", indiceXAxis, indiceYAxis);
     if (indiceXAxis >= Y_AXIS_SIZE) indiceXAxis = Y_AXIS_SIZE - 1;
-    if (indiceYAxis >= X_AXIS_SIZE) indiceYAxis = X_AXIS_SIZE - 1;
-
+    if (indiceXAxis < 0) indiceXAxis = 0;   
+    if (indiceYAxis > X_AXIS_SIZE) indiceYAxis = X_AXIS_SIZE;
+    if (indiceYAxis < 0) indiceYAxis = 0;
+    
     for (int i = 0; i < X_AXIS_SIZE + 1; i++) {
         if (axis[indiceXAxis][i] == ' ')
             axis[indiceXAxis][i] = '-';
