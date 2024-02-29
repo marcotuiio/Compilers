@@ -6,12 +6,14 @@
 #include <string.h>
 
 FILE *createAsmFile(char *fileName);
+void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath);
 
 // Arithmetic operations
 int printConstant(FILE *mips, int value);
 int printArithmeticsOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
 int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int rightReg, char *op);
-int printAutoIncrements(FILE *mips, int leftType, int leftReg, char *op);
+int printPreIncrements(FILE *mips, int leftType, int leftReg, char *op);
+int printPostIncrements(FILE *mips, int leftType, int leftReg, char *op);
 
 // Assigns
 int printAssignment(FILE *mips, int rightType, int rightReg);
@@ -38,7 +40,11 @@ void printJump(FILE *mips, char *label, int labelID);
 void printLabel(FILE *mips, char *label, int labelID);
 
 // Global variables
-void printGlobalVariable(FILE *mips, char *name, int value);
+void setGlobalIntVariable(char *name, int value);
+void printGlobals(FILE *mips);
+// void printGlobalCharVariable(FILE *mips, char *name, char value);
+int printLoadIntGlobal(FILE *mips, char *name);
+
 
 // Output print
 void printInteger(FILE *mips, int regType, int RegNumber);
@@ -54,7 +60,5 @@ void printReturn(FILE *mips);
 // Stack
 void printStart(FILE *mips);
 void printEnd(FILE *mips);
-
-void failedToGenerateMips(FILE *mips, char *path);
 
 #endif

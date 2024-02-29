@@ -1,5 +1,17 @@
 // #include <stdio.h>
 
+void main() {
+    int x = 5;
+    int preIncrementResult, postIncrementResult;
+    // Post-increment: Use the original value and then increment
+    postIncrementResult = x++;
+    printf("Post-increment result: %d\n", postIncrementResult); // Prints 5
+
+    // Pre-increment: Increment first and then use the updated value
+    preIncrementResult = ++x;
+    printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
+}
+
 // int main() {
 //     int a = 7;
 //     printf("hello world %d this is fun\n", a);
@@ -142,16 +154,15 @@
 //     return 0;
 // }
 
-// TEST: loops
-int main() {
-    int i= 99;
-    for (i = 1; i <= 10; i++) {
-        printf("%d ", i);
-    }
-    printf("\n");
-
-    return 0;
-}
+// TEST: defines
+// #define max 10
+// int main() {
+//     int i;
+//     i = max * 2;
+//     printf("max = %d\n", max);
+//     printf("i = %d\n", i);
+//     return 0;
+// }
 
 // TESTE Bitwise
 // int main() {
@@ -178,5 +189,23 @@ int main() {
 //     // The result is 00000100
 //     printf("b>>1 = %d\n", b >> 1);
  
+//     return 0;
+// }
+
+// TESTE loops
+// int main() {
+//     int a = 0;
+//     while (a < 10) {
+//         printf("while a = %d\n", a);
+//         a = a + 1;
+//     }
+//     a = 0;
+//     do {
+//         printf("do-while a = %d\n", a);
+//         a = a + 1;
+//     } while (a < 10);
+//     for (a = 10; a > 0; a--) {
+//         printf("for a = %d\n", a);
+//     }
 //     return 0;
 // }

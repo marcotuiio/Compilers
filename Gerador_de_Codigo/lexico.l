@@ -4,6 +4,7 @@
 
 %{
 #include "ast.h"
+#include "asm.h"
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
@@ -19,6 +20,9 @@ int wrongTokenColumn;
 
 char lineBuffer[2048] = "";
 FILE *auxFile;
+
+extern FILE *mipsFile;
+extern char *mipsPath;
 
 void addToUnion(int type) {
     yylval.token.valor = strdup(yytext);
@@ -58,7 +62,7 @@ void getLineBuffer(int nline) {
 }
 
 void deleteAuxFile() {
-    fclose(auxFile);
+    // fclose(auxFile);
     remove("tempfile.txt");
 }
 
@@ -98,6 +102,7 @@ void deleteAuxFile() {
 <COMMENT><<EOF>> { 
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: unterminated comment", lineStart, columnStart);
+    deleteMipsFileOnError(mipsFile, mipsPath);
     deleteAuxFile();
     exit(1); 
 }
@@ -170,6 +175,7 @@ void deleteAuxFile() {
         if (textBefore) printf("\n");
         printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
         yycolumn += strlen(yytext);
+        deleteMipsFileOnError(mipsFile, mipsPath);
         deleteAuxFile();
         exit(1);
     } 
@@ -186,6 +192,7 @@ void deleteAuxFile() {
     if (textBefore) printf("\n");
     printf("error:lexical:%d:%d: %s", yylineno, yycolumn, yytext);
     yycolumn += strlen(yytext);
+    deleteMipsFileOnError(mipsFile, mipsPath);
     deleteAuxFile();
     exit(1);
 }

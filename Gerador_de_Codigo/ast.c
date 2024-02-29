@@ -5,6 +5,7 @@
 #include "sintatico.tab.h"
 
 extern FILE *mipsFile;
+extern char *mipsPath;
 
 int functionWithNoReturn = 0;
 extern void printLineError(int line, int column);
@@ -236,6 +237,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: '%s' undeclared", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -245,17 +247,18 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: '%s' initializer element is not constant", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
-
-                // printf("Achei %p %s %d %d (kind = %d) = %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign);
+                // printf("Achei %p %s %d %d (kind = %d) = %d | const %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign, hashNode->isConstant);
 
                 if (hashNode->typeVar == VOID) {
                     // if (textBefore) printf("\n");
                     // printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                     // printLineError(expr->value->line, expr->value->column);
                     // freeAST(program);
+                    // deleteMipsFileOnError(mipsFile, mipsPath);
                     // deleteAuxFile();
                     // exit(0);
                     result = createResultExpression(VOID, hashNode->pointer, hashNode->assign);
@@ -267,8 +270,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     // printf("AAAAA id %s reg %d = fake %d\n", hashNode->varId, hashNode->sRegister, hashNode->assign);
                     result->auxIdNode = hashNode;
-                    result->registerType = 1;
-                    result->registerNumber = hashNode->sRegister;
+                    if (hashNode->isConstant) {
+                        result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
+                        result->registerType = 0;
+                    } else {
+                        result->registerType = 1;
+                        result->registerNumber = hashNode->sRegister;
+                    }
                     return result;
                 } else if (hashNode->typeVar == CHARACTER || hashNode->typeVar == CHAR) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
@@ -301,6 +309,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -311,6 +320,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: assignment of read-only location %s", expr->value->line, expr->value->column, expr->left->value->valor);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -321,6 +331,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -373,6 +384,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         }
@@ -390,13 +402,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         }
                     }
                 }
+                // fprintf(mipsFile, "\t# assignment na ast %d %d\n", right->registerNumber, right->registerType);
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxRightValor);
-                // fprintf(mipsFile, "\t# assignment na ast\n");
                 int regS = -1;
                 // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
                 if (left->registerNumber == -1) {
@@ -423,6 +436,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         }
@@ -438,6 +452,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             free(type2);
                             printLineError(expr->value->line, expr->value->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         }
@@ -654,10 +669,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
-     
+
             if (expr->operator== LESS_THAN) {
                 result = createResultExpression(INT, 0, left->assign < right->assign);
                 int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "slt");
@@ -683,7 +699,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 int reg = printRelationalOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sne");
                 result->registerNumber = reg;
             }
-            
+
+            result->registerType = 0;
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
@@ -697,6 +714,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -749,6 +767,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -758,6 +777,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: %s shift count is negative", expr->value->line, expr->value->column, expr->operator== R_SHIFT ? "right" : "left");
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -792,7 +812,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
             //     printLineError(expr->value->line, expr->value->column);
             //     freeAST(program);
-            //     deleteAuxFile();
+            //     deleteMipsFileOnError(mipsFile, mipsPath);
+            deleteAuxFile();
             //     exit(0);
             // }
 
@@ -837,6 +858,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -861,6 +883,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type2);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -886,7 +909,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
             //     printLineError(expr->value->line, expr->value->column);
             //     freeAST(program);
-            //     deleteAuxFile();
+            //     deleteMipsFileOnError(mipsFile, mipsPath);
+            deleteAuxFile();
             //     exit(0);
             // }
 
@@ -946,6 +970,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 free(type2);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -961,6 +986,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: division by zero", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1003,6 +1029,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -1078,6 +1105,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
             //     printLineError(expr->value->line, expr->value->column);
             //     freeAST(program);
+            //     deleteMipsFileOnError(mipsFile, mipsPath);
             //     deleteAuxFile();
             //     exit(0);
             // }
@@ -1089,6 +1117,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         printf("error:semantic:%d:%d: wrong type argument to unary %s", expr->value->line, expr->value->column, expr->operator== PLUS ? "plus" : "minus");
                         printLineError(expr->value->line, expr->value->column);
                         freeAST(program);
+                        deleteMipsFileOnError(mipsFile, mipsPath);
                         deleteAuxFile();
                         exit(0);
                     }
@@ -1109,6 +1138,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1137,6 +1167,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1150,6 +1181,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1167,6 +1199,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: lvalue required as unary '%s' operand", expr->value->line, expr->value->column, expr->value->valor);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1195,25 +1228,26 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     free(type1);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
 
                 if (expr->operator== BITWISE_AND) {
-                    result = createResultExpression(auxLeftType, 1, *(&auxLeftValor)); // acesso do valor em memoria
+                    result = createResultExpression(auxLeftType, 1, *(&auxLeftValor));  // acesso do valor em memoria
                 } else if (expr->operator== NOT) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
                     int reg = printLogicalNot(mipsFile, left->registerType, left->registerNumber);
                     result->registerType = 0;
                     result->registerNumber = reg;
-                } else if (expr->operator== INC) {
+                } else if (expr->operator== INC) {  // pre incremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
-                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
+                    int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
                     result->registerType = left->registerType;
                     result->registerNumber = r;
-                } else if (expr->operator== DEC) {
+                } else if (expr->operator== DEC) {  // pre decremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
-                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
+                    int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
                     result->registerType = left->registerType;
                     result->registerNumber = r;
                 }
@@ -1238,22 +1272,25 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: lvalue required as increment operand", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
 
-                int auxAssign;
-                if (expr->operator== INC) {
-                    auxAssign = left->assign + 1;
-                    result = createResultExpression(left->typeVar, left->pointer, auxAssign);
-                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
-                    result->registerType = left->registerType;
+                if (expr->operator== INC) { // pos incremento
+                    int originalValue = left->assign;
+                    left->assign++;
+                    result = createResultExpression(left->typeVar, left->pointer, originalValue);
+                    int r = printPostIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
+                    result->registerType = 0; // como o que deve ser retornado é o valor original, nao tem registrador $s
                     result->registerNumber = r;
-                } else if (expr->operator== DEC) {
-                    auxAssign = left->assign - 1;
-                    result = createResultExpression(left->typeVar, left->pointer, auxAssign);
-                    int r = printAutoIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
-                    result->registerType = left->registerType;
+
+                } else if (expr->operator== DEC) { // pos decremento
+                    int originalValue = left->assign;
+                    left->assign--;
+                    result = createResultExpression(left->typeVar, left->pointer, originalValue);
+                    int r = printPostIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
+                    result->registerType = 0; // como o que deve ser retornado é o valor original, nao tem registrador $s
                     result->registerNumber = r;
                 }
                 // set assign do id referente ao left
@@ -1276,6 +1313,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: subscripted value is neither array nor pointer", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
 
@@ -1295,6 +1333,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             printf("error:semantic:%d:%d: subscripted value is neither array nor pointer", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                             printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         }
@@ -1305,6 +1344,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             printf("error:semantic:%d:%d: array subscript is not an integer", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                             printLineError(dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
                             freeAST(program);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
                             deleteAuxFile();
                             exit(0);
                         } else {
@@ -1334,6 +1374,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printf("error:semantic:%d:%d: called object '%s' is not a function or function pointer", expr->value->line, expr->value->column, auxIdNode->varId);
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1354,6 +1395,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                     printLineError(expr->value->line, expr->value->column);
                     freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -1397,6 +1439,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         free(type2);
                         printLineError(expr->value->line, expr->value->column);
                         freeAST(program);
+                        deleteMipsFileOnError(mipsFile, mipsPath);
                         deleteAuxFile();
                         exit(0);
                     }
@@ -1416,6 +1459,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
         default:
             printf("Tipo de expressão não suportado %p\n", expr);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(0);
     }
@@ -1444,6 +1488,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", ifResult->auxLine, ifResult->auxColumn);
             printLineError(ifResult->auxLine, ifResult->auxColumn);
             freeAST(program);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(0);
         }
@@ -1483,6 +1528,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", whileResult->auxLine, whileResult->auxColumn);
             printLineError(whileResult->auxLine, whileResult->auxColumn);
             freeAST(program);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(0);
         }
@@ -1507,6 +1553,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
             printLineError(forResult->auxLine, forResult->auxColumn);
             freeAST(program);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(0);
         }
@@ -1520,16 +1567,16 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             if (command->auxPrint) {
                 // printf("1.String original: %s\n", command->string);
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, command->string + 1);  // copy the string without the "
-                char *formatSpecifier = strstr(stringWithoutFormat, "%d"); // pointer to the first occurrence of %d
+                strcpy(stringWithoutFormat, command->string + 1);           // copy the string without the "
+                char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
                 char *restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
                 strcpy(restOfString, formatSpecifier + 2);
-                restOfString[strlen(restOfString) - 1] = '\0';  // remove the " and null terminate
+                restOfString[strlen(restOfString) - 1] = '\0';         // remove the " and null terminate
                 if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
                 printString(mipsFile, stringWithoutFormat, command->auxToken->line);
                 printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
                 // printf("after %s\n", stringWithoutFormat);
-                if (strlen(restOfString) > 0) 
+                if (strlen(restOfString) > 0)
                     printString(mipsFile, restOfString, rand() % 1000);
                 free(stringWithoutFormat);
             } else {
@@ -1550,6 +1597,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 printf("error:semantic:%d:%d: '%s' undeclared", command->idLin, command->idCol, command->identifier);
                 printLineError(command->idLin, command->idCol);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -1568,6 +1616,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 printf("error:semantic:%d:%d: return with a value, in function returning void", auxFunc->line, auxFunc->column);
                 printLineError(auxFunc->line, auxFunc->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -1577,6 +1626,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 printf("error:semantic:%d:%d: return with no value, in function returning non-void", command->auxToken->line, command->auxToken->column);
                 printLineError(command->auxToken->line, command->auxToken->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }
@@ -1597,6 +1647,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 free(type2);
                 printLineError(command->auxToken->line, command->auxToken->column);
                 freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(0);
             }

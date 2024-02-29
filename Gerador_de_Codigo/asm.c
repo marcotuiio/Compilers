@@ -3,6 +3,8 @@
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+char *globalDeclarations = NULL;
+
 int getSRegister() {
     for (int i = 0; i < 8; i++) {
         if (sRegister[i] == 0) {
@@ -34,6 +36,11 @@ FILE *createAsmFile(char *fileName) {
     return file;
 }
 
+void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath) {
+    fclose(mipsFile);
+    remove(mipsPath);
+}
+
 int printConstant(FILE *mips, int value) {
     int t = getTRegister();
     fprintf(mips, "\taddi $t%d, $zero, %d\n", t, value);
@@ -61,10 +68,18 @@ int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int r
     return t;
 }
 
-int printAutoIncrements(FILE *mips, int leftType, int leftReg, char *op) {
+int printPreIncrements(FILE *mips, int leftType, int leftReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
-    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg);
+    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg); // the return value will be on the already incremented register
     return leftReg;
+}
+
+int printPostIncrements(FILE *mips, int leftType, int leftReg, char *op) {
+    char l = leftType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\tadd $t%d, $zero, $%c%d\n", t, l, leftReg); // first store the original value
+    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg); // then increment and return the original value
+    return t;
 }
 
 int printAssignment(FILE *mips, int rightType, int rightReg) {
@@ -156,7 +171,7 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
 void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "addi $t%d, $zero, 0\n", t);
+    fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
     fprintf(mips, "\tbeq $t%d, $%c%d, else_linha_%d\n", t, c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
     tRegister[t] = 0;
@@ -188,9 +203,36 @@ void printLabel(FILE *mips, char *label, int labelId) {
     fprintf(mips, "\t%s%d:\n", label, labelId);
 }
 
-void printGlobalVariable(FILE *mips, char *name, int value) {
-    fprintf(mips, ".data\n");
-    fprintf(mips, "%s: .word %d\n", name, value);
+void setGlobalIntVariable(char *name, int value) {
+    if (!globalDeclarations)
+        globalDeclarations = calloc(4096, sizeof(char));
+    
+    sprintf(globalDeclarations + strlen(globalDeclarations), "\t%s: .word %d\n", name, value);
+    // printf("teste de global: %s\n", globalDeclarations);
+
+    // fprintf(mips, ".data\n");
+    // fprintf(mips, "\t%s: .word %d\n", name, value);
+}
+
+void printGlobals(FILE *mips) {
+    if (globalDeclarations) {
+        fprintf(mips, "\n# BLOCO DE DEFINES NO FIM DO ARQUIVO\n");
+        fprintf(mips, ".data\n");
+        fprintf(mips, "%s", globalDeclarations);
+        fprintf(mips, "# END BLOCO DEFINES");
+    }
+}
+
+// void printGlobalCharVariable(FILE *mips, char *name, char value) {
+//     fprintf(mips, ".data\n");
+//     fprintf(mips, "\t%s: .byte '%c'\n", name, value);
+// }
+
+int printLoadIntGlobal(FILE *mips, char *name) {
+    int t = getTRegister();
+    fprintf(mips, "\tla $t%d, %s\n", t, name);
+    fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, t);
+    return t;
 }
 
 void printInteger(FILE *mips, int regType, int RegNumber) {
@@ -267,12 +309,8 @@ void printStart(FILE *mips) {
 }
 
 void printEnd(FILE *mips) {
-    fprintf(mips, "\taddi $v0, $zero, 10\n");
+    fprintf(mips, "\n\taddi $v0, $zero, 10\n");
     fprintf(mips, "\tsyscall\n");
+    printGlobals(mips);
     fclose(mips);
-}
-
-void failedToGenerateMips(FILE *mips, char *path) {
-    fclose(mips);
-    remove(path);
 }

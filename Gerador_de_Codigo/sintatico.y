@@ -44,6 +44,7 @@ void **currentHash = NULL;
 
 Program *AST = NULL;
 FILE *mipsFile = NULL;
+char *mipsPath = NULL;
 
 void printLineError(int line, int column);
 
@@ -237,6 +238,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             printLineError($4->value->line, $4->value->column);
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(1);
         }
@@ -250,6 +252,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
             // printf("\nresult do define %s %d %d\n", $3.valor, result->typeVar, result->assign);
+            setGlobalIntVariable($3.valor, result->assign);
             setAssign(node, result->assign);
         }
     }
@@ -259,6 +262,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             printLineError($1.line, $1.column);
             if (currentHash) freeHash(currentHash);
             // if (globalHash) freeHash(globalHash);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(1);
         }
@@ -282,6 +286,7 @@ Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Coman
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
             traverseAST(AST);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(1);
         }
@@ -325,6 +330,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             if (currentHash) freeHash(currentHash);
             if (globalHash) freeHash(globalHash);
             traverseAST(AST);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(1);
         }
@@ -381,6 +387,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                     printLineError(auxLineAssign, auxColumnAssign);
                     if (currentHash) freeHash(currentHash);
                     // if (globalHash) freeHash(globalHash);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
                     deleteAuxFile();
                     exit(0);
                 }
@@ -395,6 +402,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
                         printLineError(auxLineAssign, auxColumnAssign);
                         if (currentHash) freeHash(currentHash);
                         // if (globalHash) freeHash(globalHash);
+                        deleteMipsFileOnError(mipsFile, mipsPath);
                         deleteAuxFile();
                         exit(1);
                     }
@@ -418,6 +426,7 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
                 printLineError($1.line, $1.column);
                 if (currentHash) freeHash(currentHash);
                 // if (globalHash) freeHash(globalHash);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(1);
             }
@@ -476,6 +485,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
             printLineError($3.line, $3.column);
             if (currentHash) freeHash(currentHash);
             // traverseAST(AST);
+            deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(1);
         }
@@ -900,10 +910,8 @@ void printLineError(int line, int column) {
 
 int main(int argc, char *argv[]) {
     mipsFile = createAsmFile(argv[argc - 1]);
-    if (argc < 2) {
-        printf("error:usage: no input files\n");
-        return 1;
-    }
+    mipsPath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
+    strcpy(mipsPath, argv[argc - 1]);
     printStart(mipsFile);
     readInputIntoAuxFile();
     yyparse();
