@@ -206,12 +206,9 @@ void printLabel(FILE *mips, char *label, int labelId) {
 void setGlobalIntVariable(char *name, int value) {
     if (!globalDeclarations)
         globalDeclarations = calloc(4096, sizeof(char));
-    
+            
     sprintf(globalDeclarations + strlen(globalDeclarations), "\t%s: .word %d\n", name, value);
     // printf("teste de global: %s\n", globalDeclarations);
-
-    // fprintf(mips, ".data\n");
-    // fprintf(mips, "\t%s: .word %d\n", name, value);
 }
 
 void printGlobals(FILE *mips) {
@@ -232,6 +229,37 @@ int printLoadIntGlobal(FILE *mips, char *name) {
     int t = getTRegister();
     fprintf(mips, "\tla $t%d, %s\n", t, name);
     fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, t);
+    return t;
+}
+
+int printDeclareArray(FILE *mips, char *name, int size) {
+    fprintf(mips, "\t.data\n");
+    fprintf(mips, "\t\t%s: .space %d\n", name, size * 4);
+    fprintf(mips, "\t.text\n");
+    int s = getSRegister();
+    fprintf(mips, "\tla $s%d, %s\n", s, name);
+    return s;
+}
+
+int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, int indexType, int indexReg) {
+    int t = getTRegister();
+    char index = indexType == 0 ? 't' : 's';
+    char a = arrayType == 0 ? 't' : 's';
+    fprintf(mips, "\tsll $t%d, $%c%d, 2\n", t, index, indexReg);
+    fprintf(mips, "\tadd $t%d, $t%d, $%c%d\n", t, t, a, arrayReg);
+    return t;
+}
+
+void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg) {
+    char c = rightType == 0 ? 't' : 's';
+    fprintf(mips, "\tsw $%c%d, 0($t%d)\n", c, rightReg, posic);
+    if (rightType == 0) tRegister[rightReg] = 0;
+    // tRegister[posic] = 0;
+}
+
+int printLoadFromArray(FILE *mips, int posic) {
+    int t = getTRegister();
+    fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, posic);
     return t;
 }
 

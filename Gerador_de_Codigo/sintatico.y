@@ -339,9 +339,17 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             void *node = insertHash(currentHash, $2.valor, $2.line, $2.column, CURRENT_TYPE, $1);
             // printf("\n----- %s %p node %p \n\n", $2.valor, $3, node);
             if (!$3) {
-
                 setKind(node, VAR);
             } else {
+                // printf("Declaring vector %s %d\n", $2.valor, $3->size);
+                int count = 0;
+                Dimension *aux = $3;
+                while (aux) {
+                    count = count + aux->size;
+                    aux = aux->next;
+                }
+                int s = printDeclareArray(mipsFile, $2.valor, count);
+                setSRegisterInHash(node, s);
                 setKind(node, VECTOR);
             }
 

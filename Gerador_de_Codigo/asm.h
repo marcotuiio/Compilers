@@ -39,12 +39,17 @@ void printFor(FILE *mips, int conditionType, int conditionReg, int labelID);
 void printJump(FILE *mips, char *label, int labelID);
 void printLabel(FILE *mips, char *label, int labelID);
 
-// Global variables
+// Global variables and declarations
 void setGlobalIntVariable(char *name, int value);
 void printGlobals(FILE *mips);
 // void printGlobalCharVariable(FILE *mips, char *name, char value);
 int printLoadIntGlobal(FILE *mips, char *name);
 
+// Arrays
+int printDeclareArray(FILE *mips, char *name, int size);
+int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, int indexType, int indexReg);
+void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg);
+int printLoadFromArray(FILE *mips, int posic);
 
 // Output print
 void printInteger(FILE *mips, int regType, int RegNumber);

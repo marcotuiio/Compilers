@@ -1,16 +1,16 @@
 // #include <stdio.h>
 
-void main() {
-    int x = 5;
-    int preIncrementResult, postIncrementResult;
-    // Post-increment: Use the original value and then increment
-    postIncrementResult = x++;
-    printf("Post-increment result: %d\n", postIncrementResult); // Prints 5
+// void main() {
+//     int x = 5;
+//     int preIncrementResult, postIncrementResult;
+//     // Post-increment: Use the original value and then increment
+//     postIncrementResult = x++;
+//     printf("Post-increment result: %d\n", postIncrementResult); // Prints 5
 
-    // Pre-increment: Increment first and then use the updated value
-    preIncrementResult = ++x;
-    printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
-}
+//     // Pre-increment: Increment first and then use the updated value
+//     preIncrementResult = ++x;
+//     printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
+// }
 
 // int main() {
 //     int a = 7;
@@ -155,14 +155,19 @@ void main() {
 // }
 
 // TEST: defines
-// #define max 10
-// int main() {
-//     int i;
-//     i = max * 2;
-//     printf("max = %d\n", max);
-//     printf("i = %d\n", i);
-//     return 0;
-// }
+#define max 10
+int sla = 666;
+int array[max];
+int main() {
+    int i;
+    i = max * 2;
+    array[9] = 69;
+    printf("array [9] = %d\n", array[9]);
+    // printf("max = %d\n", max);
+    // printf("i = %d\n", i);
+    // printf("sla = %d\n", sla);
+    return 0;
+}
 
 // TESTE Bitwise
 // int main() {
