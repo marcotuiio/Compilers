@@ -343,6 +343,7 @@ void loadFromStack(FILE *mips) {
 }
 
 void freeRegister(int type, int number) {
+    // printf("freeing register %d %d\n", type, number);
     if (type == 0) {
         tRegister[number] = 0;
     } else {

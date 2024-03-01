@@ -588,15 +588,17 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
                 rightType = 0; 
             }
-
+            // printf("left reg %d %d right reg %d %d\n", leftType, leftReg, rightType, rightReg);
             if (condition->assign) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, left->assign);
                 result->registerNumber = left->registerNumber;
                 result->registerType = left->registerType;
+                if (rightType == 0) freeRegister(rightType, rightReg);
             } else {
                 result = createResultExpression(auxRightType, auxRightPointer, right->assign);
                 result->registerNumber = right->registerNumber;
                 result->registerType = right->registerType;
+                if (leftType == 0) freeRegister(leftType, leftReg);
             }
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
