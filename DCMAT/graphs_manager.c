@@ -8,9 +8,9 @@ void setAxis(float lowV, float highV, float lowH, float highH) {
             axis[i][j] = ' ';
         }
     }
-    int indiceXAxis = -1, indiceYAxis = -1;
+    int indiceXAxis = -1, indiceYAxis = 0;
 
-    float xStep = (highH - lowH) / (float)(X_AXIS_SIZE);
+    float xStep = (highH - lowH) / (float)(X_AXIS_SIZE); 
     float yStep = (highV - lowV) / (float)(Y_AXIS_SIZE);
 
     float acum = lowH;
@@ -29,16 +29,28 @@ void setAxis(float lowV, float highV, float lowH, float highH) {
     if (indiceYAxis > X_AXIS_SIZE) indiceYAxis = X_AXIS_SIZE;
     if (indiceYAxis < 0) indiceYAxis = 0;
     
-    for (int i = 0; i < X_AXIS_SIZE + 1; i++) {
-        if (axis[indiceXAxis][i] == ' ')
-            axis[indiceXAxis][i] = '-';
+    int aux = 0;
+    if (lowV <= 0.0 && highV >= 0.0) {
+        for (int i = 0; i < X_AXIS_SIZE + 1; i++) {
+            if (axis[indiceXAxis][i] == ' ')
+                axis[indiceXAxis][i] = '-';
+        }
+        aux = 1;
     }
-    for (int i = 0; i < Y_AXIS_SIZE; i++) {
-        if (axis[i][indiceYAxis] == ' ')
-            axis[i][indiceYAxis] = '|';
+    if (lowH <= 0.0 && highH >= 0.0) {
+        for (int i = 0; i < Y_AXIS_SIZE; i++) {
+            if (axis[i][indiceYAxis] == ' ')
+                axis[i][indiceYAxis] = '|';
+        }
+        aux = 2;
     }
-    if (axis[indiceXAxis][indiceYAxis] != '*')
-        axis[indiceXAxis][indiceYAxis] = '+';
+    if (aux == 2) {
+        if (axis[indiceXAxis][indiceYAxis] != '*')
+            axis[indiceXAxis][indiceYAxis] = '+';
+    } else {
+        if (axis[indiceXAxis][indiceYAxis] != '*')
+            axis[indiceXAxis][indiceYAxis] = ' ';
+    }
 }
 
 void drawAxis(bool hasAxis) {
