@@ -12,11 +12,11 @@
 //     printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
 // }
 
-// int main() {
-//     int a = 7;
-//     printf("hello world %d this is fun\n", a);
-//     return 0;
-// }
+int main() {
+    int a = 7;
+    printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
+    return 0;
+}
 
 // int main() {
 //     int a;
@@ -222,11 +222,11 @@
 // }
 
 // TEST ternary
-int main() {
-    int a = 5;
-    int b = 10;
-    int c;
-    c = (a > b) ? a+1 : b-1;
-    printf("c = %d\n", c);
-    return 0;
-}
+// int main() {
+//     int a = 5;
+//     int b = 10;
+//     int c;
+//     c = (a > b) ? a+1 : b-1;
+//     printf("c = %d\n", c);
+//     return 0;
+// }

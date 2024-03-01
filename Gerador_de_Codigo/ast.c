@@ -51,7 +51,7 @@ ExpParam *createExpParam(Expression *exp, ExpParam *next) {
     return newExpParam;
 }
 
-Expression *createExpression(int type, int operator, void *value, void *left, void *right) {
+Expression *createExpression(int type, int operator, void * value, void *left, void *right) {
     Expression *newExp = calloc(1, sizeof(Expression));
     newExp->type = type;
     newExp->operator= operator;
@@ -272,7 +272,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) {
                         result->pointer = 1;
-
                     }
                     // printf("AAAAA id %s reg %d = fake %d\n", hashNode->varId, hashNode->sRegister, hashNode->assign);
                     result->auxIdNode = hashNode;
@@ -417,21 +416,21 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxRightValor);
                 int regS = -1;
                 // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
-               
+
                 int rightType = right->registerType;
                 int rightReg = right->registerNumber;
-                
-                if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+
+                if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                     rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                    rightType = 0; 
+                    rightType = 0;
                 }
 
-                if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+                if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                     // printf("VECTOR ASSIGN $ t %d \n", left->registerNumber);
                     printStoreIntoArray(mipsFile, left->registerNumber, rightType, rightReg);
                     result->registerType = 0;
                     regS = left->registerNumber;
-                
+
                 } else {
                     if (left->registerNumber == -1) {
                         regS = printAssignment(mipsFile, rightType, rightReg);
@@ -521,13 +520,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
         case TERNARY:
             ResultExpression *condition = evalExpression(expr->ternary, globalHash, localHash, program);
-            printTernary(mipsFile, condition->registerType, condition->registerNumber, ((AuxToken*)expr->value)->line);
-            printLabel(mipsFile, "true_ternary_", ((AuxToken*)expr->value)->line);
+            printTernary(mipsFile, condition->registerType, condition->registerNumber, ((AuxToken *)expr->value)->line);
+            printLabel(mipsFile, "true_ternary_", ((AuxToken *)expr->value)->line);
             left = evalExpression(expr->left, globalHash, localHash, program);
-            printJump(mipsFile, "end_ternary_", ((AuxToken*)expr->value)->line);
-            printLabel(mipsFile, "false_ternary_", ((AuxToken*)expr->value)->line);
+            printJump(mipsFile, "end_ternary_", ((AuxToken *)expr->value)->line);
+            printLabel(mipsFile, "false_ternary_", ((AuxToken *)expr->value)->line);
             right = evalExpression(expr->right, globalHash, localHash, program);
-            printLabel(mipsFile, "end_ternary_", ((AuxToken*)expr->value)->line);
+            printLabel(mipsFile, "end_ternary_", ((AuxToken *)expr->value)->line);
 
             // printf("teste de ternario true %d false %d\n", left->assign, right->assign);
             auxLeftPointer = expr->left->value->pointer;
@@ -580,13 +579,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
             // printf("left reg %d %d right reg %d %d\n", leftType, leftReg, rightType, rightReg);
             if (condition->assign) {
@@ -645,13 +644,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
 
             if (expr->type == OR_LOGICO) {
@@ -742,13 +741,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
 
             if (expr->operator== LESS_THAN) {
@@ -872,13 +871,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
 
             if (expr->operator== R_SHIFT) {
@@ -960,13 +959,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
 
             if (expr->operator== PLUS) {
@@ -1086,13 +1085,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             rightType = right->registerType;
             rightReg = right->registerNumber;
 
-            if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                 leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                leftType = 0; 
+                leftType = 0;
             }
-            if (right->auxIdNode && ((HashNode*)right->auxIdNode)->kind == VECTOR) {
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
                 rightReg = printLoadFromArray(mipsFile, right->registerNumber);
-                rightType = 0; 
+                rightType = 0;
             }
 
             if (expr->operator== MULTIPLY) {
@@ -1266,9 +1265,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 leftType = left->registerType;
                 leftReg = left->registerNumber;
 
-                if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR) {
+                if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                     leftReg = printLoadFromArray(mipsFile, left->registerNumber);
-                    leftType = 0; 
+                    leftType = 0;
                 }
 
                 if (expr->operator== PLUS) {
@@ -1406,20 +1405,20 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
-                if (expr->operator== INC) { // pos incremento
+                if (expr->operator== INC) {  // pos incremento
                     int originalValue = left->assign;
                     left->assign++;
                     result = createResultExpression(left->typeVar, left->pointer, originalValue);
                     int r = printPostIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
-                    result->registerType = 0; // como o que deve ser retornado é o valor original, nao tem registrador $s
+                    result->registerType = 0;  // como o que deve ser retornado é o valor original, nao tem registrador $s
                     result->registerNumber = r;
 
-                } else if (expr->operator== DEC) { // pos decremento
+                } else if (expr->operator== DEC) {  // pos decremento
                     int originalValue = left->assign;
                     left->assign--;
                     result = createResultExpression(left->typeVar, left->pointer, originalValue);
                     int r = printPostIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
-                    result->registerType = 0; // como o que deve ser retornado é o valor original, nao tem registrador $s
+                    result->registerType = 0;  // como o que deve ser retornado é o valor original, nao tem registrador $s
                     result->registerNumber = r;
                 }
                 // set assign do id referente ao left
@@ -1492,7 +1491,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
                         // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
                     }
-                    posic = printAccessIndexArray(mipsFile, 1, ((HashNode*)left->auxIdNode)->sRegister, dimenResult->registerType, dimenResult->registerNumber);
+                    posic = printAccessIndexArray(mipsFile, 1, ((HashNode *)left->auxIdNode)->sRegister, dimenResult->registerType, dimenResult->registerNumber);
                 }
                 // printLoadFromArray
                 result = createResultExpression(auxIdNode->typeVar, 0, 0);
@@ -1703,41 +1702,62 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == PRINTF || command->type == SCANF) {
-        ResultExpression *toPrint = evalExpression(command->auxPrint, globalHash, localHash, program);
-        // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
-        
-        if (toPrint) {
-            if (toPrint->auxIdNode) {
-                if (((HashNode*)toPrint->auxIdNode)->kind == VECTOR) {
-                    toPrint->registerNumber = printLoadFromArray(mipsFile, toPrint->registerNumber);
-                    toPrint->registerType = 0;
-                }
-            } 
-        }
-        
         if (command->type == PRINTF) {
             if (command->auxPrint) {
+                Expression *next = command->auxPrint;
+                ResultExpression *toPrint = NULL;
+
                 // printf("1.String original: %s\n", command->string);
+                char *restOfString = NULL;
+
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, command->string + 1);           // copy the string without the "
-                char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
-                char *restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
-                strcpy(restOfString, formatSpecifier + 2);
-                restOfString[strlen(restOfString) - 1] = '\0';         // remove the " and null terminate
-                if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
-                printString(mipsFile, stringWithoutFormat, command->auxToken->line);
-                printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
-                // printf("after %s\n", stringWithoutFormat);
-                if (strlen(restOfString) > 0)
-                    printString(mipsFile, restOfString, rand() % 1000);
-                free(stringWithoutFormat);
+                strcpy(stringWithoutFormat, command->string + 1);  // copy the 7 string without the "
+
+                // If we got to this block there is for sure at least one %d in this print
+                while (next) {
+                    toPrint = evalExpression(next, globalHash, localHash, program);
+                    // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
+                    next = next->nextPrint;
+                    if (toPrint) {
+                        if (toPrint->auxIdNode) {
+                            if (((HashNode *)toPrint->auxIdNode)->kind == VECTOR) {
+                                toPrint->registerNumber = printLoadFromArray(mipsFile, toPrint->registerNumber);
+                                toPrint->registerType = 0;
+                            }
+                        }
+                    }
+
+                    char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
+                    // printf("before %s\n", stringWithoutFormat);
+                    // printf("2.formatSpecifier %s\n", formatSpecifier);
+                    if (restOfString) free(restOfString);
+                    restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
+                    strcpy(restOfString, formatSpecifier + 2);
+                    restOfString[strlen(restOfString)] = '\0';  // remove the " and null terminate
+                    // printf("3.rest %s\n", restOfString);
+                    if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
+                    printString(mipsFile, stringWithoutFormat, toPrint->auxLine, toPrint->auxColumn);
+                    printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
+
+                    free(stringWithoutFormat);
+                    stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
+                    strcpy(stringWithoutFormat, restOfString);
+                }
+                if (strlen(restOfString) > 0) {
+                    restOfString[strlen(restOfString) - 1] = '\0';
+                    // printf("4.rest %s\n", restOfString);
+                    printString(mipsFile, restOfString, rand() % 1000, rand() % 666);
+                }
+                if (restOfString) free(restOfString);
+                if (stringWithoutFormat) free(stringWithoutFormat);
+
             } else {
                 // remove the " " from the string
                 // printf("2.String original %s\n", command->string);
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
                 fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
-                printString(mipsFile, fixedString, command->auxToken->line);
+                printString(mipsFile, fixedString, command->auxToken->line, command->auxToken->column);
                 free(fixedString);
             }
 

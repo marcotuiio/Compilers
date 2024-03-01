@@ -283,11 +283,11 @@ void printInteger(FILE *mips, int regType, int RegNumber) {
     if (regType == 0) tRegister[RegNumber] = 0;
 }
 
-void printString(FILE *mips, char *value, int stringID) {
+void printString(FILE *mips, char *value, int stringID1, int stringID2) {
     fprintf(mips, "\t.data\n");
-    fprintf(mips, "\t\tstring%d: .asciiz \"%s\"\n", stringID, value);
+    fprintf(mips, "\t\tstring%d_%d: .asciiz \"%s\"\n", stringID1, stringID2, value);
     fprintf(mips, "\t.text\n");
-    fprintf(mips, "\tla $a0, string%d\n", stringID);
+    fprintf(mips, "\tla $a0, string%d_%d\n", stringID1, stringID2);
     fprintf(mips, "\taddi $v0, $zero, 4\n");
     fprintf(mips, "\tsyscall\n");
 }

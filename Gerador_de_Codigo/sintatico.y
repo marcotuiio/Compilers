@@ -627,6 +627,12 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
         $$ = aux;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
+        // Expression *t = $4;
+        // while (t) {
+        //     ResultExpression *asss = evalExpression(t, globalHash, currentHash, AST);
+        //     printf("eval %p = %d\n", asss, asss ? asss->assign : -666);
+        //     t = t->nextPrint;
+        // }
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, PRINTF);
         Command *aux = createPrintStatement($3.valor, $4, NULL);
         aux->auxToken = auxToken;
@@ -665,13 +671,16 @@ AuxElse: ELSE Bloco {
 AuxFor: Expressao { $$ = $1; }
     | { $$ = NULL; } ;
 
-AuxPrint: COMMA Expressao { $$ = $2; }
+AuxPrint: COMMA Expressao AuxPrint { // da conflito de reduce mas paciencia
+        $2->nextPrint = $3;
+        $$ = $2; 
+    }
     | { $$ = NULL; } ;
 
 Expressao: ExpressaoAtribuicao {
         $$ = $1;
     }
-    | Expressao COMMA ExpressaoAtribuicao {
+    | Expressao COMMA ExpressaoAtribuicao { // o gerador do conflito aqui
         AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, COMMA);
         Expression *aux = createExpression(LISTA_EXP, COMMA, auxToken, $1, $3);
         $$ = aux;

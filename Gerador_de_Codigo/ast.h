@@ -140,6 +140,8 @@ typedef struct expression {
     Dimension *dimension;
     ExpParam *param;
     void *extra;
+    
+    struct expression *nextPrint;
 
     struct expression *ternary;
     struct expression *left;

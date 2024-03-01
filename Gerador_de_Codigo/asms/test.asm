@@ -1,35 +1,43 @@
 .text
 .globl main
 main:
-	addi $t0, $zero, 5
+	addi $t0, $zero, 7
 	add $s0, $zero, $t0
-	addi $t0, $zero, 10
-	add $s1, $zero, $t0
-	sgt $t0, $s0, $s1
-	addi $t1, $zero, 0
-	beq $t1, $t0, false_ternary_229
-	true_ternary_229:
-	addi $t0, $zero, 1
-	add $t1, $s0, $t0
-	j end_ternary_229
-	false_ternary_229:
-	addi $t0, $zero, 1
-	sub $t2, $s1, $t0
-	end_ternary_229:
-	add $s2, $zero, $t2
 	.data
-		string230: .asciiz "c = "
+		string0_0: .asciiz "hello world "
 	.text
-	la $a0, string230
+	la $a0, string0_0
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $s2
+	add $a0, $zero, $s0
+	addi $v0, $zero, 1
+	syscall
+	addi $t0, $zero, 5
+	add $t1, $s0, $t0
+	.data
+		string17_54: .asciiz " this is fun "
+	.text
+	la $a0, string17_54
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t1
+	addi $v0, $zero, 1
+	syscall
+	addi $t0, $zero, 2
+	sub $t1, $s0, $t0
+	.data
+		string17_59: .asciiz " "
+	.text
+	la $a0, string17_59
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t1
 	addi $v0, $zero, 1
 	syscall
 	.data
-		string383: .asciiz "\n"
+		string886_145: .asciiz "\n"
 	.text
-	la $a0, string383
+	la $a0, string886_145
 	addi $v0, $zero, 4
 	syscall
 	addi $t0, $zero, 0

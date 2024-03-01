@@ -54,7 +54,7 @@ int printLoadFromArray(FILE *mips, int posic);
 
 // Output print
 void printInteger(FILE *mips, int regType, int RegNumber);
-void printString(FILE *mips, char *value, int stringID);
+void printString(FILE *mips, char *value, int stringID1, int stringID2);
 
 // Input scan
 int printScanInt(FILE *mips, int sReg);
