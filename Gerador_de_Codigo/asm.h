@@ -34,13 +34,14 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
 void printIf(FILE *mips, int conditionType, int conditionReg, int labelID);
 void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID);
 void printFor(FILE *mips, int conditionType, int conditionReg, int labelID);
+void printTernary(FILE *mips, int conditionType, int conditionReg, int labelID);
 
 // Labels and jumps
 void printJump(FILE *mips, char *label, int labelID);
 void printLabel(FILE *mips, char *label, int labelID);
 
 // Global variables and declarations
-void setGlobalIntVariable(char *name, int value);
+void setGlobalIntVariable(char *name, int value, int type, int regToFree);
 void printGlobals(FILE *mips);
 // void printGlobalCharVariable(FILE *mips, char *name, char value);
 int printLoadIntGlobal(FILE *mips, char *name);
@@ -63,6 +64,7 @@ void printCallFunction(FILE *mips, char *name);
 void printReturn(FILE *mips);
 
 // Stack
+void freeRegister(int type, int number);
 void printStart(FILE *mips);
 void printEnd(FILE *mips);
 

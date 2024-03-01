@@ -195,6 +195,15 @@ void printFor(FILE *mips, int conditionType, int conditionReg, int labelID) {
     tRegister[t] = 0;
 }
 
+void printTernary(FILE *mips, int conditionType, int conditionReg, int labelID) {
+    char c = conditionType == 0 ? 't' : 's';
+    int t = getTRegister();
+    fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
+    fprintf(mips, "\tbeq $t%d, $%c%d, false_ternary_%d\n", t, c, conditionReg, labelID);
+    if (conditionType == 0) tRegister[conditionReg] = 0;
+    tRegister[t] = 0;
+}
+
 void printJump(FILE *mips, char *label, int labelID) {
     fprintf(mips, "\tj %s%d\n", label, labelID);
 }
@@ -203,10 +212,10 @@ void printLabel(FILE *mips, char *label, int labelId) {
     fprintf(mips, "\t%s%d:\n", label, labelId);
 }
 
-void setGlobalIntVariable(char *name, int value) {
+void setGlobalIntVariable(char *name, int value, int type, int regToFree) {
     if (!globalDeclarations)
         globalDeclarations = calloc(4096, sizeof(char));
-            
+    freeRegister(type, regToFree);
     sprintf(globalDeclarations + strlen(globalDeclarations), "\t%s: .word %d\n", name, value);
     // printf("teste de global: %s\n", globalDeclarations);
 }
@@ -217,6 +226,7 @@ void printGlobals(FILE *mips) {
         fprintf(mips, ".data\n");
         fprintf(mips, "%s", globalDeclarations);
         fprintf(mips, "# END BLOCO DEFINES");
+        free(globalDeclarations);
     }
 }
 
@@ -227,6 +237,7 @@ void printGlobals(FILE *mips) {
 
 int printLoadIntGlobal(FILE *mips, char *name) {
     int t = getTRegister();
+    printf("t = %d\n", t);
     fprintf(mips, "\tla $t%d, %s\n", t, name);
     fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, t);
     return t;
@@ -254,12 +265,13 @@ void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg) {
     char c = rightType == 0 ? 't' : 's';
     fprintf(mips, "\tsw $%c%d, 0($t%d)\n", c, rightReg, posic);
     if (rightType == 0) tRegister[rightReg] = 0;
-    // tRegister[posic] = 0;
+    tRegister[posic] = 0;
 }
 
 int printLoadFromArray(FILE *mips, int posic) {
     int t = getTRegister();
     fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, posic);
+    tRegister[posic] = 0;
     return t;
 }
 
@@ -328,6 +340,14 @@ void loadFromStack(FILE *mips) {
     fprintf(mips, "\tlw $s7, 44($sp)\n");
     fprintf(mips, "\tlw $ra, 48($sp)\n");
     fprintf(mips, "\taddi $sp, $sp, 52\n");
+}
+
+void freeRegister(int type, int number) {
+    if (type == 0) {
+        tRegister[number] = 0;
+    } else {
+        sRegister[number] = 0;
+    }
 }
 
 void printStart(FILE *mips) {

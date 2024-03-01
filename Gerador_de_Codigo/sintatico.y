@@ -252,7 +252,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
             // printf("\nresult do define %s %d %d\n", $3.valor, result->typeVar, result->assign);
-            setGlobalIntVariable($3.valor, result->assign);
+            setGlobalIntVariable($3.valor, result->assign, result->registerType, result->registerNumber);
             setAssign(node, result->assign);
         }
     }
@@ -377,6 +377,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
 
             if ($4) {
                 ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+
                 int assignType, assignPointer = result->pointer;
                 // printf("\nassignType %d %d\n", result->typeVar, result->assign);
                 if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
@@ -443,6 +444,7 @@ ExpressaoColchete: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET ExpressaoColchete
             } else if (result->assign < 0) {
                 dimensionError = 2;
             }   
+            freeRegister(result->registerType, result->registerNumber);
         }
         dimensionAux = 0;
         Dimension *aux = createDimension(result->assign);

@@ -26,22 +26,22 @@
 //         printf("a = %d\n", a);
 //         a = a + 1;
 //     }
-    // printf("Digite um valor para a: ");
-    // scanf("%d", &a);
+//     // printf("Digite um valor para a: ");
+//     // scanf("%d", &a);
 
-    // b = a * 2;
-    // printf("Valor lido de a = %d\n", a);
-    // printf("Valor de b = %d\n", b);
-    // int b = 40;
-    // int c;
-    // c = a + b * 2;
-    // // printf("valor %d\n", c);
-    // // return 0;
-    // if (a < b && a < 4) {
-    //     printf("a menor que b E a < 4\n");
-    // } else {
-    //     printf("a maior que b OU a >= 4\n");
-    // }
+//     // b = a * 2;
+//     // printf("Valor lido de a = %d\n", a);
+//     // printf("Valor de b = %d\n", b);
+//     // int b = 40;
+//     // int c;
+//     // c = a + b * 2;
+//     // // printf("valor %d\n", c);
+//     // // return 0;
+//     // if (a < b && a < 4) {
+//     //     printf("a menor que b E a < 4\n");
+//     // } else {
+//     //     printf("a maior que b OU a >= 4\n");
+//     // }
 //     return 0;
 // }
 
@@ -99,7 +99,7 @@
 
 // TEST: Logical and/or
 // int main() {
-//     int a = 5;
+//     int a = 50;
 //     int b = 10;
 //     int c = 15;
 
@@ -155,19 +155,26 @@
 // }
 
 // TEST: defines
-#define max 10
-int sla = 666;
-int array[max];
-int main() {
-    int i;
-    i = max * 2;
-    array[9] = 69;
-    printf("array [9] = %d\n", array[9]);
-    // printf("max = %d\n", max);
-    // printf("i = %d\n", i);
-    // printf("sla = %d\n", sla);
-    return 0;
-}
+// #define max 34
+// // int sla = 666;
+// int array[10];
+// int main() {
+//     int i;
+//     // i = max * 2;
+//     array[9] = 69;
+//     array[0] = 1;
+//     i = array[9];
+//     if (array[9] == array[0]) {
+//         printf("bucetoncios langeicus\n");
+//     } else {
+//         printf("cuuu buuu\n");
+//     }
+//     printf("array [9] = %d\n", array[9]);
+//     // printf("max = %d\n", max);
+//     // printf("i = %d\n", i);
+//     // printf("sla = %d\n", sla);
+//     return 0;
+// }
 
 // TESTE Bitwise
 // int main() {
@@ -201,16 +208,25 @@ int main() {
 // int main() {
 //     int a = 0;
 //     while (a < 10) {
-//         printf("while a = %d\n", a);
-//         a = a + 1;
+//         printf("while a = %d\n", a++);
 //     }
 //     a = 0;
 //     do {
-//         printf("do-while a = %d\n", a);
-//         a = a + 1;
+//         printf("do-while a = %d\n", ++a);
+//         // a = a + 1;
 //     } while (a < 10);
 //     for (a = 10; a > 0; a--) {
 //         printf("for a = %d\n", a);
 //     }
 //     return 0;
 // }
+
+// TEST ternary
+int main() {
+    int a = 5;
+    int b = 10;
+    int c;
+    c = (a > b) ? a+1 : b-1;
+    printf("c = %d\n", c);
+    return 0;
+}
