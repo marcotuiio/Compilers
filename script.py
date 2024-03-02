@@ -3,10 +3,11 @@ import subprocess
 import datetime
 
 BED = '/home/marcotuiio/Compilers/Semantico/testes'
-BSD = '/home/marcotuiio/Compilers/Semantico/saidas'
+BSD = '/home/marcotuiio/Compilers/Gerador_de_Codigo/semantico_aux'
 OFICIAL = '/home/marcotuiio/Compilers/Semantico/saidas_padrao'
-EXEC = 'semantico'
-src = '/home/marcotuiio/Compilers/Semantico'
+EXEC = 'gerador'
+ASM= '/home/marcotuiio/Compilers/Gerador_de_Codigo/asms/vrau.asm'
+src = '/home/marcotuiio/Compilers/Gerador_de_Codigo'
 ini = datetime.datetime.now()
 
 os.chdir(src)
