@@ -110,9 +110,9 @@ main:
 	addi $sp, $sp, 52
 	add $t0, $zero, $v0
 	.data
-		string_1904105440: .asciiz "Resultado: "
+		string_1268025312: .asciiz "Resultado: "
 	.text
-	la $a0, string_1904105440
+	la $a0, string_1268025312
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

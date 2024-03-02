@@ -325,8 +325,6 @@ void printFunctionParams(FILE *mips, char *name, int params) {
 }
 
 void printReturn(FILE *mips) {
-    // char r = type == 0 ? 't' : 's';
-    // fprintf(mips, "\tadd $v0, $zero, $%c%d\n", r, reg);
     fprintf(mips, "\tjr $ra\n");
 }
 
@@ -431,9 +429,13 @@ void printStart(FILE *mips) {
     fprintf(mips, ".globl main\n");
 }
 
-void printEnd(FILE *mips) {
+void printExit(FILE *mips) {
     fprintf(mips, "\n\taddi $v0, $zero, 10\n");
     fprintf(mips, "\tsyscall\n");
+}
+
+void printEnd(FILE *mips) {
+    printExit(mips);
     printGlobals(mips);
     fclose(mips);
 }

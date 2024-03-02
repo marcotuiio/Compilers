@@ -21,23 +21,37 @@
 //     printf("bucetoncios laringicus %d a = %d b = %d\n", i++, fish, ball);
 // }
 
-int soma(int a, int b) {
-    if (a > b) {
-        return a + b;
-    }
-    if (a < b) {
-        return b - a;
-    }
+// int soma(int a, int b) {
+//     if (a > b) {
+//         return a + b;
+//     }
+//     if (a < b) {
+//         return b - a;
+//     }
+// }
+
+#define c1 10
+#define c2 -c1
+#define c3 c1 << 2
+#define c4 c2 >> c3*c3
+#define NULL 0
+#define CALL_ELEVEN 11
+int v[c2+c3];
+
+void* f()
+{
+    v[c4],c1>v,(char)c2,NULL?v:c3;
+    return (void*) 0;
 }
 
 int main() {
-    int a = 2;
-    int zeca = 3;
-    // test(a, 5);
-    printf("a e b => %d\n", soma(a, 1012));
-    // printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
+    int a = 2, b = 4;
+    // int zeca = 3;
+    // printf("a e b => %d\n", soma(a, 1012));
+    printf("hello world %d this is fun %d %d %d %d\n", a, b, 6, 7, 766);
     return 0;
 }
+
 
 // int main() {
 //     int a;

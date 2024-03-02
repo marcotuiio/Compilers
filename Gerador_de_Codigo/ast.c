@@ -220,8 +220,18 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
     // printf("evalExpression %p %d %d %d\n", expr, expr->type, expr->operator, expr->value->type);
 
+    if (expr->isHeadOfList == LISTA_EXP) {
+        expr->isHeadOfList = 0;
+        while (expr) {
+            evalExpression(expr, globalHash, localHash, program);
+            expr = expr->nextExpr;
+        }
+        return NULL;
+    }
+
     switch (expr->type) {
         case NUMEROS:
+        // printf("<<<< expr %p type %d \n", expr, expr->value->type);
             if (expr->value->type == NUM_INT) {
                 result = createResultExpression(expr->value->type, expr->value->pointer, atoi(expr->value->valor));
                 int regT = printConstant(mipsFile, result->assign);
@@ -504,19 +514,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             result->auxLine = expr->value->line;
             result->auxColumn = expr->value->column;
             return result;
-            break;
-
-        case LISTA_EXP:  // nao sei fazer ainda
-            left = evalExpression(expr->left, globalHash, localHash, program);
-            right = evalExpression(expr->right, globalHash, localHash, program);
-            // printf("left %p %d %d \nright %p %d %d \n", left, left->typeVar, left->pointer, right, right->typeVar, right->pointer);
-            if (left) {
-                // printf("left %d %d\n", left->typeVar, left->assign);
-            }
-            if (right) {
-                // printf("right %d %d\n", right->typeVar, right->assign);
-            }
-
             break;
 
         case TERNARY:
@@ -1730,12 +1727,16 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
 
                 char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
                 strcpy(stringWithoutFormat, command->string + 1);  // copy the 7 string without the "
-
+                // while (next) {
+                //     printf("expr inprint %p %d\n", next, next->type);
+                //     next = next->nextExpr;
+                // }
+                // exit(0);
                 // If we got to this block there is for sure at least one %d in this print
                 while (next) {
                     toPrint = evalExpression(next, globalHash, localHash, program);
                     // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
-                    next = next->nextPrint;
+                    next = next->nextExpr;
                     if (toPrint) {
                         if (toPrint->auxIdNode) {
                             if (((HashNode *)toPrint->auxIdNode)->kind == VECTOR) {
@@ -1852,7 +1853,11 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == EXIT) {
-        if (command->condition) evalExpression(command->condition, globalHash, localHash, program);
+        if (command->condition) {
+            ResultExpression *status = evalExpression(command->condition, globalHash, localHash, program);
+            fprintf(mipsFile, "\t# exit with status %d", status->assign);
+            printExit(mipsFile);
+        }
     }
 }
 

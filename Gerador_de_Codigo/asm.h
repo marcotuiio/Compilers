@@ -75,6 +75,7 @@ void storeTRegisters(FILE *mips, int *regs);
 void loadTRegisters(FILE *mips, int *regs);
 void freeRegister(int type, int number);
 void printStart(FILE *mips);
+void printExit(FILE *mips);
 void printEnd(FILE *mips);
 
 #endif

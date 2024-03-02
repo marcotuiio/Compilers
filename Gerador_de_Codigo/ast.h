@@ -141,8 +141,9 @@ typedef struct expression {
     Dimension *dimension;
     ExpParam *param;
     void *extra;
+    int isHeadOfList;
     
-    struct expression *nextPrint;
+    struct expression *nextExpr;
 
     struct expression *ternary;
     struct expression *left;

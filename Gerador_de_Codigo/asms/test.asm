@@ -1,77 +1,112 @@
 .text
 .globl main
+	addi $t0, $zero, 10
+	la $t0, c1
+	lw $t0, 0($t0)
+	sub $t1, $zero, $t0
+	la $t0, c1
+	lw $t0, 0($t0)
+	addi $t1, $zero, 2
+	sllv $t2, $t0, $t1
+	la $t0, c2
+	lw $t0, 0($t0)
+	la $t2, c3
+	lw $t2, 0($t2)
+	la $t3, c3
+	lw $t3, 0($t3)
+	mul $t4, $t2, $t3
+	srlv $t2, $t0, $t4
+	addi $t0, $zero, 0
+	addi $t0, $zero, 11
+	la $t0, c2
+	lw $t0, 0($t0)
+	la $t2, c3
+	lw $t2, 0($t2)
+	add $t3, $t0, $t2
+	.data
+		v: .space 120
+	.text
+	la $s0, v
 
-soma:
-	#laoding params = 2
-	add $s0, $zero, $a0
-	add $s1, $zero, $a1
-	sgt $t0, $s1, $s0
-	addi $t1, $zero, 0
-	beq $t1, $t0, else_linha_26
-	add $t0, $s1, $s0
-	add $v0, $zero, $t0
+f:
+	#laoding params = 0
+	la $t0, c4
+	lw $t0, 0($t0)
+	sll $t2, $t0, 2
+	add $t2, $t2, $s0
+	la $t3, c1
+	lw $t3, 0($t3)
+	lw $t5, 0($t0)
+	sgt $t0, $t3, $t5
+	la $t3, c2
+	lw $t3, 0($t3)
+	la $t5, NULL
+	lw $t5, 0($t5)
+	addi $t6, $zero, 0
+	beq $t6, $t5, false_ternary_43
+	true_ternary_43:
+	j end_ternary_43
+	false_ternary_43:
+	la $t5, c3
+	lw $t5, 0($t5)
+	end_ternary_43:
+	lw $t6, 0($t0)
+	addi $t0, $zero, 0
+	add $v0, $zero, $s-1
 	jr $ra
-	j exit_if_26
-	else_linha_26:
-	exit_if_26:
-	slt $t0, $s1, $s0
-	addi $t1, $zero, 0
-	beq $t1, $t0, else_linha_29
-	sub $t0, $s0, $s1
-	add $v0, $zero, $t0
-	jr $ra
-	j exit_if_29
-	else_linha_29:
-	exit_if_29:
 	jr $ra
 
 main:
-	addi $t0, $zero, 3
-	add $s2, $zero, $t0
-	addi $t0, $zero, 2
-	add $s3, $zero, $t0
-	#function param
-	add $a1, $zero, $s3 # a
-	addi $t0, $zero, 1012
-	#function param
-	add $a0, $zero, $t0 # b
-	addi $sp, $sp, -52
-	sw $a0, 0($sp)
-	sw $a1, 4($sp)
-	sw $a2, 8($sp)
-	sw $a3, 12($sp)
-	sw $s0, 16($sp)
-	sw $s1, 20($sp)
-	sw $s2, 24($sp)
-	sw $s3, 28($sp)
-	sw $s4, 32($sp)
-	sw $s5, 36($sp)
-	sw $s6, 40($sp)
-	sw $s7, 44($sp)
-	sw $ra, 48($sp)
-	jal soma
-	lw $a0, 0($sp)
-	lw $a1, 4($sp)
-	lw $a2, 8($sp)
-	lw $a3, 12($sp)
-	lw $s0, 16($sp)
-	lw $s1, 20($sp)
-	lw $s2, 24($sp)
-	lw $s3, 28($sp)
-	lw $s4, 32($sp)
-	lw $s5, 36($sp)
-	lw $s6, 40($sp)
-	lw $s7, 44($sp)
-	lw $ra, 48($sp)
-	addi $sp, $sp, 52
-	add $t0, $zero, $v0
+	addi $t6, $zero, 2
+	add $s1, $zero, $t6
+	addi $t6, $zero, 4
+	add $s2, $zero, $t6
 	.data
-		string_1078004016: .asciiz "a e b => "
+		string_597922464: .asciiz "hello world "
 	.text
-	la $a0, string_1078004016
+	la $a0, string_597922464
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $t0
+	add $a0, $zero, $s1
+	addi $v0, $zero, 1
+	syscall
+	.data
+		string_597922320: .asciiz " this is fun "
+	.text
+	la $a0, string_597922320
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $s2
+	addi $v0, $zero, 1
+	syscall
+	addi $t6, $zero, 6
+	.data
+		string_597922208: .asciiz " "
+	.text
+	la $a0, string_597922208
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t6
+	addi $v0, $zero, 1
+	syscall
+	addi $t6, $zero, 7
+	.data
+		string_597922128: .asciiz " "
+	.text
+	la $a0, string_597922128
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t6
+	addi $v0, $zero, 1
+	syscall
+	addi $t6, $zero, 766
+	.data
+		string_597922080: .asciiz " "
+	.text
+	la $a0, string_597922080
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t6
 	addi $v0, $zero, 1
 	syscall
 	.data
@@ -80,8 +115,18 @@ main:
 	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
-	addi $t0, $zero, 0
-	add $v0, $zero, $t0
+	addi $t6, $zero, 0
+	add $v0, $zero, $t6
 
 	addi $v0, $zero, 10
 	syscall
+
+# BLOCO DE DEFINES NO FIM DO ARQUIVO
+.data
+	c1: .word 10
+	c2: .word -10
+	c3: .word 40
+	c4: .word -10
+	NULL: .word 0
+	CALL_ELEVEN: .word 11
+# END BLOCO DEFINES

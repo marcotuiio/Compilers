@@ -632,8 +632,9 @@ AuxElse: ELSE Bloco {
 AuxFor: Expressao { $$ = $1; }
     | { $$ = NULL; } ;
 
-AuxPrint: COMMA Expressao AuxPrint { // da conflito de reduce mas paciencia
-        $2->nextPrint = $3;
+AuxPrint: COMMA Expressao { // da conflito de reduce mas paciencia
+        // printf("auxprint %p\n", $2);
+        $2->isHeadOfList = 0;
         $$ = $2; 
     }
     | { $$ = NULL; } ;
@@ -642,9 +643,17 @@ Expressao: ExpressaoAtribuicao {
         $$ = $1;
     }
     | Expressao COMMA ExpressaoAtribuicao { // o gerador do conflito aqui
-        AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, COMMA);
-        Expression *aux = createExpression(LISTA_EXP, COMMA, auxToken, $1, $3);
-        $$ = aux;
+        // AuxToken *auxToken = createAuxToken($2.valor, $2.line, $2.column, $1->value->type);
+        // Expression *aux = createExpression($1->type, COMMA, auxToken, $1, NULL);
+        Expression *head = $1;
+        // int i = 0;
+        head->isHeadOfList = LISTA_EXP;
+        while (head->nextExpr) {    
+            // printf("%d list de exprs %p %d \n", i++, head, head->type);
+            head = head->nextExpr;   
+        }
+        head->nextExpr = $3;
+        $$ = $1;
     } ;
 
 OpAtrib: ASSIGN { $$ = yylval.token; }
@@ -891,7 +900,7 @@ void printLineError(int line, int column) {
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         mipsPath = calloc(128, sizeof(char));
-        strcpy(mipsPath, "/home/marcotuiio/Compilers/Gerador_de_Codigo/asms/default.asm");
+        strcpy(mipsPath, "default.asm");
     } else {
         mipsPath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
         strcpy(mipsPath, argv[argc - 1]);
