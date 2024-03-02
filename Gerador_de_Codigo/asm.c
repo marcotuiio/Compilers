@@ -237,7 +237,7 @@ void printGlobals(FILE *mips) {
 
 int printLoadIntGlobal(FILE *mips, char *name) {
     int t = getTRegister();
-    printf("t = %d\n", t);
+    // printf("t = %d\n", t);
     fprintf(mips, "\tla $t%d, %s\n", t, name);
     fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, t);
     return t;

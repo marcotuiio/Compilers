@@ -92,6 +92,13 @@ void setKind(void *node, int kind) {
     aux->kind = kind;
 }
 
+void setHashExpr(void *node, void *hashExpr, int lin, int col) {
+    HashNode *aux = node;
+    aux->hashExpr = hashExpr;
+    aux->lineAssign = lin;
+    aux->columnAssign = col;
+}
+
 void setSRegisterInHash(void *node, int sRegister) {
     HashNode *aux = node;
     aux->sRegister = sRegister;

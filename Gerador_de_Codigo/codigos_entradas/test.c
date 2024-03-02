@@ -11,10 +11,22 @@
 //     preIncrementResult = ++x;
 //     printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
 // }
+// #define c1 2
+// #define c2 5
+// int v[10];
+// int i = v[c1*c2] + c1;
+
+// void test() {
+//     // int i = 987;
+//     void a = 11213;
+//     printf("bucetoncios laringicus %d\n", i++);
+// }
 
 int main() {
+    char c = "character";
     int a = 7;
-    printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
+   printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
+    // test();
     return 0;
 }
 

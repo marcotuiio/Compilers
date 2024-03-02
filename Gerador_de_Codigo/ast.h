@@ -101,6 +101,7 @@ typedef struct program {
 
 typedef struct function {
     void **hashTable;
+    void *declarations;
     int returnType;
     int pointer;
     char *name;

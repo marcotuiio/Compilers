@@ -26,6 +26,9 @@ typedef struct node {
     int qntdParams;
     int qntdDimen;
 
+    void *hashExpr;
+    int lineAssign, columnAssign;
+
     int sRegister;
 
     struct node *next;
@@ -53,6 +56,7 @@ void setParam(void *node, Param *p);
 void setAssign(void *node, int assign);
 void setDimensions(void *node, void *dimensions);
 void setKind(void *node, int kind);
+void setHashExpr(void *node, void *hashExpr, int lin, int col);
 
 void setSRegisterInHash(void *node, int sRegister);
 int getSRegisterFromHash(void *node);

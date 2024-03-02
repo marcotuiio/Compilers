@@ -1586,7 +1586,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxIdNode->typeVar, auxIdNode->pointer, 0);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                // printf("result %p %d %d = %d\n", result, result->typeVar, result->pointer, 0);
+                // printf("result function %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
                 // exit(1);
                 return result;
             }
@@ -1628,7 +1628,10 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        int ifLine = ((Command *)command->then)->auxToken->line;
+        // printf("\n\n>>>>>>>>>>>>>>> pq ta quebrando %p\n\n", ((Command *)command->then)->auxToken);
+        int ifLine = -1;
+        if (((Command *)command->then)->auxToken) ifLine = ((Command *)command->then)->auxToken->line;
+       
         int elseLine = -1;
         if (command->elseStatement) {
             elseLine = ((Command *)command->elseStatement)->auxToken->line;
@@ -1728,6 +1731,9 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                     }
 
                     char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
+                    if (!formatSpecifier) {
+                        formatSpecifier = strstr(stringWithoutFormat, "%s");
+                    }
                     // printf("before %s\n", stringWithoutFormat);
                     // printf("2.formatSpecifier %s\n", formatSpecifier);
                     if (restOfString) free(restOfString);
@@ -1833,13 +1839,75 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 }
 
+void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *program) {
+    if (!localHash) return;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *node = (HashNode *)localHash[i];
+        // HashNode *node = hashTable[i];
+        ResultExpression *atrib = NULL;
+        while (node) {
+            if (node->hashExpr) {
+                // printf(">>>>>>>>>>>>>> this noda has atrib expr %p %s = %p %d\n\n", node, node->varId, node->hashExpr, ((Expression*)node->hashExpr)->type);
+                atrib = evalExpression(node->hashExpr, globalHash, localHash, program);
+                // printf("<<<<<<<<<<<<<< retornou %d %d %d\n", atrib->typeVar, atrib->pointer, atrib->assign);
+
+                int assignType, assignPointer = atrib->pointer;
+                // printf("\nassignType %d %d\n", atrib->typeVar, atrib->assign);
+                if (atrib->typeVar == CHAR || atrib->typeVar == CHARACTER) {
+                    assignType = CHAR;
+                } else if (atrib->typeVar == INT || atrib->typeVar == NUM_INT) {
+                    assignType = INT;
+                } else if (atrib->typeVar == STRING) {
+                    assignType = CHAR;
+                    assignPointer = 1;
+                } else {
+                    assignType = VOID;
+                }
+                if (atrib->typeVar == VOID && atrib->pointer == 0) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: void value not ignored as it ought to be", node->lineAssign, node->columnAssign);
+                    printLineError(node->lineAssign, node->columnAssign);
+                    if (localHash) freeHash(localHash);
+                    // if (globalHash) freeHash(globalHash);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(0);
+                }
+
+                if (((node->typeVar == CHAR || node->typeVar == CHARACTER) && assignType == CHAR) 
+                    || ((node->typeVar == INT || node->typeVar == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
+                    if (node->pointer != assignPointer) {
+                        if (textBefore) printf("\n");
+                        char *type1 = getExactType(node->typeVar, node->pointer);
+                        char *type2 = getExactType(assignType, assignPointer);
+                        printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", node->lineAssign, node->columnAssign, type1, type2);
+                        printLineError(node->lineAssign, node->columnAssign);
+                        if (localHash) freeHash(localHash);
+                        // if (globalHash) freeHash(globalHash);
+                        deleteMipsFileOnError(mipsFile, mipsPath);
+                        deleteAuxFile();
+                        exit(1);
+                    }
+                }
+
+                int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
+                setSRegisterInHash(node, regS); 
+                setAssign(node, atrib->assign);
+            }
+            node = node->next;
+        }
+    }
+}
+
 int traverseAST(Program *program) {
     if (!program) return -1;
     // Percorra as funções na lista de funções
+    lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
         teveReturn = 0;
-        // printf("Function: %s %p\n", currentFunction->name, currentFunction);
+        // printf("Function: %s %p has hash %p\n", currentFunction->name, currentFunction, currentFunction->hashTable);
+        lookForNodeInHashWithExpr(program->hashTable, currentFunction->hashTable, program);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
         while (command != NULL) {

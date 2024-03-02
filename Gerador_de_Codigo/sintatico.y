@@ -271,6 +271,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
     | DeclaraPrototipos { } ;
 
 Funcao: Tipo Ponteiro ID Parametros L_CURLY_BRACKET DeclaraVariaveisFuncao Comandos R_CURLY_BRACKET {
+        // printf(">>>>> function name %s\n", $3.valor);
         // vendo se a funcao ja foi declarada
         if (!lookForPrototypeInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, $4, paramsQntd, &textBefore, &semanticError)) {
             if (!lookForValueInHash(globalHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
@@ -376,49 +377,51 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
             setDimensions(node, $3);
 
             if ($4) {
-                ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
+                setHashExpr(node, $4, auxLineAssign, auxColumnAssign);
+                // printf("node no bison %s tipo = %d  := (%d %p) (%p) in hash %p\n", $2.valor, ((HashNode*)node)->typeVar, $4->type, $4, node, currentHash);
+                // ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
 
-                int assignType, assignPointer = result->pointer;
-                // printf("\nassignType %d %d\n", result->typeVar, result->assign);
-                if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
-                    assignType = CHAR;
-                } else if (result->typeVar == INT || result->typeVar == NUM_INT) {
-                    assignType = INT;
-                } else if (result->typeVar == STRING) {
-                    assignType = CHAR;
-                    assignPointer = 1;
-                } else {
-                    assignType = VOID;
-                }
-                if (result->typeVar == VOID && result->pointer == 0) {
-                    if (textBefore) printf("\n");
-                    printf("error:semantic:%d:%d: void value not ignored as it ought to be", auxLineAssign, auxColumnAssign);
-                    printLineError(auxLineAssign, auxColumnAssign);
-                    if (currentHash) freeHash(currentHash);
-                    // if (globalHash) freeHash(globalHash);
-                    deleteMipsFileOnError(mipsFile, mipsPath);
-                    deleteAuxFile();
-                    exit(0);
-                }
+                // int assignType, assignPointer = result->pointer;
+                // // printf("\nassignType %d %d\n", result->typeVar, result->assign);
+                // if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
+                //     assignType = CHAR;
+                // } else if (result->typeVar == INT || result->typeVar == NUM_INT) {
+                //     assignType = INT;
+                // } else if (result->typeVar == STRING) {
+                //     assignType = CHAR;
+                //     assignPointer = 1;
+                // } else {
+                //     assignType = VOID;
+                // }
+                // if (result->typeVar == VOID && result->pointer == 0) {
+                //     if (textBefore) printf("\n");
+                //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", auxLineAssign, auxColumnAssign);
+                //     printLineError(auxLineAssign, auxColumnAssign);
+                //     if (currentHash) freeHash(currentHash);
+                //     // if (globalHash) freeHash(globalHash);
+                //     deleteMipsFileOnError(mipsFile, mipsPath);
+                //     deleteAuxFile();
+                //     exit(0);
+                // }
 
-                if (((CURRENT_TYPE == CHAR || CURRENT_TYPE == CHARACTER) && assignType == CHAR) 
-                    || ((CURRENT_TYPE == INT || CURRENT_TYPE == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
-                    if ($1 != assignPointer) {
-                        if (textBefore) printf("\n");
-                        char *type1 = getExactType(CURRENT_TYPE, $1);
-                        char *type2 = getExactType(assignType, assignPointer);
-                        printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", auxLineAssign, auxColumnAssign, type1, type2);
-                        printLineError(auxLineAssign, auxColumnAssign);
-                        if (currentHash) freeHash(currentHash);
-                        // if (globalHash) freeHash(globalHash);
-                        deleteMipsFileOnError(mipsFile, mipsPath);
-                        deleteAuxFile();
-                        exit(1);
-                    }
-                }
-                int regS = printAssignment(mipsFile, result->registerType, result->registerNumber);
-                setSRegisterInHash(node, regS); 
-                setAssign(node, result->assign);
+                // if (((CURRENT_TYPE == CHAR || CURRENT_TYPE == CHARACTER) && assignType == CHAR) 
+                //     || ((CURRENT_TYPE == INT || CURRENT_TYPE == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
+                //     if ($1 != assignPointer) {
+                //         if (textBefore) printf("\n");
+                //         char *type1 = getExactType(CURRENT_TYPE, $1);
+                //         char *type2 = getExactType(assignType, assignPointer);
+                //         printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", auxLineAssign, auxColumnAssign, type1, type2);
+                //         printLineError(auxLineAssign, auxColumnAssign);
+                //         if (currentHash) freeHash(currentHash);
+                //         // if (globalHash) freeHash(globalHash);
+                //         deleteMipsFileOnError(mipsFile, mipsPath);
+                //         deleteAuxFile();
+                //         exit(1);
+                //     }
+                // }
+                // int regS = printAssignment(mipsFile, result->registerType, result->registerNumber);
+                // setSRegisterInHash(node, regS); 
+                // setAssign(node, result->assign);
             }
         }
     } ;
@@ -928,9 +931,14 @@ void printLineError(int line, int column) {
 }
 
 int main(int argc, char *argv[]) {
-    mipsFile = createAsmFile(argv[argc - 1]);
-    mipsPath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
-    strcpy(mipsPath, argv[argc - 1]);
+    if (argc < 2) {
+        mipsPath = calloc(128, sizeof(char));
+        strcpy(mipsPath, "/home/marcotuiio/Compilers/Gerador_de_Codigo/asms/default.asm");
+    } else {
+        mipsPath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
+        strcpy(mipsPath, argv[argc - 1]);
+    }
+    mipsFile = createAsmFile(mipsPath);
     printStart(mipsFile);
     readInputIntoAuxFile();
     yyparse();
@@ -954,10 +962,11 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);
+    free(mipsPath);
     deleteAuxFile();
     return 0;
 }

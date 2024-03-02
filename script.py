@@ -3,7 +3,7 @@ import subprocess
 import datetime
 
 BED = '/home/marcotuiio/Compilers/Semantico/testes'
-BSD = '/home/marcotuiio/Compilers/Gerador_de_Codigo/semantico_aux'
+BSD = '/home/marcotuiio/Compilers/Gerador_de_Codigo/saidas_semantico'
 OFICIAL = '/home/marcotuiio/Compilers/Semantico/saidas_padrao'
 EXEC = 'gerador'
 ASM= '/home/marcotuiio/Compilers/Gerador_de_Codigo/asms/vrau.asm'
