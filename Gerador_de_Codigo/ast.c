@@ -1,5 +1,7 @@
 #include "ast.h"
 
+#include <stdint.h>
+
 #include "asm.h"
 #include "hash.h"
 #include "sintatico.tab.h"
@@ -1537,11 +1539,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 Param *auxParam = auxIdNode->param;
                 auxParamRecebido = expr->param;
                 ResultExpression *resultParam = NULL;
-                // printf("--------- %p \n", auxParam);
+                // printf("--------- %p %d\n", auxParam, qntdParamRecebido);
                 int i = 1;
+                int j = qntdParamRecebido - 1;
                 while (auxParamRecebido && auxParam) {
                     resultParam = evalExpression(auxParamRecebido->exp, globalHash, localHash, program);
-
+                    printSetParamInRegister(mipsFile, j, resultParam->registerType, resultParam->registerNumber, auxParam->identifier);
+                    // setSRegisterInHash(, resultParam->registerNumber);
+                    // printf("param %d %d %d %s ($ %d %d)\n", j, resultParam->typeVar, resultParam->assign, auxParam->identifier, resultParam->registerType, resultParam->registerNumber);
+                    j = j - 1;
                     auxLeftPointer = auxParam->pointer;
                     if (auxParam->type == INT || auxParam->type == NUM_INT)
                         auxLeftType = NUM_INT;
@@ -1586,7 +1592,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxIdNode->typeVar, auxIdNode->pointer, 0);
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
-                // printf("result function %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
+                // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
+                storeInStack(mipsFile);
+                printCallFunction(mipsFile, auxIdNode->varId);
+                loadFromStack(mipsFile);
                 // exit(1);
                 return result;
             }
@@ -1631,7 +1640,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
         // printf("\n\n>>>>>>>>>>>>>>> pq ta quebrando %p\n\n", ((Command *)command->then)->auxToken);
         int ifLine = -1;
         if (((Command *)command->then)->auxToken) ifLine = ((Command *)command->then)->auxToken->line;
-       
+
         int elseLine = -1;
         if (command->elseStatement) {
             elseLine = ((Command *)command->elseStatement)->auxToken->line;
@@ -1742,7 +1751,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                     restOfString[strlen(restOfString)] = '\0';  // remove the " and null terminate
                     // printf("3.rest %s\n", restOfString);
                     if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
-                    printString(mipsFile, stringWithoutFormat, toPrint->auxLine, toPrint->auxColumn);
+                    printString(mipsFile, stringWithoutFormat, abs((int)((intptr_t)toPrint)));
                     printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
 
                     free(stringWithoutFormat);
@@ -1752,7 +1761,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 if (strlen(restOfString) > 0) {
                     restOfString[strlen(restOfString) - 1] = '\0';
                     // printf("4.rest %s\n", restOfString);
-                    printString(mipsFile, restOfString, rand() % 1000, rand() % 666);
+                    printString(mipsFile, restOfString, rand() % 1000);
                 }
                 if (restOfString) free(restOfString);
                 if (stringWithoutFormat) free(stringWithoutFormat);
@@ -1763,7 +1772,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
                 fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
-                printString(mipsFile, fixedString, command->auxToken->line, command->auxToken->column);
+                printString(mipsFile, fixedString, command->auxToken->line);
                 free(fixedString);
             }
 
@@ -1829,6 +1838,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 deleteAuxFile();
                 exit(0);
             }
+            // printf("returning value %d %d %d\n", returnAux->typeVar, returnAux->pointer, returnAux->assign);
+            // printReturn(mipsFile, returnAux->registerType, returnAux->registerNumber);
         }
         if (!command->next)
             teveReturn = 1;
@@ -1874,8 +1885,7 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
                     exit(0);
                 }
 
-                if (((node->typeVar == CHAR || node->typeVar == CHARACTER) && assignType == CHAR) 
-                    || ((node->typeVar == INT || node->typeVar == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
+                if (((node->typeVar == CHAR || node->typeVar == CHARACTER) && assignType == CHAR) || ((node->typeVar == INT || node->typeVar == NUM_INT) && assignType == INT)) {  // tipos iguais mas ponteiros diferentes
                     if (node->pointer != assignPointer) {
                         if (textBefore) printf("\n");
                         char *type1 = getExactType(node->typeVar, node->pointer);
@@ -1891,7 +1901,7 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
                 }
 
                 int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
-                setSRegisterInHash(node, regS); 
+                setSRegisterInHash(node, regS);
                 setAssign(node, atrib->assign);
             }
             node = node->next;
@@ -1906,6 +1916,9 @@ int traverseAST(Program *program) {
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
         teveReturn = 0;
+        HashNode *funcNode = getIdentifierNode(program->hashTable, currentFunction->name);
+        printFunctions(mipsFile, currentFunction->name);
+        printFunctionParams(mipsFile, currentFunction->name, funcNode->qntdParams);
         // printf("Function: %s %p has hash %p\n", currentFunction->name, currentFunction, currentFunction->hashTable);
         lookForNodeInHashWithExpr(program->hashTable, currentFunction->hashTable, program);
         // Percorra os comandos na função
@@ -1921,6 +1934,9 @@ int traverseAST(Program *program) {
             printLineError(funcNode->line, funcNode->column);
             freeAST(program);
             exit(0);
+        }
+        if (strcmp(currentFunction->name, "main")) { // does not print jr $ra return for main
+            printReturn(mipsFile, 0, 0);
         }
         functionWithNoReturn = 0;
         currentFunction = currentFunction->next;

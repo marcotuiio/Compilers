@@ -39,6 +39,7 @@ void printTernary(FILE *mips, int conditionType, int conditionReg, int labelID);
 // Labels and jumps
 void printJump(FILE *mips, char *label, int labelID);
 void printLabel(FILE *mips, char *label, int labelID);
+void printFunctions(FILE *mips, char *name);
 
 // Global variables and declarations
 void setGlobalIntVariable(char *name, int value, int type, int regToFree);
@@ -54,16 +55,20 @@ int printLoadFromArray(FILE *mips, int posic);
 
 // Output print
 void printInteger(FILE *mips, int regType, int RegNumber);
-void printString(FILE *mips, char *value, int stringID1, int stringID2);
+void printString(FILE *mips, char *value, int stringID1);
 
 // Input scan
 int printScanInt(FILE *mips, int sReg);
 
 // Function call
 void printCallFunction(FILE *mips, char *name);
-void printReturn(FILE *mips);
+void printSetParamInRegister(FILE *mips, int aReg, int rightType, int rightReg, char *var);
+void printFunctionParams(FILE *mips, char *name, int params);
+void printReturn(FILE *mips, int type, int reg);
 
 // Stack
+void storeInStack(FILE *mips);
+void loadFromStack(FILE *mips);
 void freeRegister(int type, int number);
 void printStart(FILE *mips);
 void printEnd(FILE *mips);

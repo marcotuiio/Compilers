@@ -378,50 +378,6 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
 
             if ($4) {
                 setHashExpr(node, $4, auxLineAssign, auxColumnAssign);
-                // printf("node no bison %s tipo = %d  := (%d %p) (%p) in hash %p\n", $2.valor, ((HashNode*)node)->typeVar, $4->type, $4, node, currentHash);
-                // ResultExpression *result = evalExpression($4, globalHash, currentHash, NULL);
-
-                // int assignType, assignPointer = result->pointer;
-                // // printf("\nassignType %d %d\n", result->typeVar, result->assign);
-                // if (result->typeVar == CHAR || result->typeVar == CHARACTER) {
-                //     assignType = CHAR;
-                // } else if (result->typeVar == INT || result->typeVar == NUM_INT) {
-                //     assignType = INT;
-                // } else if (result->typeVar == STRING) {
-                //     assignType = CHAR;
-                //     assignPointer = 1;
-                // } else {
-                //     assignType = VOID;
-                // }
-                // if (result->typeVar == VOID && result->pointer == 0) {
-                //     if (textBefore) printf("\n");
-                //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", auxLineAssign, auxColumnAssign);
-                //     printLineError(auxLineAssign, auxColumnAssign);
-                //     if (currentHash) freeHash(currentHash);
-                //     // if (globalHash) freeHash(globalHash);
-                //     deleteMipsFileOnError(mipsFile, mipsPath);
-                //     deleteAuxFile();
-                //     exit(0);
-                // }
-
-                // if (((CURRENT_TYPE == CHAR || CURRENT_TYPE == CHARACTER) && assignType == CHAR) 
-                //     || ((CURRENT_TYPE == INT || CURRENT_TYPE == NUM_INT) && assignType == INT)) { // tipos iguais mas ponteiros diferentes
-                //     if ($1 != assignPointer) {
-                //         if (textBefore) printf("\n");
-                //         char *type1 = getExactType(CURRENT_TYPE, $1);
-                //         char *type2 = getExactType(assignType, assignPointer);
-                //         printf("error:semantic:%d:%d: incompatible types in initialization when assigning to type '%s' from type '%s'", auxLineAssign, auxColumnAssign, type1, type2);
-                //         printLineError(auxLineAssign, auxColumnAssign);
-                //         if (currentHash) freeHash(currentHash);
-                //         // if (globalHash) freeHash(globalHash);
-                //         deleteMipsFileOnError(mipsFile, mipsPath);
-                //         deleteAuxFile();
-                //         exit(1);
-                //     }
-                // }
-                // int regS = printAssignment(mipsFile, result->registerType, result->registerNumber);
-                // setSRegisterInHash(node, regS); 
-                // setAssign(node, result->assign);
             }
         }
     } ;
@@ -510,6 +466,8 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
         if (!lookForValueInHash(currentHash, $3.valor, $3.line, $3.column, $1.type, &textBefore, &semanticError)) {
             void *node = insertHash(currentHash, $3.valor, $3.line, $3.column, $1.type, $2);
             setQntdParams(node, paramsQntd);
+            setSRegisterInHash(node, paramsQntd-1);
+            // printf("register $ s %d for param %s\n", paramsQntd-1, $3.valor);
             
             if (dimensionError != 0) {
                 if (textBefore) printf("\n");
@@ -962,7 +920,7 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);

@@ -212,6 +212,10 @@ void printLabel(FILE *mips, char *label, int labelId) {
     fprintf(mips, "\t%s%d:\n", label, labelId);
 }
 
+void printFunctions(FILE *mips, char *name) {
+    fprintf(mips, "\n%s:\n", name);
+}
+
 void setGlobalIntVariable(char *name, int value, int type, int regToFree) {
     if (!globalDeclarations)
         globalDeclarations = calloc(4096, sizeof(char));
@@ -283,11 +287,11 @@ void printInteger(FILE *mips, int regType, int RegNumber) {
     if (regType == 0) tRegister[RegNumber] = 0;
 }
 
-void printString(FILE *mips, char *value, int stringID1, int stringID2) {
+void printString(FILE *mips, char *value, int stringID1) {
     fprintf(mips, "\t.data\n");
-    fprintf(mips, "\t\tstring%d_%d: .asciiz \"%s\"\n", stringID1, stringID2, value);
+    fprintf(mips, "\t\tstring_%d: .asciiz \"%s\"\n", stringID1, value);
     fprintf(mips, "\t.text\n");
-    fprintf(mips, "\tla $a0, string%d_%d\n", stringID1, stringID2);
+    fprintf(mips, "\tla $a0, string_%d\n", stringID1);
     fprintf(mips, "\taddi $v0, $zero, 4\n");
     fprintf(mips, "\tsyscall\n");
 }
@@ -304,11 +308,29 @@ void printCallFunction(FILE *mips, char *name) {
     fprintf(mips, "\tjal %s\n", name);
 }
 
-void printReturn(FILE *mips) {
-    fprintf(mips, "\tjr $ra\n");
+void printSetParamInRegister(FILE *mips, int aReg, int rightType, int rightReg, char *var) {
+    fprintf(mips, "\t#function param\n");
+    fprintf(mips, "\tadd $a%d, $zero, $%c%d # %s\n", aReg, rightType == 0 ? 't' : 's', rightReg, var);
+    if (rightType == 0) tRegister[rightReg] = 0;
 }
 
-void storeInStack(FILE *mips, int value) {
+void printFunctionParams(FILE *mips, char *name, int params) {
+    if (!strcmp(name, "main")) return;
+    fprintf(mips, "\t#laoding params = %d\n", params);
+    for (int i = 0; i < params; i++) {
+        fprintf(mips, "\tadd $s%d, $zero, $a%d\n", i, i);
+        sRegister[i] = 1;
+    }
+}
+
+void printReturn(FILE *mips, int type, int reg) {
+    // char r = type == 0 ? 't' : 's';
+    // fprintf(mips, "\tadd $v0, $zero, $%c%d\n", r, reg);
+    fprintf(mips, "\tjr $ra\n");
+    if (type == 0) tRegister[reg] = 0;
+}
+
+void storeInStack(FILE *mips) {
     fprintf(mips, "\taddi $sp, $sp, -52\n");
     fprintf(mips, "\tsw $a0, 0($sp)\n");
     fprintf(mips, "\tsw $a1, 4($sp)\n");
@@ -323,6 +345,8 @@ void storeInStack(FILE *mips, int value) {
     fprintf(mips, "\tsw $s6, 40($sp)\n");
     fprintf(mips, "\tsw $s7, 44($sp)\n");
     fprintf(mips, "\tsw $ra, 48($sp)\n");
+    for (int i = 0; i < 8; i++) 
+        sRegister[i] = 0;
 }
 
 void loadFromStack(FILE *mips) {
@@ -354,7 +378,6 @@ void freeRegister(int type, int number) {
 void printStart(FILE *mips) {
     fprintf(mips, ".text\n");
     fprintf(mips, ".globl main\n");
-    fprintf(mips, "main:\n");
 }
 
 void printEnd(FILE *mips) {
