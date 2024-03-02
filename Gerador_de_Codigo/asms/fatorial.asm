@@ -74,9 +74,9 @@ main:
 	syscall
 	add $s1, $zero, $v0
 	.data
-		string_45180784: .asciiz "O fatorial de "
+		string_2001713616: .asciiz "O fatorial de "
 	.text
-	la $a0, string_45180784
+	la $a0, string_2001713616
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $s1
@@ -115,9 +115,9 @@ main:
 	addi $sp, $sp, 52
 	add $t0, $zero, $v0
 	.data
-		string_45180576: .asciiz " eh: "
+		string_2001713824: .asciiz " eh: "
 	.text
-	la $a0, string_45180576
+	la $a0, string_2001713824
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

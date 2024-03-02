@@ -929,7 +929,7 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);

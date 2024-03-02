@@ -71,15 +71,15 @@ int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int r
 
 int printPreIncrements(FILE *mips, int leftType, int leftReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
-    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg); // the return value will be on the already incremented register
+    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg);  // the return value will be on the already incremented register
     return leftReg;
 }
 
 int printPostIncrements(FILE *mips, int leftType, int leftReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\tadd $t%d, $zero, $%c%d\n", t, l, leftReg); // first store the original value
-    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg); // then increment and return the original value
+    fprintf(mips, "\tadd $t%d, $zero, $%c%d\n", t, l, leftReg);           // first store the original value
+    fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg);  // then increment and return the original value
     return t;
 }
 
@@ -331,7 +331,7 @@ void printReturn(FILE *mips) {
 void printReturnToV0(FILE *mips, int type, int reg) {
     char r = type == 0 ? 't' : 's';
     fprintf(mips, "\tadd $v0, $zero, $%c%d\n", r, reg);
-    if (type == 0) tRegister[reg] = 0; 
+    if (type == 0) tRegister[reg] = 0;
 }
 
 int printLoadReturnFromV0(FILE *mips) {

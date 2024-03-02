@@ -231,7 +231,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
     switch (expr->type) {
         case NUMEROS:
-        // printf("<<<< expr %p type %d \n", expr, expr->value->type);
+            // printf("<<<< expr %p type %d \n", expr, expr->value->type);
             if (expr->value->type == NUM_INT) {
                 result = createResultExpression(expr->value->type, expr->value->pointer, atoi(expr->value->valor));
                 int regT = printConstant(mipsFile, result->assign);
@@ -1646,7 +1646,10 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
 
         int elseLine = -1;
         if (command->elseStatement) {
-            elseLine = ((Command *)command->elseStatement)->auxToken->line;
+            if (((Command *)command->elseStatement)->auxToken)
+                elseLine = ((Command *)command->elseStatement)->auxToken->line;
+            else 
+                elseLine = ifLine;
         } else {
             elseLine = ifLine;
         }
@@ -1814,6 +1817,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 deleteAuxFile();
                 exit(0);
             }
+            if (strcmp(currentFunction->name, "main"))  // doesnot print jr $ra for main
+                printReturn(mipsFile);
         } else {
             if (!command->condition) {
                 if (textBefore) printf("\n");
@@ -1847,7 +1852,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             }
             // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
             printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
-            if (strcmp(currentFunction->name, "main")) // doesnot print jr $ra for main
+            if (strcmp(currentFunction->name, "main"))  // doesnot print jr $ra for main
                 printReturn(mipsFile);
         }
     }
@@ -1947,7 +1952,7 @@ int traverseAST(Program *program) {
             freeAST(program);
             exit(0);
         }
-        if (strcmp(currentFunction->name, "main")) { // does not print jr $ra return for main
+        if (strcmp(currentFunction->name, "main")) {  // does not print jr $ra return for main
             printReturn(mipsFile);
         }
         functionWithNoReturn = 0;

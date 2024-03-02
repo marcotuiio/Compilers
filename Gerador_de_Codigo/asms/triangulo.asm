@@ -1,43 +1,44 @@
 .text
 .globl main
+
 main:
 	.data
-		string8: .asciiz "=== Determinar Tipo de Triangulo ===\n\n"
+		string_8: .asciiz "=== Determinar Tipo de Triangulo ===\n\n"
 	.text
-	la $a0, string8
+	la $a0, string_8
 	addi $v0, $zero, 4
 	syscall
 	.data
-		string9: .asciiz "Entre com o tamanho do lado A: "
+		string_9: .asciiz "Entre com o tamanho do lado A: "
 	.text
-	la $a0, string9
+	la $a0, string_9
 	addi $v0, $zero, 4
 	syscall
 	addi $v0, $zero, 5
 	syscall
 	add $s0, $zero, $v0
 	.data
-		string11: .asciiz "Entre com o tamanho do lado B: "
+		string_11: .asciiz "Entre com o tamanho do lado B: "
 	.text
-	la $a0, string11
+	la $a0, string_11
 	addi $v0, $zero, 4
 	syscall
 	addi $v0, $zero, 5
 	syscall
 	add $s1, $zero, $v0
 	.data
-		string13: .asciiz "Entre com o tamanho do lado C: "
+		string_13: .asciiz "Entre com o tamanho do lado C: "
 	.text
-	la $a0, string13
+	la $a0, string_13
 	addi $v0, $zero, 4
 	syscall
 	addi $v0, $zero, 5
 	syscall
 	add $s2, $zero, $v0
 	.data
-		string16: .asciiz "\n"
+		string_16: .asciiz "\n"
 	.text
-	la $a0, string16
+	la $a0, string_16
 	addi $v0, $zero, 4
 	syscall
 	add $t0, $s1, $s2
@@ -68,9 +69,9 @@ main:
 	addi $t0, $zero, 0
 	beq $t0, $t2, else_linha_26
 	.data
-		string22: .asciiz "Triangulo Equilatero."
+		string_22: .asciiz "Triangulo Equilatero."
 	.text
-	la $a0, string22
+	la $a0, string_22
 	addi $v0, $zero, 4
 	syscall
 	j exit_if_22
@@ -91,17 +92,17 @@ main:
 	addi $t0, $zero, 0
 	beq $t0, $t1, else_linha_32
 	.data
-		string28: .asciiz "Triangulo Isosceles."
+		string_28: .asciiz "Triangulo Isosceles."
 	.text
-	la $a0, string28
+	la $a0, string_28
 	addi $v0, $zero, 4
 	syscall
 	j exit_if_28
 	else_linha_32:
 	.data
-		string32: .asciiz "Triangulo Escaleno."
+		string_32: .asciiz "Triangulo Escaleno."
 	.text
-	la $a0, string32
+	la $a0, string_32
 	addi $v0, $zero, 4
 	syscall
 	exit_if_28:
@@ -109,12 +110,14 @@ main:
 	j exit_if_20
 	else_linha_38:
 	.data
-		string38: .asciiz "Nao eh Triangulo!!!\n"
+		string_38: .asciiz "Nao eh Triangulo!!!\n"
 	.text
-	la $a0, string38
+	la $a0, string_38
 	addi $v0, $zero, 4
 	syscall
 	exit_if_20:
 	addi $t0, $zero, 0
+	add $v0, $zero, $t0
+
 	addi $v0, $zero, 10
 	syscall

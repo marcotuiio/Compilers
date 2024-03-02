@@ -142,7 +142,7 @@ typedef struct expression {
     ExpParam *param;
     void *extra;
     int isHeadOfList;
-    
+
     struct expression *nextExpr;
 
     struct expression *ternary;
@@ -183,7 +183,7 @@ typedef struct resultExpression {
     int auxLine;
     int auxColumn;
 
-    int registerType; // 0 = t, 1 = s
+    int registerType;  // 0 = t, 1 = s
     int registerNumber;
 
     void *auxIdNode;
