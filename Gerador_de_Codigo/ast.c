@@ -15,7 +15,6 @@ extern void deleteAuxFile();
 extern int textBefore;
 extern int defineAux;
 extern int dimensionAux;
-int teveReturn = 0;
 
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
@@ -1593,9 +1592,16 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
                 // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
+                int *tRegsAlive = calloc(10, sizeof(int));
+                storeTRegisters(mipsFile, tRegsAlive);
                 storeInStack(mipsFile);
                 printCallFunction(mipsFile, auxIdNode->varId);
                 loadFromStack(mipsFile);
+                loadTRegisters(mipsFile, tRegsAlive);
+                free(tRegsAlive);
+                int r = printLoadReturnFromV0(mipsFile);
+                result->registerType = 0;
+                result->registerNumber = r;
                 // exit(1);
                 return result;
             }
@@ -1611,12 +1617,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 }
 
 void traverseASTCommand(Command *command, void **globalHash, void **localHash, Program *program, Function *currentFunction) {
-    // printf("AST Comando %d %p\n", command ? command->type : -1, command);
+    // printf(">> AST Comando %d %p %d\n", command ? command->type : -1, command, command->visited);
     if (!command || command->visited) return;
-    if (teveReturn) return;
     command->visited = 1;
 
-    // printf("traverseASTCommand %d %p %p %p\n",command->type, command, command->next, last);
+    // printf("traverseASTCommand %d %p %p\n",command->type, command, command->next);
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
     if (command->type == LISTA_EXP_COMANDO) {
@@ -1627,6 +1632,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     if (command->type == IF || command->type == ELSE) {
         ResultExpression *ifResult = NULL;
         ifResult = evalExpression(command->condition, globalHash, localHash, program);
+        // printf("ifs %p\n", command);
 
         if (ifResult->typeVar == VOID && ifResult->pointer == 0) {
             if (textBefore) printf("\n");
@@ -1838,11 +1844,11 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 deleteAuxFile();
                 exit(0);
             }
-            // printf("returning value %d %d %d\n", returnAux->typeVar, returnAux->pointer, returnAux->assign);
-            // printReturn(mipsFile, returnAux->registerType, returnAux->registerNumber);
+            // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
+            printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
+            if (strcmp(currentFunction->name, "main")) // doesnot print jr $ra for main
+                printReturn(mipsFile);
         }
-        if (!command->next)
-            teveReturn = 1;
     }
 
     if (command->type == EXIT) {
@@ -1911,11 +1917,12 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
 
 int traverseAST(Program *program) {
     if (!program) return -1;
+    // printGlobals(mipsFile);
     // Percorra as funções na lista de funções
     lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
-        teveReturn = 0;
+        // teveReturn = 0;
         HashNode *funcNode = getIdentifierNode(program->hashTable, currentFunction->name);
         printFunctions(mipsFile, currentFunction->name);
         printFunctionParams(mipsFile, currentFunction->name, funcNode->qntdParams);
@@ -1936,7 +1943,7 @@ int traverseAST(Program *program) {
             exit(0);
         }
         if (strcmp(currentFunction->name, "main")) { // does not print jr $ra return for main
-            printReturn(mipsFile, 0, 0);
+            printReturn(mipsFile);
         }
         functionWithNoReturn = 0;
         currentFunction = currentFunction->next;

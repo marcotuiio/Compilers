@@ -16,15 +16,26 @@
 // int v[10];
 // int i = v[c1*c2] + c1;
 
-void test(int fish, int ball) {
-    int i = 987;
-    printf("bucetoncios laringicus %d a = %d b = %d\n", i++, fish, ball);
+// void test(int fish, int ball) {
+//     int i = 987;
+//     printf("bucetoncios laringicus %d a = %d b = %d\n", i++, fish, ball);
+// }
+
+int soma(int a, int b) {
+    if (a > b) {
+        return a + b;
+    }
+    if (a < b) {
+        return b - a;
+    }
 }
 
 int main() {
-    int a = 7;
-    test(a, 5);
-    printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
+    int a = 2;
+    int zeca = 3;
+    // test(a, 5);
+    printf("a e b => %d\n", soma(a, 1012));
+    // printf("hello world %d this is fun %d %d\n", a, a+5, a-2);
     return 0;
 }
 

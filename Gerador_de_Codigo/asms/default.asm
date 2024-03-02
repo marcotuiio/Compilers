@@ -1,6 +1,5 @@
 .text
 .globl main
-main:
 	addi $t0, $zero, 10
 	la $t0, c1
 	lw $t0, 0($t0)
@@ -55,6 +54,9 @@ main:
 		vetor: .space 4
 	.text
 	la $s1, vetor
+
+f:
+	#laoding params = 0
 	la $t0, c4
 	lw $t0, 0($t0)
 	sll $t2, $t0, 2
@@ -77,24 +79,30 @@ main:
 	end_ternary_11:
 	lw $t6, 0($t0)
 	addi $t0, $zero, 0
+	add $v0, $zero, $s-1
+	jr $ra
+	jr $ra
+
+g:
+	#laoding params = 0
 	addi $t6, $zero, 1
 	add $t7, $s-1, $t6
 	add $s2, $zero, $t7
 	addi $t6, $zero, 666
 	srlv $t7, $s-1, $t6
 	.data
-		string23_28: .asciiz ""
+		string_1518930144: .asciiz ""
 	.text
-	la $a0, string23_28
+	la $a0, string_1518930144
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t7
 	addi $v0, $zero, 1
 	syscall
 	.data
-		string886_145: .asciiz ""
+		string_383: .asciiz ""
 	.text
-	la $a0, string886_145
+	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
 	addi $t7, $zero, 0
@@ -112,11 +120,98 @@ main:
 	sllv $t-1, $t-1, $t-1
 	sll $t-1, $t-1, 2
 	add $t-1, $t-1, $s1
-	add $s4, $zero, $s-1
+	add $v0, $zero, $s-1
+	jr $ra
+	jr $ra
+
+main:
+	addi $sp, $sp, -52
+	sw $a0, 0($sp)
+	sw $a1, 4($sp)
+	sw $a2, 8($sp)
+	sw $a3, 12($sp)
+	sw $s0, 16($sp)
+	sw $s1, 20($sp)
+	sw $s2, 24($sp)
+	sw $s3, 28($sp)
+	sw $s4, 32($sp)
+	sw $s5, 36($sp)
+	sw $s6, 40($sp)
+	sw $s7, 44($sp)
+	sw $ra, 48($sp)
+	jal g
+	lw $a0, 0($sp)
+	lw $a1, 4($sp)
+	lw $a2, 8($sp)
+	lw $a3, 12($sp)
+	lw $s0, 16($sp)
+	lw $s1, 20($sp)
+	lw $s2, 24($sp)
+	lw $s3, 28($sp)
+	lw $s4, 32($sp)
+	lw $s5, 36($sp)
+	lw $s6, 40($sp)
+	lw $s7, 44($sp)
+	lw $ra, 48($sp)
+	addi $sp, $sp, 52
+	lw $t0, 0($sp)
+	lw $t1, 4($sp)
+	lw $t2, 8($sp)
+	lw $t3, 12($sp)
+	lw $t4, 16($sp)
+	lw $t5, 20($sp)
+	lw $t6, 24($sp)
+	lw $t7, 28($sp)
+	lw $t8, 32($sp)
+	lw $t9, 36($sp)
+	addi $sp, $sp, 40
+	add $t-1, $zero, $v0
+	add $s4, $zero, $t-1
 	addi $t-1, $zero, 65
 	add $s5, $zero, $s-1
 	add $s6, $zero, $s-1
-	add $s7, $zero, $s-1
+	addi $sp, $sp, -52
+	sw $a0, 0($sp)
+	sw $a1, 4($sp)
+	sw $a2, 8($sp)
+	sw $a3, 12($sp)
+	sw $s0, 16($sp)
+	sw $s1, 20($sp)
+	sw $s2, 24($sp)
+	sw $s3, 28($sp)
+	sw $s4, 32($sp)
+	sw $s5, 36($sp)
+	sw $s6, 40($sp)
+	sw $s7, 44($sp)
+	sw $ra, 48($sp)
+	jal f
+	lw $a0, 0($sp)
+	lw $a1, 4($sp)
+	lw $a2, 8($sp)
+	lw $a3, 12($sp)
+	lw $s0, 16($sp)
+	lw $s1, 20($sp)
+	lw $s2, 24($sp)
+	lw $s3, 28($sp)
+	lw $s4, 32($sp)
+	lw $s5, 36($sp)
+	lw $s6, 40($sp)
+	lw $s7, 44($sp)
+	lw $ra, 48($sp)
+	addi $sp, $sp, 52
+	lw $t0, 0($sp)
+	lw $t1, 4($sp)
+	lw $t2, 8($sp)
+	lw $t3, 12($sp)
+	lw $t4, 16($sp)
+	lw $t5, 20($sp)
+	lw $t6, 24($sp)
+	lw $t7, 28($sp)
+	lw $t8, 32($sp)
+	lw $t9, 36($sp)
+	addi $sp, $sp, 40
+	add $t-1, $zero, $v0
+	add $s7, $zero, $t-1
 	add $s-1, $zero, $s-1
 	addi $t-1, $zero, 0
 	add $s-1, $zero, $s-1
@@ -133,7 +228,7 @@ main:
 	sle $t-1, $s-1, $s-1
 	addi $t-1, $zero, 0
 	beq $t-1, $t-1, else_linha_43
-	add $s7, $zero, $s-1
+	add $s-1, $zero, $s-1
 	addi $t-1, $zero, 666
 	div $s-1, $t-1
 	mflo $t-1
@@ -157,6 +252,7 @@ main:
 	addi $t-1, $zero, 1
 	beq $t-1, $s-1, for_corpo_32
 	add $t-1, $s-1, $s-1
+	add $v0, $zero, $t-1
 
 	addi $v0, $zero, 10
 	syscall

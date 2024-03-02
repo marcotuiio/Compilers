@@ -1,6 +1,7 @@
 #include "asm.h"
 
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int sAux[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 char *globalDeclarations = NULL;
@@ -323,11 +324,22 @@ void printFunctionParams(FILE *mips, char *name, int params) {
     }
 }
 
-void printReturn(FILE *mips, int type, int reg) {
+void printReturn(FILE *mips) {
     // char r = type == 0 ? 't' : 's';
     // fprintf(mips, "\tadd $v0, $zero, $%c%d\n", r, reg);
     fprintf(mips, "\tjr $ra\n");
-    if (type == 0) tRegister[reg] = 0;
+}
+
+void printReturnToV0(FILE *mips, int type, int reg) {
+    char r = type == 0 ? 't' : 's';
+    fprintf(mips, "\tadd $v0, $zero, $%c%d\n", r, reg);
+    if (type == 0) tRegister[reg] = 0; 
+}
+
+int printLoadReturnFromV0(FILE *mips) {
+    int t = getTRegister();
+    fprintf(mips, "\tadd $t%d, $zero, $v0\n", t);
+    return t;
 }
 
 void storeInStack(FILE *mips) {
@@ -345,8 +357,11 @@ void storeInStack(FILE *mips) {
     fprintf(mips, "\tsw $s6, 40($sp)\n");
     fprintf(mips, "\tsw $s7, 44($sp)\n");
     fprintf(mips, "\tsw $ra, 48($sp)\n");
-    for (int i = 0; i < 8; i++) 
+    for (int i = 0; i < 8; i++) {
+        if (sRegister[i] == 1)
+            sAux[i] = 1;
         sRegister[i] = 0;
+    }
 }
 
 void loadFromStack(FILE *mips) {
@@ -364,6 +379,42 @@ void loadFromStack(FILE *mips) {
     fprintf(mips, "\tlw $s7, 44($sp)\n");
     fprintf(mips, "\tlw $ra, 48($sp)\n");
     fprintf(mips, "\taddi $sp, $sp, 52\n");
+    for (int i = 0; i < 8; i++) {
+        if (sAux[i] == 1)
+            sRegister[i] = 1;
+        sAux[i] = 0;
+    }
+}
+
+void storeTRegisters(FILE *mips, int *regs) {
+    int count = 0;
+    for (int i = 0; i < 10; i++) {
+        regs[i] = tRegister[i];
+        tRegister[i] = 0;
+        if (tRegister[i] == 1) count++;
+    }
+    if (count == 0) return;
+    fprintf(mips, "\taddi $sp, $sp, -%d\n", count * 4);
+    for (int i = 0; i < 10; i++) {
+        if (regs[i] == 1) {
+            fprintf(mips, "\tsw $t%d, %d($sp)\n", i, i * 4);
+        }
+    }
+}
+
+void loadTRegisters(FILE *mips, int *regs) {
+    int count = 0;
+    for (int i = 0; i < 10; i++) {
+        tRegister[i] = regs[i];
+        if (regs[i] == 1) count++;
+    }
+    if (count == 0) return;
+    for (int i = 0; i < 10; i++) {
+        if (regs[i] == 1) {
+            fprintf(mips, "\tlw $t%d, %d($sp)\n", i, i * 4);
+        }
+    }
+    fprintf(mips, "\taddi $sp, $sp, %d\n", count * 4);
 }
 
 void freeRegister(int type, int number) {

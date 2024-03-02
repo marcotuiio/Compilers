@@ -1,57 +1,40 @@
 .text
 .globl main
 
-test:
+soma:
 	#laoding params = 2
 	add $s0, $zero, $a0
 	add $s1, $zero, $a1
-	addi $t0, $zero, 987
-	add $s2, $zero, $t0
-	add $t0, $zero, $s2
-	addi $s2, $s2, 1
-	.data
-		string_800780912: .asciiz "bucetoncios laringicus "
-	.text
-	la $a0, string_800780912
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t0
-	addi $v0, $zero, 1
-	syscall
-	.data
-		string_800780800: .asciiz " a = "
-	.text
-	la $a0, string_800780800
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $s1
-	addi $v0, $zero, 1
-	syscall
-	.data
-		string_800780688: .asciiz " b = "
-	.text
-	la $a0, string_800780688
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $s0
-	addi $v0, $zero, 1
-	syscall
-	.data
-		string_383: .asciiz "\n"
-	.text
-	la $a0, string_383
-	addi $v0, $zero, 4
-	syscall
+	sgt $t0, $s1, $s0
+	addi $t1, $zero, 0
+	beq $t1, $t0, else_linha_26
+	add $t0, $s1, $s0
+	add $v0, $zero, $t0
+	jr $ra
+	j exit_if_26
+	else_linha_26:
+	exit_if_26:
+	slt $t0, $s1, $s0
+	addi $t1, $zero, 0
+	beq $t1, $t0, else_linha_29
+	sub $t0, $s0, $s1
+	add $v0, $zero, $t0
+	jr $ra
+	j exit_if_29
+	else_linha_29:
+	exit_if_29:
 	jr $ra
 
 main:
-	addi $t0, $zero, 7
+	addi $t0, $zero, 3
+	add $s2, $zero, $t0
+	addi $t0, $zero, 2
 	add $s3, $zero, $t0
 	#function param
-	add $a1, $zero, $s3 # fish
-	addi $t0, $zero, 5
+	add $a1, $zero, $s3 # a
+	addi $t0, $zero, 1012
 	#function param
-	add $a0, $zero, $t0 # ball
+	add $a0, $zero, $t0 # b
 	addi $sp, $sp, -52
 	sw $a0, 0($sp)
 	sw $a1, 4($sp)
@@ -66,7 +49,7 @@ main:
 	sw $s6, 40($sp)
 	sw $s7, 44($sp)
 	sw $ra, 48($sp)
-	jal test
+	jal soma
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
 	lw $a2, 8($sp)
@@ -81,44 +64,24 @@ main:
 	lw $s7, 44($sp)
 	lw $ra, 48($sp)
 	addi $sp, $sp, 52
+	add $t0, $zero, $v0
 	.data
-		string_800780288: .asciiz "hello world "
+		string_1078004016: .asciiz "a e b => "
 	.text
-	la $a0, string_800780288
+	la $a0, string_1078004016
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $s3
-	addi $v0, $zero, 1
-	syscall
-	addi $t0, $zero, 5
-	add $t1, $s3, $t0
-	.data
-		string_800780080: .asciiz " this is fun "
-	.text
-	la $a0, string_800780080
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t1
-	addi $v0, $zero, 1
-	syscall
-	addi $t0, $zero, 2
-	sub $t1, $s3, $t0
-	.data
-		string_800779904: .asciiz " "
-	.text
-	la $a0, string_800779904
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t1
+	add $a0, $zero, $t0
 	addi $v0, $zero, 1
 	syscall
 	.data
-		string_886: .asciiz "\n"
+		string_383: .asciiz "\n"
 	.text
-	la $a0, string_886
+	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
 	addi $t0, $zero, 0
+	add $v0, $zero, $t0
 
 	addi $v0, $zero, 10
 	syscall

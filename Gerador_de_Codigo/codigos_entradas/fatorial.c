@@ -20,7 +20,7 @@ int fatorial(int n)
 int main()
 {
     int n;
-    printf("Entre com um valor inteiro:");
+    printf("Entre com um valor inteiro: ");
     scanf("%d",&n);
     printf("O fatorial de %d eh: %d\n",n,fatorial(n));    
     return 0;

@@ -64,11 +64,15 @@ int printScanInt(FILE *mips, int sReg);
 void printCallFunction(FILE *mips, char *name);
 void printSetParamInRegister(FILE *mips, int aReg, int rightType, int rightReg, char *var);
 void printFunctionParams(FILE *mips, char *name, int params);
-void printReturn(FILE *mips, int type, int reg);
+void printReturn(FILE *mips);
+void printReturnToV0(FILE *mips, int type, int reg);
+int printLoadReturnFromV0(FILE *mips);
 
 // Stack
 void storeInStack(FILE *mips);
 void loadFromStack(FILE *mips);
+void storeTRegisters(FILE *mips, int *regs);
+void loadTRegisters(FILE *mips, int *regs);
 void freeRegister(int type, int number);
 void printStart(FILE *mips);
 void printEnd(FILE *mips);
