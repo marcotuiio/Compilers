@@ -12,6 +12,8 @@ int getSRegister() {
             return i;
         }
     }
+    printf("\n######### No free $s register found #########\n\n");
+    exit(-1);
     return -1;
 }
 
