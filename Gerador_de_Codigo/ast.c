@@ -8,6 +8,7 @@
 
 extern FILE *mipsFile;
 extern char *mipsPath;
+int *tRegsAlive = NULL;
 
 int functionWithNoReturn = 0;
 extern void printLineError(int line, int column);
@@ -1383,11 +1384,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case POS_FIXA:
-            // if (expr->value->type == L_PAREN) {
-            //     printf("\npos fixa %p %d %d\n", expr, expr->operator, expr->value->type);
-            //     printf("hihi ainda nao fizzzz funcao 968\n");
-            //     exit(0);
-            // }
             // printf("expr->left->type %d\n", expr->left->type);
             left = evalExpression(expr->left, globalHash, localHash, program);
             // printf(">left %p %d %d %d\n", left, left->typeVar, left->pointer, left->assign);
@@ -1489,7 +1485,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
                         // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
                     }
-                    HashNode *vec = (HashNode *)left->auxIdNode; 
+                    HashNode *vec = (HashNode *)left->auxIdNode;
                     posic = printAccessIndexArray(mipsFile, 1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber);
                 }
                 // printLoadFromArray
@@ -1589,15 +1585,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
                 // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
-                int *tRegsAlive = calloc(10, sizeof(int));
-                storeTRegisters(mipsFile, tRegsAlive);
-                int *sRegsAux = calloc(8, sizeof(int));
-                storeInStack(mipsFile, sRegsAux);
+
                 printCallFunction(mipsFile, auxIdNode->varId);
-                loadFromStack(mipsFile, sRegsAux);
-                loadTRegisters(mipsFile, tRegsAlive);
-                free(tRegsAlive);
-                free(sRegsAux);
+
                 int r = printLoadReturnFromV0(mipsFile);
                 result->registerType = 0;
                 result->registerNumber = r;
@@ -1813,8 +1803,12 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 deleteAuxFile();
                 exit(0);
             }
-            if (strcmp(currentFunction->name, "main"))  // doesnot print jr $ra for main
+            if (strcmp(currentFunction->name, "main")) {  // doesnot print jr $ra for main
+                loadFromStack(mipsFile);
+                loadTRegisters(mipsFile, tRegsAlive);
+                // free(tRegsAlive);
                 printReturn(mipsFile);
+            }
         } else {
             if (!command->condition) {
                 if (textBefore) printf("\n");
@@ -1848,8 +1842,13 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             }
             // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
             printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
-            if (strcmp(currentFunction->name, "main"))  // doesnot print jr $ra for main
+            if (strcmp(currentFunction->name, "main")) {
+                loadFromStack(mipsFile);
+                loadTRegisters(mipsFile, tRegsAlive);
+                // free(tRegsAlive);
+                // free(sRegsAux);
                 printReturn(mipsFile);
+            }  // doesnot print jr $ra for main
         }
     }
 
@@ -1925,24 +1924,26 @@ int traverseAST(Program *program) {
     if (!program) return -1;
     // printGlobals(mipsFile);
     // Percorra as funções na lista de funções
-    lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program); // loading global variables (defines not include)
-    int *globals = calloc(8, sizeof(int)); 
+    lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);  // loading global variables (defines not include)
+    int *globals = calloc(8, sizeof(int));
     storeGlobalsInStack(mipsFile, globals);
-    
+
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
         for (int i = 0; i < 10; i++) freeRegister(0, i);
         for (int i = 0; i < 8; i++) {
             if (globals[i] == 0) {
-                // printf("freeing reg s %d\n", i);   
+                // printf("freeing reg s %d\n", i);
                 freeRegister(1, i);
             }
         }
         HashNode *funcNode = getIdentifierNode(program->hashTable, currentFunction->name);
         printFunctions(mipsFile, currentFunction->name);
-        // if (!strcmp(currentFunction->name, "main")) {  // if main, must load globals, in the others main will deal with it
-        //     loadGlobalsFromStack(mipsFile, globals);
-        // }
+        if (strcmp(currentFunction->name, "main")) {  // if not in main save context
+            tRegsAlive = calloc(10, sizeof(int));
+            storeTRegisters(mipsFile, tRegsAlive);
+            storeInStack(mipsFile);
+        }
         printFunctionParams(mipsFile, currentFunction->name, funcNode->qntdParams);
         // printf("Function: %s %p has hash %p\n", currentFunction->name, currentFunction, currentFunction->hashTable);
         lookForNodeInHashWithExpr(program->hashTable, currentFunction->hashTable, program);
@@ -1961,6 +1962,9 @@ int traverseAST(Program *program) {
             exit(0);
         }
         if (strcmp(currentFunction->name, "main")) {  // does not print jr $ra return for main
+            loadFromStack(mipsFile);
+            loadTRegisters(mipsFile, tRegsAlive);
+            free(tRegsAlive);
             printReturn(mipsFile);
         }
         functionWithNoReturn = 0;

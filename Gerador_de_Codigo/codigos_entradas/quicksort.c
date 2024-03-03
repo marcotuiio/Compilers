@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
 
 #define MAX 100
 
@@ -12,10 +12,11 @@ void quicksort(int m, int n)
     int non_stop;
     int i,j;
     int v,x;
-    
+    // exit(1);
     non_stop = 1;
     if (n <= m) { return; }
     i = m-1; j = n; v = a[n];
+    // printf("no quick sort %d %d %d %d %d\n", m, n, i, j, v);
     while(non_stop)
     {
         do{ i=i+1; }while (a[i] < v);
@@ -30,6 +31,7 @@ void quicksort(int m, int n)
         }
     }
     x = a[i]; a[i] = a[n]; a[n] = x;
+    // printf("antes de chamar %d %d\n", m, j);
     quicksort(m,j);
     quicksort(i+1,n);
 }

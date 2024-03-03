@@ -1,68 +1,113 @@
 .text
 .globl main
-	addi $t0, $zero, 34
-	addi $t0, $zero, 10
-	.data
-		array: .space 40
-	.text
-	addi $t0, $zero, 6
-	.data
-		v: .space 24
-	.text
+
+segredo:
+	addi $sp, $sp, -52
+	sw $a0, 0($sp)
+	sw $a1, 4($sp)
+	sw $a2, 8($sp)
+	sw $a3, 12($sp)
+	sw $s0, 16($sp)
+	sw $s1, 20($sp)
+	sw $s2, 24($sp)
+	sw $s3, 28($sp)
+	sw $s4, 32($sp)
+	sw $s5, 36($sp)
+	sw $s6, 40($sp)
+	sw $s7, 44($sp)
+	sw $ra, 48($sp)
+
+	#loading 2 params
+	add $s0, $zero, $a0
+	add $s1, $zero, $a1
+	sgt $t0, $s1, $s0
+	addi $t1, $zero, 0
+	beq $t1, $t0, else_854647472
+	add $t0, $s1, $s0
+	add $v0, $zero, $t0
+	j exit_if_854647472
+	else_854647472:
+	exit_if_854647472:
+	slt $t0, $s1, $s0
+	addi $t1, $zero, 0
+	beq $t1, $t0, else_854650032
+	sub $t0, $s0, $s1
+	add $v0, $zero, $t0
+	j exit_if_854650032
+	else_854650032:
+	exit_if_854650032:
+
+	lw $a0, 0($sp)
+	lw $a1, 4($sp)
+	lw $a2, 8($sp)
+	lw $a3, 12($sp)
+	lw $s0, 16($sp)
+	lw $s1, 20($sp)
+	lw $s2, 24($sp)
+	lw $s3, 28($sp)
+	lw $s4, 32($sp)
+	lw $s5, 36($sp)
+	lw $s6, 40($sp)
+	lw $s7, 44($sp)
+	lw $ra, 48($sp)
+	addi $sp, $sp, 52
+
+	jr $ra
 
 main:
-	addi $t0, $zero, 9
-	la $s7, array
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
-	addi $t2, $zero, 69
-	sw $t2, 0($t1)
-	addi $t1, $zero, 2
-	la $s8, v
-	sll $t2, $t1, 2
-	add $t2, $t2, $s8
-	addi $t3, $zero, 1
-	sw $t3, 0($t2)
-	addi $t2, $zero, 9
-	la $s7, array
-	sll $t3, $t2, 2
-	add $t3, $t3, $s7
-	addi $t4, $zero, 0
-	la $s8, v
-	sll $t5, $t4, 2
-	add $t5, $t5, $s8
-	lw $t6, 0($t3)
-	lw $t3, 0($t5)
-	seq $t5, $t6, $t3
-	addi $t3, $zero, 0
-	beq $t3, $t5, else_487496304
+	addi $t0, $zero, 1000
+	add $s0, $zero, $t0
+	addi $t0, $zero, 999
+	add $s1, $zero, $t0
 	.data
-		string_204: .asciiz "bucetoncios langeicus\n"
+		string_854761648: .asciiz "hello world (a "
 	.text
-	la $a0, string_204
+	la $a0, string_854761648
 	addi $v0, $zero, 4
 	syscall
-	j exit_if_487497184
-	else_487496304:
+	add $a0, $zero, $s0
+	addi $v0, $zero, 1
+	syscall
 	.data
-		string_206: .asciiz "cuuu buuu\n"
+		string_854761792: .asciiz ") this is fun (b "
 	.text
-	la $a0, string_206
+	la $a0, string_854761792
 	addi $v0, $zero, 4
 	syscall
-	exit_if_487497184:
-	addi $t3, $zero, 9
-	la $s7, array
-	sll $t5, $t3, 2
-	add $t5, $t5, $s7
-	lw $t6, 0($t5)
+	add $a0, $zero, $s1
+	addi $v0, $zero, 1
+	syscall
+	addi $t0, $zero, 6
 	.data
-		string_487489984: .asciiz "array [9] = "
+		string_854761904: .asciiz ") "
 	.text
-	la $a0, string_487489984
+	la $a0, string_854761904
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $t6
+	add $a0, $zero, $t0
+	addi $v0, $zero, 1
+	syscall
+	addi $t0, $zero, 7
+	.data
+		string_854762016: .asciiz " "
+	.text
+	la $a0, string_854762016
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t0
+	addi $v0, $zero, 1
+	syscall
+	add $a1, $zero, $s0 # function param a
+	add $a0, $zero, $s1 # function param b
+	jal segredo
+	add $t0, $zero, $v0
+	.data
+		string_854762272: .asciiz " "
+	.text
+	la $a0, string_854762272
+	addi $v0, $zero, 4
+	syscall
+	add $a0, $zero, $t0
 	addi $v0, $zero, 1
 	syscall
 	.data
@@ -71,13 +116,8 @@ main:
 	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
-	addi $t5, $zero, 0
-	add $v0, $zero, $t5
+	addi $t0, $zero, 0
+	add $v0, $zero, $t0
 
 	addi $v0, $zero, 10
 	syscall
-
-# BLOCO DE DEFINES NO FIM DO ARQUIVO
-.data
-	max: .word 34
-# END BLOCO DEFINES

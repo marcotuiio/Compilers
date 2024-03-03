@@ -33,6 +33,9 @@ FILE *createAsmFile(char *fileName) {
     FILE *file = fopen(newFileName, "w");
     if (!file) printf("Erro ao criar arquivo .asm\n");
     // free(newFileName);
+    fprintf(file, "# Gerado por: Gerador de Código do Marco Tulio 202100560105\n");
+    fprintf(file, ".text\n");
+    fprintf(file, "#.globl main\n\n");
     return file;
 }
 
@@ -355,38 +358,10 @@ void storeGlobalsInStack(FILE *mips, int *globals) {
             // count++;
         }
     }
-    // if (count <= 0) return;
-    // fprintf(mips, "\n\taddi $sp, $sp, -%d\n", count * 4);
-    // --count;
-    // for (int i = 0; i < 8; i++) {
-    //     if (globals[i] == 1) {
-    //         fprintf(mips, "\tsw $s%d, %d($sp)\n", i, count * 4);
-    //         count--;
-    //     }
-    // }
 }
 
-// void loadGlobalsFromStack(FILE *mips, int *globals) {
-//     int count = 0;
-//     for (int i = 0; i < 8; i++) {
-//         if (globals[i] == 1) {
-//             sRegister[i] = 1;
-//             count++;
-//         }
-//     }
-//     if (count <= 0) return;
-//     count = 0;
-//     for (int i = 0; i < 8; i++) {
-//         if (globals[i] == 1) {
-//             fprintf(mips, "\tlw $s%d, %d($sp)\n", i, count * 4);
-//             count++;
-//         }
-//     }
-//     fprintf(mips, "\taddi $sp, $sp, %d\n", count * 4);
-// }
-
-void storeInStack(FILE *mips, int *sAux) {
-    fprintf(mips, "\n\taddi $sp, $sp, -52\n");
+void storeInStack(FILE *mips) {
+    fprintf(mips, "\taddi $sp, $sp, -52\n");
     fprintf(mips, "\tsw $a0, 0($sp)\n");
     fprintf(mips, "\tsw $a1, 4($sp)\n");
     fprintf(mips, "\tsw $a2, 8($sp)\n");
@@ -400,14 +375,9 @@ void storeInStack(FILE *mips, int *sAux) {
     fprintf(mips, "\tsw $s6, 40($sp)\n");
     fprintf(mips, "\tsw $s7, 44($sp)\n");
     fprintf(mips, "\tsw $ra, 48($sp)\n\n");
-    for (int i = 0; i < 8; i++) {
-        if (sRegister[i] == 1)
-            sAux[i] = 1;
-        sRegister[i] = 0;
-    }
 }
 
-void loadFromStack(FILE *mips, int *sAux) {
+void loadFromStack(FILE *mips) {
     fprintf(mips, "\n\tlw $a0, 0($sp)\n");
     fprintf(mips, "\tlw $a1, 4($sp)\n");
     fprintf(mips, "\tlw $a2, 8($sp)\n");
@@ -422,11 +392,6 @@ void loadFromStack(FILE *mips, int *sAux) {
     fprintf(mips, "\tlw $s7, 44($sp)\n");
     fprintf(mips, "\tlw $ra, 48($sp)\n");
     fprintf(mips, "\taddi $sp, $sp, 52\n\n");
-    for (int i = 0; i < 8; i++) {
-        if (sAux[i] == 1)
-            sRegister[i] = 1;
-        sAux[i] = 0;
-    }
 }
 
 void storeTRegisters(FILE *mips, int *regs) {
@@ -467,11 +432,6 @@ void freeRegister(int type, int number) {
     } else {
         sRegister[number] = 0;
     }
-}
-
-void printStart(FILE *mips) {
-    fprintf(mips, ".text\n");
-    fprintf(mips, ".globl main\n");
 }
 
 void printExit(FILE *mips) {

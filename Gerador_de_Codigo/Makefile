@@ -29,4 +29,5 @@ clear:
 	rm -f $(PROGRAMA)
 	rm -f diff.txt
 	rm -f tempfile.txt
+	rm -f default.asm
 	rm -f *.o

@@ -71,8 +71,8 @@ int printLoadReturnFromV0(FILE *mips);
 // Stack
 void storeGlobalsInStack(FILE *mips, int *globals);
 // void loadGlobalsFromStack(FILE *mips, int *globals);
-void storeInStack(FILE *mips, int *sAux);
-void loadFromStack(FILE *mips, int *sAux);
+void storeInStack(FILE *mips);
+void loadFromStack(FILE *mips);
 void storeTRegisters(FILE *mips, int *regs);
 void loadTRegisters(FILE *mips, int *regs);
 void freeRegister(int type, int number);

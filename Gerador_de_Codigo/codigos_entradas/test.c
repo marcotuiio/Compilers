@@ -21,14 +21,14 @@
 //     printf("bucetoncios laringicus %d a = %d b = %d\n", i++, fish, ball);
 // }
 
-// int soma(int a, int b) {
-//     if (a > b) {
-//         return a + b;
-//     }
-//     if (a < b) {
-//         return b - a;
-//     }
-// }
+int segredo(int a, int b) {
+    if (a > b) {
+        return a + b;
+    }
+    if (a < b) {
+        return b - a;
+    }
+}
 
 // #define c1 10
 // #define c2 -c1
@@ -44,13 +44,14 @@
 //     return (void*) 0;
 // }
 
-// int main() {
-//     int a = 2, b = 4;
-//     // int zeca = 3;
-//     // printf("a e b => %d\n", soma(a, 1012));
-//     printf("hello world %d this is fun %d %d %d %d\n", a, b, 6, 7, 766);
-//     return 0;
-// }
+int main() {
+    int a = 1000, b = 999;
+    // int zeca = 3;
+    // printf("a e b => %d\n", soma(a, 1012));
+    // test(a, b);
+    printf("hello world (a %d) this is fun (b %d) %d %d %d\n", a, b, 6, 7, segredo(a, b));
+    return 0;
+}
 
 
 // int main() {
@@ -190,27 +191,27 @@
 // }
 
 // TEST: defines
-#define max 34
-// int sla = 666;
-int array[10];
-int main() {
-    int i;
-    int v[6];
-    // i = max * 2;
-    array[9] = 69;
-    v[2] = 1;
-    i = array[9];
-    if (array[9] == array[0]) {
-        printf("bucetoncios langeicus\n");
-    } else {
-        printf("cuuu buuu\n");
-    }
-    printf("array [9] = %d\n", array[9]);
-    // printf("max = %d\n", max);
-    // printf("i = %d\n", i);
-    // printf("sla = %d\n", sla);
-    return 0;
-}
+// #define max 34
+// // int sla = 666;
+// int array[10];
+// int main() {
+//     int i;
+//     int v[6];
+//     // i = max * 2;
+//     array[9] = 69;
+//     v[2] = 1;
+//     i = array[9];
+//     if (array[9] == array[0]) {
+//         printf("bucetoncios langeicus\n");
+//     } else {
+//         printf("cuuu buuu\n");
+//     }
+//     printf("array [9] = %d\n", array[9]);
+//     // printf("max = %d\n", max);
+//     // printf("i = %d\n", i);
+//     // printf("sla = %d\n", sla);
+//     return 0;
+// }
 
 // TESTE Bitwise
 // int main() {
