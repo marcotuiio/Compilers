@@ -1,7 +1,6 @@
 #include "asm.h"
 
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-int sAux[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 char *globalDeclarations = NULL;
@@ -173,7 +172,7 @@ void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
     int t = getTRegister();
     fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
-    fprintf(mips, "\tbeq $t%d, $%c%d, else_linha_%d\n", t, c, conditionReg, labelID);
+    fprintf(mips, "\tbeq $t%d, $%c%d, else_%d\n", t, c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
     tRegister[t] = 0;
 }
@@ -252,15 +251,23 @@ int printDeclareArray(FILE *mips, char *name, int size) {
     fprintf(mips, "\t.data\n");
     fprintf(mips, "\t\t%s: .space %d\n", name, size * 4);
     fprintf(mips, "\t.text\n");
-    int s = getSRegister();
-    fprintf(mips, "\tla $s%d, %s\n", s, name);
+    int s;
+    for (int i = 7; i >= 0; i++) {
+        if (sRegister[i] == 0) {
+            s = i;
+            sRegister[i] = 1;
+            break;
+        }
+    }
+    // fprintf(mips, "\tla $s%d, %s\n", s, name);
     return s;
 }
 
-int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, int indexType, int indexReg) {
+int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, int indexType, int indexReg) {
     int t = getTRegister();
     char index = indexType == 0 ? 't' : 's';
     char a = arrayType == 0 ? 't' : 's';
+    fprintf(mips, "\tla $%c%d, %s\n", a, arrayReg, name);
     fprintf(mips, "\tsll $t%d, $%c%d, 2\n", t, index, indexReg);
     fprintf(mips, "\tadd $t%d, $t%d, $%c%d\n", t, t, a, arrayReg);
     return t;
@@ -310,14 +317,14 @@ void printCallFunction(FILE *mips, char *name) {
 }
 
 void printSetParamInRegister(FILE *mips, int aReg, int rightType, int rightReg, char *var) {
-    fprintf(mips, "\t#function param\n");
-    fprintf(mips, "\tadd $a%d, $zero, $%c%d # %s\n", aReg, rightType == 0 ? 't' : 's', rightReg, var);
+    // fprintf(mips, "\t#function param\n");
+    fprintf(mips, "\tadd $a%d, $zero, $%c%d # function param %s\n", aReg, rightType == 0 ? 't' : 's', rightReg, var);
     if (rightType == 0) tRegister[rightReg] = 0;
 }
 
 void printFunctionParams(FILE *mips, char *name, int params) {
     if (!strcmp(name, "main")) return;
-    fprintf(mips, "\t#laoding params = %d\n", params);
+    fprintf(mips, "\t#loading %d params\n", params);
     for (int i = 0; i < params; i++) {
         fprintf(mips, "\tadd $s%d, $zero, $a%d\n", i, i);
         sRegister[i] = 1;
@@ -340,8 +347,46 @@ int printLoadReturnFromV0(FILE *mips) {
     return t;
 }
 
-void storeInStack(FILE *mips) {
-    fprintf(mips, "\taddi $sp, $sp, -52\n");
+void storeGlobalsInStack(FILE *mips, int *globals) {
+    // int count = 0;
+    for (int i = 0; i < 8; i++) {
+        if (sRegister[i] == 1) {
+            globals[i] = 1;
+            // count++;
+        }
+    }
+    // if (count <= 0) return;
+    // fprintf(mips, "\n\taddi $sp, $sp, -%d\n", count * 4);
+    // --count;
+    // for (int i = 0; i < 8; i++) {
+    //     if (globals[i] == 1) {
+    //         fprintf(mips, "\tsw $s%d, %d($sp)\n", i, count * 4);
+    //         count--;
+    //     }
+    // }
+}
+
+// void loadGlobalsFromStack(FILE *mips, int *globals) {
+//     int count = 0;
+//     for (int i = 0; i < 8; i++) {
+//         if (globals[i] == 1) {
+//             sRegister[i] = 1;
+//             count++;
+//         }
+//     }
+//     if (count <= 0) return;
+//     count = 0;
+//     for (int i = 0; i < 8; i++) {
+//         if (globals[i] == 1) {
+//             fprintf(mips, "\tlw $s%d, %d($sp)\n", i, count * 4);
+//             count++;
+//         }
+//     }
+//     fprintf(mips, "\taddi $sp, $sp, %d\n", count * 4);
+// }
+
+void storeInStack(FILE *mips, int *sAux) {
+    fprintf(mips, "\n\taddi $sp, $sp, -52\n");
     fprintf(mips, "\tsw $a0, 0($sp)\n");
     fprintf(mips, "\tsw $a1, 4($sp)\n");
     fprintf(mips, "\tsw $a2, 8($sp)\n");
@@ -354,7 +399,7 @@ void storeInStack(FILE *mips) {
     fprintf(mips, "\tsw $s5, 36($sp)\n");
     fprintf(mips, "\tsw $s6, 40($sp)\n");
     fprintf(mips, "\tsw $s7, 44($sp)\n");
-    fprintf(mips, "\tsw $ra, 48($sp)\n");
+    fprintf(mips, "\tsw $ra, 48($sp)\n\n");
     for (int i = 0; i < 8; i++) {
         if (sRegister[i] == 1)
             sAux[i] = 1;
@@ -362,8 +407,8 @@ void storeInStack(FILE *mips) {
     }
 }
 
-void loadFromStack(FILE *mips) {
-    fprintf(mips, "\tlw $a0, 0($sp)\n");
+void loadFromStack(FILE *mips, int *sAux) {
+    fprintf(mips, "\n\tlw $a0, 0($sp)\n");
     fprintf(mips, "\tlw $a1, 4($sp)\n");
     fprintf(mips, "\tlw $a2, 8($sp)\n");
     fprintf(mips, "\tlw $a3, 12($sp)\n");
@@ -376,7 +421,7 @@ void loadFromStack(FILE *mips) {
     fprintf(mips, "\tlw $s6, 40($sp)\n");
     fprintf(mips, "\tlw $s7, 44($sp)\n");
     fprintf(mips, "\tlw $ra, 48($sp)\n");
-    fprintf(mips, "\taddi $sp, $sp, 52\n");
+    fprintf(mips, "\taddi $sp, $sp, 52\n\n");
     for (int i = 0; i < 8; i++) {
         if (sAux[i] == 1)
             sRegister[i] = 1;

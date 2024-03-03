@@ -1489,7 +1489,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
                         // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
                     }
-                    posic = printAccessIndexArray(mipsFile, 1, ((HashNode *)left->auxIdNode)->sRegister, dimenResult->registerType, dimenResult->registerNumber);
+                    HashNode *vec = (HashNode *)left->auxIdNode; 
+                    posic = printAccessIndexArray(mipsFile, 1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber);
                 }
                 // printLoadFromArray
                 result = createResultExpression(auxIdNode->typeVar, 0, 0);
@@ -1501,7 +1502,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             } else if (expr->operator== L_PAREN) {
                 HashNode *auxIdNode = left->auxIdNode;
-                // printf("%p hihi ainda nao fizzzz %p %d\n", left, auxIdNode, expr->operator);
+                // printf("%p pos fixa func %p %d\n", left, auxIdNode, expr->operator);
                 if (auxIdNode->kind != FUNCTION) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: called object '%s' is not a function or function pointer", expr->value->line, expr->value->column, auxIdNode->varId);
@@ -1541,7 +1542,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 while (auxParamRecebido && auxParam) {
                     resultParam = evalExpression(auxParamRecebido->exp, globalHash, localHash, program);
                     printSetParamInRegister(mipsFile, j, resultParam->registerType, resultParam->registerNumber, auxParam->identifier);
-                    // setSRegisterInHash(, resultParam->registerNumber);
                     // printf("param %d %d %d %s ($ %d %d)\n", j, resultParam->typeVar, resultParam->assign, auxParam->identifier, resultParam->registerType, resultParam->registerNumber);
                     j = j - 1;
                     auxLeftPointer = auxParam->pointer;
@@ -1591,15 +1591,16 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
                 int *tRegsAlive = calloc(10, sizeof(int));
                 storeTRegisters(mipsFile, tRegsAlive);
-                storeInStack(mipsFile);
+                int *sRegsAux = calloc(8, sizeof(int));
+                storeInStack(mipsFile, sRegsAux);
                 printCallFunction(mipsFile, auxIdNode->varId);
-                loadFromStack(mipsFile);
+                loadFromStack(mipsFile, sRegsAux);
                 loadTRegisters(mipsFile, tRegsAlive);
                 free(tRegsAlive);
+                free(sRegsAux);
                 int r = printLoadReturnFromV0(mipsFile);
                 result->registerType = 0;
                 result->registerNumber = r;
-                // exit(1);
                 return result;
             }
             break;
@@ -1640,16 +1641,11 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        // printf("\n\n>>>>>>>>>>>>>>> pq ta quebrando %p\n\n", ((Command *)command->then)->auxToken);
-        int ifLine = -1;
-        if (((Command *)command->then)->auxToken) ifLine = ((Command *)command->then)->auxToken->line;
-
+        // printf("\n\n>>>>>>>>>>>>>>> pq ta quebrando %p\n\n", ((Command *)command->auxToken));
+        int ifLine = abs((int)((intptr_t)command->then));
         int elseLine = -1;
         if (command->elseStatement) {
-            if (((Command *)command->elseStatement)->auxToken)
-                elseLine = ((Command *)command->elseStatement)->auxToken->line;
-            else 
-                elseLine = ifLine;
+            elseLine = abs((int)((intptr_t)command->elseStatement));
         } else {
             elseLine = ifLine;
         }
@@ -1660,7 +1656,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             t = t->next;
         }
         printJump(mipsFile, "exit_if_", ifLine);
-        printLabel(mipsFile, "else_linha_", elseLine);
+        printLabel(mipsFile, "else_", elseLine);
         Command *t2 = command->elseStatement;
         while (t2) {
             traverseASTCommand(t2, globalHash, localHash, program, currentFunction);
@@ -1929,12 +1925,24 @@ int traverseAST(Program *program) {
     if (!program) return -1;
     // printGlobals(mipsFile);
     // Percorra as funções na lista de funções
-    lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);
+    lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program); // loading global variables (defines not include)
+    int *globals = calloc(8, sizeof(int)); 
+    storeGlobalsInStack(mipsFile, globals);
+    
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
-        // teveReturn = 0;
+        for (int i = 0; i < 10; i++) freeRegister(0, i);
+        for (int i = 0; i < 8; i++) {
+            if (globals[i] == 0) {
+                // printf("freeing reg s %d\n", i);   
+                freeRegister(1, i);
+            }
+        }
         HashNode *funcNode = getIdentifierNode(program->hashTable, currentFunction->name);
         printFunctions(mipsFile, currentFunction->name);
+        // if (!strcmp(currentFunction->name, "main")) {  // if main, must load globals, in the others main will deal with it
+        //     loadGlobalsFromStack(mipsFile, globals);
+        // }
         printFunctionParams(mipsFile, currentFunction->name, funcNode->qntdParams);
         // printf("Function: %s %p has hash %p\n", currentFunction->name, currentFunction, currentFunction->hashTable);
         lookForNodeInHashWithExpr(program->hashTable, currentFunction->hashTable, program);
@@ -1958,6 +1966,7 @@ int traverseAST(Program *program) {
         functionWithNoReturn = 0;
         currentFunction = currentFunction->next;
     }
+    free(globals);
     return 0;
 }
 

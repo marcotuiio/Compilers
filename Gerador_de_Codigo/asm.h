@@ -49,7 +49,7 @@ int printLoadIntGlobal(FILE *mips, char *name);
 
 // Arrays
 int printDeclareArray(FILE *mips, char *name, int size);
-int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, int indexType, int indexReg);
+int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, int indexType, int indexReg);
 void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg);
 int printLoadFromArray(FILE *mips, int posic);
 
@@ -69,8 +69,10 @@ void printReturnToV0(FILE *mips, int type, int reg);
 int printLoadReturnFromV0(FILE *mips);
 
 // Stack
-void storeInStack(FILE *mips);
-void loadFromStack(FILE *mips);
+void storeGlobalsInStack(FILE *mips, int *globals);
+// void loadGlobalsFromStack(FILE *mips, int *globals);
+void storeInStack(FILE *mips, int *sAux);
+void loadFromStack(FILE *mips, int *sAux);
 void storeTRegisters(FILE *mips, int *regs);
 void loadTRegisters(FILE *mips, int *regs);
 void freeRegister(int type, int number);

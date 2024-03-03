@@ -1,5 +1,5 @@
-//#include <stdio.h>
-//#include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX 100
 
@@ -49,6 +49,7 @@ int main()
     {
         printf("Entre com o valor da posicao %d: ",i+1);
         scanf("%d",&j);
+        // printf("lido %d\n",)
         a[i] = j;
     }
     quicksort(0,max-1);
@@ -59,3 +60,5 @@ int main()
     printf("\n");    
     return 0;
 }
+
+

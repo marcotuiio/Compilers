@@ -1,109 +1,65 @@
 .text
 .globl main
+	addi $t0, $zero, 34
 	addi $t0, $zero, 10
-	la $t0, c1
-	lw $t0, 0($t0)
-	sub $t1, $zero, $t0
-	la $t0, c1
-	lw $t0, 0($t0)
-	addi $t1, $zero, 2
-	sllv $t2, $t0, $t1
-	la $t0, c2
-	lw $t0, 0($t0)
-	la $t2, c3
-	lw $t2, 0($t2)
-	la $t3, c3
-	lw $t3, 0($t3)
-	mul $t4, $t2, $t3
-	srlv $t2, $t0, $t4
-	addi $t0, $zero, 0
-	addi $t0, $zero, 11
-	la $t0, c2
-	lw $t0, 0($t0)
-	la $t2, c3
-	lw $t2, 0($t2)
-	add $t3, $t0, $t2
 	.data
-		v: .space 120
+		array: .space 40
 	.text
-	la $s0, v
-
-f:
-	#laoding params = 0
-	la $t0, c4
-	lw $t0, 0($t0)
-	sll $t2, $t0, 2
-	add $t2, $t2, $s0
-	la $t3, c1
-	lw $t3, 0($t3)
-	lw $t5, 0($t0)
-	sgt $t0, $t3, $t5
-	la $t3, c2
-	lw $t3, 0($t3)
-	la $t5, NULL
-	lw $t5, 0($t5)
-	addi $t6, $zero, 0
-	beq $t6, $t5, false_ternary_43
-	true_ternary_43:
-	j end_ternary_43
-	false_ternary_43:
-	la $t5, c3
-	lw $t5, 0($t5)
-	end_ternary_43:
-	lw $t6, 0($t0)
-	addi $t0, $zero, 0
-	add $v0, $zero, $s-1
-	jr $ra
-	jr $ra
+	addi $t0, $zero, 6
+	.data
+		v: .space 24
+	.text
 
 main:
-	addi $t6, $zero, 2
-	add $s1, $zero, $t6
-	addi $t6, $zero, 4
-	add $s2, $zero, $t6
+	addi $t0, $zero, 9
+	la $s7, array
+	sll $t1, $t0, 2
+	add $t1, $t1, $s7
+	addi $t2, $zero, 69
+	sw $t2, 0($t1)
+	addi $t1, $zero, 2
+	la $s8, v
+	sll $t2, $t1, 2
+	add $t2, $t2, $s8
+	addi $t3, $zero, 1
+	sw $t3, 0($t2)
+	addi $t2, $zero, 9
+	la $s7, array
+	sll $t3, $t2, 2
+	add $t3, $t3, $s7
+	addi $t4, $zero, 0
+	la $s8, v
+	sll $t5, $t4, 2
+	add $t5, $t5, $s8
+	lw $t6, 0($t3)
+	lw $t3, 0($t5)
+	seq $t5, $t6, $t3
+	addi $t3, $zero, 0
+	beq $t3, $t5, else_487496304
 	.data
-		string_597922464: .asciiz "hello world "
+		string_204: .asciiz "bucetoncios langeicus\n"
 	.text
-	la $a0, string_597922464
+	la $a0, string_204
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $s1
-	addi $v0, $zero, 1
-	syscall
+	j exit_if_487497184
+	else_487496304:
 	.data
-		string_597922320: .asciiz " this is fun "
+		string_206: .asciiz "cuuu buuu\n"
 	.text
-	la $a0, string_597922320
+	la $a0, string_206
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $s2
-	addi $v0, $zero, 1
-	syscall
-	addi $t6, $zero, 6
+	exit_if_487497184:
+	addi $t3, $zero, 9
+	la $s7, array
+	sll $t5, $t3, 2
+	add $t5, $t5, $s7
+	lw $t6, 0($t5)
 	.data
-		string_597922208: .asciiz " "
+		string_487489984: .asciiz "array [9] = "
 	.text
-	la $a0, string_597922208
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t6
-	addi $v0, $zero, 1
-	syscall
-	addi $t6, $zero, 7
-	.data
-		string_597922128: .asciiz " "
-	.text
-	la $a0, string_597922128
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t6
-	addi $v0, $zero, 1
-	syscall
-	addi $t6, $zero, 766
-	.data
-		string_597922080: .asciiz " "
-	.text
-	la $a0, string_597922080
+	la $a0, string_487489984
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t6
@@ -115,18 +71,13 @@ main:
 	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
-	addi $t6, $zero, 0
-	add $v0, $zero, $t6
+	addi $t5, $zero, 0
+	add $v0, $zero, $t5
 
 	addi $v0, $zero, 10
 	syscall
 
 # BLOCO DE DEFINES NO FIM DO ARQUIVO
 .data
-	c1: .word 10
-	c2: .word -10
-	c3: .word 40
-	c4: .word -10
-	NULL: .word 0
-	CALL_ELEVEN: .word 11
+	max: .word 34
 # END BLOCO DEFINES
