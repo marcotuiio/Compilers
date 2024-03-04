@@ -255,7 +255,7 @@ void printDefines(FILE *mips) {
 void setGlobalVarAssign(char *name, int value) {
     if (!globalAssigns)
         globalAssigns = calloc(4096, sizeof(char));
-    
+
     int t1 = getTRegister();
     int t2 = getTRegister();
     sprintf(globalAssigns + strlen(globalAssigns), "\tla $t%d, %s\n", t1, name);
@@ -290,28 +290,20 @@ void printStoreIntGlobal(FILE *mips, int type, int reg, char *name) {
     fprintf(mips, "\tla $t%d, %s\n", t1, name);
     fprintf(mips, "\tsw $%c%d, 0($t%d)\n", r, reg, t1);
     if (type == 0) tRegister[reg] = 0;
-    tRegister[t1] = 0;	
+    tRegister[t1] = 0;
     // return t1;
 }
 
 int printDeclareArray(FILE *mips, char *name, int size, int isGlobal) {
     if (isGlobal) {
         fprintf(mips, "\t%s: .space %d # global array\n", name, size * 4);
-        return -1;    
+        return -1;
     }
-    
+
     int s = getSRegister();
     fprintf(mips, "\t.data\n");
     fprintf(mips, "\t\t%s: .space %d # local function array\n", name, size * 4);
     fprintf(mips, "\t.text\n");
-    // for (int i = 7; i >= 0; i++) {
-    //     if (sRegister[i] == 0) {
-    //         s = i;
-    //         sRegister[i] = 1;
-    //         break;
-    //     }
-    // }
-    // fprintf(mips, "\tla $s%d, %s\n", s, name);
     return s;
 }
 
@@ -326,7 +318,7 @@ int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, i
         fprintf(mips, "\tadd $t%d, $t%d, $%c%d\n", t, t, a, arrayReg);
         if (indexType == 0) tRegister[indexReg] = 0;
         return t;
-    
+
     } else {
         // printf("trying to access global array %s \n", name);
         int t1 = getTRegister();
@@ -335,7 +327,7 @@ int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, i
         fprintf(mips, "\tsll $t%d, $%c%d, 2\n", t2, index, indexReg);
         fprintf(mips, "\tadd $t%d, $t%d, $t%d\n", t2, t2, t1);
         if (indexType == 0) tRegister[indexReg] = 0;
-        tRegister[t1] = 0;  
+        tRegister[t1] = 0;
         return t2;
     }
 }

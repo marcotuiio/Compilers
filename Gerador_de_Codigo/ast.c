@@ -527,6 +527,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
 
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
+                // PQ TERIA UM LOAD SEGUIDO DE STORE NI ARRAY PREGUIÇA NE
+
                 if (expr->operator== ADD_ASSIGN) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
                     int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
@@ -647,6 +650,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result->registerNumber = left->registerNumber;
                 result->registerType = left->registerType;
                 if (rightType == 0) freeRegister(rightType, rightReg);
+
             } else {
                 result = createResultExpression(auxRightType, auxRightPointer, right->assign);
                 result->registerNumber = right->registerNumber;
@@ -808,22 +812,27 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(INT, 0, left->assign < right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "slt");
                 result->registerNumber = reg;
+
             } else if (expr->operator== GREATER_THAN) {
                 result = createResultExpression(INT, 0, left->assign > right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "sgt");
                 result->registerNumber = reg;
+
             } else if (expr->operator== LESS_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign <= right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "sle");
                 result->registerNumber = reg;
+
             } else if (expr->operator== GREATER_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign >= right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "sge");
                 result->registerNumber = reg;
+
             } else if (expr->operator== EQUAL) {
                 result = createResultExpression(INT, 0, left->assign == right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "seq");
                 result->registerNumber = reg;
+
             } else if (expr->operator== NOT_EQUAL) {
                 result = createResultExpression(INT, 0, left->assign != right->assign);
                 int reg = printRelationalOps(mipsFile, leftType, leftReg, rightType, rightReg, "sne");
@@ -938,6 +947,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "srlv");
                 result->registerNumber = tReg;
+
             } else if (expr->operator== L_SHIFT) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "sllv");
@@ -1153,6 +1163,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 int tReg = printArithmeticsOps(mipsFile, leftType, leftReg, rightType, rightReg, "mul");
                 result->registerType = 0;
                 result->registerNumber = tReg;
+
             } else if (expr->operator== DIVIDE) {
                 if (right->assign == 0 || auxRightValor == 0) {
                     if (textBefore) printf("\n");
@@ -1166,18 +1177,22 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
                 int tReg = printDivisionOps(mipsFile, leftType, leftReg, rightType, rightReg, "mflo");
                 result->registerNumber = tReg;
+
             } else if (expr->operator== REMAINDER) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
                 int tReg = printDivisionOps(mipsFile, leftType, leftReg, rightType, rightReg, "mfhi");
                 result->registerNumber = tReg;
+
             } else if (expr->operator== BITWISE_OR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "or");
                 result->registerNumber = tReg;
+                
             } else if (expr->operator== BITWISE_XOR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "xor");
                 result->registerNumber = tReg;
+
             } else if (expr->operator== BITWISE_AND) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor & auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "and");
@@ -1414,18 +1429,22 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
                 if (expr->operator== BITWISE_AND) {
                     result = createResultExpression(auxLeftType, 1, *(&auxLeftValor));  // acesso do valor em memoria
+                
                 } else if (expr->operator== NOT) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
                     int reg = printLogicalNot(mipsFile, left->registerType, left->registerNumber);
                     result->registerType = 0;
                     result->registerNumber = reg;
+               
                 } else if (expr->operator== INC) {  // pre incremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
                     int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
                     result->registerType = left->registerType;
                     result->registerNumber = r;
+                
                 } else if (expr->operator== DEC) {  // pre decremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
                     int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
@@ -1453,6 +1472,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     deleteAuxFile();
                     exit(0);
                 }
+
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
 
                 if (expr->operator== INC) {  // pos incremento
                     int originalValue = left->assign;
@@ -1544,7 +1565,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     // printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
                     posic = printAccessIndexArray(mipsFile, 1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber, vec->isGlobal);
                 }
-                // printLoadFromArray
+
                 result = createResultExpression(auxIdNode->typeVar, 0, 0);
                 result->registerType = 0;
                 result->registerNumber = posic;
@@ -1649,7 +1670,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
 
                 printCallFunction(mipsFile, auxIdNode->varId);
-
                 int r = printLoadReturnFromV0(mipsFile);
                 result->registerType = 0;
                 result->registerNumber = r;
@@ -1693,7 +1713,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        // printf("\n\n>>>>>>>>>>>>>>> pq ta quebrando %p\n\n", ((Command *)command->auxToken));
+
         int ifLine = abs((int)((intptr_t)command->then));
         int elseLine = -1;
         if (command->elseStatement) {
@@ -1908,7 +1928,6 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 loadFromStack(mipsFile);
                 loadTRegisters(mipsFile, tRegsAlive);
                 // free(tRegsAlive);
-                // free(sRegsAux);
                 printReturn(mipsFile);
             }  // doesnot print jr $ra for main
         }
@@ -1944,7 +1963,6 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
                         size = 8;
                     printGlobalVariableInMemory(mipsFile, size, node->varId);
                 }
-                
             }
 
             if (node->kind == VECTOR) {
@@ -2023,19 +2041,12 @@ int traverseAST(Program *program) {
     // Percorra as funções na lista de funções
     fprintf(mipsFile, "\n.data\n");
     lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);  // loading global variables (defines not include)
-    int *globals = calloc(8, sizeof(int));                                       // may go through changes
-    storeGlobalsInStack(mipsFile, globals);
     fprintf(mipsFile, ".text\n");
 
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
         for (int i = 0; i < 10; i++) freeRegister(0, i);
-        for (int i = 0; i < 8; i++) {
-            if (globals[i] == 0) {
-                // printf("freeing reg s %d\n", i);
-                freeRegister(1, i);
-            }
-        }
+        for (int i = 0; i < 8; i++) freeRegister(1, i);
         HashNode *funcNode = getIdentifierNode(program->hashTable, currentFunction->name);
         printFunctions(mipsFile, currentFunction->name);
         if (strcmp(currentFunction->name, "main")) {  // if not in main save context
@@ -2071,7 +2082,6 @@ int traverseAST(Program *program) {
         functionWithNoReturn = 0;
         currentFunction = currentFunction->next;
     }
-    free(globals);
     return 0;
 }
 

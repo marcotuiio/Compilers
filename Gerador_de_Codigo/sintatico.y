@@ -581,12 +581,6 @@ ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON {
         $$ = aux;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON {
-        // Expression *t = $4;
-        // while (t) {
-        //     ResultExpression *asss = evalExpression(t, globalHash, currentHash, AST);
-        //     printf("eval %p = %d\n", asss, asss ? asss->assign : -666);
-        //     t = t->nextPrint;
-        // }
         AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, PRINTF);
         Command *aux = createPrintStatement($3.valor, $4, NULL);
         aux->auxToken = auxToken;

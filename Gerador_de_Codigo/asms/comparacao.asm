@@ -9443,12 +9443,12 @@ ASSERT:
 	add $s1, $zero, $a1
 	sub $t0, $s1, $s0
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_2075099344
+	beq $t1, $t0, else_1974791984
 	jal Panic
 	add $t0, $zero, $v0
-	j exit_if_2075099344
-	else_2075099344:
-	exit_if_2075099344:
+	j exit_if_1974791984
+	else_1974791984:
+	exit_if_1974791984:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)

@@ -72,7 +72,7 @@ AuxElse ->
 AuxFor -> Expressao
 AuxFor ->
 
-AuxPrint -> , Expressao AuxPrint
+AuxPrint -> , Expressao
 AuxPrint ->
 
 Expressao -> ExpressaoAtribuicao
