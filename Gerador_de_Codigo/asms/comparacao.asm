@@ -9360,12 +9360,12 @@ ASSERT:
 	add $s1, $zero, $a1
 	sub $t0, $s1, $s0
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_1274851904
+	beq $t1, $t0, else_1697865152
 	jal Panic
 	add $t0, $zero, $v0
-	j exit_if_1274851904
-	else_1274851904:
-	exit_if_1274851904:
+	j exit_if_1697865152
+	else_1697865152:
+	exit_if_1697865152:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -9403,8 +9403,166 @@ main:
 	beq $t1, $t2, for_corpo_285
 	jal PopulateArray
 	add $t1, $zero, $v0
-	addi $t2, $zero, 666
-	add $v0, $zero, $t2
+	addi $t2, $zero, 0
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $s0, $zero, $t2
+	j for_teste_289
+	for_corpo_289:
+	la $s7, a
+	sll $t2, $s0, 2
+	add $t2, $t2, $s7
+	add $a1, $zero, $t2 # function param v1
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	addi $t3, $zero, 1
+	add $a0, $zero, $t3 # function param i
+	jal GenValue
+	add $t3, $zero, $v0
+	add $t4, $t2, $t3
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t4, $t3, $t2
+	addi $t2, $zero, 1
+	add $a0, $zero, $t2 # function param i
+	jal GenValue
+	add $t2, $zero, $v0
+	add $t3, $t4, $t2
+	add $a0, $zero, $t3 # function param v2
+	jal ASSERT
+	add $t2, $zero, $v0
+	addi $t3, $zero, 1
+	add $a0, $zero, $t3 # function param i
+	jal GenValue
+	add $t3, $zero, $v0
+	add $t4, $s0, $t3
+	add $s0, $zero, $t4
+	for_teste_289:
+	addi $t3, $zero, 100
+	add $a0, $zero, $t3 # function param i
+	jal GenValue
+	add $t3, $zero, $v0
+	slt $t4, $s0, $t3
+	addi $t3, $zero, 1
+	beq $t3, $t4, for_corpo_289
+	.data
+		string_292: .asciiz "O codigo assembly gerado funcionou como o esperado."
+	.text
+	la $a0, string_292
+	addi $v0, $zero, 4
+	syscall
+	addi $t3, $zero, 666
+	add $v0, $zero, $t3
 
 	addi $v0, $zero, 10
 	syscall

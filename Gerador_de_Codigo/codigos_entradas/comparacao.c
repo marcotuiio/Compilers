@@ -286,9 +286,9 @@ int main() {
         a[i]=0;
     }
     PopulateArray();
-    // for(i=GenValue(0); i<GenValue(100); i+=GenValue(1)) {
-    //     ASSERT(a[i], GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1));
-    // }
-    // printf("O codigo assembly gerado funcionou como o esperado.");
+    for(i=GenValue(0); i<GenValue(100); i+=GenValue(1)) {
+        ASSERT(a[i], GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1));
+    }
+    printf("O codigo assembly gerado funcionou como o esperado.");
     return(666);
 }
