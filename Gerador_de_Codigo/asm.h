@@ -46,12 +46,14 @@ void printGlobalVariableInMemory(FILE *mipsFile, int size, char *name);
 void setDefineIntVariable(char *name, int value, int type, int regToFree);
 void printDefines(FILE *mips);
 // void printGlobalCharVariable(FILE *mips, char *name, char value);
+void setGlobalVarAssign(char *name, int value);
+void printGlobalVarAssign(FILE *mips);
 int printLoadIntGlobal(FILE *mips, char *name);
 void printStoreIntGlobal(FILE *mips, int type, int reg, char *name);
 
 // Arrays
-int printDeclareArray(FILE *mips, char *name, int size);
-int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, int indexType, int indexReg);
+int printDeclareArray(FILE *mips, char *name, int size, int isGlobal);
+int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, int indexType, int indexReg, int isGlobal);
 void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg);
 int printLoadFromArray(FILE *mips, int posic);
 

@@ -269,9 +269,9 @@
 // }
 
 
-// #define cu 10
+#define max 10
 // int a;
-// int b;
+int b;
 
 int soma(int a, int b) {
     printf("params %d %d\n", a, b);
@@ -279,15 +279,20 @@ int soma(int a, int b) {
 }
 
 int v[3];
+int teste = 7%3 + 9;
 
 int main() {
+    int a[max];
     int i;
-    v[0] = 1;
-    v[1] = 2;
-    v[2] = 3;
-    for (i = 0; i < 2; i++) {
-        printf("%d soma %d\n", i, soma(v[i], v[i+1]));
-    }
+    b = 999;
+    printf("teste = %d\n", teste);
+    // a[0] = 1;
+    // a[1] = 2;
+    // a[2] = 3;
+    // v[0] = 666;
+    // for (i = 0; i < 2; i++) {
+    //     printf("%d soma %d\n", i, soma(a[i], a[i+1]));
+    // }
     // printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
     // printf("c local = %d\n", c);
     return(666);

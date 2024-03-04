@@ -4,11 +4,9 @@
 .globl main
 
 	addi $t0, $zero, 100
-	.data
-		a: .space 400
-	.text
 
 .data
+	a: .space 400 # global array
 	v10: .word 0
 	v01: .word 0
 	v20: .word 0
@@ -965,906 +963,821 @@ PopulateArray:
 	addi $t0, $zero, 0
 	addi $t1, $zero, 0
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 2
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 2
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 3
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 4
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 5
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 6
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 7
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 8
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 0
 	addi $t1, $zero, 9
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 5
-	addi $t1, $zero, 1
-	sllv $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 5
-	addi $t1, $zero, 1
-	sllv $t2, $t0, $t1
-	addi $t0, $zero, 2
-	addi $t1, $zero, 1
-	srlv $t3, $t0, $t1
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t2, v03
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v05
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v07
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v09
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v11
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v13
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v15
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v17
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v19
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v21
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v23
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
+	la $t2, v25
+	lw $t3, 0($t2)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
+	addi $t0, $zero, 5
+	addi $t1, $zero, 1
+	sllv $t2, $t0, $t1
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
 	la $t0, v01
 	lw $t2, 0($t0)
 	la $t0, v02
@@ -1944,757 +1857,757 @@ PopulateArray:
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 2
+	addi $t1, $zero, 1
+	srlv $t3, $t0, $t1
+	add $t0, $t2, $t3
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
+	addi $t0, $zero, 5
+	addi $t1, $zero, 1
+	sllv $t2, $t0, $t1
+	addi $t0, $zero, 2
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 3
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 4
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 5
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 6
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 7
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 8
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 5
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 9
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 10
-	addi $t1, $zero, 1
-	sllv $t2, $t0, $t1
-	addi $t0, $zero, 2
-	addi $t1, $zero, 1
-	srlv $t3, $t0, $t1
-	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
 	la $t0, v01
 	lw $t2, 0($t0)
 	la $t0, v02
@@ -2774,757 +2687,757 @@ PopulateArray:
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 2
+	addi $t1, $zero, 1
+	srlv $t3, $t0, $t1
+	add $t0, $t2, $t3
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
+	addi $t0, $zero, 10
+	addi $t1, $zero, 1
+	sllv $t2, $t0, $t1
+	addi $t0, $zero, 2
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 3
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 4
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 5
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 6
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 7
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 8
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 10
 	addi $t1, $zero, 1
 	sllv $t2, $t0, $t1
 	addi $t0, $zero, 9
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 60
-	addi $t1, $zero, 1
-	srlv $t2, $t0, $t1
-	addi $t0, $zero, 2
-	addi $t1, $zero, 1
-	srlv $t3, $t0, $t1
-	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
 	la $t0, v01
 	lw $t2, 0($t0)
 	la $t0, v02
@@ -3604,1599 +3517,1516 @@ PopulateArray:
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 2
+	addi $t1, $zero, 1
+	srlv $t3, $t0, $t1
+	add $t0, $t2, $t3
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
+	addi $t0, $zero, 60
+	addi $t1, $zero, 1
+	srlv $t2, $t0, $t1
+	addi $t0, $zero, 2
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 3
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 4
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 5
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 6
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 7
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 8
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 60
 	addi $t1, $zero, 1
 	srlv $t2, $t0, $t1
 	addi $t0, $zero, 9
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 10
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 1
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 2
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 3
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 4
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 5
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 6
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 7
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 8
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 40
 	addi $t1, $zero, 9
 	addi $t2, $zero, 10
 	div $t1, $t2
 	mfhi $t1
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 186
-	addi $t1, $zero, 55
-	and $t2, $t0, $t1
-	addi $t0, $zero, 0
-	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 186
-	addi $t1, $zero, 55
-	and $t2, $t0, $t1
-	addi $t0, $zero, 2
-	addi $t1, $zero, 1
-	srlv $t3, $t0, $t1
-	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
 	la $t0, v01
 	lw $t2, 0($t0)
 	la $t0, v02
@@ -5275,750 +5105,918 @@ PopulateArray:
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
+	addi $t0, $zero, 0
+	add $t1, $t2, $t0
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
+	addi $t0, $zero, 186
+	addi $t1, $zero, 55
+	and $t2, $t0, $t1
+	addi $t0, $zero, 2
+	addi $t1, $zero, 1
+	srlv $t3, $t0, $t1
+	add $t0, $t2, $t3
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
+	addi $t0, $zero, 186
+	addi $t1, $zero, 55
+	and $t2, $t0, $t1
 	addi $t0, $zero, 2
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 3
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 4
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 5
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 6
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 7
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 8
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 186
 	addi $t1, $zero, 55
 	and $t2, $t0, $t1
 	addi $t0, $zero, 9
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
 	addi $t0, $zero, 0
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6026,84 +6024,84 @@ PopulateArray:
 	addi $t1, $zero, 1
 	srlv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6111,84 +6109,84 @@ PopulateArray:
 	addi $t1, $zero, 1
 	sllv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6196,84 +6194,84 @@ PopulateArray:
 	addi $t1, $zero, 1
 	srlv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6281,84 +6279,84 @@ PopulateArray:
 	addi $t1, $zero, 1
 	sllv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6370,84 +6368,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6455,84 +6453,84 @@ PopulateArray:
 	addi $t1, $zero, 1
 	sllv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6544,84 +6542,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6629,84 +6627,84 @@ PopulateArray:
 	addi $t1, $zero, 2
 	sllv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 48
 	addi $t1, $zero, 12
 	or $t2, $t0, $t1
@@ -6718,167 +6716,167 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 0
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
@@ -6886,748 +6884,748 @@ PopulateArray:
 	addi $t1, $zero, 1
 	srlv $t3, $t0, $t1
 	add $t0, $t2, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 2
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 3
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 4
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 5
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 6
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 7
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 8
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 173
 	addi $t1, $zero, 235
 	xor $t2, $t0, $t1
 	addi $t0, $zero, 9
 	add $t1, $t2, $t0
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -7639,100 +7637,9 @@ PopulateArray:
 	sub $t1, $t0, $t2
 	addi $t0, $zero, 0
 	add $t2, $t1, $t0
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
-	addi $t0, $zero, 91
-	sub $t1, $zero, $t0
-	not $t0, $t1
-	addi $t1, $zero, 5
-	addi $t2, $zero, 2
-	addi $t3, $zero, 1
-	srlv $t4, $t2, $t3
-	sllv $t2, $t1, $t4
-	sub $t1, $t0, $t2
-	addi $t0, $zero, 2
-	addi $t2, $zero, 1
-	srlv $t3, $t0, $t2
-	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
 	la $t0, v01
 	lw $t2, 0($t0)
 	la $t0, v02
@@ -7808,6 +7715,97 @@ PopulateArray:
 	lw $t3, 0($t2)
 	add $t2, $t0, $t3
 	sw $t2, 0($t1)
+	addi $t0, $zero, 91
+	sub $t1, $zero, $t0
+	not $t0, $t1
+	addi $t1, $zero, 5
+	addi $t2, $zero, 2
+	addi $t3, $zero, 1
+	srlv $t4, $t2, $t3
+	sllv $t2, $t1, $t4
+	sub $t1, $t0, $t2
+	addi $t0, $zero, 2
+	addi $t2, $zero, 1
+	srlv $t3, $t0, $t2
+	add $t0, $t1, $t3
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -7821,84 +7819,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	sllv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -7912,84 +7910,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8001,84 +7999,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	sllv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8096,84 +8094,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8185,84 +8183,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	sllv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8280,84 +8278,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8369,84 +8367,84 @@ PopulateArray:
 	addi $t2, $zero, 2
 	sllv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8462,167 +8460,167 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
 	addi $t1, $zero, 0
 	add $t2, $t0, $t1
-	la $s7, a
-	sll $t0, $t2, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	la $t0, a
+	sll $t1, $t2, 2
+	add $t1, $t1, $t0
+	la $t0, v01
+	lw $t2, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v03
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v05
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v07
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v09
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v11
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v13
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v15
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v17
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v19
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v21
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v23
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
-	lw $t3, 0($t1)
-	add $t1, $t2, $t3
+	add $t2, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t2, $t3
 	la $t2, v25
 	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t2, $t0, $t3
+	sw $t2, 0($t1)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8630,84 +8628,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8715,84 +8713,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	sllv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8800,84 +8798,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8887,84 +8885,84 @@ PopulateArray:
 	srlv $t4, $t2, $t3
 	sllv $t2, $t1, $t4
 	add $t1, $t0, $t2
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -8980,84 +8978,84 @@ PopulateArray:
 	srlv $t3, $t2, $t5
 	srlv $t2, $t0, $t3
 	add $t0, $t1, $t2
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -9065,84 +9063,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	sllv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -9154,84 +9152,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -9239,84 +9237,84 @@ PopulateArray:
 	addi $t2, $zero, 2
 	sllv $t3, $t1, $t2
 	add $t1, $t0, $t3
-	la $s7, a
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	la $t1, v01
-	lw $t2, 0($t1)
-	la $t1, v02
+	la $t0, a
+	sll $t2, $t1, 2
+	add $t2, $t2, $t0
+	la $t0, v01
+	lw $t1, 0($t0)
+	la $t0, v02
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v03
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v04
+	add $t1, $t0, $t3
+	la $t0, v04
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v05
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v06
+	add $t1, $t0, $t3
+	la $t0, v06
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v07
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v08
+	add $t1, $t0, $t3
+	la $t0, v08
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v09
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v10
+	add $t1, $t0, $t3
+	la $t0, v10
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v11
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v12
+	add $t1, $t0, $t3
+	la $t0, v12
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v13
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v14
+	add $t1, $t0, $t3
+	la $t0, v14
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v15
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v16
+	add $t1, $t0, $t3
+	la $t0, v16
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v17
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v18
+	add $t1, $t0, $t3
+	la $t0, v18
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v19
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v20
+	add $t1, $t0, $t3
+	la $t0, v20
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v21
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v22
+	add $t1, $t0, $t3
+	la $t0, v22
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v23
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	la $t1, v24
+	add $t1, $t0, $t3
+	la $t0, v24
+	lw $t3, 0($t0)
+	add $t0, $t1, $t3
+	la $t1, v25
 	lw $t3, 0($t1)
-	add $t1, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t1, $t3
-	sw $t2, 0($t0)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
@@ -9328,84 +9326,84 @@ PopulateArray:
 	addi $t2, $zero, 1
 	srlv $t3, $t0, $t2
 	add $t0, $t1, $t3
-	la $s7, a
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
+	la $t1, a
+	sll $t2, $t0, 2
+	add $t2, $t2, $t1
 	la $t0, v01
-	lw $t2, 0($t0)
+	lw $t1, 0($t0)
 	la $t0, v02
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v03
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v03
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v04
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v05
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v05
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v06
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v07
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v07
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v08
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v09
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v09
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v10
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v11
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v11
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v12
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v13
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v13
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v14
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v15
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v15
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v16
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v17
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v17
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v18
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v19
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v19
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v20
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v21
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v21
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v22
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v23
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
+	add $t0, $t1, $t3
+	la $t1, v23
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
 	la $t0, v24
 	lw $t3, 0($t0)
-	add $t0, $t2, $t3
-	la $t2, v25
-	lw $t3, 0($t2)
-	add $t2, $t0, $t3
-	sw $t2, 0($t1)
+	add $t0, $t1, $t3
+	la $t1, v25
+	lw $t3, 0($t1)
+	add $t1, $t0, $t3
+	sw $t1, 0($t2)
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -9445,12 +9443,12 @@ ASSERT:
 	add $s1, $zero, $a1
 	sub $t0, $s1, $s0
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_9089232
+	beq $t1, $t0, else_2075099344
 	jal Panic
 	add $t0, $zero, $v0
-	j exit_if_9089232
-	else_9089232:
-	exit_if_9089232:
+	j exit_if_2075099344
+	else_2075099344:
+	exit_if_2075099344:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -9474,11 +9472,11 @@ main:
 	add $s0, $zero, $t0
 	j for_teste_286
 	for_corpo_286:
-	la $s7, a
-	sll $t0, $s0, 2
-	add $t0, $t0, $s7
-	addi $t1, $zero, 0
-	sw $t1, 0($t0)
+	la $t0, a
+	sll $t1, $s0, 2
+	add $t1, $t1, $t0
+	addi $t0, $zero, 0
+	sw $t0, 0($t1)
 	add $t0, $zero, $s0
 	addi $s0, $s0, 1
 	for_teste_286:
@@ -9495,160 +9493,162 @@ main:
 	add $s0, $zero, $t2
 	j for_teste_290
 	for_corpo_290:
-	la $s7, a
-	sll $t2, $s0, 2
-	add $t2, $t2, $s7
+	la $t2, a
 	lw $t3, 0($t2)
-	add $a1, $zero, $t3 # function param v1
+	la $t2, a
+	sll $t4, $s0, 2
+	add $t4, $t4, $t2
+	lw $t2, 0($t4)
+	add $a1, $zero, $t2 # function param v1
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	addi $t3, $zero, 1
-	add $a0, $zero, $t3 # function param i
+	addi $t4, $zero, 1
+	add $a0, $zero, $t4 # function param i
 	jal GenValue
-	add $t3, $zero, $v0
-	add $t4, $t2, $t3
+	add $t4, $zero, $v0
+	add $t5, $t2, $t4
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
+	add $t4, $t5, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t4, $t3, $t2
+	add $t5, $t4, $t2
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
 	add $t2, $zero, $v0
-	add $t3, $t4, $t2
-	add $a0, $zero, $t3 # function param v2
+	add $t4, $t5, $t2
+	add $a0, $zero, $t4 # function param v2
 	jal ASSERT
 	add $t2, $zero, $v0
-	addi $t3, $zero, 1
-	add $a0, $zero, $t3 # function param i
+	addi $t4, $zero, 1
+	add $a0, $zero, $t4 # function param i
 	jal GenValue
-	add $t3, $zero, $v0
-	add $t4, $s0, $t3
-	add $s0, $zero, $t4
+	add $t4, $zero, $v0
+	add $t5, $s0, $t4
+	add $s0, $zero, $t5
 	for_teste_290:
-	addi $t3, $zero, 100
-	add $a0, $zero, $t3 # function param i
+	addi $t4, $zero, 100
+	add $a0, $zero, $t4 # function param i
 	jal GenValue
-	add $t3, $zero, $v0
-	slt $t4, $s0, $t3
-	addi $t3, $zero, 1
-	beq $t3, $t4, for_corpo_290
+	add $t4, $zero, $v0
+	slt $t5, $s0, $t4
+	addi $t4, $zero, 1
+	beq $t4, $t5, for_corpo_290
 	.data
 		string_294: .asciiz "O codigo assembly gerado funcionou como o esperado."
 	.text
 	la $a0, string_294
 	addi $v0, $zero, 4
 	syscall
-	addi $t3, $zero, 666
-	add $v0, $zero, $t3
+	addi $t4, $zero, 666
+	add $v0, $zero, $t4
 
 	addi $v0, $zero, 10
 	syscall

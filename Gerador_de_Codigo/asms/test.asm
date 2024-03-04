@@ -3,12 +3,21 @@
 .text
 .globl main
 
+	addi $t0, $zero, 10
 	addi $t0, $zero, 3
-	.data
-		v: .space 12
-	.text
+	la $t0, max
+	lw $t1, 0($t0)
 
 .data
+	b: .word 0
+	v: .space 12 # global array
+	teste: .word 0
+	addi $t0, $zero, 7
+	addi $t1, $zero, 3
+	div $t0, $t1
+	mfhi $t0
+	addi $t1, $zero, 9
+	add $t2, $t0, $t1
 .text
 
 soma:
@@ -31,18 +40,18 @@ soma:
 	add $s0, $zero, $a0
 	add $s1, $zero, $a1
 	.data
-		string_604004432: .asciiz "params "
+		string_593436368: .asciiz "params "
 	.text
-	la $a0, string_604004432
+	la $a0, string_593436368
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $s1
 	addi $v0, $zero, 1
 	syscall
 	.data
-		string_604004544: .asciiz " "
+		string_593436480: .asciiz " "
 	.text
-	la $a0, string_604004544
+	la $a0, string_593436480
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $s0
@@ -92,58 +101,26 @@ soma:
 	jr $ra
 
 main:
-	addi $t0, $zero, 0
-	la $s7, v
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
-	addi $t0, $zero, 1
-	sw $t0, 0($t1)
-	addi $t0, $zero, 1
-	la $s7, v
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
-	addi $t0, $zero, 2
-	sw $t0, 0($t1)
-	addi $t0, $zero, 2
-	la $s7, v
-	sll $t1, $t0, 2
-	add $t1, $t1, $s7
-	addi $t0, $zero, 3
-	sw $t0, 0($t1)
-	addi $t0, $zero, 0
-	add $s0, $zero, $t0
-	j for_teste_288
-	for_corpo_288:
+	# BLOCO DE ATRIBUICOES GLOBAIS NO COMEÇO DA MAIN
+	la $t0, teste
+	add $t1, $zero, 10
+	sw $t1, 0($t0)
+	# END BLOCO ATRIBUICOES GLOBAIS
 	.data
-		string_604005696: .asciiz ""
+		a: .space 40 # local function array
 	.text
-	la $a0, string_604005696
+	addi $t0, $zero, 999
+	la $t1, b
+	sw $t0, 0($t1)
+	la $t0, teste
+	lw $t1, 0($t0)
+	.data
+		string_593432304: .asciiz "teste = "
+	.text
+	la $a0, string_593432304
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $s0
-	addi $v0, $zero, 1
-	syscall
-	la $s7, v
-	sll $t0, $s0, 2
-	add $t0, $t0, $s7
-	lw $t1, 0($t0)
-	add $a1, $zero, $t1 # function param a
-	addi $t0, $zero, 1
-	add $t1, $s0, $t0
-	la $s7, v
-	sll $t0, $t1, 2
-	add $t0, $t0, $s7
-	lw $t1, 0($t0)
-	add $a0, $zero, $t1 # function param b
-	jal soma
-	add $t0, $zero, $v0
-	.data
-		string_604006240: .asciiz " soma "
-	.text
-	la $a0, string_604006240
-	addi $v0, $zero, 4
-	syscall
-	add $a0, $zero, $t0
+	add $a0, $zero, $t1
 	addi $v0, $zero, 1
 	syscall
 	.data
@@ -152,15 +129,13 @@ main:
 	la $a0, string_886
 	addi $v0, $zero, 4
 	syscall
-	add $t0, $zero, $s0
-	addi $s0, $s0, 1
-	for_teste_288:
-	addi $t1, $zero, 2
-	slt $t2, $s0, $t1
-	addi $t1, $zero, 1
-	beq $t1, $t2, for_corpo_288
-	addi $t1, $zero, 666
-	add $v0, $zero, $t1
+	addi $t0, $zero, 666
+	add $v0, $zero, $t0
 
 	addi $v0, $zero, 10
 	syscall
+
+# BLOCO DE DEFINES NO FIM DO ARQUIVO
+.data
+	max: .word 10
+# END BLOCO DEFINES
