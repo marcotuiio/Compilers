@@ -37,7 +37,7 @@ quicksort:
 	add $s2, $zero, $t0
 	sle $t0, $s0, $s1
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_1605154144
+	beq $t1, $t0, else_225477984
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -55,9 +55,9 @@ quicksort:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1605154144
-	else_1605154144:
-	exit_if_1605154144:
+	j exit_if_225477984
+	else_225477984:
+	exit_if_225477984:
 	addi $t0, $zero, 1
 	sub $t1, $s1, $t0
 	add $s3, $zero, $t1
@@ -95,11 +95,11 @@ quicksort:
 	beq $t1, $t0, while_corpo_23
 	sge $t0, $s3, $s4
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_1605137856
+	beq $t1, $t0, else_225461696
 	addi $t0, $zero, 0
 	add $s2, $zero, $t0
-	j exit_if_1605140496
-	else_1605137856:
+	j exit_if_225464336
+	else_225461696:
 	la $s7, a
 	sll $t0, $s3, 2
 	add $t0, $t0, $s7
@@ -117,7 +117,7 @@ quicksort:
 	sll $t0, $s4, 2
 	add $t0, $t0, $s7
 	sw $s6, 0($t0)
-	exit_if_1605140496:
+	exit_if_225464336:
 	while_teste_20:
 	addi $t0, $zero, 1
 	beq $t0, $s2, while_corpo_20
@@ -205,9 +205,9 @@ main:
 	addi $t0, $zero, 1
 	add $t1, $s1, $t0
 	.data
-		string_1604996672: .asciiz "Entre com o valor da posicao "
+		string_225320512: .asciiz "Entre com o valor da posicao "
 	.text
-	la $a0, string_1604996672
+	la $a0, string_225320512
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t1
@@ -252,9 +252,9 @@ main:
 	add $t2, $t2, $s7
 	lw $t3, 0($t2)
 	.data
-		string_1604995520: .asciiz ""
+		string_225319360: .asciiz ""
 	.text
-	la $a0, string_1604995520
+	la $a0, string_225319360
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t3

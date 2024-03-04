@@ -28,7 +28,7 @@ fatorial:
 	addi $t0, $zero, 0
 	sle $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1493763600
+	beq $t0, $t1, else_1099696624
 	addi $t0, $zero, 0
 	add $v0, $zero, $t0
 
@@ -48,13 +48,13 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1493763600
-	else_1493763600:
-	exit_if_1493763600:
+	j exit_if_1099696624
+	else_1099696624:
+	exit_if_1099696624:
 	addi $t0, $zero, 1
 	seq $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1493758976
+	beq $t0, $t1, else_1099701248
 	addi $t0, $zero, 1
 	add $v0, $zero, $t0
 
@@ -74,8 +74,8 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1493761520
-	else_1493758976:
+	j exit_if_1099698704
+	else_1099701248:
 	addi $t0, $zero, 1
 	sub $t1, $s0, $t0
 	add $a0, $zero, $t1 # function param n
@@ -100,7 +100,7 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	exit_if_1493761520:
+	exit_if_1099698704:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -130,9 +130,9 @@ main:
 	syscall
 	add $s0, $zero, $v0
 	.data
-		string_1493649568: .asciiz "O fatorial de "
+		string_1099810656: .asciiz "O fatorial de "
 	.text
-	la $a0, string_1493649568
+	la $a0, string_1099810656
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $s0
@@ -142,9 +142,9 @@ main:
 	jal fatorial
 	add $t0, $zero, $v0
 	.data
-		string_1493649360: .asciiz " eh: "
+		string_1099810864: .asciiz " eh: "
 	.text
-	la $a0, string_1493649360
+	la $a0, string_1099810864
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

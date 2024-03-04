@@ -21,14 +21,14 @@
 //     printf("bucetoncios laringicus %d a = %d b = %d\n", i++, fish, ball);
 // }
 
-int segredo(int a, int b) {
-    if (a > b) {
-        return a + b;
-    }
-    if (a < b) {
-        return b - a;
-    }
-}
+// int segredo(int a, int b) {
+//     if (a > b) {
+//         return a + b;
+//     }
+//     if (a < b) {
+//         return b - a;
+//     }
+// }
 
 // #define c1 10
 // #define c2 -c1
@@ -44,16 +44,15 @@ int segredo(int a, int b) {
 //     return (void*) 0;
 // }
 
-int main() {
-    int a = 1000, b = 999;
-    // int zeca = 3;
-    // printf("a e b => %d\n", soma(a, 1012));
-    // test(a, b);
-    int c = segredo(a, b);
-    printf("hello world (a %d) this is fun (b %d) %d %d %d\n", a, b, 6, 7, c);
-    return 0;
-}
-
+// int main() {
+//     int a = 1000, b = 999;
+//     // int zeca = 3;
+//     // printf("a e b => %d\n", soma(a, 1012));
+//     // test(a, b);
+//     int c = segredo(a, b);
+//     printf("hello world (a %d) this is fun (b %d) %d %d %d\n", a, b, 6, 7, c);
+//     return 0;
+// }
 
 // int main() {
 //     int a;
@@ -274,11 +273,22 @@ int main() {
 // int a;
 // int b;
 
-// int main() {
-//     int c = 20;
-//     a = 1111;
-//     b = a + cu;
-//     printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
-//     printf("c local = %d\n", c);
-//     return(666);
-// }
+int soma(int a, int b) {
+    printf("params %d %d\n", a, b);
+    return a + b;
+}
+
+int v[3];
+
+int main() {
+    int i;
+    v[0] = 1;
+    v[1] = 2;
+    v[2] = 3;
+    for (i = 0; i < 2; i++) {
+        printf("%d soma %d\n", i, soma(v[i], v[i+1]));
+    }
+    // printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
+    // printf("c local = %d\n", c);
+    return(666);
+}

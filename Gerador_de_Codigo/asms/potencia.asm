@@ -29,7 +29,7 @@ potencia:
 	addi $t0, $zero, 0
 	seq $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_2114886112
+	beq $t0, $t1, else_1542207008
 	addi $t0, $zero, 1
 	add $v0, $zero, $t0
 
@@ -49,8 +49,8 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_2114888912
-	else_2114886112:
+	j exit_if_1542204208
+	else_1542207008:
 	add $a1, $zero, $s1 # function param base
 	addi $t0, $zero, 1
 	sub $t1, $s0, $t0
@@ -76,7 +76,7 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	exit_if_2114888912:
+	exit_if_1542204208:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -119,9 +119,9 @@ main:
 	jal potencia
 	add $t0, $zero, $v0
 	.data
-		string_2114775360: .asciiz "Resultado: "
+		string_1542317760: .asciiz "Resultado: "
 	.text
-	la $a0, string_2114775360
+	la $a0, string_1542317760
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

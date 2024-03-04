@@ -158,7 +158,7 @@ void PopulateArray() {
     v10 = GenValue(1);
     v11 = GenValue(1);
     v12 = GenValue(1);
-    v13 = GenValue(5);
+    v13 = GenValue(1);
     v14 = GenValue(1);
     v15 = GenValue(1);
     v16 = GenValue(1);
@@ -264,8 +264,9 @@ void PopulateArray() {
     a[(~(-91)-(5<<1))+(2<<2)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
     a[(((~(-91))-(5<<1))+(2<<2))+(2>>1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
     a[(~(-91))+0] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
-    a[(~(-91))+(2>>1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
+    a[(~(-91))+(2>>1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;    
     a[(~(-91))+(1<<1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
+    a[(~(-91))+(6>>1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
     a[(~(-91))+(2<<(2>>1))] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
     a[(((~(-91))+(2<<1))+(2>>(2>>(2>>1))))] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
     a[(~(-91))+(3<<1)] = v01+v02+v03+v04+v05+v06+v07+v08+v09+v10+v11+v12+v13+v14+v15+v16+v17+v18+v19+v20+v21+v22+v23+v24+v25;
@@ -287,8 +288,9 @@ int main() {
     }
     PopulateArray();
     for(i=GenValue(0); i<GenValue(100); i+=GenValue(1)) {
+        // printf("a[%d] = %d -> %d\n", i, a[i], GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1));
         ASSERT(a[i], GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1)+GenValue(1));
-    }
+    }   
     printf("O codigo assembly gerado funcionou como o esperado.");
     return(666);
 }

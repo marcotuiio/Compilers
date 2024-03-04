@@ -884,7 +884,7 @@ PopulateArray:
 	add $t0, $zero, $v0
 	la $t1, v12
 	sw $t0, 0($t1)
-	addi $t0, $zero, 5
+	addi $t0, $zero, 1
 	add $a0, $zero, $t0 # function param i
 	jal GenValue
 	add $t0, $zero, $v0
@@ -8796,6 +8796,91 @@ PopulateArray:
 	addi $t0, $zero, 91
 	sub $t1, $zero, $t0
 	not $t0, $t1
+	addi $t1, $zero, 6
+	addi $t2, $zero, 1
+	srlv $t3, $t1, $t2
+	add $t1, $t0, $t3
+	la $s7, a
+	sll $t0, $t1, 2
+	add $t0, $t0, $s7
+	la $t1, v01
+	lw $t2, 0($t1)
+	la $t1, v02
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v03
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v04
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v05
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v06
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v07
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v08
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v09
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v10
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v11
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v12
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v13
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v14
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v15
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v16
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v17
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v18
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v19
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v20
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v21
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v22
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v23
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	la $t1, v24
+	lw $t3, 0($t1)
+	add $t1, $t2, $t3
+	la $t2, v25
+	lw $t3, 0($t2)
+	add $t2, $t1, $t3
+	sw $t2, 0($t0)
+	addi $t0, $zero, 91
+	sub $t1, $zero, $t0
+	not $t0, $t1
 	addi $t1, $zero, 2
 	addi $t2, $zero, 2
 	addi $t3, $zero, 1
@@ -9360,12 +9445,12 @@ ASSERT:
 	add $s1, $zero, $a1
 	sub $t0, $s1, $s0
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_1697865152
+	beq $t1, $t0, else_9089232
 	jal Panic
 	add $t0, $zero, $v0
-	j exit_if_1697865152
-	else_1697865152:
-	exit_if_1697865152:
+	j exit_if_9089232
+	else_9089232:
+	exit_if_9089232:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -9387,8 +9472,8 @@ ASSERT:
 main:
 	addi $t0, $zero, 0
 	add $s0, $zero, $t0
-	j for_teste_285
-	for_corpo_285:
+	j for_teste_286
+	for_corpo_286:
 	la $s7, a
 	sll $t0, $s0, 2
 	add $t0, $t0, $s7
@@ -9396,11 +9481,11 @@ main:
 	sw $t1, 0($t0)
 	add $t0, $zero, $s0
 	addi $s0, $s0, 1
-	for_teste_285:
+	for_teste_286:
 	addi $t1, $zero, 100
 	slt $t2, $s0, $t1
 	addi $t1, $zero, 1
-	beq $t1, $t2, for_corpo_285
+	beq $t1, $t2, for_corpo_286
 	jal PopulateArray
 	add $t1, $zero, $v0
 	addi $t2, $zero, 0
@@ -9408,12 +9493,13 @@ main:
 	jal GenValue
 	add $t2, $zero, $v0
 	add $s0, $zero, $t2
-	j for_teste_289
-	for_corpo_289:
+	j for_teste_290
+	for_corpo_290:
 	la $s7, a
 	sll $t2, $s0, 2
 	add $t2, $t2, $s7
-	add $a1, $zero, $t2 # function param v1
+	lw $t3, 0($t2)
+	add $a1, $zero, $t3 # function param v1
 	addi $t2, $zero, 1
 	add $a0, $zero, $t2 # function param i
 	jal GenValue
@@ -9547,18 +9633,18 @@ main:
 	add $t3, $zero, $v0
 	add $t4, $s0, $t3
 	add $s0, $zero, $t4
-	for_teste_289:
+	for_teste_290:
 	addi $t3, $zero, 100
 	add $a0, $zero, $t3 # function param i
 	jal GenValue
 	add $t3, $zero, $v0
 	slt $t4, $s0, $t3
 	addi $t3, $zero, 1
-	beq $t3, $t4, for_corpo_289
+	beq $t3, $t4, for_corpo_290
 	.data
-		string_292: .asciiz "O codigo assembly gerado funcionou como o esperado."
+		string_294: .asciiz "O codigo assembly gerado funcionou como o esperado."
 	.text
-	la $a0, string_292
+	la $a0, string_294
 	addi $v0, $zero, 4
 	syscall
 	addi $t3, $zero, 666

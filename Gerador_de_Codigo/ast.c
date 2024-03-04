@@ -1550,7 +1550,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result->registerType = 0;
                 result->registerNumber = posic;
                 result->auxIdNode = auxIdNode;
-                // printf("pos fixa result ($ t %d) %p %d (%d %d)\n", result->registerNumber result, result->typeVar, result->pointer, result->assign);
+                // printf("pos fixa result ($ t %d) %p %d (%d %d)\n", result->registerNumber, result, result->typeVar, result->pointer, result->assign);
                 return result;
 
             } else if (expr->operator== L_PAREN) {
@@ -1573,6 +1573,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     qntdParamRecebido++;
                     auxParamRecebido = auxParamRecebido->next;
                 }
+
+                // printf(">>>>>>> qntd esperada (%s) %d\n", auxIdNode->varId, auxIdNode->qntdParams);
                 if (qntdParamRecebido != auxIdNode->qntdParams) {
                     if (textBefore) printf("\n");
                     if (qntdParamRecebido > auxIdNode->qntdParams) {
@@ -1589,13 +1591,17 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 Param *auxParam = auxIdNode->param;
                 auxParamRecebido = expr->param;
                 ResultExpression *resultParam = NULL;
-                // printf("--------- %p %d\n", auxParam, qntdParamRecebido);
+
                 int i = 1;
                 int j = qntdParamRecebido - 1;
                 while (auxParamRecebido && auxParam) {
                     resultParam = evalExpression(auxParamRecebido->exp, globalHash, localHash, program);
+                    if (resultParam->auxIdNode && ((HashNode*)resultParam->auxIdNode)->kind == VECTOR) {
+                        // printf("result do param %p %d %d\n", resultParam->auxIdNode, ((HashNode*)resultParam->auxIdNode)->kind, ((HashNode*)resultParam->auxIdNode)->typeVar);
+                        resultParam->registerNumber = printLoadFromArray(mipsFile, resultParam->registerNumber);
+                    }
                     printSetParamInRegister(mipsFile, j, resultParam->registerType, resultParam->registerNumber, auxParam->identifier);
-                    // printf("param %d %d %d %s ($ %d %d)\n", j, resultParam->typeVar, resultParam->assign, auxParam->identifier, resultParam->registerType, resultParam->registerNumber);
+                    // printf("%s param %d %d %d %s ($ %d %d)\n",auxIdNode->varId, j, resultParam->typeVar, resultParam->assign, auxParam->identifier, resultParam->registerType, resultParam->registerNumber);
                     j = j - 1;
                     auxLeftPointer = auxParam->pointer;
                     if (auxParam->type == INT || auxParam->type == NUM_INT)

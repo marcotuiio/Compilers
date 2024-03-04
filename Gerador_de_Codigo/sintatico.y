@@ -491,6 +491,7 @@ BlocoParametros: Tipo Ponteiro ID ExpressaoColchete RetornaParametros {
                 setKind(node, VAR);
                 aux->kindParam = VAR; 
             } else {
+                printf("VETOR param %d %s\n", $1.type, $3.valor);
                 setKind(node, VECTOR);
                 aux->kindParam = VECTOR;
             }

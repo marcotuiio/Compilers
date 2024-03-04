@@ -64,7 +64,7 @@ main:
 	addi $t1, $zero, 1
 	f_logical_and_18_27:
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1069323984
+	beq $t0, $t1, else_327706320
 	seq $t0, $s0, $s1
 	seq $t1, $s1, $s2
 	addi $t2, $zero, 0
@@ -73,15 +73,15 @@ main:
 	addi $t2, $zero, 1
 	f_logical_and_20_18:
 	addi $t0, $zero, 0
-	beq $t0, $t2, else_1069322448
+	beq $t0, $t2, else_327704784
 	.data
 		string_22: .asciiz "Triangulo Equilatero."
 	.text
 	la $a0, string_22
 	addi $v0, $zero, 4
 	syscall
-	j exit_if_1069314672
-	else_1069322448:
+	j exit_if_327697008
+	else_327704784:
 	seq $t0, $s0, $s1
 	seq $t1, $s0, $s2
 	addi $t2, $zero, 1
@@ -96,32 +96,32 @@ main:
 	addi $t1, $zero, 0
 	t_logical_or_26_30:
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1069321856
+	beq $t0, $t1, else_327704192
 	.data
 		string_28: .asciiz "Triangulo Isosceles."
 	.text
 	la $a0, string_28
 	addi $v0, $zero, 4
 	syscall
-	j exit_if_1069319760
-	else_1069321856:
+	j exit_if_327702096
+	else_327704192:
 	.data
 		string_32: .asciiz "Triangulo Escaleno."
 	.text
 	la $a0, string_32
 	addi $v0, $zero, 4
 	syscall
-	exit_if_1069319760:
-	exit_if_1069314672:
-	j exit_if_1069322912
-	else_1069323984:
+	exit_if_327702096:
+	exit_if_327697008:
+	j exit_if_327705248
+	else_327706320:
 	.data
 		string_38: .asciiz "Nao eh Triangulo!!!\n"
 	.text
 	la $a0, string_38
 	addi $v0, $zero, 4
 	syscall
-	exit_if_1069322912:
+	exit_if_327705248:
 	addi $t0, $zero, 0
 	add $v0, $zero, $t0
 
