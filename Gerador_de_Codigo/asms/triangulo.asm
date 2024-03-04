@@ -1,7 +1,11 @@
-# Gerado por: Gerador de Código do Marco Tulio 202100560105
+# Gerado por: Gerador de Codigo do Marco Tulio 202100560105
+# file: asms/triangulo.asm
 .text
-#.globl main
+.globl main
 
+
+.data
+.text
 
 main:
 	.data
@@ -60,7 +64,7 @@ main:
 	addi $t1, $zero, 1
 	f_logical_and_18_27:
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_681502864
+	beq $t0, $t1, else_1069323984
 	seq $t0, $s0, $s1
 	seq $t1, $s1, $s2
 	addi $t2, $zero, 0
@@ -69,15 +73,15 @@ main:
 	addi $t2, $zero, 1
 	f_logical_and_20_18:
 	addi $t0, $zero, 0
-	beq $t0, $t2, else_681501328
+	beq $t0, $t2, else_1069322448
 	.data
 		string_22: .asciiz "Triangulo Equilatero."
 	.text
 	la $a0, string_22
 	addi $v0, $zero, 4
 	syscall
-	j exit_if_681493552
-	else_681501328:
+	j exit_if_1069314672
+	else_1069322448:
 	seq $t0, $s0, $s1
 	seq $t1, $s0, $s2
 	addi $t2, $zero, 1
@@ -92,32 +96,32 @@ main:
 	addi $t1, $zero, 0
 	t_logical_or_26_30:
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_681500736
+	beq $t0, $t1, else_1069321856
 	.data
 		string_28: .asciiz "Triangulo Isosceles."
 	.text
 	la $a0, string_28
 	addi $v0, $zero, 4
 	syscall
-	j exit_if_681498640
-	else_681500736:
+	j exit_if_1069319760
+	else_1069321856:
 	.data
 		string_32: .asciiz "Triangulo Escaleno."
 	.text
 	la $a0, string_32
 	addi $v0, $zero, 4
 	syscall
-	exit_if_681498640:
-	exit_if_681493552:
-	j exit_if_681501792
-	else_681502864:
+	exit_if_1069319760:
+	exit_if_1069314672:
+	j exit_if_1069322912
+	else_1069323984:
 	.data
 		string_38: .asciiz "Nao eh Triangulo!!!\n"
 	.text
 	la $a0, string_38
 	addi $v0, $zero, 4
 	syscall
-	exit_if_681501792:
+	exit_if_1069322912:
 	addi $t0, $zero, 0
 	add $v0, $zero, $t0
 

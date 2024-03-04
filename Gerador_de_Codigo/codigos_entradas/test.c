@@ -49,7 +49,8 @@ int main() {
     // int zeca = 3;
     // printf("a e b => %d\n", soma(a, 1012));
     // test(a, b);
-    printf("hello world (a %d) this is fun (b %d) %d %d %d\n", a, b, 6, 7, segredo(a, b));
+    int c = segredo(a, b);
+    printf("hello world (a %d) this is fun (b %d) %d %d %d\n", a, b, 6, 7, c);
     return 0;
 }
 
@@ -266,4 +267,18 @@ int main() {
 //     c = (a > b) ? a+1 : b-1;
 //     printf("c = %d\n", c);
 //     return 0;
+// }
+
+
+// #define cu 10
+// int a;
+// int b;
+
+// int main() {
+//     int c = 20;
+//     a = 1111;
+//     b = a + cu;
+//     printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
+//     printf("c local = %d\n", c);
+//     return(666);
 // }

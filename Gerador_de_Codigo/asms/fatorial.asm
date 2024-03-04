@@ -1,7 +1,11 @@
-# Gerado por: Gerador de Código do Marco Tulio 202100560105
+# Gerado por: Gerador de Codigo do Marco Tulio 202100560105
+# file: asms/fatorial.asm
 .text
-#.globl main
+.globl main
 
+
+.data
+.text
 
 fatorial:
 	addi $sp, $sp, -52
@@ -24,7 +28,7 @@ fatorial:
 	addi $t0, $zero, 0
 	sle $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1999365200
+	beq $t0, $t1, else_1493763600
 	addi $t0, $zero, 0
 	add $v0, $zero, $t0
 
@@ -44,13 +48,13 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1999365200
-	else_1999365200:
-	exit_if_1999365200:
+	j exit_if_1493763600
+	else_1493763600:
+	exit_if_1493763600:
 	addi $t0, $zero, 1
 	seq $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1999360576
+	beq $t0, $t1, else_1493758976
 	addi $t0, $zero, 1
 	add $v0, $zero, $t0
 
@@ -70,8 +74,8 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1999363120
-	else_1999360576:
+	j exit_if_1493761520
+	else_1493758976:
 	addi $t0, $zero, 1
 	sub $t1, $s0, $t0
 	add $a0, $zero, $t1 # function param n
@@ -96,7 +100,7 @@ fatorial:
 	addi $sp, $sp, 52
 
 	jr $ra
-	exit_if_1999363120:
+	exit_if_1493761520:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -126,9 +130,9 @@ main:
 	syscall
 	add $s0, $zero, $v0
 	.data
-		string_1999259136: .asciiz "O fatorial de "
+		string_1493649568: .asciiz "O fatorial de "
 	.text
-	la $a0, string_1999259136
+	la $a0, string_1493649568
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $s0
@@ -138,9 +142,9 @@ main:
 	jal fatorial
 	add $t0, $zero, $v0
 	.data
-		string_1999258928: .asciiz " eh: "
+		string_1493649360: .asciiz " eh: "
 	.text
-	la $a0, string_1999258928
+	la $a0, string_1493649360
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

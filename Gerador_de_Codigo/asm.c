@@ -3,7 +3,7 @@
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-char *globalDeclarations = NULL;
+char *definesDeclarations = NULL;
 
 int getSRegister() {
     for (int i = 0; i < 8; i++) {
@@ -35,9 +35,10 @@ FILE *createAsmFile(char *fileName) {
     FILE *file = fopen(newFileName, "w");
     if (!file) printf("Erro ao criar arquivo .asm\n");
     // free(newFileName);
-    fprintf(file, "# Gerado por: Gerador de Código do Marco Tulio 202100560105\n");
+    fprintf(file, "# Gerado por: Gerador de Codigo do Marco Tulio 202100560105\n");
+    fprintf(file, "# file: %s\n", fileName);
     fprintf(file, ".text\n");
-    fprintf(file, "#.globl main\n\n");
+    fprintf(file, ".globl main\n\n");
     return file;
 }
 
@@ -76,6 +77,7 @@ int printDivisionOps(FILE *mips, int leftType, int leftReg, int rightType, int r
 int printPreIncrements(FILE *mips, int leftType, int leftReg, char *op) {
     char l = leftType == 0 ? 't' : 's';
     fprintf(mips, "\t%s $%c%d, $%c%d, 1\n", op, l, leftReg, l, leftReg);  // the return value will be on the already incremented register
+    if (leftType == 0) tRegister[leftReg] = 0;
     return leftReg;
 }
 
@@ -123,6 +125,7 @@ int printBitwiseOps(FILE *mips, int leftType, int leftReg, int rightType, int ri
     int t = getTRegister();
     fprintf(mips, "\t%s $t%d, $%c%d, $%c%d\n", op, t, l, leftReg, r, rightReg);
     if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
     return t;
 }
 
@@ -221,21 +224,25 @@ void printFunctions(FILE *mips, char *name) {
     fprintf(mips, "\n%s:\n", name);
 }
 
-void setGlobalIntVariable(char *name, int value, int type, int regToFree) {
-    if (!globalDeclarations)
-        globalDeclarations = calloc(4096, sizeof(char));
-    freeRegister(type, regToFree);
-    sprintf(globalDeclarations + strlen(globalDeclarations), "\t%s: .word %d\n", name, value);
-    // printf("teste de global: %s\n", globalDeclarations);
+void printGlobalVariableInMemory(FILE *mipsFile, int size, char *name) {
+    fprintf(mipsFile, "\t%s: .%s 0\n", name, size == 32 ? "word" : "byte");
 }
 
-void printGlobals(FILE *mips) {
-    if (globalDeclarations) {
+void setDefineIntVariable(char *name, int value, int type, int regToFree) {
+    if (!definesDeclarations)
+        definesDeclarations = calloc(4096, sizeof(char));
+    freeRegister(type, regToFree);
+    sprintf(definesDeclarations + strlen(definesDeclarations), "\t%s: .word %d\n", name, value);
+    // printf("teste de global: %s\n", definesDeclarations);
+}
+
+void printDefines(FILE *mips) {
+    if (definesDeclarations) {
         fprintf(mips, "\n# BLOCO DE DEFINES NO FIM DO ARQUIVO\n");
         fprintf(mips, ".data\n");
-        fprintf(mips, "%s", globalDeclarations);
+        fprintf(mips, "%s", definesDeclarations);
         fprintf(mips, "# END BLOCO DEFINES");
-        free(globalDeclarations);
+        free(definesDeclarations);
     }
 }
 
@@ -245,11 +252,23 @@ void printGlobals(FILE *mips) {
 // }
 
 int printLoadIntGlobal(FILE *mips, char *name) {
-    int t = getTRegister();
+    int t1 = getTRegister();
+    int t2 = getTRegister();
     // printf("t = %d\n", t);
-    fprintf(mips, "\tla $t%d, %s\n", t, name);
-    fprintf(mips, "\tlw $t%d, 0($t%d)\n", t, t);
-    return t;
+    fprintf(mips, "\tla $t%d, %s\n", t1, name);
+    fprintf(mips, "\tlw $t%d, 0($t%d)\n", t2, t1);
+    tRegister[t1] = 0;
+    return t2;
+}
+
+void printStoreIntGlobal(FILE *mips, int type, int reg, char *name) {
+    char r = type == 0 ? 't' : 's';
+    int t1 = getTRegister();
+    fprintf(mips, "\tla $t%d, %s\n", t1, name);
+    fprintf(mips, "\tsw $%c%d, 0($t%d)\n", r, reg, t1);
+    if (type == 0) tRegister[reg] = 0;
+    tRegister[t1] = 0;	
+    // return t1;
 }
 
 int printDeclareArray(FILE *mips, char *name, int size) {
@@ -275,6 +294,7 @@ int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, i
     fprintf(mips, "\tla $%c%d, %s\n", a, arrayReg, name);
     fprintf(mips, "\tsll $t%d, $%c%d, 2\n", t, index, indexReg);
     fprintf(mips, "\tadd $t%d, $t%d, $%c%d\n", t, t, a, arrayReg);
+    if (indexType == 0) tRegister[indexReg] = 0;
     return t;
 }
 
@@ -309,10 +329,17 @@ void printString(FILE *mips, char *value, int stringID1) {
     fprintf(mips, "\tsyscall\n");
 }
 
-int printScanInt(FILE *mips, int sReg) {
+int printScanInt(FILE *mips, int sReg, char *name, int isGlobal) {
     if (sReg == -1) sReg = getSRegister();
     fprintf(mips, "\taddi $v0, $zero, 5\n");
     fprintf(mips, "\tsyscall\n");
+    if (isGlobal) {
+        int t = getTRegister();
+        fprintf(mips, "\tla $t%d, %s\n", t, name);
+        fprintf(mips, "\tsw $v0, 0($t%d)\n", t);
+        tRegister[t] = 0;
+        return -1;
+    }
     fprintf(mips, "\tadd $s%d, $zero, $v0\n", sReg);
     return sReg;
 }
@@ -443,6 +470,6 @@ void printExit(FILE *mips) {
 
 void printEnd(FILE *mips) {
     printExit(mips);
-    printGlobals(mips);
+    printDefines(mips);
     fclose(mips);
 }

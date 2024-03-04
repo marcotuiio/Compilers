@@ -42,10 +42,12 @@ void printLabel(FILE *mips, char *label, int labelID);
 void printFunctions(FILE *mips, char *name);
 
 // Global variables and declarations
-void setGlobalIntVariable(char *name, int value, int type, int regToFree);
-void printGlobals(FILE *mips);
+void printGlobalVariableInMemory(FILE *mipsFile, int size, char *name);
+void setDefineIntVariable(char *name, int value, int type, int regToFree);
+void printDefines(FILE *mips);
 // void printGlobalCharVariable(FILE *mips, char *name, char value);
 int printLoadIntGlobal(FILE *mips, char *name);
+void printStoreIntGlobal(FILE *mips, int type, int reg, char *name);
 
 // Arrays
 int printDeclareArray(FILE *mips, char *name, int size);
@@ -58,7 +60,7 @@ void printInteger(FILE *mips, int regType, int RegNumber);
 void printString(FILE *mips, char *value, int stringID1);
 
 // Input scan
-int printScanInt(FILE *mips, int sReg);
+int printScanInt(FILE *mips, int sReg, char *name, int isGlobal);
 
 // Function call
 void printCallFunction(FILE *mips, char *name);

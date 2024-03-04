@@ -252,7 +252,7 @@ Declaracoes: NUMBER_SIGN DEFINE ID Expressao { /* Adicionar isso na hash */
             ResultExpression *result = evalExpression($4, globalHash, NULL, NULL);
             defineAux = 0;
             // printf("\nresult do define %s %d %d\n", $3.valor, result->typeVar, result->assign);
-            setGlobalIntVariable($3.valor, result->assign, result->registerType, result->registerNumber);
+            setDefineIntVariable($3.valor, result->assign, result->registerType, result->registerNumber);
             setAssign(node, result->assign);
         }
     }
@@ -928,7 +928,7 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);

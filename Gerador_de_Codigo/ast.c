@@ -17,6 +17,8 @@ extern int textBefore;
 extern int defineAux;
 extern int dimensionAux;
 
+int inAtrib = 0;
+
 Program *createProgram(void **hash, void *functionsList, void *main) {
     Program *newProg = calloc(1, sizeof(Program));
     newProg->hashTable = hash;
@@ -279,7 +281,19 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     result = createResultExpression(VOID, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
+                    if (hashNode->isConstant || hashNode->isGlobal) {
+                        if (!inAtrib) {
+                            result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
+                            result->registerType = 0;
+                        }
+                    } else {
+                        if (hashNode->pointer > 0) {
+                            result->registerType = 1;
+                            result->registerNumber = hashNode->sRegister;
+                        }
+                    }
                     return result;
+
                 } else if (hashNode->typeVar == NUM_INT || hashNode->typeVar == INT) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) {
@@ -287,19 +301,32 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                     // printf("AAAAA id %s reg %d = fake %d\n", hashNode->varId, hashNode->sRegister, hashNode->assign);
                     result->auxIdNode = hashNode;
-                    if (hashNode->isConstant) {
-                        result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
-                        result->registerType = 0;
+                    if (hashNode->isConstant || hashNode->isGlobal) {
+                        if (!inAtrib) {
+                            result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
+                            result->registerType = 0;
+                        }
                     } else {
                         result->registerType = 1;
                         result->registerNumber = hashNode->sRegister;
                     }
                     return result;
+
                 } else if (hashNode->typeVar == CHARACTER || hashNode->typeVar == CHAR) {
                     result = createResultExpression(hashNode->typeVar, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
+                    if (hashNode->isConstant || hashNode->isGlobal) {
+                        if (!inAtrib) {
+                            result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
+                            result->registerType = 0;
+                        }
+                    } else {
+                        result->registerType = 1;
+                        result->registerNumber = hashNode->sRegister;
+                    }
                     return result;
+
                 } else if (hashNode->typeVar == STRING) {
                     result = createResultExpression(CHAR, 1, 0);
                     result->auxIdNode = hashNode;
@@ -317,7 +344,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case ATRIBUICAO:
+            inAtrib = 1;
             left = evalExpression(expr->left, globalHash, localHash, program);
+            inAtrib = 0;
             right = evalExpression(expr->right, globalHash, localHash, program);
             // printf("[assign left %p %d %d %s \nright %p %d %d %d]\n", left, left->typeVar, left->pointer, ((HashNode*)left->auxIdNode)->varId, right, right->typeVar, right->pointer, right->assign);
 
@@ -442,6 +471,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     printStoreIntoArray(mipsFile, left->registerNumber, rightType, rightReg);
                     result->registerType = 0;
                     regS = left->registerNumber;
+                
+                } else if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                    // printf("STORING INTO GLOBAL VARIABLE = \n");
+                    freeRegister(left->registerType, left->registerNumber);
+                    printStoreIntGlobal(mipsFile, rightType, rightReg, ((HashNode *)left->auxIdNode)->varId);
+                    result->registerType = 0;
 
                 } else {
                     if (left->registerNumber == -1) {
@@ -493,18 +528,40 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 }
 
                 if (expr->operator== ADD_ASSIGN) {
+
                     result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
                     int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
-                    printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
-                    result->registerNumber = left->registerNumber;
-                    result->registerType = left->registerType;
+                    
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                        // printf("STORING INTO GLOBAL VARIABLE += \n");
+                        freeRegister(left->registerType, left->registerNumber);
+                        printStoreIntGlobal(mipsFile, 0, tReg, ((HashNode *)left->auxIdNode)->varId);
+                        result->registerType = 0;
+                        result->registerNumber = left->registerNumber;
+                    
+                    } else {
+                        printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
+                        result->registerNumber = left->registerNumber;
+                        result->registerType = left->registerType;
+                    }
 
                 } else if (expr->operator== MINUS_ASSIGN) {
                     result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
                     int tReg = printArithmeticsOps(mipsFile, left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sub");
-                    printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
-                    result->registerNumber = left->registerNumber;
-                    result->registerType = left->registerType;
+                    
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                        // printf("STORING INTO GLOBAL VARIABLE -= \n");
+                        freeRegister(left->registerType, left->registerNumber);
+                        printStoreIntGlobal(mipsFile, 0, tReg, ((HashNode *)left->auxIdNode)->varId);
+                        result->registerType = 0;
+                        result->registerNumber = left->registerNumber;
+                    
+                    } else {
+                        printAssignmentToReg(mipsFile, 0, tReg, left->registerNumber);
+                        result->registerNumber = left->registerNumber;
+                        result->registerType = left->registerType;
+                    }
+                    
                 }
             }
             HashNode *hashNodeTemp = getIdentifierNode(localHash, expr->left->value->valor);
@@ -1471,7 +1528,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             deleteAuxFile();
                             exit(0);
                         } else {
-                            // printf("dimensao atrib = %d dimensao maxima = %d\n", dimenResult->assign, dimenEsperada->size);
+                            // printf("\ndimensao atrib = %d dimensao maxima = %d\n", dimenResult->assign, dimenEsperada->size);
                             if (dimenResult->assign >= dimenEsperada->size || dimenResult->assign < 0) {
                                 if (textBefore) printf("\n");
                                 printf("warning:%d:%d: array index out of bounds", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
@@ -1784,7 +1841,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 deleteAuxFile();
                 exit(0);
             }
-            int sReg = printScanInt(mipsFile, node->sRegister);
+            int sReg = printScanInt(mipsFile, node->sRegister, node->varId, node->isGlobal);
             node->sRegister = sReg;
         }
     }
@@ -1868,6 +1925,20 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
         // HashNode *node = hashTable[i];
         ResultExpression *atrib = NULL;
         while (node) {
+            if (node->kind == FUNCTION || node->kind == VECTOR || node->isConstant) {
+                node = node->next;
+                continue;
+            }
+            if (localHash == globalHash) {  // save globals to memory
+                node->isGlobal = 1;
+                int size = 0;
+                if (node->typeVar == NUM_INT || node->typeVar == INT || node->typeVar == VOID || node->pointer > 0)
+                    size = 32;
+                else
+                    size = 8;
+                printGlobalVariableInMemory(mipsFile, size, node->varId);
+            }
+
             if (node->hashExpr) {
                 // printf(">>>>>>>>>>>>>> this noda has atrib expr %p %s = %p %d\n\n", node, node->varId, node->hashExpr, ((Expression*)node->hashExpr)->type);
                 atrib = evalExpression(node->hashExpr, globalHash, localHash, program);
@@ -1911,9 +1982,15 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
                     }
                 }
 
-                int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
-                setSRegisterInHash(node, regS);
-                setAssign(node, atrib->assign);
+                if (globalHash == localHash) {  // globals must be stored and loaded in and not to $s register
+                    printf("nao to sabendo carregar variaveis globais ja inicializas :D\n");
+                    // printStoreIntGlobal(mipsFile, atrib->registerType, atrib->registerNumber, node->varId);
+
+                } else {
+                    int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
+                    setSRegisterInHash(node, regS);
+                    setAssign(node, atrib->assign);
+                }
             }
             node = node->next;
         }
@@ -1922,11 +1999,13 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
 
 int traverseAST(Program *program) {
     if (!program) return -1;
-    // printGlobals(mipsFile);
+
     // Percorra as funções na lista de funções
+    fprintf(mipsFile, "\n.data\n");
     lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);  // loading global variables (defines not include)
-    int *globals = calloc(8, sizeof(int));
+    int *globals = calloc(8, sizeof(int));                                       // may go through changes
     storeGlobalsInStack(mipsFile, globals);
+    fprintf(mipsFile, ".text\n");
 
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {

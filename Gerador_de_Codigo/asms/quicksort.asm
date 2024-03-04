@@ -1,13 +1,18 @@
-# Gerado por: Gerador de Código do Marco Tulio 202100560105
+# Gerado por: Gerador de Codigo do Marco Tulio 202100560105
+# file: asms/quicksort.asm
 .text
-#.globl main
+.globl main
 
 	addi $t0, $zero, 100
 	la $t0, MAX
-	lw $t0, 0($t0)
+	lw $t1, 0($t0)
 	.data
 		a: .space 400
 	.text
+
+.data
+	max: .word 0
+.text
 
 quicksort:
 	addi $sp, $sp, -52
@@ -32,7 +37,7 @@ quicksort:
 	add $s2, $zero, $t0
 	sle $t0, $s0, $s1
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_228311968
+	beq $t1, $t0, else_1605154144
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -50,9 +55,9 @@ quicksort:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_228311968
-	else_228311968:
-	exit_if_228311968:
+	j exit_if_1605154144
+	else_1605154144:
+	exit_if_1605154144:
 	addi $t0, $zero, 1
 	sub $t1, $s1, $t0
 	add $s3, $zero, $t1
@@ -90,11 +95,11 @@ quicksort:
 	beq $t1, $t0, while_corpo_23
 	sge $t0, $s3, $s4
 	addi $t1, $zero, 0
-	beq $t1, $t0, else_228295680
+	beq $t1, $t0, else_1605137856
 	addi $t0, $zero, 0
 	add $s2, $zero, $t0
-	j exit_if_228298320
-	else_228295680:
+	j exit_if_1605140496
+	else_1605137856:
 	la $s7, a
 	sll $t0, $s3, 2
 	add $t0, $t0, $s7
@@ -112,7 +117,7 @@ quicksort:
 	sll $t0, $s4, 2
 	add $t0, $t0, $s7
 	sw $s6, 0($t0)
-	exit_if_228298320:
+	exit_if_1605140496:
 	while_teste_20:
 	addi $t0, $zero, 1
 	beq $t0, $s2, while_corpo_20
@@ -163,7 +168,8 @@ quicksort:
 
 main:
 	addi $t0, $zero, 0
-	add $s0, $zero, $t0
+	la $t1, max
+	sw $t0, 0($t1)
 	j while_teste_45
 	while_corpo_45:
 	.data
@@ -174,15 +180,20 @@ main:
 	syscall
 	addi $v0, $zero, 5
 	syscall
-	add $s0, $zero, $v0
+	la $t0, max
+	sw $v0, 0($t0)
 	while_teste_45:
+	la $t0, max
+	lw $t1, 0($t0)
 	addi $t0, $zero, 0
-	sle $t1, $s0, $t0
+	sle $t2, $t1, $t0
+	la $t0, max
+	lw $t1, 0($t0)
 	addi $t0, $zero, 100
-	sgt $t2, $s0, $t0
+	sgt $t3, $t1, $t0
 	addi $t0, $zero, 1
-	beq $t0, $t1, t_logical_or_45_18
 	beq $t0, $t2, t_logical_or_45_18
+	beq $t0, $t3, t_logical_or_45_18
 	addi $t0, $zero, 0
 	t_logical_or_45_18:
 	addi $t1, $zero, 1
@@ -194,9 +205,9 @@ main:
 	addi $t0, $zero, 1
 	add $t1, $s1, $t0
 	.data
-		string_228162464: .asciiz "Entre com o valor da posicao "
+		string_1604996672: .asciiz "Entre com o valor da posicao "
 	.text
-	la $a0, string_228162464
+	la $a0, string_1604996672
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t1
@@ -218,14 +229,18 @@ main:
 	add $t0, $zero, $s1
 	addi $s1, $s1, 1
 	for_teste_50:
-	slt $t1, $s1, $s0
+	la $t1, max
+	lw $t2, 0($t1)
+	slt $t1, $s1, $t2
 	addi $t2, $zero, 1
 	beq $t2, $t1, for_corpo_50
 	addi $t1, $zero, 0
 	add $a1, $zero, $t1 # function param m
+	la $t1, max
+	lw $t2, 0($t1)
 	addi $t1, $zero, 1
-	sub $t2, $s0, $t1
-	add $a0, $zero, $t2 # function param n
+	sub $t3, $t2, $t1
+	add $a0, $zero, $t3 # function param n
 	jal quicksort
 	add $t1, $zero, $v0
 	addi $t2, $zero, 0
@@ -237,9 +252,9 @@ main:
 	add $t2, $t2, $s7
 	lw $t3, 0($t2)
 	.data
-		string_228161312: .asciiz ""
+		string_1604995520: .asciiz ""
 	.text
-	la $a0, string_228161312
+	la $a0, string_1604995520
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t3
@@ -254,7 +269,9 @@ main:
 	add $t2, $zero, $s1
 	addi $s1, $s1, 1
 	for_teste_58:
-	slt $t3, $s1, $s0
+	la $t3, max
+	lw $t4, 0($t3)
+	slt $t3, $s1, $t4
 	addi $t4, $zero, 1
 	beq $t4, $t3, for_corpo_58
 	.data

@@ -17,6 +17,7 @@ typedef struct node {
     char *varId;
     int assign;
     int isConstant;
+    int isGlobal;
     int line;
     int column;
     void *dimensions;

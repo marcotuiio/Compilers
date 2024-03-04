@@ -1,7 +1,11 @@
-# Gerado por: Gerador de Código do Marco Tulio 202100560105
+# Gerado por: Gerador de Codigo do Marco Tulio 202100560105
+# file: asms/potencia.asm
 .text
-#.globl main
+.globl main
 
+
+.data
+.text
 
 potencia:
 	addi $sp, $sp, -52
@@ -25,7 +29,7 @@ potencia:
 	addi $t0, $zero, 0
 	seq $t1, $s0, $t0
 	addi $t0, $zero, 0
-	beq $t0, $t1, else_1409165280
+	beq $t0, $t1, else_2114886112
 	addi $t0, $zero, 1
 	add $v0, $zero, $t0
 
@@ -45,8 +49,8 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1409162480
-	else_1409165280:
+	j exit_if_2114888912
+	else_2114886112:
 	add $a1, $zero, $s1 # function param base
 	addi $t0, $zero, 1
 	sub $t1, $s0, $t0
@@ -72,7 +76,7 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	exit_if_1409162480:
+	exit_if_2114888912:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -115,9 +119,9 @@ main:
 	jal potencia
 	add $t0, $zero, $v0
 	.data
-		string_1409268064: .asciiz "Resultado: "
+		string_2114775360: .asciiz "Resultado: "
 	.text
-	la $a0, string_1409268064
+	la $a0, string_2114775360
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0
