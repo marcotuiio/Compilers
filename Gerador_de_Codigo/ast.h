@@ -182,6 +182,7 @@ typedef struct resultExpression {
     int assign;
     int auxLine;
     int auxColumn;
+    char str[256];
 
     int registerType;  // 0 = t, 1 = s
     int registerNumber;

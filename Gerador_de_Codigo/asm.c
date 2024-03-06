@@ -233,16 +233,13 @@ void setDefineIntVariable(char *name, int value, int type, int regToFree) {
     if (!definesDeclarations)
         definesDeclarations = calloc(4096, sizeof(char));
     freeRegister(type, regToFree);
-    sprintf(definesDeclarations + strlen(definesDeclarations), "\t%s: .word %d\n", name, value);
+    sprintf(definesDeclarations + strlen(definesDeclarations), "\t%s: .word %d # define\n", name, value);
     // printf("teste de global: %s\n", definesDeclarations);
 }
 
 void printDefines(FILE *mips) {
     if (definesDeclarations) {
-        fprintf(mips, "\n# BLOCO DE DEFINES NO FIM DO ARQUIVO\n");
-        fprintf(mips, ".data\n");
         fprintf(mips, "%s", definesDeclarations);
-        fprintf(mips, "# END BLOCO DEFINES");
         free(definesDeclarations);
     }
 }
@@ -350,6 +347,14 @@ void printInteger(FILE *mips, int regType, int RegNumber) {
     char r = regType == 0 ? 't' : 's';
     fprintf(mips, "\tadd $a0, $zero, $%c%d\n", r, RegNumber);
     fprintf(mips, "\taddi $v0, $zero, 1\n");
+    fprintf(mips, "\tsyscall\n");
+    if (regType == 0) tRegister[RegNumber] = 0;
+}
+
+void printCharacter(FILE *mips, int regType, int RegNumber) {
+    char r = regType == 0 ? 't' : 's';
+    fprintf(mips, "\tadd $a0, $zero, $%c%d\n", r, RegNumber);
+    fprintf(mips, "\taddi $v0, $zero, 11\n");
     fprintf(mips, "\tsyscall\n");
     if (regType == 0) tRegister[RegNumber] = 0;
 }
@@ -504,6 +509,6 @@ void printExit(FILE *mips) {
 
 void printEnd(FILE *mips) {
     printExit(mips);
-    printDefines(mips);
+    // printDefines(mips);
     fclose(mips);
 }

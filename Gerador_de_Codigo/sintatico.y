@@ -844,7 +844,10 @@ ExpressaoPrimaria: ID {
     }
     | Numero { $$ = $1; }
     | CHARACTER {
-        AuxToken *auxToken = createAuxToken($1.valor, $1.line, $1.column, CHARACTER);
+        char *actualChar = calloc(2, sizeof(char));
+        actualChar[0] = $1.valor[1];
+        actualChar[1] = '\0';
+        AuxToken *auxToken = createAuxToken(actualChar, $1.line, $1.column, CHARACTER);
         Expression *aux = createExpression(PRIMARIA, CHARACTER, auxToken, NULL, NULL);
         $$ = aux;
     }
@@ -915,7 +918,7 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);

@@ -217,27 +217,27 @@
 // int main() {
 //     // a = 5(00000101), b = 9(00001001)
 //     int a = 5, b = 9;
- 
+
 //     // The result is 00000001
 //     printf("a = %d\n", a);
 //     printf("b = %d\n", b);
 //     printf("a&b = %d\n", a & b);
- 
+
 //     // The result is 00001101
 //     printf("a|b = %d\n", a | b);
- 
+
 //     // The result is 00001100
 //     printf("a^b = %d\n", a ^ b);
- 
+
 //     // The result is 11111010
 //     printf("~a = %d\n", a = ~a);
- 
+
 //     // The result is 00010010
 //     printf("b<<1 = %d\n", b << 1);
- 
+
 //     // The result is 00000100
 //     printf("b>>1 = %d\n", b >> 1);
- 
+
 //     return 0;
 // }
 
@@ -268,32 +268,81 @@
 //     return 0;
 // }
 
+// #define max 10
+// // int a;
+// int b;
 
-#define max 10
-// int a;
-int b;
+// int soma(int a, int b) {
+//     printf("params %d %d\n", a, b);
+//     return a + b;
+// }
 
-int soma(int a, int b) {
-    printf("params %d %d\n", a, b);
-    return a + b;
+// int v[3];
+// int teste = 7%3 + 9;
+// char c = 'a';
+
+// int main() {
+//     int a[max];
+//     int i;
+//     b = 999;
+//     printf("teste = %d\n", teste);
+//     printf("c = %c\n", c);
+//     // a[0] = 1;
+//     // a[1] = 2;
+//     // a[2] = 3;
+//     // v[0] = 666;
+//     // for (i = 0; i < 2; i++) {
+//     //     printf("%d soma %d\n", i, soma(a[i], a[i+1]));
+//     // }
+//     // printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
+//     // printf("c local = %d\n", c);
+//     return(666);
+// }
+
+#define c1 10
+#define c2 -c1
+#define c3 c1 << 2
+#define c4 c2 >> c3* c3
+#define NULL 0
+#define CALL_ELEVEN 11
+int v[c2 + c3];
+
+void** f() {
+    void** v;
+    return v;
+}
+#define TRUE 1
+#define FALSE 0
+#define SERA_VERDADE (TRUE || FALSE)
+char* vetor[SERA_VERDADE];
+
+char g(int arg_1, char arg_2, int arg_3) {
+    char* c;
+    c = "DDominar o mundo\n";
+    printf("%s", c + 1);
+    c++;
+    printf("E depois novamente ");
+    while (*c != '\0') {
+        printf("%c", *c);
+        g(1 + 2 * 3 - 4 * 5, *c, CALL_ELEVEN + 666);
+    }
+    return *(vetor[1 << 1]);
 }
 
-int v[3];
-int teste = 7%3 + 9;
-
 int main() {
-    int a[max];
-    int i;
-    b = 999;
-    printf("teste = %d\n", teste);
-    // a[0] = 1;
-    // a[1] = 2;
-    // a[2] = 3;
-    // v[0] = 666;
-    // for (i = 0; i < 2; i++) {
-    //     printf("%d soma %d\n", i, soma(a[i], a[i+1]));
-    // }
-    // printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
-    // printf("c local = %d\n", c);
-    return(666);
+    int* ptr;
+    int* i;
+    for (ptr = v; ptr; ptr++) {
+        while (*ptr) {
+            if (ptr <= 0) {
+                *ptr = 666;
+                *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+            } else {
+                do {
+                    ptr++;
+                } while (v);
+            }
+        }
+    }
+    return (*ptr + *i);
 }

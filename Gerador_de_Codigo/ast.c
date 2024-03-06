@@ -329,6 +329,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                 } else if (hashNode->typeVar == STRING) {
                     result = createResultExpression(CHAR, 1, 0);
+                    strcpy(result->str, expr->value->valor);
                     result->auxIdNode = hashNode;
                     return result;
                 }
@@ -372,7 +373,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
 
             // atribuindo sem ser id
-            if (expr->left->value->type != ID) {
+            int auxForId = expr->left->value->type;
+            if ((HashNode*)left->auxIdNode) {
+                int kindAux = ((HashNode*)left->auxIdNode)->kind;
+                if (kindAux == VAR || kindAux == VECTOR)
+                    auxForId = ID;
+            }
+            if (auxForId != ID) {
                 if (textBefore) printf("\n");
                 printf("error:semantic:%d:%d: lvalue required as left operand of assignment", expr->value->line, expr->value->column);
                 printLineError(expr->value->line, expr->value->column);
@@ -1367,10 +1374,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     deleteAuxFile();
                     exit(0);
                 }
-
+                auxLeftPointer = left->pointer;
+                if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR)
+                    auxLeftPointer = 1;
                 if ((left->typeVar != NUM_INT || left->typeVar != CHARACTER  // alerta
                      || left->typeVar != INT || left->typeVar != CHAR) &&
-                    left->pointer == 0) {
+                    auxLeftPointer == 0) {
                     if (textBefore) printf("\n");
                     char *type1 = getExactType(left->typeVar, left->pointer);
                     printf("error:semantic:%d:%d: invalid type argument of unary '%c' (have '%s')", expr->value->line, expr->value->column, '*', type1);
@@ -1384,6 +1393,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(left->typeVar, 0, *(&left->assign));
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
+                result->auxIdNode = left->auxIdNode;
                 return result;
 
             } else if (expr->operator== BITWISE_AND || expr->operator== NOT || expr->operator== INC || expr->operator== DEC) {
@@ -1817,9 +1827,20 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                         }
                     }
 
+                    int printing = 0;
                     char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
-                    if (!formatSpecifier) {
-                        formatSpecifier = strstr(stringWithoutFormat, "%s");
+                    if (formatSpecifier) {
+                        printing = INT;
+                    } else {
+                        formatSpecifier = strstr(stringWithoutFormat, "%s");   
+                        if (formatSpecifier) {
+                            printing = STRING;
+                        } else {
+                            formatSpecifier = strstr(stringWithoutFormat, "%c");
+                            if (formatSpecifier) {
+                                printing = CHAR;
+                            }
+                        }
                     }
                     // printf("before %s\n", stringWithoutFormat);
                     // printf("2.formatSpecifier %s\n", formatSpecifier);
@@ -1830,7 +1851,10 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                     // printf("3.rest %s\n", restOfString);
                     if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
                     printString(mipsFile, stringWithoutFormat, abs((int)((intptr_t)toPrint)));
-                    printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                    if (printing == INT)
+                        printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == CHAR)
+                        printCharacter(mipsFile, toPrint->registerType, toPrint->registerNumber);
 
                     free(stringWithoutFormat);
                     stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
@@ -2040,6 +2064,7 @@ int traverseAST(Program *program) {
 
     // Percorra as funções na lista de funções
     fprintf(mipsFile, "\n.data\n");
+    printDefines(mipsFile);
     lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);  // loading global variables (defines not include)
     fprintf(mipsFile, ".text\n");
 
