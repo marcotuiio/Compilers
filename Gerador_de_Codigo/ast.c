@@ -271,13 +271,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("Achei %p %s %d %d (kind = %d) = %d | const %d\n", hashNode, hashNode->varId, hashNode->typeVar, hashNode->pointer, hashNode->kind, hashNode->assign, hashNode->isConstant);
 
                 if (hashNode->typeVar == VOID) {
-                    // if (textBefore) printf("\n");
-                    // printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
-                    // printLineError(expr->value->line, expr->value->column);
-                    // freeAST(program);
-                    // deleteMipsFileOnError(mipsFile, mipsPath);
-                    // deleteAuxFile();
-                    // exit(0);
                     result = createResultExpression(VOID, hashNode->pointer, hashNode->assign);
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
@@ -473,7 +466,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 int rightType = right->registerType;
                 int rightReg = right->registerNumber;
 
-                if (auxLeftType == INT && auxLeftPointer == 1 && auxRightPointer == 1) {
+                if ((auxLeftType == INT || auxLeftType == VOID) && auxLeftPointer == 1 && auxRightPointer == 1) {
                     // printf("error:minhacabecafritou:\n");
                     int s = printAssignAddress(mipsFile, left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId);
                     setSRegisterInHash(((HashNode *)left->auxIdNode), s);
@@ -1023,16 +1016,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            // if (left->typeVar == VOID || right->typeVar == VOID) {
-            //     if (textBefore) printf("\n");
-            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
-            //     printLineError(expr->value->line, expr->value->column);
-            //     freeAST(program);
-            //     deleteMipsFileOnError(mipsFile, mipsPath);
-            //     deleteAuxFile();
-            //     exit(0);
-            // }
-
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
             auxLeftValor = atoi(expr->left->value->valor);
@@ -1133,16 +1116,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
         case AND_BIT:
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
-
-            // if (left->typeVar == VOID || right->typeVar == VOID) {
-            //     if (textBefore) printf("\n");
-            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
-            //     printLineError(expr->value->line, expr->value->column);
-            //     freeAST(program);
-            //     deleteMipsFileOnError(mipsFile, mipsPath);
-            //     deleteAuxFile();
-            //     exit(0);
-            // }
 
             auxLeftPointer = expr->left->value->pointer;
             auxLeftType = expr->left->value->type;
@@ -1348,16 +1321,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
         case UNARIA:
             left = evalExpression(expr->left, globalHash, localHash, program);
-
-            // if (left->typeVar == VOID) {
-            //     if (textBefore) printf("\n");
-            //     printf("error:semantic:%d:%d: void value not ignored as it ought to be", expr->value->line, expr->value->column);
-            //     printLineError(expr->value->line, expr->value->column);
-            //     freeAST(program);
-            //     deleteMipsFileOnError(mipsFile, mipsPath);
-            //     deleteAuxFile();
-            //     exit(0);
-            // }
 
             if (expr->operator== PLUS || expr->operator== MINUS || expr->operator== BITWISE_NOT) {
                 if ((left->typeVar == NUM_INT || left->typeVar != CHARACTER || left->typeVar != INT || left->typeVar != CHAR)) {

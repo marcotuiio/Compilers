@@ -3,138 +3,94 @@
 .text
 .globl main
 
+	addi $t0, $zero, 10
 
 .data
+	c1: .word 10 # define
 .text
-
-potencia:
-	addi $sp, $sp, -52
-	sw $a0, 0($sp)
-	sw $a1, 4($sp)
-	sw $a2, 8($sp)
-	sw $a3, 12($sp)
-	sw $s0, 16($sp)
-	sw $s1, 20($sp)
-	sw $s2, 24($sp)
-	sw $s3, 28($sp)
-	sw $s4, 32($sp)
-	sw $s5, 36($sp)
-	sw $s6, 40($sp)
-	sw $s7, 44($sp)
-	sw $ra, 48($sp)
-
-	#loading 2 params
-	add $s0, $zero, $a0
-	add $s1, $zero, $a1
-	addi $t0, $zero, 0
-	seq $t1, $s0, $t0
-	addi $t0, $zero, 0
-	beq $t0, $t1, else_1386855936
-	addi $t0, $zero, 1
-	add $v0, $zero, $t0
-
-	lw $a0, 0($sp)
-	lw $a1, 4($sp)
-	lw $a2, 8($sp)
-	lw $a3, 12($sp)
-	lw $s0, 16($sp)
-	lw $s1, 20($sp)
-	lw $s2, 24($sp)
-	lw $s3, 28($sp)
-	lw $s4, 32($sp)
-	lw $s5, 36($sp)
-	lw $s6, 40($sp)
-	lw $s7, 44($sp)
-	lw $ra, 48($sp)
-	addi $sp, $sp, 52
-
-	jr $ra
-	j exit_if_1386853136
-	else_1386855936:
-	add $a1, $zero, $s1 # function param base
-	addi $t0, $zero, 1
-	sub $t1, $s0, $t0
-	add $a0, $zero, $t1 # function param expoente
-	jal potencia
-	add $t0, $zero, $v0
-	mul $t1, $s1, $t0
-	add $v0, $zero, $t1
-
-	lw $a0, 0($sp)
-	lw $a1, 4($sp)
-	lw $a2, 8($sp)
-	lw $a3, 12($sp)
-	lw $s0, 16($sp)
-	lw $s1, 20($sp)
-	lw $s2, 24($sp)
-	lw $s3, 28($sp)
-	lw $s4, 32($sp)
-	lw $s5, 36($sp)
-	lw $s6, 40($sp)
-	lw $s7, 44($sp)
-	lw $ra, 48($sp)
-	addi $sp, $sp, 52
-
-	jr $ra
-	exit_if_1386853136:
-
-	lw $a0, 0($sp)
-	lw $a1, 4($sp)
-	lw $a2, 8($sp)
-	lw $a3, 12($sp)
-	lw $s0, 16($sp)
-	lw $s1, 20($sp)
-	lw $s2, 24($sp)
-	lw $s3, 28($sp)
-	lw $s4, 32($sp)
-	lw $s5, 36($sp)
-	lw $s6, 40($sp)
-	lw $s7, 44($sp)
-	lw $ra, 48($sp)
-	addi $sp, $sp, 52
-
-	jr $ra
 
 main:
 	.data
-		string_11: .asciiz "Digite a base: "
+		c2: .asciiz "E depois novamente "
 	.text
-	la $a0, string_11
-	addi $v0, $zero, 4
-	syscall
-	addi $v0, $zero, 5
-	syscall
-	add $s0, $zero, $v0
+	la $s0, c2
 	.data
-		string_13: .asciiz "Digite o expoente: "
+		c: .asciiz "DDominar o mundo\n"
 	.text
-	la $a0, string_13
-	addi $v0, $zero, 4
-	syscall
-	addi $v0, $zero, 5
-	syscall
-	add $s1, $zero, $v0
-	add $a1, $zero, $s0 # function param base
-	add $a0, $zero, $s1 # function param expoente
-	jal potencia
-	add $t0, $zero, $v0
+	la $s1, c
+	j while_teste_346
+	while_corpo_346:
+	lb $t0, 0($s1)
 	.data
-		string_1386867808: .asciiz "Resultado: "
+		string_967801920: .asciiz ""
 	.text
-	la $a0, string_1386867808
+	la $a0, string_967801920
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0
-	addi $v0, $zero, 1
+	addi $v0, $zero, 11
 	syscall
 	.data
-		string_383: .asciiz "\n"
+		string_383: .asciiz " "
 	.text
 	la $a0, string_383
 	addi $v0, $zero, 4
 	syscall
-	addi $t0, $zero, 0
-	add $v0, $zero, $t0
+	add $t0, $zero, $s1
+	addi $s1, $s1, 1
+	while_teste_346:
+	lb $t1, 0($s1)
+	addi $t2, $zero, 0
+	sne $t3, $t1, $t2
+	bnez $t3, while_corpo_346
+	.data
+		string_967799696: .asciiz "antes c = "
+	.text
+	la $a0, string_967799696
+	addi $v0, $zero, 4
+	syscall
+	move $a0, $s1
+	addi $v0, $zero, 4
+	syscall
+	.data
+		string_886: .asciiz "\n"
+	.text
+	la $a0, string_886
+	addi $v0, $zero, 4
+	syscall
+	addi $s1, $s1, 1
+	.data
+		string_967787504: .asciiz "depois c = "
+	.text
+	la $a0, string_967787504
+	addi $v0, $zero, 4
+	syscall
+	move $a0, $s1
+	addi $v0, $zero, 4
+	syscall
+	.data
+		string_777: .asciiz "\n"
+	.text
+	la $a0, string_777
+	addi $v0, $zero, 4
+	syscall
+	.data
+		string_967787136: .asciiz "c2 = "
+	.text
+	la $a0, string_967787136
+	addi $v0, $zero, 4
+	syscall
+	move $a0, $s0
+	addi $v0, $zero, 4
+	syscall
+	.data
+		string_915: .asciiz "\n"
+	.text
+	la $a0, string_915
+	addi $v0, $zero, 4
+	syscall
+	addi $t1, $zero, 0
+	add $v0, $zero, $t1
 
 	addi $v0, $zero, 10
 	syscall

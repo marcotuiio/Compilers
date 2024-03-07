@@ -205,11 +205,12 @@ int printLogicalOr(FILE *mips, int leftType, int leftReg, int rightType, int rig
 
 void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
-    int t = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
-    fprintf(mips, "\tbeq $t%d, $%c%d, else_%d\n", t, c, conditionReg, labelID);
+    // int t = getTRegister();
+    // fprintf(mips, "\taddi $t%d, $zero, 0\n", t);
+    // fprintf(mips, "\tbeq $t%d, $%c%d, else_%d\n", t, c, conditionReg, labelID);
+    fprintf(mips, "\tbeqz $%c%d, else_%d\n", c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
-    tRegister[t] = 0;
+    // tRegister[t] = 0;
 }
 
 void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID) {
@@ -376,7 +377,6 @@ int printLoadByte(FILE *mips, int type, int reg) {
     fprintf(mips, "\tlb $t%d, 0($%c%d)\n", t, type == 0 ? 't' : 's', reg);
     if (type == 0) tRegister[reg] = 0;
     return t;
-
 }
 
 void printInteger(FILE *mips, int regType, int RegNumber) {

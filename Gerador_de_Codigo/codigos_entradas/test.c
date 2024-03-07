@@ -1,3 +1,10 @@
+// ./gerador asms/fatorial.asm codigos_entradas/fatorial.c
+// ./gerador asms/potencia.asm codigos_entradas/potencia.c
+// ./gerador asms/comparacao.asm codigos_entradas/comparacao.c
+// ./gerador asms/quicksort.asm codigos_entradas/quicksort.c
+// ./gerador asms/triangulo.asm codigos_entradas/triangulo.c
+// ./gerador asms/test.asm codigos_entradas/test.c
+
 // #include <stdio.h>
 
 // void main() {
@@ -11,10 +18,6 @@
 //     preIncrementResult = ++x;
 //     printf("Pre-increment result: %d\n", preIncrementResult); // Prints 7
 // }
-// #define c1 2
-// #define c2 5
-// int v[10];
-// int i = v[c1*c2] + c1;
 
 // void test(int fish, int ball) {
 //     int i = 987;
@@ -25,23 +28,9 @@
 //     if (a > b) {
 //         return a + b;
 //     }
-//     if (a < b) {
+//     if (a <= b) {
 //         return b - a;
 //     }
-// }
-
-// #define c1 10
-// #define c2 -c1
-// #define c3 c1 << 2
-// #define c4 c2 >> c3*c3
-// #define NULL 0
-// #define CALL_ELEVEN 11
-// int v[c2+c3];
-
-// void* f()
-// {
-//     v[c4],c1>v,(char)c2,NULL?v:c3;
-//     return (void*) 0;
 // }
 
 // int main() {
@@ -206,7 +195,10 @@
 //     } else {
 //         printf("cuuu buuu\n");
 //     }
-//     printf("array [9] = %d\n", array[9]);
+//     for (i = 0; i < 10; i++) {
+//         printf("v[%d] = %d\n", i, v[i]);
+//         printf("array[%d] = %d\n", i, array[i]);
+//     }
 //     // printf("max = %d\n", max);
 //     // printf("i = %d\n", i);
 //     // printf("sla = %d\n", sla);
@@ -364,10 +356,9 @@ int main() {
     }
 
     // printf("sla = %c\n", sla);
-    // printf("antes c = %s\n", c);
-    // c++;
-    // printf("depois c = %s\n", c);
-    // printf("c2 = %s\n", c2);
+    printf("antes c = %s\n", c);
+    printf("depois c = %s\n", ++c);
+    printf("c2 = %s\n", c2);
 
     return 0;
 }
@@ -376,8 +367,9 @@ int main() {
 
 // int main() {
 //     int v[5];
-//     int i = 0;
+//     int *i;
 //     int* ptr;
+//     int out = 0;
 //     v[0] = 1;
 //     v[1] = 2;
 //     v[2] = 3;
@@ -389,7 +381,9 @@ int main() {
 //         while (*ptr) {
 //             if (*ptr <= 0) {
 //                 *ptr = 666;
-//                 i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+//                 *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+//                 printf("ptr = %d\n", *ptr);
+//                 printf("i = %d\n", *i);
 //             } else {
 //                 do {
 //                     ptr++;
@@ -397,6 +391,7 @@ int main() {
 //             }
 //         }
 //     }
-//     return (*ptr + i);
-//     // return 0;
+//     out = (*ptr + *i);
+//     printf("out = %d\n", out);
+//     return 0;
 // }
