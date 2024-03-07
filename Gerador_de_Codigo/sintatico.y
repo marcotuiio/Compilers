@@ -857,7 +857,7 @@ ExpressaoPrimaria: ID {
                 case 't':
                     actualChar[0] = '\t';
                     break;
-                case 'r'
+                case 'r':
                     actualChar[0] = '\r';
                     break;
                 // Add more cases here for other escape sequences if needed

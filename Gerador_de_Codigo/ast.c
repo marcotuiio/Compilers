@@ -205,6 +205,46 @@ ResultExpression *createResultExpression(int type, int pointer, int value) {
     return newResult;
 }
 
+void padronizeTypesAndPointers(Expression *expr, ResultExpression *left, ResultExpression *right, int *auxLeftType, int *auxLeftPointer, int *auxLeftValor, int *auxRightType, int *auxRightPointer, int *auxRightValor) {
+    if (!expr) return;
+    *auxLeftPointer = expr->left->value->pointer;
+    *auxLeftType = expr->left->value->type;
+    if (expr->left->value->valor && strlen(expr->left->value->valor) > 0)
+        *auxLeftValor = atoi(expr->left->value->valor);
+    if (left) {
+        if (left->typeVar == INT || left->typeVar == NUM_INT)
+            *auxLeftType = INT;
+        else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
+            *auxLeftType = CHAR;
+        else if (left->typeVar == VOID)
+            *auxLeftType = VOID;
+        *auxLeftPointer = left->pointer;
+        if (left->typeVar == STRING) {
+            *auxLeftType = CHAR;
+            *auxLeftPointer = 1;
+        }
+        *auxLeftValor = left->assign;
+    }
+    *auxRightPointer = expr->right->value->pointer;
+    *auxRightType = expr->right->value->type;
+    if (expr->right->value->valor && strlen(expr->right->value->valor) > 0)
+        *auxRightValor = atoi(expr->right->value->valor);
+    if (right) {
+        if (right->typeVar == INT || right->typeVar == NUM_INT)
+            *auxRightType = INT;
+        else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
+            *auxRightType = CHAR;
+        else if (right->typeVar == VOID)
+            *auxRightType = VOID;
+        *auxRightPointer = right->pointer;
+        if (right->typeVar == STRING) {
+            *auxRightType = CHAR;
+            *auxRightPointer = 1;
+        }
+        *auxRightValor = right->assign;
+    }
+}
+
 ResultExpression *evalExpression(Expression *expr, void **globalHash, void **localHash, Program *program) {
     if (!expr) return NULL;
 
@@ -387,40 +427,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 exit(0);
             }
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                else if (left->typeVar == VOID)
-                    auxLeftType = VOID;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                else if (right->typeVar == VOID)
-                    auxRightType = VOID;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
+
             if (expr->operator== ASSIGN) {
                 if (right) {
                     if (auxLeftPointer != 0 || auxRightPointer != 0) {  // existem pointers envolvidos
@@ -640,40 +648,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             printLabel(mipsFile, "end_ternary_", ((AuxToken *)expr->value)->line);
 
             // printf("teste de ternario true %d false %d\n", left->assign, right->assign);
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            // auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                else if (left->typeVar == VOID)
-                    auxLeftType = VOID;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            // auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                else if (right->typeVar == VOID)
-                    auxRightType = VOID;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
+
             if (auxLeftType != auxRightType || auxLeftPointer != auxRightPointer) {
                 if (textBefore) printf("\n");
                 char *type1 = getExactType(auxLeftType, auxLeftPointer);
@@ -720,36 +696,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
 
             leftType = left->registerType;
             leftReg = left->registerNumber;
@@ -784,40 +731,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                else if (left->typeVar == VOID)
-                    auxLeftType = VOID;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                else if (right->typeVar == VOID)
-                    auxRightType = VOID;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
 
             // ponteiro com int ou char gera warning
             // ponteiro com ponteiro diferente gera erro
@@ -913,40 +827,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
             int leftBits = 0;
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT) {
-                    auxLeftType = INT;
-                    leftBits = 32;
-                } else if (left->typeVar == CHAR || left->typeVar == CHARACTER) {
-                    auxLeftType = CHAR;
-                    leftBits = 8;
-                }
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                if (auxLeftPointer > 0) leftBits = 32;
-                auxLeftValor = left->assign;
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
+            if (auxLeftType == INT) {
+                leftBits = 32;
+            } else if (auxLeftType == CHAR) {
+                leftBits = 8;
             }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            if (auxLeftPointer > 0) leftBits = 32;
 
             if (auxRightPointer != 0) {
                 if (textBefore) printf("\n");
@@ -1016,36 +903,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
+
             // printf("\naditivia left %d %d \naditiva right %d %d\n", auxLeftType, auxLeftPointer, auxRightType, auxRightPointer);
             // se sao dois pointers nao pode
             if (auxLeftPointer != 0 && auxRightPointer != 0) {  // ALERTA MUDEI
@@ -1117,36 +976,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
-            auxLeftPointer = expr->left->value->pointer;
-            auxLeftType = expr->left->value->type;
-            auxLeftValor = atoi(expr->left->value->valor);
-            if (left) {
-                if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = INT;
-                else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHAR;
-                auxLeftPointer = left->pointer;
-                if (left->typeVar == STRING) {
-                    auxLeftType = CHAR;
-                    auxLeftPointer = 1;
-                }
-                auxLeftValor = left->assign;
-            }
-            auxRightPointer = expr->right->value->pointer;
-            auxRightType = expr->right->value->type;
-            auxRightValor = atoi(expr->right->value->valor);
-            if (right) {
-                if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = INT;
-                else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHAR;
-                auxRightPointer = right->pointer;
-                if (right->typeVar == STRING) {
-                    auxRightType = CHAR;
-                    auxRightPointer = 1;
-                }
-                auxRightValor = right->assign;
-            }
+            padronizeTypesAndPointers(expr, left, right, &auxLeftType, &auxLeftPointer, &auxLeftValor, &auxRightType, &auxRightPointer, &auxRightValor);
 
             if (auxLeftPointer == 0 && auxRightPointer == 0 &&
                 (auxLeftType == INT || auxLeftType == CHAR) && (auxRightType == INT || auxRightType == CHAR)) {
