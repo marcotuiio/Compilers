@@ -1,5 +1,5 @@
-#ifndef _ASH_H
-#define _ASH_H
+#ifndef _ASM_H
+#define _ASM_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +18,9 @@ int printPostIncrements(FILE *mips, int leftType, int leftReg, char *op);
 // Assigns
 int printAssignment(FILE *mips, int rightType, int rightReg);
 void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg);
+int printDeclareString(FILE *mips, char *name, char *value);
+int printAssignAddress(FILE *mips, int leftType, int leftReg, char *name);
+void printStoreInAddress(FILE *mips, int leftType, int leftReg, int rightType, int rightReg);
 
 // Unary operations (+, -, ~) + logical not (!) + bitwise ops (&, |, ^) + shifts (<<, >>)
 int printUnaryPlusMinus(FILE *mips, int leftType, int leftReg, char *op);
@@ -56,10 +59,12 @@ int printDeclareArray(FILE *mips, char *name, int size, int isGlobal);
 int printAccessIndexArray(FILE *mips, int arrayType, int arrayReg, char *name, int indexType, int indexReg, int isGlobal);
 void printStoreIntoArray(FILE *mips, int posic, int rightType, int rightReg);
 int printLoadFromArray(FILE *mips, int posic);
+int printLoadByte(FILE *mips, int type, int reg);
 
 // Output print
 void printInteger(FILE *mips, int regType, int RegNumber);
 void printCharacter(FILE *mips, int regType, int RegNumber);
+void printStringVar(FILE *mips, int type, int value);
 void printString(FILE *mips, char *value, int stringID1);
 
 // Input scan

@@ -104,6 +104,32 @@ void printAssignmentToReg(FILE *mips, int rightType, int rightReg, int leftReg) 
     if (rightType == 0) tRegister[rightReg] = 0;
 }
 
+int printAssignAddress(FILE *mips, int leftType, int leftReg, char *name) {
+    if (leftReg == -1) leftReg = getSRegister();
+    fprintf(mips, "\t.data\n");
+    fprintf(mips, "\t\t%s: .word 0\n", name);
+    fprintf(mips, "\t.text\n");
+    fprintf(mips, "\tla $s%d, %s\n", leftReg, name);
+    return leftReg;
+}
+
+void printStoreInAddress(FILE *mips, int leftType, int leftReg, int rightType, int rightReg) {
+    char l = leftType == 0 ? 't' : 's';
+    char r = rightType == 0 ? 't' : 's';
+    fprintf(mips, "\tsw $%c%d, 0($%c%d)\n", r, rightReg, l, leftReg);
+    if (leftType == 0) tRegister[leftReg] = 0;
+    if (rightType == 0) tRegister[rightReg] = 0;
+}
+
+int printDeclareString(FILE *mips, char *name, char *value) {
+    fprintf(mips, "\t.data\n");
+    fprintf(mips, "\t\t%s: .asciiz \"%s\"\n", name, value);
+    fprintf(mips, "\t.text\n");
+    int s = getSRegister();
+    fprintf(mips, "\tla $s%d, %s\n", s, name);
+    return s;
+}
+
 int printUnaryPlusMinus(FILE *mips, int leftType, int leftReg, char *op) {
     char r = leftType == 0 ? 't' : 's';
     int t = getTRegister();
@@ -189,8 +215,9 @@ void printIf(FILE *mips, int conditionType, int conditionReg, int labelID) {
 void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
-    fprintf(mips, "\tbeq $t%d, $%c%d, while_corpo_%d\n", t, c, conditionReg, labelID);
+    // fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
+    // fprintf(mips, "\tbeq $t%d, $%c%d, while_corpo_%d\n", t, c, conditionReg, labelID);
+    fprintf(mips, "\tbnez $%c%d, while_corpo_%d\n", c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
     tRegister[t] = 0;
 }
@@ -198,8 +225,9 @@ void printWhile(FILE *mips, int conditionType, int conditionReg, int labelID) {
 void printFor(FILE *mips, int conditionType, int conditionReg, int labelID) {
     char c = conditionType == 0 ? 't' : 's';
     int t = getTRegister();
-    fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
-    fprintf(mips, "\tbeq $t%d, $%c%d, for_corpo_%d\n", t, c, conditionReg, labelID);
+    // fprintf(mips, "\taddi $t%d, $zero, 1\n", t);
+    // fprintf(mips, "\tbeq $t%d, $%c%d, for_corpo_%d\n", t, c, conditionReg, labelID);
+    fprintf(mips, "\tbnez $%c%d, for_corpo_%d\n", c, conditionReg, labelID);
     if (conditionType == 0) tRegister[conditionReg] = 0;
     tRegister[t] = 0;
 }
@@ -343,6 +371,14 @@ int printLoadFromArray(FILE *mips, int posic) {
     return t;
 }
 
+int printLoadByte(FILE *mips, int type, int reg) {
+    int t = getTRegister();
+    fprintf(mips, "\tlb $t%d, 0($%c%d)\n", t, type == 0 ? 't' : 's', reg);
+    if (type == 0) tRegister[reg] = 0;
+    return t;
+
+}
+
 void printInteger(FILE *mips, int regType, int RegNumber) {
     char r = regType == 0 ? 't' : 's';
     fprintf(mips, "\tadd $a0, $zero, $%c%d\n", r, RegNumber);
@@ -357,6 +393,14 @@ void printCharacter(FILE *mips, int regType, int RegNumber) {
     fprintf(mips, "\taddi $v0, $zero, 11\n");
     fprintf(mips, "\tsyscall\n");
     if (regType == 0) tRegister[RegNumber] = 0;
+}
+
+void printStringVar(FILE *mips, int type, int value) {
+    char t = type == 0 ? 't' : 's';
+    fprintf(mips, "\tmove $a0, $%c%d\n", t, value);
+    fprintf(mips, "\taddi $v0, $zero, 4\n");
+    fprintf(mips, "\tsyscall\n");
+    if (type == 0) tRegister[value] = 0;
 }
 
 void printString(FILE *mips, char *value, int stringID1) {
@@ -395,6 +439,7 @@ void printSetParamInRegister(FILE *mips, int aReg, int rightType, int rightReg, 
 
 void printFunctionParams(FILE *mips, char *name, int params) {
     if (!strcmp(name, "main")) return;
+    if (params == 0) return;
     fprintf(mips, "\t#loading %d params\n", params);
     for (int i = 0; i < params; i++) {
         fprintf(mips, "\tadd $s%d, $zero, $a%d\n", i, i);

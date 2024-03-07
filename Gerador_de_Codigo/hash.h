@@ -16,6 +16,7 @@ typedef struct node {
     int pointer;
     char *varId;
     int assign;
+    char string[256];
     int isConstant;
     int isGlobal;
     int line;

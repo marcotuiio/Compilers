@@ -370,6 +370,7 @@ BlocoVariaveis: Ponteiro ID ExpressaoColchete ExpressaoAssign RetornoVariavel {
 
             if ($4) {
                 setHashExpr(node, $4, auxLineAssign, auxColumnAssign);
+                // printf("assign no bison = %s %d | %d\n", $4->value->valor, $4->type, ((HashNode*)node)->typeVar);
             }
         }
     } ;
@@ -845,8 +846,27 @@ ExpressaoPrimaria: ID {
     | Numero { $$ = $1; }
     | CHARACTER {
         char *actualChar = calloc(2, sizeof(char));
-        actualChar[0] = $1.valor[1];
+        if ($1.valor[1] == '\\') {
+            switch ($1.valor[2]) {
+                case '0':
+                    actualChar[0] = '\0';
+                    break;
+                case 'n':
+                    actualChar[0] = '\n';
+                    break;
+                case 't':
+                    actualChar[0] = '\t';
+                    break;
+                // Add more cases here for other escape sequences if needed
+                default:
+                    actualChar[0] = $1.valor[2];
+                    break;
+            }
+        } else {
+            actualChar[0] = $1.valor[1];
+        }
         actualChar[1] = '\0';
+        // printf("actual one %d\n", actualChar[0]);
         AuxToken *auxToken = createAuxToken(actualChar, $1.line, $1.column, CHARACTER);
         Expression *aux = createExpression(PRIMARIA, CHARACTER, auxToken, NULL, NULL);
         $$ = aux;
@@ -918,7 +938,7 @@ int main(int argc, char *argv[]) {
     } else {
         traverseAST(AST);  // se tiver erro semantico vai dar exit e free la dentro
         if (textBefore) printf("\n");
-        printf("SUCCESSFUL COMPILATION."); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
+        printf("SUCCESSFUL COMPILATION.\n"); // se chegar aqui, compilou com sucesso e nao tem erros semanticos
         printEnd(mipsFile);
     }
     freeAST(AST);

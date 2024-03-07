@@ -269,7 +269,7 @@
 // }
 
 // #define max 10
-// // int a;
+// // // int a;
 // int b;
 
 // int soma(int a, int b) {
@@ -277,72 +277,126 @@
 //     return a + b;
 // }
 
-// int v[3];
-// int teste = 7%3 + 9;
-// char c = 'a';
+// // int v[3];
+// // int teste = 7%3 + 9;
+// // char c = 'a';
 
 // int main() {
 //     int a[max];
 //     int i;
 //     b = 999;
-//     printf("teste = %d\n", teste);
-//     printf("c = %c\n", c);
-//     // a[0] = 1;
-//     // a[1] = 2;
-//     // a[2] = 3;
+//     // printf("teste = %d\n", teste);
+//     // printf("c = %c\n", c);
+//     a[0] = 1;
+//     a[1] = 2;
+//     a[2] = 3;
+//     a[3] = a[0] + a[1];
 //     // v[0] = 666;
-//     // for (i = 0; i < 2; i++) {
-//     //     printf("%d soma %d\n", i, soma(a[i], a[i+1]));
-//     // }
+//     for (i = 0; i < 2; i++) {
+//         printf("%d soma %d\n", i, soma(a[i], a[i+1]));
+//     }
 //     // printf("b = a(%d) + cu(%d) = %d\n", a, cu, b);
 //     // printf("c local = %d\n", c);
 //     return(666);
 // }
 
+// #define c1 10
+// #define c2 -c1
+// #define c3 c1 << 2
+// #define c4 c2 >> c3* c3
+// #define NULL 0
+// #define CALL_ELEVEN 11
+// int v[c2 + c3];
+
+// void** f() {
+//     void** v;
+//     return v;
+// }
+// #define TRUE 1
+// #define FALSE 0
+// #define SERA_VERDADE (TRUE || FALSE)
+// char* vetor[SERA_VERDADE];
+
+// char g(int arg_1, char arg_2, int arg_3) {
+//     char* c;
+//     c = "DDominar o mundo\n";
+//     printf("%s", c + 1);
+//     c++;
+//     printf("E depois novamente ");
+//     while (*c != '\0') {
+//         printf("%c", *c);
+//         g(1 + 2 * 3 - 4 * 5, *c, CALL_ELEVEN + 666);
+//     }
+//     return *(vetor[1 << 1]);
+// }
+
+// int main() {
+//     int* ptr;
+//     int* i;
+//     for (ptr = v; ptr; ptr++) {
+//         while (*ptr) {
+//             if (ptr <= 0) {
+//                 *ptr = 666;
+//                 *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+//             } else {
+//                 do {
+//                     ptr++;
+//                 } while (v);
+//             }
+//         }
+//     }
+//     return (*ptr + *i);
+//     // return 0;
+// }
+
+// TESTE STRINGS
 #define c1 10
-#define c2 -c1
-#define c3 c1 << 2
-#define c4 c2 >> c3* c3
-#define NULL 0
-#define CALL_ELEVEN 11
-int v[c2 + c3];
-
-void** f() {
-    void** v;
-    return v;
-}
-#define TRUE 1
-#define FALSE 0
-#define SERA_VERDADE (TRUE || FALSE)
-char* vetor[SERA_VERDADE];
-
-char g(int arg_1, char arg_2, int arg_3) {
-    char* c;
-    c = "DDominar o mundo\n";
-    printf("%s", c + 1);
-    c++;
-    printf("E depois novamente ");
-    while (*c != '\0') {
-        printf("%c", *c);
-        g(1 + 2 * 3 - 4 * 5, *c, CALL_ELEVEN + 666);
-    }
-    return *(vetor[1 << 1]);
-}
 
 int main() {
-    int* ptr;
-    int* i;
-    for (ptr = v; ptr; ptr++) {
-        while (*ptr) {
-            if (ptr <= 0) {
-                *ptr = 666;
-                *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
-            } else {
-                do {
-                    ptr++;
-                } while (v);
-            }
-        }
+    // char sla = '\n';
+    char *c;
+    char *c2 = "E depois novamente ";
+    c = "DDominar o mundo\n";
+
+    while (*c != '\0') {
+        printf("%c ", *c);
+        c++;
     }
-    return (*ptr + *i);
+
+    // printf("sla = %c\n", sla);
+    // printf("antes c = %s\n", c);
+    // c++;
+    // printf("depois c = %s\n", c);
+    // printf("c2 = %s\n", c2);
+
+    return 0;
 }
+
+// #define CALL_ELEVEN 11
+
+// int main() {
+//     int v[5];
+//     int i = 0;
+//     int* ptr;
+//     v[0] = 1;
+//     v[1] = 2;
+//     v[2] = 3;
+//     v[3] = 4;
+//     // v[4] = 5;
+//     // *ptr = 666;
+//     // printf("ptr = %d\n", *ptr);
+//     for (ptr = v; ptr; ptr++) {
+//         while (*ptr) {
+//             if (*ptr <= 0) {
+//                 *ptr = 666;
+//                 i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+//             } else {
+//                 do {
+//                     ptr++;
+//                 } while (*ptr);
+//             }
+//         }
+//     }
+//     return (*ptr + i);
+//     // return 0;
+// }

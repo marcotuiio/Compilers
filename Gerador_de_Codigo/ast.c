@@ -336,10 +336,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             } else if (expr->operator== CHARACTER) {
                 result = createResultExpression(expr->value->type, expr->value->pointer, expr->value->valor[0]);
+                int regT = printConstant(mipsFile, result->assign);
+                result->registerType = 0;
+                result->registerNumber = regT;
                 return result;
 
             } else if (expr->operator== STRING) {
                 result = createResultExpression(STRING, 0, 0);
+                strcpy(result->str, expr->value->valor);
+                // printf("1. string na ast %s \n", result->str);
                 return result;
             }
             break;
@@ -374,8 +379,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             // atribuindo sem ser id
             int auxForId = expr->left->value->type;
-            if ((HashNode*)left->auxIdNode) {
-                int kindAux = ((HashNode*)left->auxIdNode)->kind;
+            if ((HashNode *)left->auxIdNode) {
+                int kindAux = ((HashNode *)left->auxIdNode)->kind;
                 if (kindAux == VAR || kindAux == VECTOR)
                     auxForId = ID;
             }
@@ -394,14 +399,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 else if (left->typeVar == VOID)
                     auxLeftType = VOID;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -411,14 +416,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 else if (right->typeVar == VOID)
                     auxRightType = VOID;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -460,17 +465,34 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         }
                     }
                 }
-                // fprintf(mipsFile, "\t# assignment na ast %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, right->registerNumber, right->registerType);
+                // fprintf(mipsFile, "\t# assignment na ast %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerNumber, left->registerType);
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxRightValor);
                 int regS = -1;
-                // printf("leftReg %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
+                // fprintf(mipsFile, "\t # leftReg %s %d %d %d\n", ((HashNode *)left->auxIdNode)->varId, left->registerType, left->registerNumber, expr->left->type);
 
                 int rightType = right->registerType;
                 int rightReg = right->registerNumber;
 
+                if (auxLeftType == INT && auxLeftPointer == 1 && auxRightPointer == 1) {
+                    // printf("error:minhacabecafritou:\n");
+                    int s = printAssignAddress(mipsFile, left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId);
+                    setSRegisterInHash(((HashNode *)left->auxIdNode), s);
+                    result->registerType = 1;
+                    result->registerNumber = s;
+                    return result;
+                }
+
                 if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                    // if (auxRightPointer == 0) {
                     rightReg = printLoadFromArray(mipsFile, right->registerNumber);
                     rightType = 0;
+
+                    // } else {
+                    //     int i = printConstant(mipsFile, 0);
+                    //     int posic = printAccessIndexArray(mipsFile, right->registerType, right->registerNumber, ((HashNode *)right->auxIdNode)->varId, 0, i, ((HashNode *)right->auxIdNode)->isGlobal);
+                    //     rightReg = printLoadFromArray(mipsFile, posic);
+                    //     rightType = 0;
+                    // }
                 }
 
                 if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
@@ -486,13 +508,45 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     result->registerType = 0;
 
                 } else {
-                    if (left->registerNumber == -1) {
-                        regS = printAssignment(mipsFile, rightType, rightReg);
-                        ((HashNode *)left->auxIdNode)->sRegister = regS;
+                    if (((HashNode *)left->auxIdNode)->sRegister == -1) {
+                        // printf("%s sem sRegister\n", ((HashNode *)left->auxIdNode)->varId);
+                        if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                            right->str[strlen(right->str) - 1] = '\0';
+                            strcpy(right->str, right->str + 1);
+                            regS = printDeclareString(mipsFile, ((HashNode *)left->auxIdNode)->varId, right->str);
+                            result->registerType = 1;
+                            result->registerNumber = regS;
+                            ((HashNode *)left->auxIdNode)->sRegister = regS;
+                            strcpy(((HashNode *)left->auxIdNode)->string, right->str);
+
+                        } else {
+                            if (expr->left->type == UNARIA) {
+                                printStoreInAddress(mipsFile, left->registerType, left->registerNumber, rightType, rightReg);
+
+                            } else {
+                                regS = printAssignment(mipsFile, rightType, rightReg);
+                                ((HashNode *)left->auxIdNode)->sRegister = regS;
+                            }
+                        }
 
                     } else {
-                        regS = left->registerNumber;
-                        printAssignmentToReg(mipsFile, rightType, rightReg, regS);
+                        if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                            right->str[strlen(right->str) - 1] = '\0';
+                            strcpy(right->str, right->str + 1);
+                            regS = printDeclareString(mipsFile, ((HashNode *)left->auxIdNode)->varId, right->str);
+                            result->registerType = 1;
+                            result->registerNumber = regS;
+                            strcpy(((HashNode *)left->auxIdNode)->string, right->str);
+
+                        } else {
+                            if (expr->left->type == UNARIA) {
+                                printStoreInAddress(mipsFile, left->registerType, left->registerNumber, rightType, rightReg);
+
+                            } else {
+                                regS = left->registerNumber;
+                                printAssignmentToReg(mipsFile, rightType, rightReg, regS);
+                            }
+                        }
                     }
                     result->registerType = 1;
                 }
@@ -502,7 +556,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             } else if (expr->operator== ADD_ASSIGN || expr->operator== MINUS_ASSIGN) {
                 if (right) {
                     if (auxLeftPointer != 0) {
-                        if (auxRightType != NUM_INT || auxRightType != CHARACTER) {
+                        if (auxRightType != INT || auxRightType != CHAR) {
                             if (textBefore) printf("\n");
                             char *type1 = getExactType(left->typeVar, left->pointer);
                             char *type2 = getExactType(right->typeVar, right->pointer);
@@ -518,7 +572,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 } else {
                     if (auxLeftPointer != 0) {
-                        if (auxRightType != NUM_INT || auxRightType != CHARACTER) {
+                        if (auxRightType != INT || auxRightType != CHAR) {
                             if (textBefore) printf("\n");
                             char *type1 = getExactType(auxLeftType, auxLeftPointer);
                             char *type2 = getExactType(auxRightType, auxRightPointer);
@@ -534,7 +588,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                 }
 
-                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR???
                 // PQ TERIA UM LOAD SEGUIDO DE STORE NI ARRAY PREGUIÇA NE
 
                 if (expr->operator== ADD_ASSIGN) {
@@ -598,14 +652,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             // auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 else if (left->typeVar == VOID)
                     auxLeftType = VOID;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -615,14 +669,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             // auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 else if (right->typeVar == VOID)
                     auxRightType = VOID;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -678,12 +732,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -693,12 +747,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -742,14 +796,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 else if (left->typeVar == VOID)
                     auxLeftType = VOID;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -759,14 +813,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 else if (right->typeVar == VOID)
                     auxRightType = VOID;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -871,15 +925,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT) {
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                     leftBits = 32;
                 } else if (left->typeVar == CHAR || left->typeVar == CHARACTER) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     leftBits = 8;
                 }
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 if (auxLeftPointer > 0) leftBits = 32;
@@ -890,12 +944,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -984,12 +1038,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -999,12 +1053,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
@@ -1095,12 +1149,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxLeftValor = atoi(expr->left->value->valor);
             if (left) {
                 if (left->typeVar == INT || left->typeVar == NUM_INT)
-                    auxLeftType = NUM_INT;
+                    auxLeftType = INT;
                 else if (left->typeVar == CHAR || left->typeVar == CHARACTER)
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                 auxLeftPointer = left->pointer;
                 if (left->typeVar == STRING) {
-                    auxLeftType = CHARACTER;
+                    auxLeftType = CHAR;
                     auxLeftPointer = 1;
                 }
                 auxLeftValor = left->assign;
@@ -1110,19 +1164,19 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             auxRightValor = atoi(expr->right->value->valor);
             if (right) {
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 auxRightPointer = right->pointer;
                 if (right->typeVar == STRING) {
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                     auxRightPointer = 1;
                 }
                 auxRightValor = right->assign;
             }
 
             if (auxLeftPointer == 0 && auxRightPointer == 0 &&
-                (auxLeftType == NUM_INT || auxLeftType == CHARACTER) && (auxRightType == NUM_INT || auxRightType == CHARACTER)) {
+                (auxLeftType == INT || auxLeftType == CHAR) && (auxRightType == INT || auxRightType == CHAR)) {
                 // printf("certo!\n");
             } else {
                 char c;
@@ -1194,7 +1248,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "or");
                 result->registerNumber = tReg;
-                
+
             } else if (expr->operator== BITWISE_XOR) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
                 int tReg = printBitwiseOps(mipsFile, leftType, leftReg, rightType, rightReg, "xor");
@@ -1236,17 +1290,17 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             auxLeftPointer = expr->value->pointer;
             if (expr->value->type == INT || expr->value->type == NUM_INT)
-                auxLeftType = NUM_INT;
+                auxLeftType = INT;
             else if (expr->value->type == CHAR || expr->value->type == CHARACTER)
-                auxLeftType = CHARACTER;
+                auxLeftType = CHAR;
             else if (expr->value->type == VOID)
                 auxLeftType = VOID;
             if (right) {
                 auxRightPointer = right->pointer;
                 if (right->typeVar == INT || right->typeVar == NUM_INT)
-                    auxRightType = NUM_INT;
+                    auxRightType = INT;
                 else if (right->typeVar == CHAR || right->typeVar == CHARACTER)
-                    auxRightType = CHARACTER;
+                    auxRightType = CHAR;
                 else if (right->typeVar == VOID)
                     auxRightType = VOID;
                 HashNode *temp = right->auxIdNode;
@@ -1259,16 +1313,16 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             int auxLeftSize = 0;
             int auxRightSize = 0;
 
-            if (auxLeftType == NUM_INT)
+            if (auxLeftType == INT)
                 auxLeftSize = 32;
-            else if (auxLeftType == CHARACTER)
+            else if (auxLeftType == CHAR)
                 auxLeftSize = 8;
             else if (auxLeftType == VOID)
                 auxLeftSize = 8;
 
-            if (auxRightType == NUM_INT)
+            if (auxRightType == INT)
                 auxRightSize = 32;
-            else if (auxRightType == CHARACTER)
+            else if (auxRightType == CHAR)
                 auxRightSize = 8;
             else if (auxRightType == VOID)
                 auxRightSize = 8;
@@ -1375,7 +1429,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
                 auxLeftPointer = left->pointer;
-                if (left->auxIdNode && ((HashNode*)left->auxIdNode)->kind == VECTOR)
+                if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR)
                     auxLeftPointer = 1;
                 if ((left->typeVar != NUM_INT || left->typeVar != CHARACTER  // alerta
                      || left->typeVar != INT || left->typeVar != CHAR) &&
@@ -1390,7 +1444,33 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     deleteAuxFile();
                     exit(0);
                 }
-                result = createResultExpression(left->typeVar, 0, *(&left->assign));
+                // printf("unary mult %s %d %d %d %s <> %c\n", ((HashNode*)left->auxIdNode)->varId, left->typeVar, left->pointer, left->assign, ((HashNode*)left->auxIdNode)->string, *(((HashNode*)left->auxIdNode)->string));
+                // printf("\nunary * %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
+                if (left->typeVar == CHAR && left->pointer == 1) {
+                    result = createResultExpression(CHAR, 0, *(((HashNode *)left->auxIdNode)->string));
+                    int t = printLoadByte(mipsFile, left->registerType, left->registerNumber);
+                    result->registerType = 0;
+                    result->registerNumber = t;
+
+                } else if (left->typeVar == INT && left->pointer == 1) {
+                    // fprintf(mipsFile, "\t # aqui %s %d %d\n", ((HashNode *)left->auxIdNode)->varId, left->registerType, left->registerNumber);
+                    result = createResultExpression(INT, 0, 0);
+                    int i = printConstant(mipsFile, 0);
+                    if (left->registerNumber == -1) {
+                        left->registerNumber = printAssignAddress(mipsFile, left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId);
+                        setSRegisterInHash(((HashNode *)left->auxIdNode), left->registerNumber);
+                    }
+                    int posic = printAccessIndexArray(mipsFile, left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId, 0, i, ((HashNode *)left->auxIdNode)->isGlobal);
+                    result->registerType = 0;
+                    if (inAtrib) {
+                        result->registerNumber = posic;
+                    } else {
+                        result->registerNumber = printLoadFromArray(mipsFile, posic);
+                    }
+
+                } else {
+                    result = createResultExpression(left->typeVar, 0, *(&left->assign));
+                }
                 result->auxLine = expr->value->line;
                 result->auxColumn = expr->value->column;
                 result->auxIdNode = left->auxIdNode;
@@ -1439,22 +1519,22 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
-                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR???
                 if (expr->operator== BITWISE_AND) {
                     result = createResultExpression(auxLeftType, 1, *(&auxLeftValor));  // acesso do valor em memoria
-                
+
                 } else if (expr->operator== NOT) {
                     result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
                     int reg = printLogicalNot(mipsFile, left->registerType, left->registerNumber);
                     result->registerType = 0;
                     result->registerNumber = reg;
-               
+
                 } else if (expr->operator== INC) {  // pre incremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
                     int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "addi");
                     result->registerType = left->registerType;
                     result->registerNumber = r;
-                
+
                 } else if (expr->operator== DEC) {  // pre decremento
                     result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
                     int r = printPreIncrements(mipsFile, left->registerType, left->registerNumber, "subi");
@@ -1483,7 +1563,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     exit(0);
                 }
 
-                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR??? 
+                // CONSIDERAR POSSIBILIDADE DE USAR COMO LEFT UM VALOR QUE SEJA INDICE DE VETOR???
 
                 if (expr->operator== INC) {  // pos incremento
                     int originalValue = left->assign;
@@ -1517,7 +1597,15 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("pos fixa l square %p %d %d %d %s\n", left, left->typeVar, left->pointer, auxIdNode->kind, ((HashNode*)left->auxIdNode)->varId);
                 // vendo se de fato é um array
                 int posic = -1;
-                if (auxIdNode->kind != VECTOR) {
+                // printf("antes %s %d %d %d\n", auxIdNode->varId, left->typeVar, left->pointer, auxIdNode->kind);
+                int temErro;
+                if (auxIdNode->kind == VECTOR)
+                    temErro = 0;
+                else
+                    temErro = 1;
+                if (left->pointer == 1) temErro = 0;
+
+                if (temErro) {
                     if (textBefore) printf("\n");
                     printf("error:semantic:%d:%d: subscripted value is neither array nor pointer", expr->value->line, expr->value->column);
                     printLineError(expr->value->line, expr->value->column);
@@ -1533,6 +1621,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     Dimension *dimenEsperada = auxIdNode->dimensions;
                     ResultExpression *dimenResult = NULL;
                     // percorrer as dimensoes recebidas e verificar se sao inteiros e se a qntd bate
+
+                    // PRECISARIA TERMINAR AQUI PARA PERCORRER VETORES DECLARADOS COMO PONTEIROS
+                    // if (auxIdNode->pointer > 0) auxIdNode->qntdDimen = auxIdNode->pointer;
+                    // printf("esperadas %d %p\n", auxIdNode->qntdDimen, dimenEsperada);
+
                     while (dimenRecebidas) {
                         qntdDimenRecebidas++;
                         // printf("\n\nline column dimen %d %d\n\n", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
@@ -1832,7 +1925,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                     if (formatSpecifier) {
                         printing = INT;
                     } else {
-                        formatSpecifier = strstr(stringWithoutFormat, "%s");   
+                        formatSpecifier = strstr(stringWithoutFormat, "%s");
                         if (formatSpecifier) {
                             printing = STRING;
                         } else {
@@ -1855,6 +1948,8 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                         printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
                     else if (printing == CHAR)
                         printCharacter(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == STRING)
+                        printStringVar(mipsFile, toPrint->registerType, toPrint->registerNumber);
 
                     free(stringWithoutFormat);
                     stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
@@ -1947,6 +2042,16 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 exit(0);
             }
             // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
+            if (returnAux->auxIdNode) {
+                // printf("\n>>>>> varId %s %d\n", ((HashNode*)returnAux->auxIdNode)->varId, ((HashNode*)returnAux->auxIdNode)->sRegister);
+                if (((HashNode *)returnAux->auxIdNode)->sRegister == -1) {
+                    int null = printConstant(mipsFile, 0);
+                    int s = printAssignment(mipsFile, 0, null);
+                    setSRegisterInHash((HashNode *)returnAux->auxIdNode, s);
+                    returnAux->registerType = 1;
+                    returnAux->registerNumber = s;
+                }
+            }
             printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
             if (strcmp(currentFunction->name, "main")) {
                 loadFromStack(mipsFile);
@@ -2002,9 +2107,9 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
             }
 
             if (node->hashExpr) {
-                // printf(">>>>>>>>>>>>>> this noda has atrib expr %p %s = %p %d\n\n", node, node->varId, node->hashExpr, ((Expression*)node->hashExpr)->type);
+                // printf(">>>>>>>>>>>>>> this noda has atrib expr %p %s = %p %d\n", node, node->varId, node->hashExpr, ((Expression*)node->hashExpr)->type);
                 atrib = evalExpression(node->hashExpr, globalHash, localHash, program);
-                // printf("<<<<<<<<<<<<<< retornou %d %d %d\n", atrib->typeVar, atrib->pointer, atrib->assign);
+                // printf("<<<<<<<<<<<<<< retornou %d %d %d %s\n\n", atrib->typeVar, atrib->pointer, atrib->assign, atrib->str);
 
                 int assignType, assignPointer = atrib->pointer;
                 // printf("\nassignType %d %d\n", atrib->typeVar, atrib->assign);
@@ -2049,9 +2154,18 @@ void lookForNodeInHashWithExpr(void **globalHash, void **localHash, Program *pro
                     setGlobalVarAssign(node->varId, atrib->assign);
 
                 } else {
-                    int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
-                    setSRegisterInHash(node, regS);
-                    setAssign(node, atrib->assign);
+                    if (assignType == CHAR && assignPointer == 1) {  // string
+                        atrib->str[strlen(atrib->str) - 1] = '\0';
+                        strcpy(atrib->str, atrib->str + 1);
+                        int regS = printDeclareString(mipsFile, node->varId, atrib->str);
+                        setSRegisterInHash(node, regS);
+                        strcpy(node->string, atrib->str);
+
+                    } else {
+                        int regS = printAssignment(mipsFile, atrib->registerType, atrib->registerNumber);
+                        setSRegisterInHash(node, regS);
+                        setAssign(node, atrib->assign);
+                    }
                 }
             }
             node = node->next;
@@ -2081,8 +2195,8 @@ int traverseAST(Program *program) {
         } else {
             printGlobalVarAssign(mipsFile);
         }
+        // printf("Function: %s (%d) %p has hash %p\n", currentFunction->name, funcNode->qntdParams, currentFunction, currentFunction->hashTable);
         printFunctionParams(mipsFile, currentFunction->name, funcNode->qntdParams);
-        // printf("Function: %s %p has hash %p\n", currentFunction->name, currentFunction, currentFunction->hashTable);
         lookForNodeInHashWithExpr(program->hashTable, currentFunction->hashTable, program);
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
