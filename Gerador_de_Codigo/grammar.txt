@@ -1,172 +1,87 @@
-Start -> Programa MyEOF
+Start: AstParse MyEOF {} ;
 
-Programa -> DeclaracoesOUFuncao ListaFuncoes
+AstParse: DeclaracoesGlobais Funcoes {} ;
 
-DeclaracoesOUFuncao -> Declaracoes
-DeclaracoesOUFuncao -> Funcao
+DeclaracoesGlobais: CONSTANT ID VALUE COLON NUM_INT DeclaracoesGlobais {}
+    | GLOBAL VARIABLE COLON ID TYPE COLON {} 
+    | { } ;
 
-ListaFuncoes -> DeclaracoesOUFuncao ListaFuncoes
-ListaFuncoes -> 
+ArrayCheck: L_SQUARE_BRACKET NUM_INT R_SQUARE_BRACKET ArrayCheck {}
+    | { $$ = NULL; } ;
 
-Declaracoes -> # define id Expressao
-Declaracoes -> DeclaraVariaveis
-Declaracoes -> DeclaraPrototipos
+Expression: BinaryExpr { }
+    | TernaryExpr { }
+    | UnaryExpr { } ;
 
-Funcao -> Tipo Ponteiro id Parametros { DeclaraVariaveisFuncao Comandos }
+BinaryExpr: Bop L_PAREN Expression COMMA Expression R_PAREN SEMICOLON {} ;
 
-DeclaraVariaveisFuncao -> DeclaraVariaveis DeclaraVariaveisFuncao
-DeclaraVariaveisFuncao -> 
+TernaryExpr: TERNARY_CONDITIONAL L_PAREN Expression COMMA Expression COMMA Expression {} ;
 
-Ponteiro -> * Ponteiro
-Ponteiro -> 
+UnaryExpr: Uop L_PAREN Expression R_PAREN SEMICOLON {} 
+    | L_PAREN Expression R_PAREN SEMICOLON Uop {} ;
 
-DeclaraVariaveis -> Tipo BlocoVariaveis ;
+Bop: PLUS {}
+    | MINUS {}
+    | MULTIPLY {}
+    | DIVIDE {}
+    | REMAINDER {}
+    | BITWISE_AND {}
+    | BITWISE_OR {}
+    | BITWISE_XOR {}
+    | LOGICAL_AND {}
+    | LOGICAL_OR {}
+    | EQUAL {}
+    | NOT_EQUAL {}
+    | LESS_THAN {}
+    | LESS_EQUAL {}
+    | GREATER_THAN {}
+    | GREATER_EQUAL {} 
+    | R_SHIFT {}
+    | L_SHIFT {}
+    | ASSIGN {}
+    | ADD_ASSIGN {}
+    | MINUS_ASSIGN {} ;
 
-BlocoVariaveis -> Ponteiro id ExpressaoColchete ExpressaoAssign RetornoVar
+Uop: INC {}
+    | DEC {}
+    | NOT {}
+    | BITWISE_NOT {} ;
 
-ExpressaoColchete -> [ Expressao ] ExpressaoColchete
-ExpressaoColchete ->
+Primaria: NUM_INT {}
+    | CHARACTER {}
+    | ID {} ;
 
-ExpressaoAssign -> = ExpressaoAtribuicao
-ExpressaoAssign -> 
+Funcoes: FUNCTION COLON ID { currentHash = createHash(); } 
+        RETURN_TYPE COLON VarType { pointerCount = 0; } 
+        Pointers { paramCount = 0; } 
+        Parameters DeclaracoesLocais Comandos END_FUNCTION Funcoes {} ;
 
-RetornoVar -> , BlocoVariaveis
-RetornoVar ->
+VarType: INT {}
+    | CHAR {}
+    | VOID {} ;
 
-DeclaraPrototipos -> Tipo Ponteiro id Parametros ;
+Parameters: PARAMETER COLON ID TYPE COLON 
+        VarType { pointerCount = 0; } 
+        Pointers ArrayCheck Parameters {}
+    | { } ;
 
-Parametros -> ( BlocoParametros )
+DeclaracoesLocais: VARIABLE COLON ID TYPE COLON 
+        VarType { pointerCount = 0; } 
+        Pointers ArrayCheck DeclaracoesLocais {}
+    | { } ; 
 
-BlocoParametros -> Tipo Ponteiro id ExpressaoColchete RetornaParametros
-BlocoParametros ->
+Pointers: MULTIPLY Pointers { pointerCount++; }
+    | { } ;
 
-RetornaParametros -> , BlocoParametros
-RetornaParametros ->
+Comandos: IF L_PAREN Expression COMMA Comandos COMMA Comandos R_PAREN Comandos {}
+    | DO_WHILE L_PAREN Comandos COMMA Expression R_PAREN Comandos {}
+    | WHILE L_PAREN Expression COMMA Comandos R_PAREN Comandos {}
+    | FOR L_PAREN Expression COMMA Expression COMMA Expression COMMA Comandos R_PAREN SEMICOLON Comandos {}
+    | PRINTF L_PAREN STRING AuxPrint R_PAREN SEMICOLON Comandos {}
+    | SCANF L_PAREN STRING COMMA BITWISE_AND L_PAREN ID R_PAREN R_PAREN SEMICOLON Comandos {}
+    | RETURN L_PAREN Expression R_PAREN Comandos {}
+    | EXIT L_PAREN Expression R_PAREN Comandos {} 
+    | Expression SEMICOLON Comandos {}
 
-Tipo -> int
-Tipo -> char
-Tipo -> void
-
-Bloco -> { Comandos }
-
-Comandos-> ListaComandos RetornoComandos
-
-RetornoComandos -> ListaComandos RetornoComandos
-RetornoComandos -> 
-
-ListaComandos -> do Bloco while ( Expressao ) ;
-ListaComandos -> if ( Expressao ) Bloco AuxElse
-ListaComandos -> while ( Expressao ) Bloco
-ListaComandos -> for ( AuxFor ; AuxFor ; AuxFor ) Bloco
-ListaComandos -> printf ( string AuxPrint ) ;
-ListaComandos -> scanf ( string , & id ) ;
-ListaComandos -> exit ( Expressao ) ;
-ListaComandos -> return AuxFor ;
-ListaComandos -> Expressao ;
-ListaComandos -> ;
-ListaComandos -> Bloco
-
-AuxElse -> else Bloco
-AuxElse -> 
-
-AuxFor -> Expressao
-AuxFor ->
-
-AuxPrint -> , Expressao
-AuxPrint ->
-
-Expressao -> ExpressaoAtribuicao
-Expressao -> Expressao , ExpressaoAtribuicao
-
-OpAtrib -> +=
-OpAtrib -> = 
-OpAtrib -> -=
-
-OpRel -> <
-OpRel -> <=
-OpRel -> >
-OpRel -> >=
-
-OpMult -> *
-OpMult -> /
-OpMult -> %
-
-OpUnario -> &
-OpUnario -> *
-OpUnario -> +
-OpUnario -> -
-OpUnario -> ~
-OpUnario -> !
-
-ExpressaoAtribuicao -> ExpressaoCondicional
-ExpressaoAtribuicao -> ExpressaoUnaria OpAtrib ExpressaoAtribuicao
-
-ExpressaoCondicional -> ExpressaoOrLogico AuxCondicional
-
-AuxCondicional -> ? Expressao : ExpressaoCondicional
-AuxCondicional -> 
-
-ExpressaoOrLogico -> ExpressaoAndLogico
-ExpressaoOrLogico -> ExpressaoOrLogico || ExpressaoAndLogico
-
-ExpressaoAndLogico -> ExpressaoOr
-ExpressaoAndLogico -> ExpressaoAndLogico && ExpressaoOr
-
-ExpressaoOr -> ExpressaoXor
-ExpressaoOr -> ExpressaoOr | ExpressaoXor
-
-ExpressaoXor -> ExpressaoAnd
-ExpressaoXor -> ExpressaoXor ^ ExpressaoAnd
-
-ExpressaoAnd -> ExpressaoIgual
-ExpressaoAnd -> ExpressaoAnd & ExpressaoIgual
-
-ExpressaoIgual -> ExpressaoRelacional
-ExpressaoIgual -> ExpressaoIgual == ExpressaoRelacional
-ExpressaoIgual -> ExpressaoIgual != ExpressaoRelacional
-
-ExpressaoRelacional -> ExpressaoShift
-ExpressaoRelacional -> ExpressaoRelacional OpRel ExpressaoShift
-
-ExpressaoShift -> ExpressaoAditiva
-ExpressaoShift -> ExpressaoShift >> ExpressaoAditiva
-ExpressaoShift -> ExpressaoShift << ExpressaoAditiva
-
-ExpressaoAditiva -> ExpressaoMultiplicativa
-ExpressaoAditiva -> ExpressaoAditiva - ExpressaoMultiplicativa
-ExpressaoAditiva -> ExpressaoAditiva + ExpressaoMultiplicativa
-
-ExpressaoMultiplicativa -> ExpressaoCast
-ExpressaoMultiplicativa -> ExpressaoMultiplicativa OpMult ExpressaoCast
-
-ExpressaoCast -> ExpressaoUnaria
-ExpressaoCast -> ( Tipo Ponteiro ) ExpressaoCast
-
-ExpressaoUnaria -> ExpressaoPosFixa
-ExpressaoUnaria -> ++ ExpressaoUnaria
-ExpressaoUnaria -> -- ExpressaoUnaria
-ExpressaoUnaria -> OpUnario ExpressaoCast
-
-ExpressaoPosFixa -> ExpressaoPrimaria
-ExpressaoPosFixa -> ExpressaoPosFixa AuxPosFixa
-
-AuxPosFixa -> [ Expressao ]
-AuxPosFixa -> ++
-AuxPosFixa -> --
-AuxPosFixa -> ( PulaExpressaoAtribuicao )
-
-PulaExpressaoAtribuicao -> ExpressaoAtribuicao AuxPula
-PulaExpressaoAtribuicao -> 
-
-AuxPula -> , ExpressaoAtribuicao AuxPula
-AuxPula -> 
-
-ExpressaoPrimaria -> id 
-ExpressaoPrimaria -> Numero
-ExpressaoPrimaria -> character
-ExpressaoPrimaria -> string
-ExpressaoPrimaria -> ( Expressao )
-
-Numero -> num_int
-Numero -> num_hexa
-Numero -> num_octal
+AuxPrint: COMMA Expression AuxPrint {}
+    | {} ;

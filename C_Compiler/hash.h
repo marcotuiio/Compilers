@@ -8,7 +8,7 @@
 #define HASH_SIZE 997
 
 #define VAR 1
-#define FUNCTIONN 2
+#define FUNCTION 2
 #define VECTOR 3
 
 typedef struct node {
@@ -19,9 +19,12 @@ typedef struct node {
     char string[256];
     int isConstant;
     int isGlobal;
+    int line;
+    int column;
     void *dimensions;
     void *param;
     int kind;
+    int prototype;
     int qntdParams;
     int qntdDimen;
 
@@ -36,6 +39,8 @@ typedef struct node {
 typedef struct param {
     int type;
     int pointer;
+    int line;
+    int column;
     int kindParam;
     char *identifier;
     struct param *next;
@@ -45,23 +50,24 @@ void **createHash();
 
 int hash(char *value);
 
-void *insertHash(void **hashTable, char *varId, int currentType, int pointer);
+void *insertHash(void **hashTable, char *varId, int line, int column, int currentType, int pointer);
 void setIsConstant(void *node);
-void setIsGlobal(void *node);
 void setPrototype(void *node);
 void setQntdParams(void *node, int qntdParams);
 void setParam(void *node, Param *p);
 void setAssign(void *node, int assign);
 void setDimensions(void *node, void *dimensions);
 void setKind(void *node, int kind);
-void setHashExpr(void *node, void *hashExpr);
+void setHashExpr(void *node, void *hashExpr, int lin, int col);
 
 void setSRegisterInHash(void *node, int sRegister);
 int getSRegisterFromHash(void *node);
 
-int lookForValueInHash(void **hashTable, char *varId, int currentType);
+int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError);
 
-Param *createParam(int type, char *identifier, int pointer, void *next);
+Param *createParam(int type, char *identifier, int pointer, int line, int column, void *next);
+
+int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError);
 
 HashNode *getIdentifierNode(void **hashTable, char *id);
 char *getExactType(int type, int pointer);

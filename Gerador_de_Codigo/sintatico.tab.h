@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_SINTATICO_TAB_H_INCLUDED
-# define YY_YY_SINTATICO_TAB_H_INCLUDED
+#ifndef YY_YY_SINTANTICO_TAB_H_INCLUDED
+# define YY_YY_SINTANTICO_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -55,62 +55,63 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     MyEOF = 258,                   /* MyEOF  */
-    ERRO = 259,                    /* ERRO  */
-    NUMBER_SIGN = 260,             /* NUMBER_SIGN  */
-    DEFINE = 261,                  /* DEFINE  */
-    L_CURLY_BRACKET = 262,         /* L_CURLY_BRACKET  */
-    R_CURLY_BRACKET = 263,         /* R_CURLY_BRACKET  */
-    L_PAREN = 264,                 /* L_PAREN  */
-    R_PAREN = 265,                 /* R_PAREN  */
-    L_SQUARE_BRACKET = 266,        /* L_SQUARE_BRACKET  */
-    R_SQUARE_BRACKET = 267,        /* R_SQUARE_BRACKET  */
-    COMMA = 268,                   /* COMMA  */
-    SEMICOLON = 269,               /* SEMICOLON  */
-    PLUS = 270,                    /* PLUS  */
-    MINUS = 271,                   /* MINUS  */
-    MULTIPLY = 272,                /* MULTIPLY  */
-    DIVIDE = 273,                  /* DIVIDE  */
-    REMAINDER = 274,               /* REMAINDER  */
-    INT = 275,                     /* INT  */
-    CHAR = 276,                    /* CHAR  */
-    VOID = 277,                    /* VOID  */
-    DO = 278,                      /* DO  */
-    WHILE = 279,                   /* WHILE  */
-    IF = 280,                      /* IF  */
-    ELSE = 281,                    /* ELSE  */
-    FOR = 282,                     /* FOR  */
-    PRINTF = 283,                  /* PRINTF  */
-    SCANF = 284,                   /* SCANF  */
-    RETURN = 285,                  /* RETURN  */
-    EXIT = 286,                    /* EXIT  */
-    ADD_ASSIGN = 287,              /* ADD_ASSIGN  */
-    MINUS_ASSIGN = 288,            /* MINUS_ASSIGN  */
-    ASSIGN = 289,                  /* ASSIGN  */
-    EQUAL = 290,                   /* EQUAL  */
-    NOT_EQUAL = 291,               /* NOT_EQUAL  */
-    LESS_THAN = 292,               /* LESS_THAN  */
-    LESS_EQUAL = 293,              /* LESS_EQUAL  */
-    GREATER_THAN = 294,            /* GREATER_THAN  */
-    GREATER_EQUAL = 295,           /* GREATER_EQUAL  */
-    BITWISE_AND = 296,             /* BITWISE_AND  */
-    BITWISE_OR = 297,              /* BITWISE_OR  */
-    BITWISE_XOR = 298,             /* BITWISE_XOR  */
-    BITWISE_NOT = 299,             /* BITWISE_NOT  */
-    LOGICAL_AND = 300,             /* LOGICAL_AND  */
-    LOGICAL_OR = 301,              /* LOGICAL_OR  */
-    NOT = 302,                     /* NOT  */
-    TERNARY_CONDITIONAL = 303,     /* TERNARY_CONDITIONAL  */
-    COLON = 304,                   /* COLON  */
-    R_SHIFT = 305,                 /* R_SHIFT  */
-    L_SHIFT = 306,                 /* L_SHIFT  */
-    INC = 307,                     /* INC  */
-    DEC = 308,                     /* DEC  */
-    NUM_INT = 309,                 /* NUM_INT  */
-    NUM_HEXA = 310,                /* NUM_HEXA  */
-    NUM_OCTAL = 311,               /* NUM_OCTAL  */
-    STRING = 312,                  /* STRING  */
-    CHARACTER = 313,               /* CHARACTER  */
-    ID = 314                       /* ID  */
+    GLOBAL = 259,                  /* GLOBAL  */
+    VARIABLE = 260,                /* VARIABLE  */
+    CONSTANT = 261,                /* CONSTANT  */
+    PARAMETER = 262,               /* PARAMETER  */
+    VALUE = 263,                   /* VALUE  */
+    RETURN_TYPE = 264,             /* RETURN_TYPE  */
+    TYPE = 265,                    /* TYPE  */
+    VOID = 266,                    /* VOID  */
+    INT = 267,                     /* INT  */
+    CHAR = 268,                    /* CHAR  */
+    FUNCTION = 269,                /* FUNCTION  */
+    END_FUNCTION = 270,            /* END_FUNCTION  */
+    RETURN = 271,                  /* RETURN  */
+    DO_WHILE = 272,                /* DO_WHILE  */
+    WHILE = 273,                   /* WHILE  */
+    FOR = 274,                     /* FOR  */
+    IF = 275,                      /* IF  */
+    PRINTF = 276,                  /* PRINTF  */
+    SCANF = 277,                   /* SCANF  */
+    EXIT = 278,                    /* EXIT  */
+    PLUS = 279,                    /* PLUS  */
+    MINUS = 280,                   /* MINUS  */
+    MULTIPLY = 281,                /* MULTIPLY  */
+    DIVIDE = 282,                  /* DIVIDE  */
+    REMAINDER = 283,               /* REMAINDER  */
+    INC = 284,                     /* INC  */
+    DEC = 285,                     /* DEC  */
+    ADD_ASSIGN = 286,              /* ADD_ASSIGN  */
+    MINUS_ASSIGN = 287,            /* MINUS_ASSIGN  */
+    ASSIGN = 288,                  /* ASSIGN  */
+    EQUAL = 289,                   /* EQUAL  */
+    NOT_EQUAL = 290,               /* NOT_EQUAL  */
+    LESS_THAN = 291,               /* LESS_THAN  */
+    LESS_EQUAL = 292,              /* LESS_EQUAL  */
+    GREATER_THAN = 293,            /* GREATER_THAN  */
+    GREATER_EQUAL = 294,           /* GREATER_EQUAL  */
+    BITWISE_AND = 295,             /* BITWISE_AND  */
+    BITWISE_OR = 296,              /* BITWISE_OR  */
+    BITWISE_XOR = 297,             /* BITWISE_XOR  */
+    BITWISE_NOT = 298,             /* BITWISE_NOT  */
+    LOGICAL_AND = 299,             /* LOGICAL_AND  */
+    LOGICAL_OR = 300,              /* LOGICAL_OR  */
+    NOT = 301,                     /* NOT  */
+    TERNARY_CONDITIONAL = 302,     /* TERNARY_CONDITIONAL  */
+    COLON = 303,                   /* COLON  */
+    R_SHIFT = 304,                 /* R_SHIFT  */
+    L_SHIFT = 305,                 /* L_SHIFT  */
+    L_PAREN = 306,                 /* L_PAREN  */
+    R_PAREN = 307,                 /* R_PAREN  */
+    L_SQUARE_BRACKET = 308,        /* L_SQUARE_BRACKET  */
+    R_SQUARE_BRACKET = 309,        /* R_SQUARE_BRACKET  */
+    COMMA = 310,                   /* COMMA  */
+    SEMICOLON = 311,               /* SEMICOLON  */
+    NUM_INT = 312,                 /* NUM_INT  */
+    STRING = 313,                  /* STRING  */
+    CHARACTER = 314,               /* CHARACTER  */
+    ID = 315                       /* ID  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -119,7 +120,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 53 "sintatico.y"
+#line 24 "sintantico.y"
 
     Program *prog;
     Function *func;
@@ -127,16 +128,12 @@ union YYSTYPE
     Expression *expr;
     Command *cmd;
     void *param;
-    void *paramExp;
-    int ptr;
     struct {
         char *valor;
-        int column;
-        int line;
         int type;
     } token;
 
-#line 140 "sintatico.tab.h"
+#line 137 "sintantico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -151,4 +148,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_SINTATICO_TAB_H_INCLUDED  */
+#endif /* !YY_YY_SINTANTICO_TAB_H_INCLUDED  */

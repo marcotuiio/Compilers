@@ -6,77 +6,90 @@
 // #include "sintatico.tab.h"
 
 enum expressionTypes {
-    BOP = 1001,
-    UOP,
-    // LISTA_EXP,
+    ATRIBUICAO = 1001,
+    LISTA_EXP,
     TERNARY,
-    // FUNCTION,
-    PRIMARIA
+    OR_LOGICO,
+    AND_LOGICO,
+    OR_BIT,
+    XOR_BIT,
+    AND_BIT,
+    RELACIONAL,
+    SHIFT,
+    ADITIVIVA,
+    MULTIPLICATIVA,
+    CASTING,
+    UNARIA,
+    POS_FIXA,
+    PRIMARIA,
+    NUMEROS
 };
 #define LISTA_EXP_COMANDO 9802
 
-/*
-enum yytokentype {                
-    MyEOF = 258,                   
-    GLOBAL = 259,                  
-    VARIABLE = 260,                
-    CONSTANT = 261,                
-    PARAMETER = 262,               
-    VALUE = 263,                   
-    RETURN_TYPE = 264,             
-    TYPE = 265,                    
-    VOID = 266,                    
-    INT = 267,                     
-    CHAR = 268,                    
-    FUNCTION = 269,                
-    END_FUNCTION = 270,            
-    RETURN = 271,                  
-    DO_WHILE = 272,                
-    WHILE = 273,                   
-    FOR = 274,                     
-    IF = 275,                      
-    PRINTF = 276,                  
-    SCANF = 277,                   
-    EXIT = 278,                    
-    PLUS = 279,                    
-    MINUS = 280,                   
-    MULTIPLY = 281,                
-    DIVIDE = 282,                  
-    REMAINDER = 283,               
-    INC = 284,                     
-    DEC = 285,                     
-    ADD_ASSIGN = 286,              
-    MINUS_ASSIGN = 287,            
-    ASSIGN = 288,                  
-    EQUAL = 289,                   
-    NOT_EQUAL = 290,               
-    LESS_THAN = 291,               
-    LESS_EQUAL = 292,              
-    GREATER_THAN = 293,            
-    GREATER_EQUAL = 294,           
-    BITWISE_AND = 295,             
-    BITWISE_OR = 296,              
-    BITWISE_XOR = 297,             
-    BITWISE_NOT = 298,             
-    LOGICAL_AND = 299,             
-    LOGICAL_OR = 300,              
-    NOT = 301,                     
-    TERNARY_CONDITIONAL = 302,     
-    COLON = 303,                   
-    R_SHIFT = 304,                 
-    L_SHIFT = 305,                 
-    L_PAREN = 306,                 
-    R_PAREN = 307,                 
-    L_SQUARE_BRACKET = 308,        
-    R_SQUARE_BRACKET = 309,        
-    COMMA = 310,                   
-    SEMICOLON = 311,              
-    NUM_INT = 312,                
-    STRING = 313,                 
-    CHARACTER = 314,              
-    ID = 315                      
-  }
-*/
+// enum tokens {
+//     YYEMPTY = -2,
+//     YYEOF = 0,
+//     YYerror = 256,
+//     YYUNDEF = 257,
+//     MyEOF = 258,
+//     ERRO = 259,
+//     NUMBER_SIGN = 260,
+//     DEFINE = 261,
+//     L_CURLY_BRACKET = 262,
+//     R_CURLY_BRACKET = 263,
+//     L_PAREN = 264,
+//     R_PAREN = 265,
+//     L_SQUARE_BRACKET = 266,
+//     R_SQUARE_BRACKET = 267,
+//     COMMA = 268,
+//     SEMICOLON = 269,
+//     PLUS = 270,
+//     MINUS = 271,
+//     MULTIPLY = 272,
+//     DIVIDE = 273,
+//     REMAINDER = 274,
+//     INT = 275,
+//     CHAR = 276,
+//     VOID = 277,
+//     DO = 278,
+//     WHILE = 279,
+//     IF = 280,
+//     ELSE = 281,
+//     FOR = 282,
+//     PRINTF = 283,
+//     SCANF = 284,
+//     RETURN = 285,
+//     EXIT = 286,
+//     ADD_ASSIGN = 287,
+//     MINUS_ASSIGN = 288,
+//     ASSIGN = 289,
+//     EQUAL = 290,
+//     NOT_EQUAL = 291,
+//     LESS_THAN = 292,
+//     LESS_EQUAL = 293,
+//     GREATER_THAN = 294,
+//     GREATER_EQUAL = 295,
+//     BITWISE_AND = 296,
+//     BITWISE_OR = 297,
+//     BITWISE_XOR = 298,
+//     BITWISE_NOT = 299,
+//     LOGICAL_AND = 300,
+//     LOGICAL_OR = 301,
+//     NOT = 302,
+//     TERNARY_CONDITIONAL = 303,
+//     COLON = 304,
+//     R_SHIFT = 305,
+//     L_SHIFT = 306,
+//     INC = 307,
+//     DEC = 308,
+//     NUM_INT = 309,
+//     NUM_HEXA = 310,
+//     NUM_OCTAL = 311,
+//     STRING = 312,
+//     CHARACTER = 313,
+//     ID = 314,
+//     COMMAND_EXP = 9802
+// };
 
 typedef struct program {
     void **hashTable;  // declarations
@@ -96,10 +109,19 @@ typedef struct function {
     void *next;
 } Function;
 
+typedef struct auxtoken {
+    char *valor;
+    int column;
+    int line;
+    int type;
+    int pointer;
+} AuxToken;
+
 typedef struct dimension {
     int size;
     void *exp;
     struct dimension *next;
+    AuxToken *dimenAuxToken;
 } Dimension;
 
 typedef struct expParam {
@@ -114,6 +136,7 @@ typedef struct expression {
     int type;
     int pointer;
     int operator;
+    AuxToken *value;
     int assign;
     Dimension *dimension;
     ExpParam *param;
@@ -122,7 +145,7 @@ typedef struct expression {
 
     struct expression *nextExpr;
 
-    struct expression *ternaryCondition;
+    struct expression *ternary;
     struct expression *left;
     struct expression *right;
 } Expression;
@@ -131,6 +154,7 @@ typedef struct command {
     // generic
     // while, do while, for, if, if else, print, scan, return, exit
     // most of them have a condition, a execution and a next
+    AuxToken *auxToken;
     int type;
     Expression *condition;
     void *then;
@@ -145,6 +169,7 @@ typedef struct command {
 
     // print, scan
     char *string;
+    int idLin, idCol;
     Expression *auxPrint;
     char *identifier;
 
@@ -155,6 +180,8 @@ typedef struct resultExpression {
     int typeVar;
     int pointer;
     int assign;
+    int auxLine;
+    int auxColumn;
     char str[256];
 
     int registerType;  // 0 = t, 1 = s
@@ -167,15 +194,19 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
+AuxToken *createAuxToken(char *valor, int line, int column, int type);
+
 Dimension *createDimension(int size);
 
 int countDimension(void *d);
+
+Dimension *createDimensionWithExp(Expression *exp, AuxToken *auxToken);
 
 void setDimensionExpression(Expression *expression, Dimension *dimension);
 
 ExpParam *createExpParam(Expression *exp, ExpParam *next);
 
-Expression *createExpression(int type, int operator, void *left, void *right);
+Expression *createExpression(int type, int operator, void * value, void *left, void *right);
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next);
 
@@ -189,7 +220,7 @@ Command *createForStatement(Expression *init, Expression *condition, Expression 
 
 Command *createPrintStatement(char *string, Expression *auxPrint, void *next);
 
-Command *createScanStatement(char *string, char *identifier, void *next);
+Command *createScanStatement(char *string, char *identifier, int idLin, int idCol, void *next);
 
 Command *createReturnStatement(Expression *expression, void *next);
 

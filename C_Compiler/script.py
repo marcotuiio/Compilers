@@ -2,12 +2,11 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/Semantico/testes'
-BSD = '/home/marcotuiio/Compilers/Gerador_de_Codigo/saidas_semantico'
-OFICIAL = '/home/marcotuiio/Compilers/Semantico/saidas_padrao'
-EXEC = 'gerador'
-ASM= '/home/marcotuiio/Compilers/Gerador_de_Codigo/asms/vrau.asm'
-src = '/home/marcotuiio/Compilers/Gerador_de_Codigo'
+BED = '/home/marcotuiio/Compilers/C_Compiler/testes'
+BSD = '/home/marcotuiio/Compilers/C_Compiler/saidas_semantico'
+OFICIAL = '/home/marcotuiio/Compilers/C_Compiler/saidas_padrao'
+EXEC = 'mtcc'
+src = '/home/marcotuiio/Compilers/C_Compiler'
 ini = datetime.datetime.now()
 
 os.chdir(src)

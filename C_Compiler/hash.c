@@ -26,12 +26,14 @@ int hash(char *value) {
     return hash % HASH_SIZE;
 }
 
-void *insertHash(void **hashTable, char *varId, int currentType, int pointer) {
+void *insertHash(void **hashTable, char *varId, int line, int column, int currentType, int pointer) {
     int index = hash(varId);
     HashNode *aux = calloc(1, sizeof(HashNode));
     aux->typeVar = currentType;
     aux->varId = calloc(strlen(varId) + 1, sizeof(char));
     strcpy(aux->varId, varId);
+    aux->line = line;
+    aux->column = column;
     aux->pointer = pointer;
     aux->assign = 1;
     aux->sRegister = -1;
@@ -52,9 +54,9 @@ void setIsConstant(void *node) {
     aux->isConstant = 1;
 }
 
-void setIsGlobal(void *node) {
+void setPrototype(void *node) {
     HashNode *aux = node;
-    aux->isGlobal = 1;
+    aux->prototype = 1;
 }
 
 void setQntdParams(void *node, int qntdParams) {
@@ -90,9 +92,11 @@ void setKind(void *node, int kind) {
     aux->kind = kind;
 }
 
-void setHashExpr(void *node, void *hashExpr) {
+void setHashExpr(void *node, void *hashExpr, int lin, int col) {
     HashNode *aux = node;
     aux->hashExpr = hashExpr;
+    aux->lineAssign = lin;
+    aux->columnAssign = col;
 }
 
 void setSRegisterInHash(void *node, int sRegister) {
@@ -105,7 +109,7 @@ int getSRegisterFromHash(void *node) {
     return aux->sRegister;
 }
 
-int lookForValueInHash(void **hashTable, char *varId, int currentType) {
+int lookForValueInHash(void **hashTable, char *varId, int line, int column, int currentType, int *textBefore, int *semanticError) {
     if (!hashTable) return 0;
     int index = hash(varId);
     int ocorrencias = 0;
@@ -113,14 +117,24 @@ int lookForValueInHash(void **hashTable, char *varId, int currentType) {
     // printf("\nlooking for varId: %s in %p\n", varId, hashTable);
     while (head) {
         if (!strcmp(varId, head->varId)) {  // existe outro daquele identificador na hash
+            if (head->prototype) continue;  // se for um prototipo, continua
             ocorrencias++;
             if (ocorrencias == 1) continue;      // se for o primeiro, continua
             if (currentType == head->typeVar) {  // se for do mesmo tipo
+                if (*textBefore) printf("\n");
+                printf("error:semantic:%d:%d: variable '%s' already declared, previous declaration in line %d column %d", line, column, varId, head->line, head->column);
+                printLineError(line, column);
                 freeHash(hashTable);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(1);
+
             } else {  // se for de tipo diferente
+                if (*textBefore) printf("\n");
+                printf("error:semantic:%d:%d: redefinition of '%s' previous defined in line %d column %d", line, column, varId, head->line, head->column);
+                printLineError(line, column);
                 freeHash(hashTable);
+                deleteMipsFileOnError(mipsFile, mipsPath);
                 deleteAuxFile();
                 exit(1);
             }
@@ -130,13 +144,73 @@ int lookForValueInHash(void **hashTable, char *varId, int currentType) {
     return 0;
 }
 
-Param *createParam(int type, char *identifier, int pointer, void *next) {
+Param *createParam(int type, char *identifier, int pointer, int line, int column, void *next) {
     Param *newParam = calloc(1, sizeof(Param));
     newParam->type = type;
     newParam->identifier = identifier;
     newParam->pointer = pointer;
+    newParam->line = line;
+    newParam->column = column;
     newParam->next = next;
     return newParam;
+}
+
+int lookForPrototypeInHash(void **hashTable, char *varId, int line, int column, int currentType, Param *p, int qntdParam, int *textBefore, int *semanticError) {
+    if (!hashTable) return 0;
+    int index = hash(varId);
+    HashNode *head = (HashNode *)hashTable[index];
+
+    while (head) {
+        if (!strcmp(varId, head->varId) && head->prototype) {  // existe outro daquele identificador na hash
+            if (currentType == head->typeVar) {                // se for do mesmo tipo
+                Param *aux = head->param;
+                if (head->qntdParams < qntdParam) {
+                    if (*textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: prototype for '%s' declares fewer arguments", line, column, varId);
+                    printLineError(line, column);
+                    freeHash(hashTable);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(1);
+
+                } else if (head->qntdParams > qntdParam) {
+                    if (*textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: prototype for '%s' declares more arguments", line, column, varId);
+                    printLineError(line, column);
+                    freeHash(hashTable);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(1);
+                } else {
+                    while (aux) {
+                        if (aux->type != p->type) {
+                            if (*textBefore) printf("\n");
+                            printf("error:semantic:%d:%d: argument '%s' does not match prototype", line, aux->column, aux->identifier);
+                            printLineError(line, aux->column);
+                            freeHash(hashTable);
+                            deleteMipsFileOnError(mipsFile, mipsPath);
+                            deleteAuxFile();
+                            exit(1);
+                        }
+                        aux = aux->next;
+                        p = p->next;
+                    }
+                }
+                return 0;
+
+            } else {  // se for de tipo diferente
+                if (*textBefore) printf("\n");
+                printf("error:semantic:%d:%d: conflicting types for '%s'", line, column, varId);
+                printLineError(line, column);
+                freeHash(hashTable);
+                deleteMipsFileOnError(mipsFile, mipsPath);
+                deleteAuxFile();
+                exit(1);
+            }
+        }
+        head = head->next;
+    }
+    return 0;
 }
 
 HashNode *getIdentifierNode(void **hashTable, char *id) {
