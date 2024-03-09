@@ -1,19 +1,11 @@
 #include "hash.h"
 
-extern void printLineError(int line, int column);
-extern void deleteAuxFile();
 extern int countDimension(void *dimensions);
-
-extern void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath);
-extern FILE *mipsFile;
-extern char *mipsPath;
 
 void **createHash() {
     void **hashTable = calloc(HASH_SIZE, sizeof(HashNode));
     if (!hashTable) {
         printf("Erro ao alocar memoria para hash\n");
-        deleteMipsFileOnError(mipsFile, mipsPath);
-        deleteAuxFile();
         exit(1);
     }
     return hashTable;
@@ -117,11 +109,9 @@ int lookForValueInHash(void **hashTable, char *varId, int currentType) {
             if (ocorrencias == 1) continue;      // se for o primeiro, continua
             if (currentType == head->typeVar) {  // se for do mesmo tipo
                 freeHash(hashTable);
-                deleteAuxFile();
                 exit(1);
             } else {  // se for de tipo diferente
                 freeHash(hashTable);
-                deleteAuxFile();
                 exit(1);
             }
         }

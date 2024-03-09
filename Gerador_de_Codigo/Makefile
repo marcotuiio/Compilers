@@ -1,7 +1,7 @@
 FLEX = flex
 BISON = bison
 CC = gcc
-CFLAGS = -Wall 
+CFLAGS = 
 
 PROGRAMA = gerador
 LEXICO = lexico.l

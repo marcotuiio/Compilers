@@ -53,17 +53,17 @@ Dimension *createDimension(int size) {
     return newDim;
 }
 
-// int countDimension(void *d) {
-//     Dimension *dimen = d;
-//     if (!dimen) return 0;
-//     int count = 1;
-//     Dimension *aux = dimen;
-//     while (aux->next) {
-//         count++;
-//         aux = aux->next;
-//     }
-//     return count;
-// }
+int countDimension(void *d) {
+    Dimension *dimen = d;
+    if (!dimen) return 0;
+    int count = 1;
+    Dimension *aux = dimen;
+    while (aux->next) {
+        count++;
+        aux = aux->next;
+    }
+    return count;
+}
 
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next) {

@@ -6,9 +6,6 @@
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
-extern FILE *mipsFile;
-extern char *mipsPath;
-
 void addToUnion(int type) {
     yylval.token.valor = strdup(yytext);
     yylval.token.type = type;
@@ -23,9 +20,9 @@ void addToUnion(int type) {
 
 "GLOBAL" { addToUnion(GLOBAL); return GLOBAL; }
 "VARIABLE" { addToUnion(VARIABLE); return VARIABLE; }
-"CONSTANT" { addToUnion{CONSTANT}; return CONSTANT; }
-"PARAMETER" { addToUnion{PARAMETER}; return PARAMETER; }
-"VALUE" {addToUnion{VALUE}; return VALUE; }
+"CONSTANT" { addToUnion(CONSTANT); return CONSTANT; }
+"PARAMETER" { addToUnion(PARAMETER); return PARAMETER; }
+"VALUE" { addToUnion(VALUE); return VALUE; }
 "RETURN_TYPE" { addToUnion(RETURN_TYPE); return RETURN_TYPE; }
 "TYPE" { addToUnion(TYPE); return TYPE; }
 "void" { addToUnion(VOID); return VOID; }
@@ -36,7 +33,7 @@ void addToUnion(int type) {
 "END_FUNCTION" { addToUnion(END_FUNCTION); return END_FUNCTION; }
 
 "RETURN" { addToUnion(RETURN); return RETURN; }
-"DO_WHILE" { addToUnion(DO); return DO; }
+"DO_WHILE" { addToUnion(DO_WHILE); return DO_WHILE; }
 "WHILE" { addToUnion(WHILE); return WHILE; }
 "FOR" { addToUnion(FOR); return FOR; }
 "IF" { addToUnion(IF); return IF; }
@@ -79,7 +76,7 @@ void addToUnion(int type) {
 "?" { addToUnion(TERNARY_CONDITIONAL); return TERNARY_CONDITIONAL; }
 
 \"([^\\\"]|\\.)*\" { addToUnion(STRING); return STRING; }
-" " { addToUnion(0); yycolumn++;  }
+" " { addToUnion(0); }
 \n { }
 \t { }
 

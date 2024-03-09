@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_SINTANTICO_TAB_H_INCLUDED
-# define YY_YY_SINTANTICO_TAB_H_INCLUDED
+#ifndef YY_YY_SINTATICO_TAB_H_INCLUDED
+# define YY_YY_SINTATICO_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -120,7 +120,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "sintantico.y"
+#line 24 "sintatico.y"
 
     Program *prog;
     Function *func;
@@ -133,7 +133,7 @@ union YYSTYPE
         int type;
     } token;
 
-#line 137 "sintantico.tab.h"
+#line 137 "sintatico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -148,4 +148,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_SINTANTICO_TAB_H_INCLUDED  */
+#endif /* !YY_YY_SINTATICO_TAB_H_INCLUDED  */

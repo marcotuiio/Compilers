@@ -14,7 +14,7 @@ void yyerror(void *s);
 int pointerCount = 0;
 int paramCount = 0;
 
-void **globalHash = createHash();
+void **globalHash = NULL;
 void **currentHash = NULL;
 
 Program *AST = NULL;
@@ -97,6 +97,8 @@ Program *AST = NULL;
 %token <token> ID
 
 %type <prog> AstParse
+%type <func> DeclaracoesGlobaisOuFuncoes
+%type <func> ListaFuncoes
 %type <dim> ArrayCheck
 %type <expr> Expression 
 %type <expr> BinaryExpr 
@@ -119,25 +121,29 @@ Program *AST = NULL;
 %%
 
 Start: AstParse MyEOF {
-        AST = $1;
         return 0;
     } ;
 
-AstParse: DeclaracoesGlobais Funcoes {
+AstParse: DeclaracoesGlobaisOuFuncoes ListaFuncoes {
         Program *ast = createProgram(globalHash, $2, NULL);
+        AST = ast;
+        // printf("AstParse AST %p\n", ast);
         $$ = ast;
     } ;
+
+DeclaracoesGlobaisOuFuncoes: DeclaracoesGlobais { $$ = NULL; }
+    | Funcoes { $$ = $1; } ;
 
 DeclaracoesGlobais: CONSTANT ID VALUE COLON NUM_INT DeclaracoesGlobais {
         void *node = insertHash(globalHash, $2.valor, INT, 0);
         setKind(node, VAR);
         setIsConstant(node);
-        setAssign(node, $5); 
+        setAssign(node, atoi($5.valor)); 
     }
     | GLOBAL VARIABLE COLON ID TYPE COLON 
         VarType { pointerCount = 0; } 
         Pointers ArrayCheck DeclaracoesGlobais {
-        void *node = insertHash(globalHash, $4.valor, $7, pointerCount);
+        void *node = insertHash(globalHash, $4.valor, $7.type, pointerCount);
         if (!$10) {
             setKind(node, VAR);
         } else {
@@ -148,8 +154,14 @@ DeclaracoesGlobais: CONSTANT ID VALUE COLON NUM_INT DeclaracoesGlobais {
     } 
     | { } ;
 
+ListaFuncoes: Funcoes ListaFuncoes { 
+        $1->next = $2;
+        $$ = $1;
+    }
+    | { $$ = NULL; } ;
+
 ArrayCheck: L_SQUARE_BRACKET NUM_INT R_SQUARE_BRACKET ArrayCheck {
-        Dimension *dim = createDimension($2);
+        Dimension *dim = createDimension(atoi($2.valor));
         dim->next = $4;
         $$ = dim;
     }
@@ -349,9 +361,17 @@ AuxPrint: COMMA Expression AuxPrint {
 void yyerror(void *s) {}
 
 int main(int argc, char *argv[]) {
+    globalHash = createHash();
     yyparse();
-
-    void **hash = AST->hashTable;
+    void **hash = NULL;
+    if (AST) {
+        Program *ast = (Program*)AST;
+        printf("AST %p\n", ast);
+        hash = ast->hashTable;
+    } else {
+        printf("AST NULL\n");
+        exit(1);
+    }
 
     HashNode *node = (HashNode*)hash[0];
     while(node) {
@@ -364,10 +384,10 @@ int main(int argc, char *argv[]) {
         printf("Function %s %d hash %p\n", func->name, func->returnType, func->hashTable);
         HashNode *funcNode = (HashNode*)func->hashTable[0];
         while (funcNode) {
-            printf("local var %s %d\n", funcNode->varId, funcNode->VarType);
+            printf("local var %s %d\n", funcNode->varId, funcNode->typeVar);
         }
         printf("\n");
-        Command *cmd = (Command*)func->commands;
+        Command *cmd = (Command*)func->commandList;
         while (cmd) {
             printf("Command %d\n", cmd->type);
             cmd = cmd->next;
