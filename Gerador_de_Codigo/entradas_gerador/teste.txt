@@ -4,7 +4,8 @@ FUNCTION: main
     RETURN_TYPE: int 
     VARIABLE: i TYPE: int
     VARIABLE: j TYPE: int
-    =(i, 1);
+    -(i);
+    ++(j);
     =(j, 3);
     =(i, j);
     RETURN(0)

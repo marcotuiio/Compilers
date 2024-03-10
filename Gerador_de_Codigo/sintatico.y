@@ -107,8 +107,7 @@ Program *AST = NULL;
 %type <expr> BinaryExpr 
 %type <expr> TernaryExpr 
 %type <expr> UnaryExpr
-%type <token> Bop
-%type <token> Uop
+%type <token> Ops
 %type <expr> Primaria
 %type <posfixa> PosFixa
 %type <dim> ArrayCall
@@ -188,7 +187,7 @@ Expression: BinaryExpr { $$ = $1; }
     | Primaria { $$ = $1; } 
     | FunctionCall { $$ = $1; } ;
 
-BinaryExpr: Bop L_PAREN Expression COMMA Expression R_PAREN {
+BinaryExpr: Ops L_PAREN Expression COMMA Expression R_PAREN {
         // printf("bop %d\n", $1.type);
         Expression *bop = createExpression(BOP, $1.type, $3, $5);
         $$ = bop;
@@ -200,18 +199,23 @@ TernaryExpr: TERNARY_CONDITIONAL L_PAREN Expression COMMA Expression COMMA Expre
         $$ = ternary;
     } ;
 
-UnaryExpr: Uop L_PAREN Expression R_PAREN {
-        printf("uop %d\n", $1.type);
+UnaryExpr: Ops L_PAREN Expression R_PAREN {
+        // printf("uop %d\n", $1.type);
         Expression *uop = createExpression(UOP, $1.type, $3, NULL);
         $$ = uop;
     } 
-    | L_PAREN Expression R_PAREN Uop {
-        printf("uop %d\n", $4.type);
-        Expression *uop = createExpression(UOP, $4.type, $2, NULL);
+    | L_PAREN Expression R_PAREN INC {
+        // printf("uop %d\n", $4.type);
+        Expression *uop = createExpression(UOP, INC, $2, NULL);
+        $$ = uop;
+    } 
+    | L_PAREN Expression R_PAREN DEC {
+        // printf("uop %d\n", $4.type);
+        Expression *uop = createExpression(UOP, DEC, $2, NULL);
         $$ = uop;
     } ;
 
-Bop: PLUS { $$ = yylval.token; }
+Ops: PLUS { $$ = yylval.token; }
     | MINUS { $$ = yylval.token; }
     | MULTIPLY { $$ = yylval.token; }
     | DIVIDE { $$ = yylval.token; }
@@ -231,15 +235,10 @@ Bop: PLUS { $$ = yylval.token; }
     | L_SHIFT { $$ = yylval.token; }
     | ASSIGN { $$ = yylval.token; }
     | ADD_ASSIGN { $$ = yylval.token; }
-    | MINUS_ASSIGN { $$ = yylval.token; } ;
-
-Uop: INC { $$ = yylval.token; }
-    | DEC { $$ = yylval.token; }
+    | MINUS_ASSIGN { $$ = yylval.token; }
+    | INC { $$ = yylval.token; }
+    | DEC { $$ = yylval.token; } 
     | NOT { $$ = yylval.token; }
-    | PLUS { $$ = yylval.token; }
-    | MINUS { $$ = yylval.token; }
-    | MULTIPLY { $$ = yylval.token; }
-    | BITWISE_AND { $$ = yylval.token; }
     | BITWISE_NOT { $$ = yylval.token; } ;
 
 Primaria: NUM_INT {
@@ -300,7 +299,6 @@ PosFixa: ArrayCall { isFuncOrArray = 1; $$ = $1; }
 ArrayCall: L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {
         Dimension *dim = createDimensionWithExp($2);
         // Expression *expr = createExpression(ARRAY_CALL, ID, NULL, NULL);
-        // setDimensionExpression(expr, dim);
         $$ = dim;
     } ;
 
