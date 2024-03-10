@@ -1,4 +1,5 @@
 %option noyywrap
+%option yylineno
 
 %{
 #include "ast.h"
@@ -6,9 +7,15 @@
 #include "sintatico.tab.h"
 extern YYSTYPE yylval;
 
+int yycolumn = 1;
+
 void addToUnion(int type) {
+    // printf("yytext: %s %d\n", yytext, type);
     yylval.token.valor = strdup(yytext);
     yylval.token.type = type;
+    yylval.token.line = yylineno;
+    yylval.token.col = yycolumn;
+    yycolumn += yyleng;
 }
 
 %}
@@ -76,32 +83,14 @@ void addToUnion(int type) {
 "?" { addToUnion(TERNARY_CONDITIONAL); return TERNARY_CONDITIONAL; }
 
 \"([^\\\"]|\\.)*\" { addToUnion(STRING); return STRING; }
-" " { addToUnion(0); }
-\n { }
-\t { }
+" " { yycolumn += yyleng;}
+\n { yycolumn = 1;}
+\t { yycolumn += 4; }
 
-(_*[a-zA-Z][a-zA-Z0-9_]*) {
-    // if (strlen(yytext) > 255) {
-    //     if (textBefore) printf("\n");
-    //     printf("error:lexical:%d:%d: identifier too long", yylineno, yycolumn);
-       
-    //     deleteMipsFileOnError(mipsFile, mipsPath);
-    //     deleteAuxFile();
-    //     exit(1);
-    // } 
-    addToUnion(ID);
-    return ID;
-}
+(_*[a-zA-Z][a-zA-Z0-9_]*) { addToUnion(ID); return ID; }
 "'"(\\.|[^\\']){1}"'" { addToUnion(CHARACTER); return CHARACTER; }
 [0-9]+ { addToUnion(NUM_INT); return NUM_INT; }
 
-. { 
-    // if (textBefore) printf("\n");
-    // printf("error:lexical:%d:%d: %s", yylineno, yycolumn, yytext);
-   
-    // deleteMipsFileOnError(mipsFile, mipsPath);
-    // deleteAuxFile();
-    // exit(1);
-}
+. { printf("Caracter do segredo '%s'\n", yytext); }
 
 %%

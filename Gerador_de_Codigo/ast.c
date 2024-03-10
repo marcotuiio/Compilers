@@ -29,12 +29,12 @@ Function *createFunction(void **hash, int returnType, int pointer, char *name, v
     return newFunc;
 }
 
-// ExpParam *createExpParam(Expression *exp, ExpParam *next) {
-//     ExpParam *newExpParam = calloc(1, sizeof(ExpParam));
-//     newExpParam->exp = exp;
-//     newExpParam->next = next;
-//     return newExpParam;
-// }
+ExpParam *createExpParam(Expression *exp, ExpParam *next) {
+    ExpParam *newExpParam = calloc(1, sizeof(ExpParam));
+    newExpParam->exp = exp;
+    newExpParam->next = next;
+    return newExpParam;
+}
 
 Expression *createExpression(int type, int operator, void *left, void *right) {
     Expression *newExp = calloc(1, sizeof(Expression));
@@ -65,6 +65,22 @@ int countDimension(void *d) {
     return count;
 }
 
+Dimension *createDimensionWithExp(Expression *exp) {
+    Dimension *newDim = calloc(1, sizeof(Dimension));
+    newDim->exp = exp;
+    return newDim;
+}
+
+void setDimensionExpression(Expression *expression, Dimension *dimension) {
+    if (!expression) return;
+    if (!expression->dimension) {
+        expression->dimension = dimension;
+    } else {
+        Dimension *aux = expression->dimension;
+        while (aux->next) aux = aux->next;
+        aux->next = dimension;
+    }
+}
 
 Command *createIfStatement(Expression *condition, void *then, void *elseStatement, void *next) {
     Command *newIf = calloc(1, sizeof(Command));

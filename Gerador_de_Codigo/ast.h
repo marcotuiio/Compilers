@@ -10,8 +10,9 @@ enum expressionTypes {
     UOP,
     // LISTA_EXP,
     TERNARY,
-    // FUNCTION,
-    PRIMARIA
+    PRIMARIA,
+    ARRAY_CALL,
+    FUNCTION_CALL
 };
 #define LISTA_EXP_COMANDO 9802
 
@@ -167,13 +168,15 @@ Program *createProgram(void **hash, void *functionsList, void *main);
 
 Function *createFunction(void **hash, int returnType, int pointer, char *name, void *commandList, void *next);
 
+ExpParam *createExpParam(Expression *exp, ExpParam *next);
+
 Dimension *createDimension(int size);
 
 int countDimension(void *d);
 
-void setDimensionExpression(Expression *expression, Dimension *dimension);
+Dimension *createDimensionWithExp(Expression *exp);
 
-ExpParam *createExpParam(Expression *exp, ExpParam *next);
+void setDimensionExpression(Expression *expression, Dimension *dimension);
 
 Expression *createExpression(int type, int operator, void *left, void *right);
 

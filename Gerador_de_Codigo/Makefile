@@ -11,7 +11,7 @@ OBJS = ast.o hash.o
 
 $(PROGRAMA): $(OBJS) $(LEXICO) $(SINTATICO) 
 	$(FLEX) -o lex.yy.c $(LEXICO)
-	$(BISON) -o sintatico.tab.c -d $(SINTATICO)
+	$(BISON) -o sintatico.tab.c -d $(SINTATICO) 
 	$(CC) -g *.c $(CFLAGS) -o $(PROGRAMA)
 
 ast.o: ast.c ast.h

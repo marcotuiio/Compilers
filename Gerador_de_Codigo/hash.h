@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define HASH_SIZE 997
+#define HASH_SIZE 269
 
 #define VAR 1
 #define FUNCTIONN 2
