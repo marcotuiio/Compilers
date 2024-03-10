@@ -11,6 +11,7 @@ extern int yylex();
 void yyerror(void *s);
 
 // int dimenCount = 0;
+int isFuncOrArray = -1;
 int pointerCount = 0;
 int paramCount = 0;
 
@@ -30,6 +31,7 @@ Program *AST = NULL;
     Expression *expr;
     Command *cmd;
     void *param;
+    void *posfixa;
     struct {
         char *valor;
         int type;
@@ -108,13 +110,15 @@ Program *AST = NULL;
 %type <token> Bop
 %type <token> Uop
 %type <expr> Primaria
-%type <expr> ArrayCall
-%type <expr> FunctionCall
+%type <posfixa> PosFixa
+%type <dim> ArrayCall
+%type <param> FunctionCall
 %type <param> ParamExpression
 %type <token> VarType
 %type <param> Parameters
 %type <cmd> ListaComandos
 %type <cmd> Comandos
+%type <cmd> AuxElse
 %type <expr> AuxReturn
 %type <expr> AuxPrint
 %type <token> SemicolonDeSchrodinger
@@ -182,7 +186,6 @@ Expression: BinaryExpr { $$ = $1; }
     | TernaryExpr { $$ = $1; }
     | UnaryExpr { $$ = $1; } 
     | Primaria { $$ = $1; } 
-    | ArrayCall { $$ = $1; }
     | FunctionCall { $$ = $1; } ;
 
 BinaryExpr: Bop L_PAREN Expression COMMA Expression R_PAREN {
@@ -198,12 +201,12 @@ TernaryExpr: TERNARY_CONDITIONAL L_PAREN Expression COMMA Expression COMMA Expre
     } ;
 
 UnaryExpr: Uop L_PAREN Expression R_PAREN {
-        // printf("uop %d\n", $1.type);
+        printf("uop %d\n", $1.type);
         Expression *uop = createExpression(UOP, $1.type, $3, NULL);
         $$ = uop;
     } 
     | L_PAREN Expression R_PAREN Uop {
-        // printf("uop %d\n", $4.type);
+        printf("uop %d\n", $4.type);
         Expression *uop = createExpression(UOP, $4.type, $2, NULL);
         $$ = uop;
     } ;
@@ -276,24 +279,34 @@ Primaria: NUM_INT {
         }
         $$ = expr;
     }
-    | ID {
+    | ID PosFixa {
         Expression *expr = createExpression(PRIMARIA, ID, NULL, NULL);
+        if (isFuncOrArray == 1) {
+            printf("pos fixa %s [%p]  \n", $1.valor, $2);
+            setDimensionExpression(expr, ((Dimension*)$2));
+        
+        } else if (isFuncOrArray == 2) {
+            printf("pos fixa %s (%p)  \n", $1.valor, $2);
+            expr->param = (ExpParam*)$2;
+        }
+        isFuncOrArray = -1;
         $$ = expr;
     } ;
 
-ArrayCall: ID L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {
-        // printf("array call %s\n", $1.valor);
-        Dimension *dim = createDimensionWithExp($3);
-        Expression *expr = createExpression(ARRAY_CALL, ID, NULL, NULL);
-        setDimensionExpression(expr, dim);
-        $$ = expr;
+PosFixa: ArrayCall { isFuncOrArray = 1; $$ = $1; }
+    | FunctionCall { isFuncOrArray = 2; $$ = $1; }
+    | { isFuncOrArray = 0; $$ = NULL; }
+
+ArrayCall: L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {
+        Dimension *dim = createDimensionWithExp($2);
+        // Expression *expr = createExpression(ARRAY_CALL, ID, NULL, NULL);
+        // setDimensionExpression(expr, dim);
+        $$ = dim;
     } ;
 
-FunctionCall: ID L_PAREN ParamExpression R_PAREN {
-        // printf("function call %s\n", $1.valor);
-        Expression *expr = createExpression(FUNCTION_CALL, ID, NULL, NULL);
-        expr->param = $3;
-        $$ = expr;
+FunctionCall: L_PAREN ParamExpression R_PAREN {
+        // Expression *expr = createExpression(FUNCTION_CALL, L_PAREN, NULL, NULL);
+        $$ = $2;
     } ;
 
 ParamExpression: Expression ParamExpression {
@@ -351,29 +364,29 @@ ListaComandos: Comandos SemicolonDeSchrodinger ListaComandos {
     }
     | { } ;
 
-Comandos: IF L_PAREN Expression COMMA Comandos COMMA Comandos R_PAREN Comandos {
-        Command *cmd = createIfStatement($3, $5, $7, $9);
+Comandos: IF L_PAREN Expression COMMA Comandos AuxElse R_PAREN SemicolonDeSchrodinger Comandos {
+        Command *cmd = createIfStatement($3, $5, $6, $9);
         $$ = cmd;
     }
-    | DO_WHILE L_PAREN Comandos COMMA Expression R_PAREN Comandos {
-        Command *cmd = createDoWhileStatement($5, $3, $7);
+    | DO_WHILE L_PAREN Comandos COMMA Expression R_PAREN SemicolonDeSchrodinger Comandos {
+        Command *cmd = createDoWhileStatement($5, $3, $8);
         $$ = cmd;
     }
-    | WHILE L_PAREN Expression COMMA Comandos R_PAREN Comandos {
-        Command *cmd = createWhileStatement($3, $5, $7);
+    | WHILE L_PAREN Expression COMMA Comandos R_PAREN SemicolonDeSchrodinger Comandos {
+        Command *cmd = createWhileStatement($3, $5, $8);
         $$ = cmd;
     }
-    | FOR L_PAREN Expression COMMA Expression COMMA Expression COMMA Comandos R_PAREN Comandos {
-        Command *cmd = createForStatement($3, $5, $7, $9, $11);
+    | FOR L_PAREN Expression COMMA Expression COMMA Expression COMMA Comandos R_PAREN SemicolonDeSchrodinger Comandos {
+        Command *cmd = createForStatement($3, $5, $7, $9, $12);
         $$ = cmd;
     }
-    | PRINTF L_PAREN STRING AuxPrint R_PAREN Comandos {
+    | PRINTF L_PAREN STRING AuxPrint R_PAREN SemicolonDeSchrodinger Comandos {
         // printf("Comandos print %s \n", $3.valor);
-        Command *cmd = createPrintStatement($3.valor, $4, $6);
+        Command *cmd = createPrintStatement($3.valor, $4, $7);
         $$ = cmd;
     }
-    | SCANF L_PAREN STRING COMMA BITWISE_AND L_PAREN ID R_PAREN R_PAREN Comandos {
-        Command *cmd = createScanStatement($3.valor, $7.valor, $10);
+    | SCANF L_PAREN STRING COMMA BITWISE_AND L_PAREN ID R_PAREN R_PAREN SemicolonDeSchrodinger Comandos {
+        Command *cmd = createScanStatement($3.valor, $7.valor, $11);
         $$ = cmd;
     }
     | RETURN L_PAREN AuxReturn R_PAREN Comandos {
@@ -385,12 +398,15 @@ Comandos: IF L_PAREN Expression COMMA Comandos COMMA Comandos R_PAREN Comandos {
         Command *cmd = createExitStatement($3, $5);
         $$ = cmd;
     } 
-    | Expression Comandos {
+    | Expression SemicolonDeSchrodinger Comandos {
         // printf("000000000000000 Comandos expression\n");
-        Command *cmd = createCommandExpression($1, $2);
+        Command *cmd = createCommandExpression($1, $3);
         $$ = cmd;
     } 
     | { $$ = NULL; };
+
+AuxElse: COMMA Comandos { $$ = $2; }
+    | { $$ = NULL; } ;
 
 AuxPrint: COMMA Expression AuxPrint {
         $2->nextExpr = $3;

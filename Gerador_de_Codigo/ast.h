@@ -10,9 +10,7 @@ enum expressionTypes {
     UOP,
     // LISTA_EXP,
     TERNARY,
-    PRIMARIA,
-    ARRAY_CALL,
-    FUNCTION_CALL
+    PRIMARIA
 };
 #define LISTA_EXP_COMANDO 9802
 
