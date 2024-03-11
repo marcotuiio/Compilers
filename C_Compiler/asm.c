@@ -1,4 +1,5 @@
 #include "asm.h"
+#include <unistd.h>
 
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int tRegister[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -28,24 +29,40 @@ int getTRegister() {
     return -1;
 }
 
-FILE *createAsmFile(char *fileName) {
+FILE *createAsmFile(char *fileName, char *mipsPath) {
     char *newFileName = calloc(strlen(fileName) + 5, sizeof(char));
-    newFileName = strtok(fileName, ".");
+    strcpy(newFileName, fileName);
+    
+    // char cwd[1024];
+    // if (getcwd(cwd, sizeof(cwd))) {
+    //     printf("Current working dir: %s\n", cwd);
+    // } else {
+    //     perror("getcwd() error");
+    // }
+
+    newFileName = strtok(newFileName, ".");
     strcat(newFileName, ".asm");
     strcat(newFileName, "\0");
+    strcpy(mipsPath, newFileName);
     FILE *file = fopen(newFileName, "w");
-    if (!file) printf("Erro ao criar arquivo .asm\n");
+    if (!file) {
+        printf("Error creating .asm\n");
+        exit(-1);
+    } 
     // free(newFileName);
     fprintf(file, "# Gerado por: Gerador de Codigo do Marco Tulio 202100560105\n");
     fprintf(file, "# file: %s\n", fileName);
     fprintf(file, ".text\n");
     fprintf(file, ".globl main\n\n");
+    // printf("mipsPath %s\nsourcePath %s\n", newFileName, fileName);
     return file;
 }
 
 void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath) {
+    // printf("\nDeleting compilation files due to error %s\n", mipsPath);
     fclose(mipsFile);
     remove(mipsPath);
+    free(mipsPath);
 }
 
 int printConstant(FILE *mips, int value) {

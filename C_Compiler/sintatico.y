@@ -8,6 +8,7 @@
 #include "hash.h"
 
 extern int yylex();
+extern int yyrestart();
 void yyerror(void *s);
 
 extern int yychar;
@@ -921,14 +922,24 @@ void printLineError(int line, int column) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        mipsPath = calloc(128, sizeof(char));
-        strcpy(mipsPath, "default.asm");
+        printf("No input file.\n");
+        return 1;
+
     } else {
+        char *sourcePath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
         mipsPath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
-        strcpy(mipsPath, argv[argc - 1]);
+        strcpy(sourcePath, argv[argc - 1]);
+        mipsFile = createAsmFile(sourcePath, mipsPath);
     }
-    mipsFile = createAsmFile(mipsPath);
-    readInputIntoAuxFile();
+    
+    FILE *source = fopen(argv[argc - 1], "r");
+    if (!source) {
+        printf("Source file not found.\n");
+        return 1;
+    }
+    readInputIntoAuxFile(source);
+    yyrestart(source);
+
     yyparse();
 
     if (erroAux) {
@@ -954,6 +965,7 @@ int main(int argc, char *argv[]) {
         printEnd(mipsFile);
     }
     freeAST(AST);
+    fclose(source);
     free(mipsPath);
     deleteAuxFile();
     return 0;

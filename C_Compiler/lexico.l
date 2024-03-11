@@ -38,18 +38,27 @@ void assignWrongToken() {
     wrongTokenColumn = yycolumn;
 }
 
-void readInputIntoAuxFile() {
+void readInputIntoAuxFile(FILE *srcFile) {
     auxFile = fopen("tempfile.txt", "w+");
     if (auxFile == NULL) {
-        printf("Erro: não foi possível abrir o arquivo auxiliar\n");
+        printf("Error: Unable to create temporary file\n");
         return;
     }
-    char ch;
-    while ((ch = fgetc(stdin)) != EOF) {
-        fputc(ch, auxFile);
+    // ====> USE THIS WHEN IS PASSED FROM THE STDIN
+    // char ch;
+    // while ((ch = fgetc(stdin)) != EOF) {
+    //     fputc(ch, auxFile);
+    // }
+    // rewind(auxFile);
+    // fseek(stdin, 0, SEEK_SET);
+
+    // ====> USE THIS WHEN ITS A FILE PASSED AS ARGUMENT
+    char line[2048];
+    while (fgets(line, sizeof(line), srcFile) != NULL) {
+        fputs(line, auxFile);
     }
     rewind(auxFile);
-    fseek(stdin, 0, SEEK_SET);
+    fseek(srcFile, 0, SEEK_SET);
 }
 
 void getLineBuffer(int nline) {
@@ -62,7 +71,8 @@ void getLineBuffer(int nline) {
 }
 
 void deleteAuxFile() {
-    // fclose(auxFile);
+    printf("\n");
+    fclose(auxFile);
     remove("tempfile.txt");
 }
 

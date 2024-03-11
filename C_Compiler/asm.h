@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-FILE *createAsmFile(char *fileName);
+FILE *createAsmFile(char *fileName, char *mipsPath);
 void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath);
 
 // Arithmetic operations
