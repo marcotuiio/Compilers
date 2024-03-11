@@ -10,6 +10,8 @@ enum expressionTypes {
     UOP,
     // LISTA_EXP,
     TERNARY,
+    ARRAY_CALL,
+    FUNCTION_CALL,
     PRIMARIA
 };
 #define LISTA_EXP_COMANDO 9802
@@ -114,9 +116,11 @@ typedef struct expression {
     int pointer;
     int operator;
     int assign;
+    int preOrPost; // 1 = pre, 2 = post
     Dimension *dimension;
     ExpParam *param;
-    void *extra;
+    char identifier[256];
+    char string[512];
     int isHeadOfList;
 
     struct expression *nextExpr;

@@ -7,7 +7,7 @@ PROGRAMA = gerador
 LEXICO = lexico.l
 SINTATICO = sintatico.y
 
-OBJS = ast.o hash.o
+OBJS = ast.o hash.o asm.o
 
 $(PROGRAMA): $(OBJS) $(LEXICO) $(SINTATICO) 
 	$(FLEX) -o lex.yy.c $(LEXICO)
@@ -20,8 +20,8 @@ ast.o: ast.c ast.h
 hash.o: hash.c hash.h
 	$(CC) $(CFLAGS) -c hash.c
 
-# asm.o: asm.c asm.h
-# 	$(CC) $(CFLAGS) -c asm.c
+asm.o: asm.c asm.h
+	$(CC) $(CFLAGS) -c asm.c
 
 clear:
 	rm -f sintatico.tab.c

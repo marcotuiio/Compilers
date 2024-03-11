@@ -202,44 +202,47 @@ TernaryExpr: TERNARY_CONDITIONAL L_PAREN Expression COMMA Expression COMMA Expre
 UnaryExpr: Ops L_PAREN Expression R_PAREN {
         // printf("uop %d\n", $1.type);
         Expression *uop = createExpression(UOP, $1.type, $3, NULL);
+        uop->preOrPost = 1;
         $$ = uop;
     } 
     | L_PAREN Expression R_PAREN INC {
         // printf("uop %d\n", $4.type);
         Expression *uop = createExpression(UOP, INC, $2, NULL);
+        uop->preOrPost = 2;
         $$ = uop;
     } 
     | L_PAREN Expression R_PAREN DEC {
         // printf("uop %d\n", $4.type);
         Expression *uop = createExpression(UOP, DEC, $2, NULL);
+        uop->preOrPost = 2;
         $$ = uop;
     } ;
 
-Ops: PLUS { $$ = yylval.token; }
-    | MINUS { $$ = yylval.token; }
-    | MULTIPLY { $$ = yylval.token; }
-    | DIVIDE { $$ = yylval.token; }
-    | REMAINDER { $$ = yylval.token; }
-    | BITWISE_AND { $$ = yylval.token; }
-    | BITWISE_OR { $$ = yylval.token; }
-    | BITWISE_XOR { $$ = yylval.token; }
-    | LOGICAL_AND { $$ = yylval.token; }
-    | LOGICAL_OR { $$ = yylval.token; }
-    | EQUAL { $$ = yylval.token; }
-    | NOT_EQUAL { $$ = yylval.token; }
-    | LESS_THAN { $$ = yylval.token; }
-    | LESS_EQUAL { $$ = yylval.token; }
-    | GREATER_THAN { $$ = yylval.token; }
-    | GREATER_EQUAL { $$ = yylval.token; } 
-    | R_SHIFT { $$ = yylval.token; }
-    | L_SHIFT { $$ = yylval.token; }
-    | ASSIGN { $$ = yylval.token; }
-    | ADD_ASSIGN { $$ = yylval.token; }
-    | MINUS_ASSIGN { $$ = yylval.token; }
-    | INC { $$ = yylval.token; }
-    | DEC { $$ = yylval.token; } 
-    | NOT { $$ = yylval.token; }
-    | BITWISE_NOT { $$ = yylval.token; } ;
+Ops: PLUS { $$ = yylval.token; } // bop or uop
+    | MINUS { $$ = yylval.token; } // bop or uop
+    | MULTIPLY { $$ = yylval.token; } // bop or uop
+    | DIVIDE { $$ = yylval.token; } // bop
+    | REMAINDER { $$ = yylval.token; } // bop 
+    | BITWISE_AND { $$ = yylval.token; } // bop
+    | BITWISE_OR { $$ = yylval.token; } // bop
+    | BITWISE_XOR { $$ = yylval.token; } // bop
+    | LOGICAL_AND { $$ = yylval.token; } // bop
+    | LOGICAL_OR { $$ = yylval.token; } // bop
+    | EQUAL { $$ = yylval.token; } // bop
+    | NOT_EQUAL { $$ = yylval.token; } // bop
+    | LESS_THAN { $$ = yylval.token; } // bop
+    | LESS_EQUAL { $$ = yylval.token; } // bop
+    | GREATER_THAN { $$ = yylval.token; } // bop
+    | GREATER_EQUAL { $$ = yylval.token; } // bop
+    | R_SHIFT { $$ = yylval.token; } // bop
+    | L_SHIFT { $$ = yylval.token; } // bop
+    | ASSIGN { $$ = yylval.token; } // bop
+    | ADD_ASSIGN { $$ = yylval.token; } // bop
+    | MINUS_ASSIGN { $$ = yylval.token; } // bop
+    | INC { $$ = yylval.token; } // uop
+    | DEC { $$ = yylval.token; } // uop
+    | NOT { $$ = yylval.token; } // uop
+    | BITWISE_NOT { $$ = yylval.token; } ; // uop 
 
 Primaria: NUM_INT {
         Expression *expr = createExpression(PRIMARIA, INT, NULL, NULL);
@@ -278,14 +281,22 @@ Primaria: NUM_INT {
         }
         $$ = expr;
     }
+    | STRING {
+        Expression *expr = createExpression(PRIMARIA, STRING, NULL, NULL);
+        strcpy(expr->string, $1.valor);
+        $$ = expr;
+    }
     | ID PosFixa {
         Expression *expr = createExpression(PRIMARIA, ID, NULL, NULL);
+        strcpy(expr->identifier, $1.valor);
         if (isFuncOrArray == 1) {
-            printf("pos fixa %s [%p]  \n", $1.valor, $2);
+            // printf("pos fixa %s [%p]  \n", $1.valor, $2);
+            expr->type = ARRAY_CALL;
             setDimensionExpression(expr, ((Dimension*)$2));
         
         } else if (isFuncOrArray == 2) {
-            printf("pos fixa %s (%p)  \n", $1.valor, $2);
+            // printf("pos fixa %s (%p)  \n", $1.valor, $2);
+            expr->type = FUNCTION_CALL;
             expr->param = (ExpParam*)$2;
         }
         isFuncOrArray = -1;
