@@ -31,8 +31,8 @@ int printLogicalNot(int leftType, int leftReg);
 int printRelationalOps(int leftType, int leftReg, int rightType, int rightReg, char *op);
 
 // Control structures
-int printLogicalAnd(int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);
-int printLogicalOr(int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID);
+int printLogicalAnd(int leftType, int leftReg, int rightType, int rightReg, int labelID);
+int printLogicalOr(int leftType, int leftReg, int rightType, int rightReg, int labelID);
 void printIf(int conditionType, int conditionReg, int labelID);
 void printWhile(int conditionType, int conditionReg, int labelID);
 void printFor(int conditionType, int conditionReg, int labelID);
@@ -45,7 +45,7 @@ void printFunctions(char *name);
 
 // Global variables and declarations
 void printGlobalVariableInMemory(int size, char *name);
-void setDefineIntVariable(char *name, int value, int type, int regToFree);
+void setDefineIntVariable(char *name, int value);
 void printDefines();
 // void printGlobalCharVariable(char *name, char value);
 void setGlobalVarAssign(char *name, int value);
@@ -87,6 +87,5 @@ void loadTRegisters(int *regs);
 void freeRegister(int type, int number);
 void printStart();
 void printExit();
-void printEnd();
 
 #endif

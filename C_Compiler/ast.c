@@ -1025,7 +1025,6 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             if (expr->operator== MULTIPLY) {
                 result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
                 int tReg = printArithmeticsOps(mipsFile, leftType, leftReg, rightType, rightReg, "mul");
-                result->registerType = 0;
                 result->registerNumber = tReg;
 
             } else if (expr->operator== DIVIDE) {

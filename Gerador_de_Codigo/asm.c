@@ -162,29 +162,29 @@ int printRelationalOps(int leftType, int leftReg, int rightType, int rightReg, c
     return t;
 }
 
-int printLogicalAnd(int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID) {
+int printLogicalAnd(int leftType, int leftReg, int rightType, int rightReg, int labelID) {
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
     printf("\taddi $t%d, $zero, 0\n", t);
-    printf("\tbeq $t%d, $%c%d, %s%d_%d\n", t, l, leftReg, "f_logical_and_", labelLineID, labelColumnID);
-    printf("\tbeq $t%d, $%c%d, %s%d_%d\n", t, r, rightReg, "f_logical_and_", labelLineID, labelColumnID);
+    printf("\tbeq $t%d, $%c%d, %s%d\n", t, l, leftReg, "f_logical_and_", labelID);
+    printf("\tbeq $t%d, $%c%d, %s%d\n", t, r, rightReg, "f_logical_and_", labelID);
     printf("\taddi $t%d, $zero, 1\n", t);
-    printf("\t%s%d_%d:\n", "f_logical_and_", labelLineID, labelColumnID);
+    printf("\t%s%d:\n", "f_logical_and_", labelID);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
     return t;
 }
 
-int printLogicalOr(int leftType, int leftReg, int rightType, int rightReg, int labelLineID, int labelColumnID) {
+int printLogicalOr(int leftType, int leftReg, int rightType, int rightReg, int labelID) {
     char l = leftType == 0 ? 't' : 's';
     char r = rightType == 0 ? 't' : 's';
     int t = getTRegister();
     printf("\taddi $t%d, $zero, 1\n", t);
-    printf("\tbeq $t%d, $%c%d, %s%d_%d\n", t, l, leftReg, "t_logical_or_", labelLineID, labelColumnID);
-    printf("\tbeq $t%d, $%c%d, %s%d_%d\n", t, r, rightReg, "t_logical_or_", labelLineID, labelColumnID);
+    printf("\tbeq $t%d, $%c%d, %s%d\n", t, l, leftReg, "t_logical_or_", labelID);
+    printf("\tbeq $t%d, $%c%d, %s%d\n", t, r, rightReg, "t_logical_or_", labelID);
     printf("\taddi $t%d, $zero, 0\n", t);
-    printf("\t%s%d_%d:\n", "t_logical_or_", labelLineID, labelColumnID);
+    printf("\t%s%d:\n", "t_logical_or_", labelID);
     if (leftType == 0) tRegister[leftReg] = 0;
     if (rightType == 0) tRegister[rightReg] = 0;
     return t;
@@ -245,10 +245,10 @@ void printGlobalVariableInMemory(int size, char *name) {
     printf("\t%s: .%s 0\n", name, size == 32 ? "word" : "byte");
 }
 
-void setDefineIntVariable(char *name, int value, int type, int regToFree) {
+void setDefineIntVariable(char *name, int value) {
     if (!definesDeclarations)
         definesDeclarations = calloc(4096, sizeof(char));
-    freeRegister(type, regToFree);
+    // freeRegister(type, regToFree);
     sprintf(definesDeclarations + strlen(definesDeclarations), "\t%s: .word %d # define\n", name, value);
     // printf("teste de global: %s\n", definesDeclarations);
 }

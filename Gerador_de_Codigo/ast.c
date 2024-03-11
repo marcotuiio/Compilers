@@ -182,6 +182,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     ResultExpression *result = NULL;
 
     HashNode *hashNode = NULL;
+    HashNode *hashNodeTemp = NULL;
 
     int auxLeftPointer, auxRightPointer;
     int auxLeftType, auxRightType;
@@ -189,6 +190,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
     int leftType, rightType;
     int leftReg, rightReg;
+    int tReg, regS;  // auxiliares
 
     // printf("evalExpression %p %d %d %d\n", expr, expr->type, expr->operator, expr->value->type);
 
@@ -265,41 +267,275 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
 
         case BOP:
+            left = evalExpression(expr->left, globalHash, localHash, program);
+            right = evalExpression(expr->right, globalHash, localHash, program);
+
+            leftType = left->registerType;
+            leftReg = left->registerNumber;
+            rightType = right->registerType;
+            rightReg = right->registerNumber;
+            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                leftReg = printLoadFromArray(left->registerNumber);
+                leftType = 0;
+            }
+            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                rightReg = printLoadFromArray(right->registerNumber);
+                rightType = 0;
+            }
 
             switch (expr->operator) {
                 case ASSIGN:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        // printf("VECTOR ASSIGN $ t %d \n", left->registerNumber);
+                        printStoreIntoArray(left->registerNumber, rightType, rightReg);
+                        result->registerType = 0;
+                        regS = left->registerNumber;
+
+                    } else if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                        // printf("STORING INTO GLOBAL VARIABLE = \n");
+                        freeRegister(left->registerType, left->registerNumber);
+                        printStoreIntGlobal(rightType, rightReg, ((HashNode *)left->auxIdNode)->varId);
+                        result->registerType = 0;
+
+                    } else {
+                        if (((HashNode *)left->auxIdNode)->sRegister == -1) {
+                            // printf("%s sem sRegister\n", ((HashNode *)left->auxIdNode)->varId);
+                            if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                                right->str[strlen(right->str) - 1] = '\0';
+                                strcpy(right->str, right->str + 1);
+                                regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
+                                result->registerType = 1;
+                                result->registerNumber = regS;
+                                ((HashNode *)left->auxIdNode)->sRegister = regS;
+                                strcpy(((HashNode *)left->auxIdNode)->string, right->str);
+
+                            } else {
+                                if (expr->left->type == UOP) {
+                                    printStoreInAddress(left->registerType, left->registerNumber, rightType, rightReg);
+
+                                } else {
+                                    regS = printAssignment(rightType, rightReg);
+                                    ((HashNode *)left->auxIdNode)->sRegister = regS;
+                                }
+                            }
+
+                        } else {
+                            if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                                right->str[strlen(right->str) - 1] = '\0';
+                                strcpy(right->str, right->str + 1);
+                                regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
+                                result->registerType = 1;
+                                result->registerNumber = regS;
+                                strcpy(((HashNode *)left->auxIdNode)->string, right->str);
+
+                            } else {
+                                if (expr->left->type == UOP) {
+                                    printStoreInAddress(left->registerType, left->registerNumber, rightType, rightReg);
+
+                                } else {
+                                    regS = left->registerNumber;
+                                    printAssignmentToReg(rightType, rightReg, regS);
+                                }
+                            }
+                        }
+                        result->registerType = 1;
+                    }
+                    result->registerNumber = regS;
+                    hashNodeTemp = getIdentifierNode(localHash, expr->identifier);
+                    if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->identifier);
+                    if (hashNodeTemp) setAssign(hashNodeTemp, result->assign);
+                    hashNodeTemp = NULL;
+                    return result;
                     break;
 
                 case ADD_ASSIGN:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
+                    tReg = printArithmeticsOps(left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
+
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                        // printf("STORING INTO GLOBAL VARIABLE += \n");
+                        freeRegister(left->registerType, left->registerNumber);
+                        printStoreIntGlobal(0, tReg, ((HashNode *)left->auxIdNode)->varId);
+                        result->registerType = 0;
+                        result->registerNumber = left->registerNumber;
+
+                    } else {
+                        printAssignmentToReg(0, tReg, left->registerNumber);
+                        result->registerNumber = left->registerNumber;
+                        result->registerType = left->registerType;
+                    }
+                    hashNodeTemp = getIdentifierNode(localHash, expr->identifier);
+                    if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->identifier);
+                    if (hashNodeTemp) setAssign(hashNodeTemp, result->assign);
+                    hashNodeTemp = NULL;
+                    return result;
+                    break;
+
                 case MINUS_ASSIGN:
+                    result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
+                    tReg = printArithmeticsOps(left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sub");
+
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
+                        // printf("STORING INTO GLOBAL VARIABLE -= \n");
+                        freeRegister(left->registerType, left->registerNumber);
+                        printStoreIntGlobal(0, tReg, ((HashNode *)left->auxIdNode)->varId);
+                        result->registerType = 0;
+                        result->registerNumber = left->registerNumber;
+
+                    } else {
+                        printAssignmentToReg(0, tReg, left->registerNumber);
+                        result->registerNumber = left->registerNumber;
+                        result->registerType = left->registerType;
+                    }
+                    hashNodeTemp = getIdentifierNode(localHash, expr->left->identifier);
+                    if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->left->identifier);
+                    if (hashNodeTemp) setAssign(hashNodeTemp, result->assign);
+                    hashNodeTemp = NULL;
+                    return result;
+                    break;
+
+                case MINUS:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
+                    int tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "sub");
+                    result->registerType = 0;
+                    result->registerNumber = tReg;
+                    return result;
                     break;
 
                 case PLUS:
-                case MINUS:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
+                    tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "add");
+                    result->registerType = 0;
+                    result->registerNumber = tReg;
+                    return result;
                     break;
 
                 case MULTIPLY:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
+                    tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "mul");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case DIVIDE:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
+                    tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mflo");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case REMAINDER:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
+                    tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mfhi");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case BITWISE_OR:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
+                    tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "or");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case BITWISE_AND:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor & auxRightValor);
+                    tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "and");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case BITWISE_XOR:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
+                    tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "xor");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
                     break;
 
                 case LOGICAL_AND:
+                    result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+                    tReg = printLogicalAnd(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case LOGICAL_OR:
+                    result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
+                    tReg = printLogicalOr(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
                     break;
 
                 case LESS_THAN:
+                    result = createResultExpression(INT, 0, left->assign < right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "slt");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case LESS_EQUAL:
+                    result = createResultExpression(INT, 0, left->assign <= right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sle");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case GREATER_THAN:
+                    result = createResultExpression(INT, 0, left->assign > right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sgt");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case GREATER_EQUAL:
+                    result = createResultExpression(INT, 0, left->assign >= right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sge");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case EQUAL:
+                    result = createResultExpression(INT, 0, left->assign == right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "seq");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case NOT_EQUAL:
+                    result = createResultExpression(INT, 0, left->assign != right->assign);
+                    tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sne");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
                     break;
 
                 case R_SHIFT:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
+                    tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "srlv");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case L_SHIFT:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
+                    tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "sllv");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
                     break;
 
                 default:
@@ -400,30 +636,199 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // printf("traverseASTCommand %d %p %p\n",command->type, command, command->next);
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
-
+    Command *t = NULL;
     switch (command->type) {
         case IF:
+            ResultExpression *ifResult = evalExpression(command->condition, globalHash, localHash, program);
+            // printf("ifs %p\n", command);
+
+            int ifLine = abs((int)((intptr_t)command->then));
+            int elseLine = -1;
+            if (command->elseStatement) {
+                elseLine = abs((int)((intptr_t)command->elseStatement));
+            } else {
+                elseLine = ifLine;
+            }
+            printIf(ifResult->registerType, ifResult->registerNumber, elseLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            printJump("exit_if_", ifLine);
+            printLabel("else_", elseLine);
+            Command *t2 = command->elseStatement;
+            while (t2) {
+                traverseASTCommand(t2, globalHash, localHash, program, currentFunction);
+                t2 = t2->next;
+            }
+            printLabel("exit_if_", ifLine);
             break;
 
         case DO_WHILE:
-            break;
-
         case WHILE:
+            int whileLine = abs((int)((intptr_t)command));
+            if (command->type == WHILE)
+                printJump("while_teste_", whileLine);
+            printLabel("while_corpo_", whileLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            printLabel("while_teste_", whileLine);
+            ResultExpression *whileResult = NULL;
+            whileResult = evalExpression(command->condition, globalHash, localHash, program);
+            printWhile(whileResult->registerType, whileResult->registerNumber, whileLine);
             break;
 
         case FOR:
+            int forLine = abs((int)((intptr_t)command));
+            evalExpression(command->init, globalHash, localHash, program);
+            printJump("for_teste_", forLine);
+            printLabel("for_corpo_", forLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            evalExpression(command->increment, globalHash, localHash, program);
+            printLabel("for_teste_", forLine);
+            ResultExpression *forResult = NULL;
+            forResult = evalExpression(command->condition, globalHash, localHash, program);
+            printFor(forResult->registerType, forResult->registerNumber, forLine);
             break;
 
         case PRINTF:
+            if (command->auxPrint) {
+                Expression *next = command->auxPrint;
+                ResultExpression *toPrint = NULL;
+
+                // printf("1.String original: %s\n", command->string);
+                char *restOfString = NULL;
+
+                char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
+                strcpy(stringWithoutFormat, command->string + 1);  // copy the 7 string without the "
+                // while (next) {
+                //     printf("expr inprint %p %d\n", next, next->type);
+                //     next = next->nextExpr;
+                // }
+                // exit(0);
+                // If we got to this block there is for sure at least one %d in this print
+                while (next) {
+                    toPrint = evalExpression(next, globalHash, localHash, program);
+                    // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
+                    next = next->nextExpr;
+                    if (toPrint) {
+                        if (toPrint->auxIdNode) {
+                            if (((HashNode *)toPrint->auxIdNode)->kind == VECTOR) {
+                                toPrint->registerNumber = printLoadFromArray(toPrint->registerNumber);
+                                toPrint->registerType = 0;
+                            }
+                        }
+                    }
+
+                    int printing = 0;
+                    char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
+                    if (formatSpecifier) {
+                        printing = INT;
+                    } else {
+                        formatSpecifier = strstr(stringWithoutFormat, "%s");
+                        if (formatSpecifier) {
+                            printing = STRING;
+                        } else {
+                            formatSpecifier = strstr(stringWithoutFormat, "%c");
+                            if (formatSpecifier) {
+                                printing = CHAR;
+                            }
+                        }
+                    }
+                    // printf("before %s\n", stringWithoutFormat);
+                    // printf("2.formatSpecifier %s\n", formatSpecifier);
+                    if (restOfString) free(restOfString);
+                    restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
+                    strcpy(restOfString, formatSpecifier + 2);
+                    restOfString[strlen(restOfString)] = '\0';  // remove the " and null terminate
+                    // printf("3.rest %s\n", restOfString);
+                    if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
+                    printString(stringWithoutFormat, abs((int)((intptr_t)toPrint)));
+                    if (printing == INT)
+                        printInteger(toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == CHAR)
+                        printCharacter(toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == STRING)
+                        printStringVar(toPrint->registerType, toPrint->registerNumber);
+
+                    free(stringWithoutFormat);
+                    stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
+                    strcpy(stringWithoutFormat, restOfString);
+                }
+                if (strlen(restOfString) > 0) {
+                    restOfString[strlen(restOfString) - 1] = '\0';
+                    // printf("4.rest %s\n", restOfString);
+                    printString(restOfString, rand() % 1000);
+                }
+                if (restOfString) free(restOfString);
+                if (stringWithoutFormat) free(stringWithoutFormat);
+
+            } else {
+                // remove the " " from the string
+                // printf("2.String original %s\n", command->string);
+                char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
+                strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
+                fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
+                printString(fixedString, abs((int)((intptr_t)fixedString)));
+                free(fixedString);
+            }
             break;
 
         case SCANF:
+            HashNode *node = getIdentifierNode(localHash, command->identifier);
+            if (!node) node = getIdentifierNode(globalHash, command->identifier);
+            if (!node) printf("Erro: Variável %s não declarada no scanf\n", command->identifier);
+
+            int sReg = printScanInt(node->sRegister, node->varId, node->isGlobal);
+            node->sRegister = sReg;
             break;
 
         case RETURN:
+            if (currentFunction->returnType == VOID && currentFunction->pointer == 0) {
+                if (command->condition) printf("Erro: Função %s não pode retornar valor\n", currentFunction->name);
+                if (strcmp(currentFunction->name, "main")) {  // doesnot print jr $ra for main
+                    loadFromStack();
+                    loadTRegisters(tRegsAlive);
+                    // free(tRegsAlive);
+                    printReturn();
+                }
+            } else {
+                if (!command->condition) printf("Erro: Função %s deve retornar valor\n", currentFunction->name);
+                ResultExpression *returnAux = evalExpression(command->condition, globalHash, localHash, program);
+                if (returnAux->auxIdNode) {
+                    // printf("\n>>>>> varId %s %d\n", ((HashNode*)returnAux->auxIdNode)->varId, ((HashNode*)returnAux->auxIdNode)->sRegister);
+                    if (((HashNode *)returnAux->auxIdNode)->sRegister == -1) {
+                        int null = printConstant(0);
+                        int s = printAssignment(0, null);
+                        setSRegisterInHash((HashNode *)returnAux->auxIdNode, s);
+                        returnAux->registerType = 1;
+                        returnAux->registerNumber = s;
+                    }
+                }
+                printReturnToV0(returnAux->registerType, returnAux->registerNumber);
+                if (strcmp(currentFunction->name, "main")) {
+                    loadFromStack();
+                    loadTRegisters(tRegsAlive);
+                    // free(tRegsAlive);
+                    printReturn();
+                }  // doesnot print jr $ra for main
+            }
             break;
 
         case EXIT:
+            if (command->condition) {
+                ResultExpression *status = evalExpression(command->condition, globalHash, localHash, program);
+                printf("\t# exit with status %d", status->assign);
+                printExit();
+            }
             break;
 
         case LISTA_EXP_COMANDO:

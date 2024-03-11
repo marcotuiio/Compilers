@@ -1,5 +1,5 @@
 %{
-// #include "asm.h"
+#include "asm.h"
 #include "ast.h"
 
 #include <stdio.h>
@@ -144,6 +144,7 @@ DeclaraDefine: CONSTANT COLON ID VALUE COLON NUM_INT {
         setKind(node, VAR);
         setIsConstant(node);
         setAssign(node, atoi($6.valor)); 
+        setDefineIntVariable($3.valor, atoi($6.valor));
     } ;
 
 DeclaraVarGlobal: GLOBAL VARIABLE COLON ID TYPE COLON VarType { pointerCount = 0; } Pointers ArrayCheck {
