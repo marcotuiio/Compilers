@@ -1,4 +1,5 @@
 #include "asm.h"
+
 #include <unistd.h>
 
 int sRegister[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -32,7 +33,7 @@ int getTRegister() {
 FILE *createAsmFile(char *fileName, char *mipsPath) {
     char *newFileName = calloc(strlen(fileName) + 5, sizeof(char));
     strcpy(newFileName, fileName);
-    
+
     // char cwd[1024];
     // if (getcwd(cwd, sizeof(cwd))) {
     //     printf("Current working dir: %s\n", cwd);
@@ -48,7 +49,7 @@ FILE *createAsmFile(char *fileName, char *mipsPath) {
     if (!file) {
         printf("Error creating .asm\n");
         exit(-1);
-    } 
+    }
     // free(newFileName);
     fprintf(file, "# Gerado por: Gerador de Codigo do Marco Tulio 202100560105\n");
     fprintf(file, "# file: %s\n", fileName);

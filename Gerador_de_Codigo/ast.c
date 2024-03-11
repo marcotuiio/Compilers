@@ -183,6 +183,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
     HashNode *hashNode = NULL;
     HashNode *hashNodeTemp = NULL;
+    HashNode *auxIdNode = NULL;
 
     int auxLeftPointer, auxRightPointer;
     int auxLeftType, auxRightType;
@@ -549,23 +550,114 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             switch (expr->operator) {
                 case INC:
+                    if (expr->preOrPost == 1) {
+                        // printf("pre incremento\n");
+                        result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
+                        tReg = printPreIncrements(left->registerType, left->registerNumber, "addi");
+                        result->registerType = left->registerType;
+                        result->registerNumber = tReg;
+
+                    } else if (expr->preOrPost == 2) {
+                        // printf("pos incremento\n");
+                        int originalValue = left->assign;
+                        left->assign++;
+                        result = createResultExpression(left->typeVar, left->pointer, originalValue);
+                        tReg = printPostIncrements(left->registerType, left->registerNumber, "addi");
+                        result->registerType = 0;  // como o que deve ser retornado é o valor original, nao tem registrador $s
+                        result->registerNumber = tReg;
+                    }
+
+                    hashNodeTemp = getIdentifierNode(localHash, expr->identifier);
+                    if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->identifier);
+                    if (hashNodeTemp) setAssign(hashNodeTemp, result->assign);
+                    hashNodeTemp = NULL;
+                    return result;
+                    break;
+
                 case DEC:
                     if (expr->preOrPost == 1) {
-                        printf("pre incremento ou decremento\n");
+                        // printf("pre decremento\n");
+                        result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
+                        tReg = printPreIncrements(left->registerType, left->registerNumber, "subi");
+                        result->registerType = left->registerType;
+                        result->registerNumber = tReg;
+
                     } else if (expr->preOrPost == 2) {
-                        printf("pos incremento ou decremento\n");
+                        // printf("pos decremento\n");
+                        int originalValue = left->assign;
+                        left->assign--;
+                        result = createResultExpression(left->typeVar, left->pointer, originalValue);
+                        tReg = printPostIncrements(left->registerType, left->registerNumber, "subi");
+                        result->registerType = 0;  // como o que deve ser retornado é o valor original, nao tem registrador $s
+                        result->registerNumber = tReg;
                     }
+
+                    hashNodeTemp = getIdentifierNode(localHash, expr->identifier);
+                    if (!hashNodeTemp) hashNodeTemp = getIdentifierNode(globalHash, expr->identifier);
+                    if (hashNodeTemp) setAssign(hashNodeTemp, result->assign);
+                    hashNodeTemp = NULL;
+                    return result;
                     break;
 
                 case BITWISE_NOT:
+                    result = createResultExpression(left->typeVar, left->pointer, ~left->assign);
+                    tReg = printBitwiseNot(leftType, leftReg);
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case PLUS:
+                    result = createResultExpression(left->typeVar, left->pointer, +left->assign);
+                    tReg = printUnaryPlusMinus(leftType, leftReg, "add");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
+                    break;
+
                 case MINUS:
+                    result = createResultExpression(left->typeVar, left->pointer, -left->assign);
+                    tReg = printUnaryPlusMinus(leftType, leftReg, "sub");
+                    result->registerNumber = tReg;
+                    result->registerType = 0;
+                    return result;
                     break;
 
                 case NOT:
+                    result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
+                    tReg = printLogicalNot(left->registerType, left->registerNumber);
+                    result->registerType = 0;
+                    result->registerNumber = tReg;
                     break;
 
                 case MULTIPLY:
+                    if (left->typeVar == CHAR && left->pointer == 1) {
+                        result = createResultExpression(CHAR, 0, *(((HashNode *)left->auxIdNode)->string));
+                        int t = printLoadByte(left->registerType, left->registerNumber);
+                        result->registerType = 0;
+                        result->registerNumber = t;
+
+                    } else if (left->typeVar == INT && left->pointer == 1) {
+                        // fprintf("\t # aqui %s %d %d\n", ((HashNode *)left->auxIdNode)->varId, left->registerType, left->registerNumber);
+                        result = createResultExpression(INT, 0, 0);
+                        int i = printConstant(0);
+                        if (left->registerNumber == -1) {
+                            left->registerNumber = printAssignAddress(left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId);
+                            setSRegisterInHash(((HashNode *)left->auxIdNode), left->registerNumber);
+                        }
+                        int posic = printAccessIndexArray(left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId, 0, i, ((HashNode *)left->auxIdNode)->isGlobal);
+                        result->registerType = 0;
+                        if (inAtrib) {
+                            result->registerNumber = posic;
+                        } else {
+                            result->registerNumber = printLoadFromArray(posic);
+                        }
+
+                    } else {
+                        result = createResultExpression(left->typeVar, 0, *(&left->assign));
+                    }
+                    result->auxIdNode = left->auxIdNode;
+                    return result;
                     break;
 
                 default:
@@ -615,9 +707,70 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case ARRAY_CALL:
+            auxIdNode = left->auxIdNode;
+            int posic = -1;
+            int qntdDimenRecebidas = 0;
+            Dimension *dimenRecebidas = expr->dimension;
+            Dimension *dimenEsperada = auxIdNode->dimensions;
+            ResultExpression *dimenResult = NULL;
+
+            while (dimenRecebidas) {
+                qntdDimenRecebidas++;
+
+                dimenResult = evalExpression(dimenRecebidas->exp, globalHash, localHash, program);
+                dimenEsperada = dimenEsperada->next;
+                dimenRecebidas = dimenRecebidas->next;
+                // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
+                // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
+            }
+
+            HashNode *vec = (HashNode *)left->auxIdNode;
+            printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
+            posic = printAccessIndexArray(1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber, vec->isGlobal);
+            result = createResultExpression(auxIdNode->typeVar, 0, 0);
+            result->registerType = 0;
+            result->registerNumber = posic;
+
             break;
 
         case FUNCTION_CALL:
+            auxIdNode = left->auxIdNode;
+            ExpParam *auxParamRecebido = expr->param;
+            int qntdParamRecebido = 0;
+            while (auxParamRecebido) {
+                qntdParamRecebido++;
+                auxParamRecebido = auxParamRecebido->next;
+            }
+
+            Param *auxParam = auxIdNode->param;
+            auxParamRecebido = expr->param;
+            ResultExpression *resultParam = NULL;
+
+            int i = 1;
+            int j = qntdParamRecebido - 1;
+            while (auxParamRecebido && auxParam) {
+                resultParam = evalExpression(auxParamRecebido->exp, globalHash, localHash, program);
+                if (resultParam->auxIdNode && ((HashNode *)resultParam->auxIdNode)->kind == VECTOR) {
+                    // printf("result do param %p %d %d\n", resultParam->auxIdNode, ((HashNode*)resultParam->auxIdNode)->kind, ((HashNode*)resultParam->auxIdNode)->typeVar);
+                    resultParam->registerNumber = printLoadFromArray(resultParam->registerNumber);
+                }
+                printSetParamInRegister(j, resultParam->registerType, resultParam->registerNumber, auxParam->identifier);
+                // printf("%s param %d %d %d %s ($ %d %d)\n",auxIdNode->varId, j, resultParam->typeVar, resultParam->assign, auxParam->identifier, resultParam->registerType, resultParam->registerNumber);
+                j = j - 1;
+
+                auxParam = auxParam->next;
+                auxParamRecebido = auxParamRecebido->next;
+                i++;
+            }
+            result = createResultExpression(auxIdNode->typeVar, auxIdNode->pointer, 0);
+            // printf("result function call %s %p %d %d = %d\n", auxIdNode->varId, result, result->typeVar, result->pointer, 0);
+
+            printCallFunction(auxIdNode->varId);
+            int r = printLoadReturnFromV0();
+            result->registerType = 0;
+            result->registerNumber = r;
+            return result;
+
             break;
 
         default:
@@ -947,6 +1100,7 @@ int traverseAST(Program *program) {
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
         while (command != NULL) {
+            printf(">>>>>>> %p %p %p %p %p\n", command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             command = command->next;
         }

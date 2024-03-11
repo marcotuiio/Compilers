@@ -441,17 +441,18 @@ int main(int argc, char *argv[]) {
     yyparse();
     void **hash = NULL;
 
-    printf("\n>>>>>>>> End Parse <<<<<<<<\n");
+    /* printf("\n>>>>>>>> End Parse <<<<<<<<\n"); */
     if (AST) {
         Program *ast = (Program*)AST;
-        printf("AST %p\n", ast);
-        hash = ast->hashTable;
+        /* printf("AST %p\n", ast); */
+        traverseAST(ast);
+        /* hash = ast->hashTable; */
     } else {
         printf("AST NULL\n");
         exit(1);
     }
 
-    for (int i = 0; i < HASH_SIZE; i++) {
+    /* for (int i = 0; i < HASH_SIZE; i++) {
         HashNode *node = (HashNode*)hash[i];
         while (node) {
             printf("%d Global hash %s %d\n", i, node->varId, node->typeVar);
@@ -479,7 +480,7 @@ int main(int argc, char *argv[]) {
         }
         printf("\n");
         func = func->next;
-    }
+    } */
     
     return 0;
 }

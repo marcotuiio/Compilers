@@ -25,8 +25,9 @@ for f in inputs:
     output_file = os.path.join(BSD, f'output_{f}')
     
     # print("valgrind ./" + EXEC +" < " + input_file + " > " + output_file)
-    with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
-        subprocess.Popen(["./"+EXEC], stdin=stdin, stdout=stdout).wait()
+    # with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
+    with open(output_file, 'w') as stdout:
+        subprocess.Popen(["./"+EXEC], stdout=stdout).wait()
 
 print("\nIniciando comparação de resutados...")
 

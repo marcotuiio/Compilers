@@ -1,17 +1,5 @@
 AST -->
 
-CONSTANT: MAX VALUE: 100
-GLOBAL VARIABLE: AAA TYPE: int[100]
-GLOBAL VARIABLE: max TYPE: int
-
-FUNCTION: nada_faz
-   RETURN_TYPE: int
-   VARIABLE: sla TYPE: int
-   PRINTF("ESsa funcao nao faz nadica de nada\n");
-   RETURN(1)
-
-END_FUNCTION
-
 FUNCTION: main
    RETURN_TYPE: int
    VARIABLE: a TYPE: int
