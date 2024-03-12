@@ -66,6 +66,7 @@ Param *createParam(int type, char *identifier, int pointer, void *next);
 HashNode *getIdentifierNode(void **hashTable, char *id);
 char *getExactType(int type, int pointer);
 
+void printProgram(void *AST);
 void freeHash(void **hashTable);
 
 #endif

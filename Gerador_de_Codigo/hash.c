@@ -1,5 +1,7 @@
 #include "hash.h"
 
+#include "ast.h"
+
 extern int countDimension(void *dimensions);
 
 void **createHash() {
@@ -165,6 +167,44 @@ char *getExactType(int type, int pointer) {
     char *aux = calloc(strlen(newType) + 1, sizeof(char));
     strcpy(aux, newType);
     return aux;
+}
+
+void printProgram(void *AST) {
+    void **hash = NULL;
+    if (AST) {
+        Program *ast = (Program *)AST;
+        printf("AST %p\n", ast);
+        hash = ast->hashTable;
+    }
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode *node = (HashNode *)hash[i];
+        while (node) {
+            printf("%d Global hash %s %d\n", i, node->varId, node->typeVar);
+            node = node->next;
+        }
+    }
+
+    printf("\n");
+    Function *func = (Function *)((Program*)AST)->functionsList;
+    while (func) {
+        printf("Function %s %d hash %p\n", func->name, func->returnType, func->hashTable);
+
+        for (int i = 0; i < HASH_SIZE; i++) {
+            HashNode *node = (HashNode *)func->hashTable[i];
+            while (node) {
+                printf("%d Local hash var %s %d\n", i, node->varId, node->typeVar);
+                node = node->next;
+            }
+        }
+        printf("\n");
+        Command *cmd = (Command *)func->commandList;
+        while (cmd) {
+            printf("Command %d\n", cmd->type);
+            cmd = cmd->next;
+        }
+        printf("\n");
+        func = func->next;
+    }
 }
 
 void freeHash(void **hashTable) {

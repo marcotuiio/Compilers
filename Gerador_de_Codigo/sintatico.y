@@ -336,9 +336,9 @@ VarType: INT { $$ = yylval.token; }
 Parameters: PARAMETER COLON ID TYPE COLON VarType { pointerCount = 0; } Pointers ArrayCheck Parameters {
         // printf("Parmetro ID %s type %d\n", $3.valor, $6.type);
         void *node = insertHash(currentHash, $3.valor, $6.type, pointerCount);
-        setQntdParams(node, paramCount);
-        // setSRegisterInHash(node, paramsQntd-1);
         paramCount++;
+        setQntdParams(node, paramCount);
+        setSRegisterInHash(node, paramCount-1);
         Param *param = createParam($6.type, $3.valor, pointerCount, $10);
         if (!$9) {
             setKind(node, VAR);
@@ -369,48 +369,63 @@ Pointers: MULTIPLY Pointers { pointerCount++; }
     | { } ;
 
 ListaComandos: Comandos SemicolonDeSchrodinger ListaComandos {       
-        $1->next = $3;
+        Command *cmd = $1;
+        while (cmd->next != NULL) {
+            cmd = cmd->next;
+        }
+        cmd->next = $3;
+        // cmd = $1;
+        // while (cmd) {
+        //     printf("ListaComandos %p\n", cmd);
+        //     cmd = cmd->next;
+        // }
         $$ = $1;
     }
-    | { } ;
+    | { $$ = NULL; } ;
 
 Comandos: IF L_PAREN Expression COMMA Comandos AuxElse R_PAREN SemicolonDeSchrodinger Comandos {
         Command *cmd = createIfStatement($3, $5, $6, $9);
+        // printf("Comando if %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     }
     | DO_WHILE L_PAREN Comandos COMMA Expression R_PAREN SemicolonDeSchrodinger Comandos {
         Command *cmd = createDoWhileStatement($5, $3, $8);
+        // printf("Comando do while %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     }
     | WHILE L_PAREN Expression COMMA Comandos R_PAREN SemicolonDeSchrodinger Comandos {
         Command *cmd = createWhileStatement($3, $5, $8);
+        // printf("Comando while %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     }
     | FOR L_PAREN Expression COMMA Expression COMMA Expression COMMA Comandos R_PAREN SemicolonDeSchrodinger Comandos {
         Command *cmd = createForStatement($3, $5, $7, $9, $12);
+        // printf("Comando for %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     }
     | PRINTF L_PAREN STRING AuxPrint R_PAREN SemicolonDeSchrodinger Comandos {
-        // printf("Comandos print %s \n", $3.valor);
         Command *cmd = createPrintStatement($3.valor, $4, $7);
+        // printf("Comando print %s %p -> %p\n", $3.valor, cmd, cmd->next);
         $$ = cmd;
     }
     | SCANF L_PAREN STRING COMMA BITWISE_AND L_PAREN ID R_PAREN R_PAREN SemicolonDeSchrodinger Comandos {
         Command *cmd = createScanStatement($3.valor, $7.valor, $11);
+        // printf("Comando scan %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     }
     | RETURN L_PAREN AuxReturn R_PAREN Comandos {
-        // printf("@@@@@@@ retunr  %d\n", $3 ? $3->type : -1);
         Command *cmd = createReturnStatement($3, $5);
+        // printf("Comando return %p (%d) -> %p\n", cmd, $3 ? $3->type : -1, cmd->next);
         $$ = cmd;
     }
     | EXIT L_PAREN Expression R_PAREN Comandos {
         Command *cmd = createExitStatement($3, $5);
+        // printf("Comando exit %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     } 
     | Expression SemicolonDeSchrodinger Comandos {
-        // printf("000000000000000 Comandos expression\n");
         Command *cmd = createCommandExpression($1, $3);
+        // printf("000000000000000 Comandos expression %p -> %p\n", cmd, cmd->next);
         $$ = cmd;
     } 
     | { $$ = NULL; };
@@ -439,48 +454,15 @@ void yyerror(void *s) {
 int main(int argc, char *argv[]) {
     globalHash = createHash();
     yyparse();
-    void **hash = NULL;
 
-    /* printf("\n>>>>>>>> End Parse <<<<<<<<\n"); */
     if (AST) {
+        /* printProgram(AST); */
         Program *ast = (Program*)AST;
-        /* printf("AST %p\n", ast); */
         traverseAST(ast);
-        /* hash = ast->hashTable; */
+        printExit();
     } else {
         printf("AST NULL\n");
         exit(1);
     }
-
-    /* for (int i = 0; i < HASH_SIZE; i++) {
-        HashNode *node = (HashNode*)hash[i];
-        while (node) {
-            printf("%d Global hash %s %d\n", i, node->varId, node->typeVar);
-            node = node->next;
-        }
-    }
-    
-    printf("\n");
-    Function *func = (Function*)AST->functionsList;
-    while (func) {
-        printf("Function %s %d hash %p\n", func->name, func->returnType, func->hashTable);
-
-        for (int i = 0; i < HASH_SIZE; i++) {
-            HashNode *node = (HashNode*)func->hashTable[i];
-            while (node) {
-                printf("%d Local hash var %s %d\n", i, node->varId, node->typeVar);
-                node = node->next;
-            }
-        }
-        printf("\n");
-        Command *cmd = (Command*)func->commandList;
-        while (cmd) {
-            printf("Command %d\n", cmd->type);
-            cmd = cmd->next;
-        }
-        printf("\n");
-        func = func->next;
-    } */
-    
     return 0;
 }

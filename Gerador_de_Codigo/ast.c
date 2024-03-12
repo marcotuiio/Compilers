@@ -185,9 +185,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     HashNode *hashNodeTemp = NULL;
     HashNode *auxIdNode = NULL;
 
-    int auxLeftPointer, auxRightPointer;
-    int auxLeftType, auxRightType;
-    int auxLeftValor, auxRightValor;
+    // int auxLeftPointer, auxRightPointer;
+    // int auxLeftType, auxRightType;
+    // int auxLeftValor, auxRightValor;
 
     int leftType, rightType;
     int leftReg, rightReg;
@@ -196,7 +196,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     // printf("evalExpression %p %d %d %d\n", expr, expr->type, expr->operator, expr->value->type);
 
     switch (expr->type) {
-        case PRIMARIA:
+        case PRIMARIA: // tipo 1 de expr
 
             switch (expr->operator) {
                 case INT:
@@ -267,7 +267,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
             }
 
-        case BOP:
+        case BOP: // tipo 2 de expr
             left = evalExpression(expr->left, globalHash, localHash, program);
             right = evalExpression(expr->right, globalHash, localHash, program);
 
@@ -301,7 +301,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     } else {
                         if (((HashNode *)left->auxIdNode)->sRegister == -1) {
                             // printf("%s sem sRegister\n", ((HashNode *)left->auxIdNode)->varId);
-                            if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                            if (left->typeVar == CHAR && left->pointer == 1) {
                                 right->str[strlen(right->str) - 1] = '\0';
                                 strcpy(right->str, right->str + 1);
                                 regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
@@ -321,7 +321,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             }
 
                         } else {
-                            if (auxLeftType == CHAR && auxLeftPointer == 1) {
+                            if (left->typeVar == CHAR && left->pointer == 1) {
                                 right->str[strlen(right->str) - 1] = '\0';
                                 strcpy(right->str, right->str + 1);
                                 regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
@@ -350,7 +350,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case ADD_ASSIGN:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign + right->assign);
                     tReg = printArithmeticsOps(left->registerType, left->registerNumber, right->registerType, right->registerNumber, "add");
 
                     if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
@@ -373,7 +373,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case MINUS_ASSIGN:
-                    result = createResultExpression(left->typeVar, left->pointer, auxLeftValor - auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign - right->assign);
                     tReg = printArithmeticsOps(left->registerType, left->registerNumber, right->registerType, right->registerNumber, "sub");
 
                     if (left->auxIdNode && ((HashNode *)left->auxIdNode)->isGlobal) {
@@ -395,24 +395,24 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     return result;
                     break;
 
-                case MINUS:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor - auxRightValor);
-                    int tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "sub");
-                    result->registerType = 0;
-                    result->registerNumber = tReg;
-                    return result;
-                    break;
-
                 case PLUS:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor + auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign + right->assign);
                     tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "add");
                     result->registerType = 0;
                     result->registerNumber = tReg;
                     return result;
                     break;
 
+                case MINUS:
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign - right->assign);
+                    int tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "sub");
+                    result->registerType = 0;
+                    result->registerNumber = tReg;
+                    return result;
+                    break;
+
                 case MULTIPLY:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor * auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign * right->assign);
                     tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "mul");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -420,7 +420,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case DIVIDE:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor / auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign / right->assign);
                     tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mflo");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -428,7 +428,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case REMAINDER:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor % auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign % right->assign);
                     tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mfhi");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -436,7 +436,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_OR:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor | auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign | right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "or");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -444,7 +444,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_AND:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor & auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign & right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "and");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -452,7 +452,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_XOR:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor ^ auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign ^ right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "xor");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -460,7 +460,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LOGICAL_AND:
-                    result = createResultExpression(INT, 0, auxLeftValor && auxRightValor);
+                    result = createResultExpression(INT, 0, left->assign && right->assign);
                     tReg = printLogicalAnd(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -468,7 +468,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LOGICAL_OR:
-                    result = createResultExpression(INT, 0, auxLeftValor || auxRightValor);
+                    result = createResultExpression(INT, 0, left->assign || right->assign);
                     tReg = printLogicalOr(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -524,7 +524,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case R_SHIFT:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor >> auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign >> right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "srlv");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -532,7 +532,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case L_SHIFT:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, auxLeftValor << auxRightValor);
+                    result = createResultExpression(left->typeVar, left->pointer, left->assign << right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "sllv");
                     result->registerNumber = tReg;
                     result->registerType = 0;
@@ -546,13 +546,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
             break;
 
-        case UOP:
+        case UOP: // tipo 3 de expr
+            left = evalExpression(expr->left, globalHash, localHash, program);
 
             switch (expr->operator) {
                 case INC:
                     if (expr->preOrPost == 1) {
                         // printf("pre incremento\n");
-                        result = createResultExpression(auxLeftType, auxLeftPointer, ++(auxLeftValor));
+                        result = createResultExpression(left->typeVar, left->pointer, ++(left->assign));
                         tReg = printPreIncrements(left->registerType, left->registerNumber, "addi");
                         result->registerType = left->registerType;
                         result->registerNumber = tReg;
@@ -577,7 +578,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 case DEC:
                     if (expr->preOrPost == 1) {
                         // printf("pre decremento\n");
-                        result = createResultExpression(auxLeftType, auxLeftPointer, --(auxLeftValor));
+                        result = createResultExpression(left->typeVar, left->pointer, --(left->assign));
                         tReg = printPreIncrements(left->registerType, left->registerNumber, "subi");
                         result->registerType = left->registerType;
                         result->registerNumber = tReg;
@@ -624,7 +625,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case NOT:
-                    result = createResultExpression(auxLeftType, auxLeftPointer, !(auxLeftValor));
+                    result = createResultExpression(left->typeVar, left->pointer, !(left->assign));
                     tReg = printLogicalNot(left->registerType, left->registerNumber);
                     result->registerType = 0;
                     result->registerNumber = tReg;
@@ -667,6 +668,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case TERNARY:
+            left = evalExpression(expr->left, globalHash, localHash, program);
+            right = evalExpression(expr->right, globalHash, localHash, program);
 
             ResultExpression *condition = evalExpression(expr->ternaryCondition, globalHash, localHash, program);
             printTernary(condition->registerType, condition->registerNumber, abs((int)((intptr_t)condition)));
@@ -692,13 +695,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
             // printf("left reg %d %d right reg %d %d\n", leftType, leftReg, rightType, rightReg);
             if (condition->assign) {
-                result = createResultExpression(auxLeftType, auxLeftPointer, left->assign);
+                result = createResultExpression(left->typeVar, left->pointer, left->assign);
                 result->registerNumber = left->registerNumber;
                 result->registerType = left->registerType;
                 if (rightType == 0) freeRegister(rightType, rightReg);
 
             } else {
-                result = createResultExpression(auxRightType, auxRightPointer, right->assign);
+                result = createResultExpression(right->typeVar, right->pointer, right->assign);
                 result->registerNumber = right->registerNumber;
                 result->registerType = right->registerType;
                 if (leftType == 0) freeRegister(leftType, leftReg);
@@ -707,7 +710,9 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case ARRAY_CALL:
-            auxIdNode = left->auxIdNode;
+            auxIdNode = getIdentifierNode(localHash, expr->identifier);
+            if (!auxIdNode) auxIdNode = getIdentifierNode(globalHash, expr->identifier);
+
             int posic = -1;
             int qntdDimenRecebidas = 0;
             Dimension *dimenRecebidas = expr->dimension;
@@ -725,7 +730,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
 
             HashNode *vec = (HashNode *)left->auxIdNode;
-            printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
+            // printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
             posic = printAccessIndexArray(1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber, vec->isGlobal);
             result = createResultExpression(auxIdNode->typeVar, 0, 0);
             result->registerType = 0;
@@ -734,7 +739,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             break;
 
         case FUNCTION_CALL:
-            auxIdNode = left->auxIdNode;
+            auxIdNode = getIdentifierNode(globalHash, expr->identifier);
             ExpParam *auxParamRecebido = expr->param;
             int qntdParamRecebido = 0;
             while (auxParamRecebido) {
@@ -1076,10 +1081,11 @@ int traverseAST(Program *program) {
     if (!program) return -1;
 
     // Percorra as funções na lista de funções
+    printStart();
     printf("\n.data\n");
     printDefines();
     lookForNodeInHashWithExpr(program->hashTable, program->hashTable, program);  // loading global variables (defines not include)
-    printf(".text\n");
+    printf(".text\n\n");
 
     Function *currentFunction = program->functionsList;
     while (currentFunction != NULL) {
@@ -1100,7 +1106,7 @@ int traverseAST(Program *program) {
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
         while (command != NULL) {
-            printf(">>>>>>> %p %p %p %p %p\n", command, program->hashTable, currentFunction->hashTable, program, currentFunction);
+            // printf(">>>>>>> %p %p %p %p %p\n", command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             command = command->next;
         }
