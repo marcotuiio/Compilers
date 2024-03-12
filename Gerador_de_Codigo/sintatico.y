@@ -130,6 +130,7 @@ Program *AST = NULL;
 
 AstParse: Declaracoes MyEOF {
         Program *ast = createProgram(globalHash, functionList, NULL);
+        Function *aux = functionList;
         AST = ast;
         return 0;
     } ;
@@ -162,7 +163,11 @@ DeclaraVarGlobal: GLOBAL VARIABLE COLON ID TYPE COLON VarType { pointerCount = 0
 DeclaraFuncao: FUNCTION COLON ID { currentHash = createHash(); } RETURN_TYPE COLON VarType { pointerCount = 0; } Pointers { paramCount = 0; } Parameters DeclaracoesLocais ListaComandos END_FUNCTION {
         Function *func = createFunction(currentHash, $7.type, pointerCount, $3.valor, $13, NULL);
         if (functionList) {
-            functionList->next = func;
+            Function *aux = functionList;
+            while (aux->next) {
+                aux = aux->next;
+            }
+            aux->next = func;
         } else {
             functionList = func;
         }
@@ -189,8 +194,8 @@ Expression: BinaryExpr { $$ = $1; }
     | FunctionCall { $$ = $1; } ;
 
 BinaryExpr: Ops L_PAREN Expression COMMA Expression R_PAREN {
-        // printf("bop %d\n", $1.type);
         Expression *bop = createExpression(BOP, $1.type, $3, $5);
+        // printf("bop %d, %d (%p)\n", $1.type, $1.line, bop);
         $$ = bop;
     } ;
 
@@ -201,7 +206,7 @@ TernaryExpr: TERNARY_CONDITIONAL L_PAREN Expression COMMA Expression COMMA Expre
     } ;
 
 UnaryExpr: Ops L_PAREN Expression R_PAREN {
-        // printf("uop %d\n", $1.type);
+        // printf("uop %d, %d\n", $1.type, $1.line);
         Expression *uop = createExpression(UOP, $1.type, $3, NULL);
         uop->preOrPost = 1;
         $$ = uop;
@@ -425,7 +430,7 @@ Comandos: IF L_PAREN Expression COMMA Comandos AuxElse R_PAREN SemicolonDeSchrod
     } 
     | Expression SemicolonDeSchrodinger Comandos {
         Command *cmd = createCommandExpression($1, $3);
-        // printf("000000000000000 Comandos expression %p -> %p\n", cmd, cmd->next);
+        // printf("\tComandos expression %p %p (%d) -> %p\n", cmd, $1, $1->operator, cmd->next);
         $$ = cmd;
     } 
     | { $$ = NULL; };

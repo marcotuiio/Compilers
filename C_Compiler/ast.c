@@ -315,7 +315,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
                     if (hashNode->isConstant || hashNode->isGlobal) {
-                        if (!inAtrib) {
+                        if (!inAtrib && hashNode->kind != VECTOR) {
                             result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
                             result->registerType = 0;
                         }
@@ -335,7 +335,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     // printf("AAAAA id %s reg %d = fake %d\n", hashNode->varId, hashNode->sRegister, hashNode->assign);
                     result->auxIdNode = hashNode;
                     if (hashNode->isConstant || hashNode->isGlobal) {
-                        if (!inAtrib) {
+                        if (!inAtrib && hashNode->kind != VECTOR) {
                             result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
                             result->registerType = 0;
                         }
@@ -350,7 +350,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     if (hashNode->kind == VECTOR) result->pointer = 1;
                     result->auxIdNode = hashNode;
                     if (hashNode->isConstant || hashNode->isGlobal) {
-                        if (!inAtrib) {
+                        if (!inAtrib && hashNode->kind != VECTOR) {
                             result->registerNumber = printLoadIntGlobal(mipsFile, hashNode->varId);
                             result->registerType = 0;
                         }
@@ -1633,7 +1633,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == WHILE || command->type == DO) {
-        int whileLine = command->auxToken->line;
+        int whileLine = abs((int)((intptr_t)command));
         if (command->type == WHILE)
             printJump(mipsFile, "while_teste_", whileLine);
         printLabel(mipsFile, "while_corpo_", whileLine);
@@ -1658,16 +1658,17 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     }
 
     if (command->type == FOR) {
+        int forLine = abs((int)((intptr_t)command));
         evalExpression(command->init, globalHash, localHash, program);
-        printJump(mipsFile, "for_teste_", command->auxToken->line);
-        printLabel(mipsFile, "for_corpo_", command->auxToken->line);
+        printJump(mipsFile, "for_teste_", forLine);
+        printLabel(mipsFile, "for_corpo_", forLine);
         Command *t = command->then;
         while (t) {
             traverseASTCommand(t, globalHash, localHash, program, currentFunction);
             t = t->next;
         }
         evalExpression(command->increment, globalHash, localHash, program);
-        printLabel(mipsFile, "for_teste_", command->auxToken->line);
+        printLabel(mipsFile, "for_teste_", forLine);
         ResultExpression *forResult = NULL;
         forResult = evalExpression(command->condition, globalHash, localHash, program);
         if (forResult->typeVar == VOID && forResult->pointer == 0) {
@@ -1679,7 +1680,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             deleteAuxFile();
             exit(0);
         }
-        printFor(mipsFile, forResult->registerType, forResult->registerNumber, command->auxToken->line);
+        printFor(mipsFile, forResult->registerType, forResult->registerNumber, forLine);
     }
 
     if (command->type == PRINTF || command->type == SCANF) {
@@ -1750,7 +1751,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 if (strlen(restOfString) > 0) {
                     restOfString[strlen(restOfString) - 1] = '\0';
                     // printf("4.rest %s\n", restOfString);
-                    printString(mipsFile, restOfString, rand() % 1000);
+                    printString(mipsFile, restOfString, rand() % 67282);
                 }
                 if (restOfString) free(restOfString);
                 if (stringWithoutFormat) free(stringWithoutFormat);
@@ -1761,7 +1762,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
                 fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
-                printString(mipsFile, fixedString, command->auxToken->line);
+                printString(mipsFile, fixedString, abs((int)((intptr_t)command->string)));
                 free(fixedString);
             }
 

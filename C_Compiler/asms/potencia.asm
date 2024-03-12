@@ -1,5 +1,5 @@
 # Gerado por: Gerador de Codigo do Marco Tulio 202100560105
-# file: asms/potencia.asm
+# file: testes_mips/potencia.c
 .text
 .globl main
 
@@ -28,8 +28,7 @@ potencia:
 	add $s1, $zero, $a1
 	addi $t0, $zero, 0
 	seq $t1, $s0, $t0
-	addi $t0, $zero, 0
-	beq $t0, $t1, else_1619589600
+	beqz $t1, else_192270304
 	addi $t0, $zero, 1
 	add $v0, $zero, $t0
 
@@ -49,8 +48,8 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1619592400
-	else_1619589600:
+	j exit_if_192273104
+	else_192270304:
 	add $a1, $zero, $s1 # function param base
 	addi $t0, $zero, 1
 	sub $t1, $s0, $t0
@@ -76,7 +75,7 @@ potencia:
 	addi $sp, $sp, 52
 
 	jr $ra
-	exit_if_1619592400:
+	exit_if_192273104:
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -119,9 +118,9 @@ main:
 	jal potencia
 	add $t0, $zero, $v0
 	.data
-		string_1619478848: .asciiz "Resultado: "
+		string_192258432: .asciiz "Resultado: "
 	.text
-	la $a0, string_1619478848
+	la $a0, string_192258432
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t0

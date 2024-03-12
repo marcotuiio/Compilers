@@ -1,5 +1,5 @@
 # Gerado por: Gerador de Codigo do Marco Tulio 202100560105
-# file: asms/quicksort.asm
+# file: testes_mips/quicksort.c
 .text
 .globl main
 
@@ -8,6 +8,7 @@
 	lw $t1, 0($t0)
 
 .data
+	MAX: .word 100 # define
 	a: .space 400 # global array
 	max: .word 0
 .text
@@ -34,8 +35,7 @@ quicksort:
 	addi $t0, $zero, 1
 	add $s2, $zero, $t0
 	sle $t0, $s0, $s1
-	addi $t1, $zero, 0
-	beq $t1, $t0, else_1563277984
+	beqz $t0, else_1664577904
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -53,113 +53,95 @@ quicksort:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_1563277984
-	else_1563277984:
-	exit_if_1563277984:
+	j exit_if_1664577904
+	else_1664577904:
+	exit_if_1664577904:
 	addi $t0, $zero, 1
 	sub $t1, $s1, $t0
 	add $s3, $zero, $t1
 	add $s4, $zero, $s0
 	la $t0, a
-	lw $t1, 0($t0)
-	la $t0, a
-	sll $t2, $s0, 2
-	add $t2, $t2, $t0
-	lw $t0, 0($t2)
+	sll $t1, $s0, 2
+	add $t1, $t1, $t0
+	lw $t0, 0($t1)
 	add $s5, $zero, $t0
 	j while_teste_20
 	while_corpo_20:
 	while_corpo_22:
 	addi $t0, $zero, 1
-	add $t2, $s3, $t0
-	add $s3, $zero, $t2
+	add $t1, $s3, $t0
+	add $s3, $zero, $t1
 	while_teste_22:
 	la $t0, a
-	lw $t2, 0($t0)
-	la $t0, a
-	sll $t3, $s3, 2
-	add $t3, $t3, $t0
-	lw $t0, 0($t3)
-	slt $t3, $t0, $s5
-	addi $t0, $zero, 1
-	beq $t0, $t3, while_corpo_22
+	sll $t1, $s3, 2
+	add $t1, $t1, $t0
+	lw $t0, 0($t1)
+	slt $t1, $t0, $s5
+	bnez $t1, while_corpo_22
 	while_corpo_23:
 	addi $t0, $zero, 1
-	sub $t3, $s4, $t0
-	add $s4, $zero, $t3
+	sub $t1, $s4, $t0
+	add $s4, $zero, $t1
 	while_teste_23:
 	la $t0, a
-	lw $t3, 0($t0)
-	la $t0, a
-	sll $t4, $s4, 2
-	add $t4, $t4, $t0
-	lw $t0, 0($t4)
-	sgt $t4, $t0, $s5
-	addi $t0, $zero, 1
-	beq $t0, $t4, while_corpo_23
+	sll $t1, $s4, 2
+	add $t1, $t1, $t0
+	lw $t0, 0($t1)
+	sgt $t1, $t0, $s5
+	bnez $t1, while_corpo_23
 	sge $t0, $s3, $s4
-	addi $t4, $zero, 0
-	beq $t4, $t0, else_1563294272
+	beqz $t0, else_1664561616
 	addi $t0, $zero, 0
 	add $s2, $zero, $t0
-	j exit_if_1563291632
-	else_1563294272:
+	j exit_if_1664564256
+	else_1664561616:
 	la $t0, a
-	lw $t4, 0($t0)
-	la $t0, a
-	sll $t5, $s3, 2
-	add $t5, $t5, $t0
-	lw $t0, 0($t5)
+	sll $t1, $s3, 2
+	add $t1, $t1, $t0
+	lw $t0, 0($t1)
 	add $s6, $zero, $t0
 	la $t0, a
-	sll $t5, $s3, 2
-	add $t5, $t5, $t0
+	sll $t1, $s3, 2
+	add $t1, $t1, $t0
 	la $t0, a
-	lw $t6, 0($t0)
+	sll $t2, $s4, 2
+	add $t2, $t2, $t0
+	lw $t0, 0($t2)
+	sw $t0, 0($t1)
 	la $t0, a
-	sll $t7, $s4, 2
-	add $t7, $t7, $t0
-	lw $t0, 0($t7)
-	sw $t0, 0($t5)
-	la $t0, a
-	sll $t5, $s4, 2
-	add $t5, $t5, $t0
-	sw $s6, 0($t5)
-	exit_if_1563291632:
+	sll $t1, $s4, 2
+	add $t1, $t1, $t0
+	sw $s6, 0($t1)
+	exit_if_1664564256:
 	while_teste_20:
-	addi $t0, $zero, 1
-	beq $t0, $s2, while_corpo_20
+	bnez $s2, while_corpo_20
 	la $t0, a
-	lw $t5, 0($t0)
-	la $t0, a
-	sll $t7, $s3, 2
-	add $t7, $t7, $t0
-	lw $t0, 0($t7)
+	sll $t1, $s3, 2
+	add $t1, $t1, $t0
+	lw $t0, 0($t1)
 	add $s6, $zero, $t0
 	la $t0, a
-	sll $t7, $s3, 2
-	add $t7, $t7, $t0
+	sll $t1, $s3, 2
+	add $t1, $t1, $t0
 	la $t0, a
-	lw $t8, 0($t0)
+	sll $t2, $s0, 2
+	add $t2, $t2, $t0
+	lw $t0, 0($t2)
+	sw $t0, 0($t1)
 	la $t0, a
-	sll $t9, $s0, 2
-	add $t9, $t9, $t0
-	lw $t0, 0($t9)
-	sw $t0, 0($t7)
-	la $t0, a
-	sll $t7, $s0, 2
-	add $t7, $t7, $t0
-	sw $s6, 0($t7)
+	sll $t1, $s0, 2
+	add $t1, $t1, $t0
+	sw $s6, 0($t1)
 	add $a1, $zero, $s1 # function param m
 	add $a0, $zero, $s4 # function param n
 	jal quicksort
 	add $t0, $zero, $v0
-	addi $t7, $zero, 1
-	add $t9, $s3, $t7
-	add $a1, $zero, $t9 # function param m
+	addi $t1, $zero, 1
+	add $t2, $s3, $t1
+	add $a1, $zero, $t2 # function param m
 	add $a0, $zero, $s0 # function param n
 	jal quicksort
-	add $t7, $zero, $v0
+	add $t1, $zero, $v0
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -208,8 +190,7 @@ main:
 	beq $t0, $t3, t_logical_or_45_18
 	addi $t0, $zero, 0
 	t_logical_or_45_18:
-	addi $t1, $zero, 1
-	beq $t1, $t0, while_corpo_45
+	bnez $t0, while_corpo_45
 	addi $t0, $zero, 0
 	add $s1, $zero, $t0
 	j for_teste_50
@@ -217,9 +198,9 @@ main:
 	addi $t0, $zero, 1
 	add $t1, $s1, $t0
 	.data
-		string_1563435408: .asciiz "Entre com o valor da posicao "
+		string_1664500384: .asciiz "Entre com o valor da posicao "
 	.text
-	la $a0, string_1563435408
+	la $a0, string_1664500384
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t1
@@ -244,8 +225,7 @@ main:
 	la $t1, max
 	lw $t2, 0($t1)
 	slt $t1, $s1, $t2
-	addi $t2, $zero, 1
-	beq $t2, $t1, for_corpo_50
+	bnez $t1, for_corpo_50
 	addi $t1, $zero, 0
 	add $a1, $zero, $t1 # function param m
 	la $t1, max
@@ -260,15 +240,13 @@ main:
 	j for_teste_58
 	for_corpo_58:
 	la $t2, a
-	lw $t3, 0($t2)
-	la $t2, a
-	sll $t4, $s1, 2
-	add $t4, $t4, $t2
-	lw $t2, 0($t4)
+	sll $t3, $s1, 2
+	add $t3, $t3, $t2
+	lw $t2, 0($t3)
 	.data
-		string_1563436560: .asciiz ""
+		string_1664493600: .asciiz ""
 	.text
-	la $a0, string_1563436560
+	la $a0, string_1664493600
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t2
@@ -283,24 +261,18 @@ main:
 	add $t2, $zero, $s1
 	addi $s1, $s1, 1
 	for_teste_58:
-	la $t4, max
-	lw $t5, 0($t4)
-	slt $t4, $s1, $t5
-	addi $t5, $zero, 1
-	beq $t5, $t4, for_corpo_58
+	la $t3, max
+	lw $t4, 0($t3)
+	slt $t3, $s1, $t4
+	bnez $t3, for_corpo_58
 	.data
 		string_62: .asciiz "\n"
 	.text
 	la $a0, string_62
 	addi $v0, $zero, 4
 	syscall
-	addi $t4, $zero, 0
-	add $v0, $zero, $t4
+	addi $t3, $zero, 0
+	add $v0, $zero, $t3
 
 	addi $v0, $zero, 10
 	syscall
-
-# BLOCO DE DEFINES NO FIM DO ARQUIVO
-.data
-	MAX: .word 100
-# END BLOCO DEFINES

@@ -7,6 +7,13 @@
 
 #define HASH_SIZE 269
 
+/*
+./gerador < entradas_gerador/quicksort.txt > saidas_gerador/quicksort.asm 
+./gerador < entradas_gerador/fatorial.txt > saidas_gerador/fatorial.asm 
+./gerador < entradas_gerador/triangulo.txt > saidas_gerador/triangulo.asm 
+./gerador < entradas_gerador/comparacao.txt > saidas_gerador/comparacao.asm 
+*/
+
 #define VAR 1
 #define FUNCTIONN 2
 #define VECTOR 3

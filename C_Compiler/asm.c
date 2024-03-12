@@ -44,6 +44,7 @@ FILE *createAsmFile(char *fileName, char *mipsPath) {
     newFileName = strtok(newFileName, ".");
     strcat(newFileName, ".asm");
     strcat(newFileName, "\0");
+    mipsPath = calloc(strlen(newFileName) + 1, sizeof(char));
     strcpy(mipsPath, newFileName);
     FILE *file = fopen(newFileName, "w");
     if (!file) {

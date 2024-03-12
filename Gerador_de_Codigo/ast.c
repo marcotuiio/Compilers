@@ -196,7 +196,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
     // printf("evalExpression %p %d %d %d\n", expr, expr->type, expr->operator, expr->value->type);
 
     switch (expr->type) {
-        case PRIMARIA: // tipo 1 de expr
+        case PRIMARIA:  // tipo 1 de expr
 
             switch (expr->operator) {
                 case INT:
@@ -225,7 +225,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         if (hashNode->kind == VECTOR) result->pointer = 1;
                         result->auxIdNode = hashNode;
                         if (hashNode->isConstant || hashNode->isGlobal) {
-                            if (!inAtrib) {
+                            if (!inAtrib && hashNode->kind != VECTOR) {
                                 result->registerNumber = printLoadIntGlobal(hashNode->varId);
                                 result->registerType = 0;
                             }
@@ -242,7 +242,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         if (hashNode->kind == VECTOR) result->pointer = 1;
                         result->auxIdNode = hashNode;
                         if (hashNode->isConstant || hashNode->isGlobal) {
-                            if (!inAtrib) {
+                            if (!inAtrib && hashNode->kind != VECTOR) {
                                 result->registerNumber = printLoadIntGlobal(hashNode->varId);
                                 result->registerType = 0;
                             }
@@ -267,25 +267,35 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
             }
 
-        case BOP: // tipo 2 de expr
+        case BOP:  // tipo 2 de expr
+            if (expr->left->operator== ASSIGN) inAtrib = 1;
             left = evalExpression(expr->left, globalHash, localHash, program);
+            if (expr->left->operator== ASSIGN) inAtrib = 0;
             right = evalExpression(expr->right, globalHash, localHash, program);
 
             leftType = left->registerType;
             leftReg = left->registerNumber;
             rightType = right->registerType;
             rightReg = right->registerNumber;
-            if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
-                leftReg = printLoadFromArray(left->registerNumber);
-                leftType = 0;
-            }
-            if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
-                rightReg = printLoadFromArray(right->registerNumber);
-                rightType = 0;
-            }
 
             switch (expr->operator) {
                 case ASSIGN:
+                    result = createResultExpression(left->typeVar, left->pointer, right->assign);
+
+                    if ((left->typeVar == INT || left->typeVar == VOID) && left->pointer == 1 && right->pointer == 1) {
+                        // printf("error:minhacabecafritou:\n");
+                        int s = printAssignAddress(left->registerType, left->registerNumber, ((HashNode *)left->auxIdNode)->varId);
+                        setSRegisterInHash(((HashNode *)left->auxIdNode), s);
+                        result->registerType = 1;
+                        result->registerNumber = s;
+                        return result;
+                    }
+
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
+
                     if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
                         // printf("VECTOR ASSIGN $ t %d \n", left->registerNumber);
                         printStoreIntoArray(left->registerNumber, rightType, rightReg);
@@ -396,6 +406,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case PLUS:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign + right->assign);
                     tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "add");
                     result->registerType = 0;
@@ -404,6 +422,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case MINUS:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign - right->assign);
                     int tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "sub");
                     result->registerType = 0;
@@ -412,6 +438,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case MULTIPLY:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign * right->assign);
                     tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "mul");
                     result->registerNumber = tReg;
@@ -420,6 +454,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case DIVIDE:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign / right->assign);
                     tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mflo");
                     result->registerNumber = tReg;
@@ -428,6 +470,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case REMAINDER:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign % right->assign);
                     tReg = printDivisionOps(leftType, leftReg, rightType, rightReg, "mfhi");
                     result->registerNumber = tReg;
@@ -436,6 +486,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_OR:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign | right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "or");
                     result->registerNumber = tReg;
@@ -444,6 +502,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_AND:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign & right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "and");
                     result->registerNumber = tReg;
@@ -452,6 +518,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_XOR:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign ^ right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "xor");
                     result->registerNumber = tReg;
@@ -460,6 +534,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LOGICAL_AND:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign && right->assign);
                     tReg = printLogicalAnd(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
                     result->registerNumber = tReg;
@@ -468,6 +550,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LOGICAL_OR:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign || right->assign);
                     tReg = printLogicalOr(leftType, leftReg, rightType, rightReg, abs((int)((intptr_t)expr)));
                     result->registerNumber = tReg;
@@ -476,6 +566,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LESS_THAN:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign < right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "slt");
                     result->registerNumber = tReg;
@@ -484,6 +582,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case LESS_EQUAL:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign <= right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sle");
                     result->registerNumber = tReg;
@@ -492,6 +598,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case GREATER_THAN:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign > right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sgt");
                     result->registerNumber = tReg;
@@ -500,6 +614,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case GREATER_EQUAL:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign >= right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sge");
                     result->registerNumber = tReg;
@@ -508,6 +630,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case EQUAL:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign == right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "seq");
                     result->registerNumber = tReg;
@@ -516,6 +646,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case NOT_EQUAL:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(INT, 0, left->assign != right->assign);
                     tReg = printRelationalOps(leftType, leftReg, rightType, rightReg, "sne");
                     result->registerNumber = tReg;
@@ -524,6 +662,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case R_SHIFT:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign >> right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "srlv");
                     result->registerNumber = tReg;
@@ -532,6 +678,14 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case L_SHIFT:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+                    if (right->auxIdNode && ((HashNode *)right->auxIdNode)->kind == VECTOR) {
+                        rightReg = printLoadFromArray(right->registerNumber);
+                        rightType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign << right->assign);
                     tReg = printBitwiseOps(leftType, leftReg, rightType, rightReg, "sllv");
                     result->registerNumber = tReg;
@@ -541,16 +695,24 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                 default:
                     printf("Erro: Operador binario desconhecido\n");
+                    exit(1);
                     break;
             }
 
             break;
 
-        case UOP: // tipo 3 de expr
+        case UOP:  // tipo 3 de expr
             left = evalExpression(expr->left, globalHash, localHash, program);
+            leftType = left->registerType;
+            leftReg = left->registerNumber;
 
             switch (expr->operator) {
                 case INC:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
+
                     if (expr->preOrPost == 1) {
                         // printf("pre incremento\n");
                         result = createResultExpression(left->typeVar, left->pointer, ++(left->assign));
@@ -576,6 +738,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case DEC:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
                     if (expr->preOrPost == 1) {
                         // printf("pre decremento\n");
                         result = createResultExpression(left->typeVar, left->pointer, --(left->assign));
@@ -601,6 +767,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case BITWISE_NOT:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, ~left->assign);
                     tReg = printBitwiseNot(leftType, leftReg);
                     result->registerNumber = tReg;
@@ -609,6 +779,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case PLUS:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, +left->assign);
                     tReg = printUnaryPlusMinus(leftType, leftReg, "add");
                     result->registerNumber = tReg;
@@ -617,6 +791,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case MINUS:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, -left->assign);
                     tReg = printUnaryPlusMinus(leftType, leftReg, "sub");
                     result->registerNumber = tReg;
@@ -625,6 +803,10 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case NOT:
+                    if (left->auxIdNode && ((HashNode *)left->auxIdNode)->kind == VECTOR) {
+                        leftReg = printLoadFromArray(left->registerNumber);
+                        leftType = 0;
+                    }
                     result = createResultExpression(left->typeVar, left->pointer, !(left->assign));
                     tReg = printLogicalNot(left->registerType, left->registerNumber);
                     result->registerType = 0;
@@ -663,6 +845,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                 default:
                     printf("Erro: Operador unario desconhecido\n");
+                    exit(1);
+                    break;
             }
 
             break;
@@ -729,12 +913,13 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                 // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
             }
 
-            HashNode *vec = (HashNode *)left->auxIdNode;
-            // printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
-            posic = printAccessIndexArray(1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber, vec->isGlobal);
+            // printf(" -----| posiccc %s %d %d (%d %d)\n", auxIdNode->varId, auxIdNode->sRegister, auxIdNode->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
+            posic = printAccessIndexArray(1, auxIdNode->sRegister, auxIdNode->varId, dimenResult->registerType, dimenResult->registerNumber, auxIdNode->isGlobal);
             result = createResultExpression(auxIdNode->typeVar, 0, 0);
             result->registerType = 0;
             result->registerNumber = posic;
+            result->auxIdNode = auxIdNode;
+            return result;
 
             break;
 
@@ -774,6 +959,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             int r = printLoadReturnFromV0();
             result->registerType = 0;
             result->registerNumber = r;
+            result->auxIdNode = auxIdNode;
             return result;
 
             break;
@@ -924,7 +1110,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 if (strlen(restOfString) > 0) {
                     restOfString[strlen(restOfString) - 1] = '\0';
                     // printf("4.rest %s\n", restOfString);
-                    printString(restOfString, rand() % 1000);
+                    printString(restOfString, rand() % 67282);
                 }
                 if (restOfString) free(restOfString);
                 if (stringWithoutFormat) free(stringWithoutFormat);
@@ -935,7 +1121,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
                 char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
                 strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
                 fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
-                printString(fixedString, abs((int)((intptr_t)fixedString)));
+                printString(fixedString, abs((int)((intptr_t)command->string)));
                 free(fixedString);
             }
             break;
@@ -990,6 +1176,7 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
             break;
 
         case LISTA_EXP_COMANDO:
+            // printf("command %p %p (%d)\n", command, command->condition, command->condition->type);
             evalExpression(command->condition, globalHash, localHash, program);
             traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
             break;
@@ -1106,7 +1293,7 @@ int traverseAST(Program *program) {
         // Percorra os comandos na função
         Command *command = currentFunction->commandList;
         while (command != NULL) {
-            // printf(">>>>>>> %p %p %p %p %p\n", command, program->hashTable, currentFunction->hashTable, program, currentFunction);
+            // printf(">>>>>>> %p %d %s\n", command, command->type, currentFunction->name);
             traverseASTCommand(command, program->hashTable, currentFunction->hashTable, program, currentFunction);
             command = command->next;
         }

@@ -330,6 +330,7 @@ int printAccessIndexArray(int arrayType, int arrayReg, char *name, int indexType
         printf("\tsll $t%d, $%c%d, 2\n", t, index, indexReg);
         printf("\tadd $t%d, $t%d, $%c%d\n", t, t, a, arrayReg);
         if (indexType == 0) tRegister[indexReg] = 0;
+        if (arrayType == 0) tRegister[arrayReg] = 0;
         return t;
 
     } else {
