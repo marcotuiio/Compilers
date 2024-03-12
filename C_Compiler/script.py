@@ -2,7 +2,7 @@ import os
 import subprocess
 import datetime
 
-BED = '/home/marcotuiio/Compilers/C_Compiler/testes'
+BED = '/home/marcotuiio/Compilers/C_Compiler/testes_semantico'
 BSD = '/home/marcotuiio/Compilers/C_Compiler/saidas_semantico'
 OFICIAL = '/home/marcotuiio/Compilers/C_Compiler/saidas_padrao'
 EXEC = 'mtcc'
@@ -24,10 +24,11 @@ for f in inputs:
     input_file = os.path.join(BED, f)
     output_file = os.path.join(BSD, f'output_{f}')
     
-    # print("valgrind ./" + EXEC +" < " + input_file + " > " + output_file)
+    print("valgrind ./" + EXEC + " " + input_file + " > " + output_file)
     # with open(input_file, 'r') as stdin, open(output_file, 'w') as stdout:
     with open(output_file, 'w') as stdout:
-        subprocess.Popen(["./"+EXEC], stdout=stdout).wait()
+        # subprocess.Popen(["./" + EXEC], stdin=stdion, stdout=stdout).wait()
+        subprocess.Popen(["./" + EXEC, input_file], stdout=stdout).wait()
 
 print("\nIniciando comparação de resutados...")
 

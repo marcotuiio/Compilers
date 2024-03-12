@@ -928,6 +928,7 @@ int main(int argc, char *argv[]) {
     } else {
         char *sourcePath = calloc(strlen(argv[argc - 1]) + 1, sizeof(char));
         strcpy(sourcePath, argv[argc - 1]);
+        mipsPath = calloc(strlen(argv[argc - 1]) + 20, sizeof(char));
         mipsFile = createAsmFile(sourcePath, mipsPath);
     }
     

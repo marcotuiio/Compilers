@@ -44,7 +44,6 @@ FILE *createAsmFile(char *fileName, char *mipsPath) {
     newFileName = strtok(newFileName, ".");
     strcat(newFileName, ".asm");
     strcat(newFileName, "\0");
-    mipsPath = calloc(strlen(newFileName) + 1, sizeof(char));
     strcpy(mipsPath, newFileName);
     FILE *file = fopen(newFileName, "w");
     if (!file) {
@@ -62,9 +61,12 @@ FILE *createAsmFile(char *fileName, char *mipsPath) {
 
 void deleteMipsFileOnError(FILE *mipsFile, char *mipsPath) {
     // printf("\nDeleting compilation files due to error %s\n", mipsPath);
-    fclose(mipsFile);
-    remove(mipsPath);
-    free(mipsPath);
+    if (mipsFile)
+        fclose(mipsFile);
+    if (mipsPath) {
+        remove(mipsPath);
+        free(mipsPath);
+    }
 }
 
 int printConstant(FILE *mips, int value) {
