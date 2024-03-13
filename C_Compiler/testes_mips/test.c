@@ -317,28 +317,30 @@
 //     printf("E depois novamente ");
 //     while (*c != '\0') {
 //         printf("%c", *c);
-//         g(1 + 2 * 3 - 4 * 5, *c, CALL_ELEVEN + 666);
+//         c++;
+//         // g(1 + 2 * 3 - 4 * 5, *c, CALL_ELEVEN + 666);
 //     }
 //     return *(vetor[1 << 1]);
 // }
 
 // int main() {
-//     int* ptr;
-//     int* i;
-//     for (ptr = v; ptr; ptr++) {
-//         while (*ptr) {
-//             if (ptr <= 0) {
-//                 *ptr = 666;
-//                 *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
-//             } else {
-//                 do {
-//                     ptr++;
-//                 } while (v);
-//             }
-//         }
-//     }
-//     return (*ptr + *i);
-//     // return 0;
+//     g (1, 'a', 2);
+// //     int* ptr;
+// //     int* i;
+// //     for (ptr = v; ptr; ptr++) {
+// //         while (*ptr) {
+// //             if (ptr <= 0) {
+// //                 *ptr = 666;
+// //                 *i /*Porta para o mundo invertido*/ = CALL_ELEVEN + 666;
+// //             } else {
+// //                 do {
+// //                     ptr++;
+// //                 } while (v);
+// //             }
+// //         }
+// //     }
+// //     return (*ptr + *i);
+//     return 0;
 // }
 
 // TESTE STRINGS
@@ -349,6 +351,8 @@ int main() {
     char *c;
     char *c2 = "E depois novamente ";
     c = "DDominar o mundo\n";
+    c++;
+    printf("porraaaa %s\n", c);
 
     while (*c != '\0') {
         printf("%c ", *c);

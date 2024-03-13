@@ -129,6 +129,7 @@ union YYSTYPE
     Command *cmd;
     void *param;
     void *posfixa;
+    int sinalAux;
     struct {
         char *valor;
         int type;
@@ -136,7 +137,7 @@ union YYSTYPE
         int col;
     } token;
 
-#line 140 "sintatico.tab.h"
+#line 141 "sintatico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

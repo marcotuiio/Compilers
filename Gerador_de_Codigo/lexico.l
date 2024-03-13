@@ -91,6 +91,6 @@ void addToUnion(int type) {
 "'"(\\.|[^\\']){1}"'" { addToUnion(CHARACTER); return CHARACTER; }
 [0-9]+ { addToUnion(NUM_INT); return NUM_INT; }
 
-. { printf("Caracter do segredo '%s'\n", yytext); }
+. { printf("Caracter do segredo '%s' [%d][%d] \n", yytext, yylineno, yycolumn); }
 
 %%

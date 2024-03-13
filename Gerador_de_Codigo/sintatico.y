@@ -32,6 +32,7 @@ Program *AST = NULL;
     Command *cmd;
     void *param;
     void *posfixa;
+    int sinalAux;
     struct {
         char *valor;
         int type;
@@ -102,6 +103,7 @@ Program *AST = NULL;
 %token <token> CHARACTER
 %token <token> ID
 
+%type <sinalAux> Sinal 
 %type <dim> ArrayCheck
 %type <expr> Expression 
 %type <expr> BinaryExpr 
@@ -140,13 +142,21 @@ Declaracoes: DeclaraDefine Declaracoes { }
     | DeclaraFuncao Declaracoes { } 
     | { } ;
 
-DeclaraDefine: CONSTANT COLON ID VALUE COLON NUM_INT {
+DeclaraDefine: CONSTANT COLON ID VALUE COLON Sinal NUM_INT {
+        int valor = atoi($7.valor);
+        if ($6 == MINUS) {
+            valor *= -1;
+        }
         void *node = insertHash(globalHash, $3.valor, INT, 0);
         setKind(node, VAR);
         setIsConstant(node);
-        setAssign(node, atoi($6.valor)); 
-        setDefineIntVariable($3.valor, atoi($6.valor));
+        setAssign(node, valor); 
+        setDefineIntVariable($3.valor, valor);
     } ;
+
+Sinal : PLUS { $$ = PLUS; }
+    | MINUS { $$ = MINUS; } ;
+    | { $$ = PLUS; } ; 
 
 DeclaraVarGlobal: GLOBAL VARIABLE COLON ID TYPE COLON VarType { pointerCount = 0; } Pointers ArrayCheck {
         // printf("DeclaraVarGlobal global var\n");

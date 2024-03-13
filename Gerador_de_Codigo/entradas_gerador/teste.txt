@@ -1,0 +1,22 @@
+AST -->
+
+CONSTANT: sla2 VALUE: 56
+CONSTANT: sla1 VALUE: -10
+
+FUNCTION: main
+    RETURN_TYPE: int
+    VARIABLE: c TYPE: char*
+    VARIABLE: c2 TYPE: char*
+
+=(c,"DDominar o mundo\n");
+PRINTF("FUNCIONAAAAA %s\n", c);
+=(c2, "E depois novamente ");
+(c)++;
+PRINTF("E depois novamente ");
+PRINTF("PORRA %s\n", c);
+
+WHILE(!=(*(c),'\0'),PRINTF("%c ",*(c));(c)++);
+
+RETURN(1)
+
+END_FUNCTION

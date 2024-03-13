@@ -257,6 +257,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                         result = createResultExpression(CHAR, 1, 0);
                         strcpy(result->str, expr->string);
                         result->auxIdNode = hashNode;
+                        result->registerType = 1;
+                        result->registerNumber = hashNode->sRegister;
                         return result;
                         break;
                     }
@@ -313,7 +315,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                             // printf("%s sem sRegister\n", ((HashNode *)left->auxIdNode)->varId);
                             if (left->typeVar == CHAR && left->pointer == 1) {
                                 right->str[strlen(right->str) - 1] = '\0';
-                                strcpy(right->str, right->str + 1);
+                                char aux[strlen(right->str) - 1];
+                                strcpy(aux, right->str + 1);
+                                for (int i = 0; i < strlen(right->str); i++) {
+                                    right->str[i] = '\0';
+                                }
+                                strcpy(right->str, aux);
                                 regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
                                 result->registerType = 1;
                                 result->registerNumber = regS;
@@ -814,6 +821,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     break;
 
                 case MULTIPLY:
+                    // printf("acesso de pointer %s %d %d\n", ((HashNode*)left->auxIdNode)->varId, left->registerType, left->registerNumber);
                     if (left->typeVar == CHAR && left->pointer == 1) {
                         result = createResultExpression(CHAR, 0, *(((HashNode *)left->auxIdNode)->string));
                         int t = printLoadByte(left->registerType, left->registerNumber);
