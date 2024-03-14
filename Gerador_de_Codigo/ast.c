@@ -339,11 +339,11 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
 
                         } else {
                             if (left->typeVar == CHAR && left->pointer == 1) {
-                                right->str[strlen(right->str) - 1] = '\0';
-                                strcpy(right->str, right->str + 1);
-                                regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
+                                // right->str[strlen(right->str) - 1] = '\0';
+                                // strcpy(right->str, right->str + 1);
+                                // regS = printDeclareString(((HashNode *)left->auxIdNode)->varId, right->str);
                                 result->registerType = 1;
-                                result->registerNumber = regS;
+                                result->registerNumber = ((HashNode *)left->auxIdNode)->sRegister;
                                 strcpy(((HashNode *)left->auxIdNode)->string, right->str);
 
                             } else {
@@ -423,6 +423,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     }
                     result = createResultExpression(left->typeVar, left->pointer, left->assign + right->assign);
                     tReg = printArithmeticsOps(leftType, leftReg, rightType, rightReg, "add");
+                    if (left->typeVar == CHAR && left->pointer == 1) strcpy(result->str, ((HashNode *)left->auxIdNode)->string + right->assign);
+                    if (right->typeVar == CHAR && right->pointer == 1) strcpy(result->str, ((HashNode *)right->auxIdNode)->string + left->assign);
                     result->registerType = 0;
                     result->registerNumber = tReg;
                     return result;

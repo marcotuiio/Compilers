@@ -18,15 +18,15 @@ main:
 		c: .asciiz "DDominar o mundo\n"
 	.text
 	la $s1, c
-	add $t0, $zero, $s1
-	addi $s1, $s1, 1
+	addi $t0, $zero, 1
+	add $t1, $s1, $t0
 	.data
-		string_1117537984: .asciiz "porraaaa "
+		string_2003634496: .asciiz "porraaaa "
 	.text
-	la $a0, string_1117537984
+	la $a0, string_2003634496
 	addi $v0, $zero, 4
 	syscall
-	move $a0, $s1
+	move $a0, $t1
 	addi $v0, $zero, 4
 	syscall
 	.data
@@ -35,16 +35,16 @@ main:
 	la $a0, string_55271
 	addi $v0, $zero, 4
 	syscall
-	j while_teste_1117527952
-	while_corpo_1117527952:
-	lb $t1, 0($s1)
+	j while_teste_2003644768
+	while_corpo_2003644768:
+	lb $t0, 0($s1)
 	.data
-		string_1117537280: .asciiz ""
+		string_2003635200: .asciiz ""
 	.text
-	la $a0, string_1117537280
+	la $a0, string_2003635200
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $t1
+	add $a0, $zero, $t0
 	addi $v0, $zero, 11
 	syscall
 	.data
@@ -53,17 +53,17 @@ main:
 	la $a0, string_52352
 	addi $v0, $zero, 4
 	syscall
-	add $t1, $zero, $s1
+	add $t0, $zero, $s1
 	addi $s1, $s1, 1
-	while_teste_1117527952:
-	lb $t2, 0($s1)
-	addi $t3, $zero, 0
-	sne $t4, $t2, $t3
-	bnez $t4, while_corpo_1117527952
+	while_teste_2003644768:
+	lb $t1, 0($s1)
+	addi $t2, $zero, 0
+	sne $t3, $t1, $t2
+	bnez $t3, while_corpo_2003644768
 	.data
-		string_1117521904: .asciiz "antes c = "
+		string_2003650816: .asciiz "antes c = "
 	.text
-	la $a0, string_1117521904
+	la $a0, string_2003650816
 	addi $v0, $zero, 4
 	syscall
 	move $a0, $s1
@@ -77,9 +77,9 @@ main:
 	syscall
 	addi $s1, $s1, 1
 	.data
-		string_1117521296: .asciiz "depois c = "
+		string_2003651424: .asciiz "depois c = "
 	.text
-	la $a0, string_1117521296
+	la $a0, string_2003651424
 	addi $v0, $zero, 4
 	syscall
 	move $a0, $s1
@@ -92,9 +92,9 @@ main:
 	addi $v0, $zero, 4
 	syscall
 	.data
-		string_1117520992: .asciiz "c2 = "
+		string_2003651728: .asciiz "c2 = "
 	.text
-	la $a0, string_1117520992
+	la $a0, string_2003651728
 	addi $v0, $zero, 4
 	syscall
 	move $a0, $s0
@@ -106,8 +106,8 @@ main:
 	la $a0, string_43439
 	addi $v0, $zero, 4
 	syscall
-	addi $t2, $zero, 0
-	add $v0, $zero, $t2
+	addi $t1, $zero, 0
+	add $v0, $zero, $t1
 
 	addi $v0, $zero, 10
 	syscall

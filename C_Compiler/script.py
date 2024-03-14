@@ -3,7 +3,7 @@ import subprocess
 import datetime
 
 BED = '/home/marcotuiio/Compilers/C_Compiler/testes_semantico'
-BSD = '/home/marcotuiio/Compilers/C_Compiler/saidas_semantico'
+BSD = '/home/marcotuiio/Compilers/C_Compiler/aux'
 OFICIAL = '/home/marcotuiio/Compilers/C_Compiler/saidas_padrao'
 EXEC = 'mtcc'
 src = '/home/marcotuiio/Compilers/C_Compiler'

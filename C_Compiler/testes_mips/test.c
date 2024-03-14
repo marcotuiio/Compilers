@@ -351,8 +351,10 @@ int main() {
     char *c;
     char *c2 = "E depois novamente ";
     c = "DDominar o mundo\n";
-    c++;
-    printf("porraaaa %s\n", c);
+    // c++;
+    // c=c+1; // problema!!!!
+    printf("porraaaa %s\n", c+1);
+    // printf("porraaaa %s\n", c+1);
 
     while (*c != '\0') {
         printf("%c ", *c);
