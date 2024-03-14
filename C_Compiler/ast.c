@@ -1422,7 +1422,8 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                     // PRECISARIA TERMINAR AQUI PARA PERCORRER VETORES DECLARADOS COMO PONTEIROS
                     // if (auxIdNode->pointer > 0) auxIdNode->qntdDimen = auxIdNode->pointer;
                     // printf("esperadas %d %p\n", auxIdNode->qntdDimen, dimenEsperada);
-
+                    // int index = 1;
+                    int mipsIndex = printConstant(mipsFile, 1);
                     while (dimenRecebidas) {
                         qntdDimenRecebidas++;
                         // printf("\n\nline column dimen %d %d\n\n", dimenRecebidas->dimenAuxToken->line, dimenRecebidas->dimenAuxToken->column);
@@ -1455,16 +1456,20 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
                                 textBefore = 1;
                             }
                         }
+                        // index = index * dimenResult->assign;
+                        // printf("index %p %d\n", dimenResult, dimenResult->assign);
+                        mipsIndex = printArithmeticsOps(mipsFile, 0, mipsIndex, dimenResult->registerType, dimenResult->registerNumber, "mul");
 
                         dimenEsperada = dimenEsperada->next;
                         dimenRecebidas = dimenRecebidas->next;
+
                         // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
                         // printf("Indice do vetor %s [%d] || reg $ %c %d\n", ((HashNode*)left->auxIdNode)->varId, dimenResult->assign, dimenResult->registerType == 0 ? 't' : 's', dimenResult->registerNumber);
                     }
 
                     HashNode *vec = (HashNode *)left->auxIdNode;
                     // printf("posiccc %s %d %d (%d %d)\n", vec->varId, vec->sRegister, vec->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
-                    posic = printAccessIndexArray(mipsFile, 1, vec->sRegister, vec->varId, dimenResult->registerType, dimenResult->registerNumber, vec->isGlobal);
+                    posic = printAccessIndexArray(mipsFile, 1, vec->sRegister, vec->varId, 0, mipsIndex, vec->isGlobal);
                 }
 
                 result = createResultExpression(auxIdNode->typeVar, 0, 0);
@@ -1591,281 +1596,295 @@ void traverseASTCommand(Command *command, void **globalHash, void **localHash, P
     // printf(">> AST Comando %d %p %d\n", command ? command->type : -1, command, command->visited);
     if (!command || command->visited) return;
     command->visited = 1;
+    Command *t = NULL;
 
     // printf("traverseASTCommand %d %p %p\n",command->type, command, command->next);
     // Para cada comando percorrer seus blocos de comandos e expressoes relacionadas recursivamente
     // Atencao as expressoes condicionais das estruturas, qua NAO PODEM ter expressoes de retorno tipo void
-    if (command->type == LISTA_EXP_COMANDO) {
-        evalExpression(command->condition, globalHash, localHash, program);
-        traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
-    }
 
-    if (command->type == IF || command->type == ELSE) {
-        ResultExpression *ifResult = NULL;
-        ifResult = evalExpression(command->condition, globalHash, localHash, program);
-        // printf("ifs %p\n", command);
+    switch (command->type) {
+        case LISTA_EXP_COMANDO:
+            evalExpression(command->condition, globalHash, localHash, program);
+            traverseASTCommand(command->next, globalHash, localHash, program, currentFunction);
+            break;
 
-        if (ifResult->typeVar == VOID && ifResult->pointer == 0) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", ifResult->auxLine, ifResult->auxColumn);
-            printLineError(ifResult->auxLine, ifResult->auxColumn);
-            freeAST(program);
-            deleteMipsFileOnError(mipsFile, mipsPath);
-            deleteAuxFile();
-            exit(0);
-        }
+        case IF:
+        case ELSE:
+            ResultExpression *ifResult = NULL;
+            ifResult = evalExpression(command->condition, globalHash, localHash, program);
+            // printf("ifs %p\n", command);
 
-        int ifLine = abs((int)((intptr_t)command->then));
-        int elseLine = -1;
-        if (command->elseStatement) {
-            elseLine = abs((int)((intptr_t)command->elseStatement));
-        } else {
-            elseLine = ifLine;
-        }
-        printIf(mipsFile, ifResult->registerType, ifResult->registerNumber, elseLine);
-        Command *t = command->then;
-        while (t) {
-            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
-            t = t->next;
-        }
-        printJump(mipsFile, "exit_if_", ifLine);
-        printLabel(mipsFile, "else_", elseLine);
-        Command *t2 = command->elseStatement;
-        while (t2) {
-            traverseASTCommand(t2, globalHash, localHash, program, currentFunction);
-            t2 = t2->next;
-        }
-        printLabel(mipsFile, "exit_if_", ifLine);
-    }
+            if (ifResult->typeVar == VOID && ifResult->pointer == 0) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", ifResult->auxLine, ifResult->auxColumn);
+                printLineError(ifResult->auxLine, ifResult->auxColumn);
+                freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
+                deleteAuxFile();
+                exit(0);
+            }
 
-    if (command->type == WHILE || command->type == DO) {
-        int whileLine = abs((int)((intptr_t)command));
-        if (command->type == WHILE)
-            printJump(mipsFile, "while_teste_", whileLine);
-        printLabel(mipsFile, "while_corpo_", whileLine);
-        Command *t = command->then;
-        while (t) {
-            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
-            t = t->next;
-        }
-        printLabel(mipsFile, "while_teste_", whileLine);
-        ResultExpression *whileResult = NULL;
-        whileResult = evalExpression(command->condition, globalHash, localHash, program);
-        if (whileResult->typeVar == VOID && whileResult->pointer == 0) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", whileResult->auxLine, whileResult->auxColumn);
-            printLineError(whileResult->auxLine, whileResult->auxColumn);
-            freeAST(program);
-            deleteMipsFileOnError(mipsFile, mipsPath);
-            deleteAuxFile();
-            exit(0);
-        }
-        printWhile(mipsFile, whileResult->registerType, whileResult->registerNumber, whileLine);
-    }
+            int ifLine = abs((int)((intptr_t)command->then));
+            int elseLine = -1;
+            if (command->elseStatement) {
+                elseLine = abs((int)((intptr_t)command->elseStatement));
+            } else {
+                elseLine = ifLine;
+            }
+            printIf(mipsFile, ifResult->registerType, ifResult->registerNumber, elseLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            printJump(mipsFile, "exit_if_", ifLine);
+            printLabel(mipsFile, "else_", elseLine);
+            Command *t2 = command->elseStatement;
+            while (t2) {
+                traverseASTCommand(t2, globalHash, localHash, program, currentFunction);
+                t2 = t2->next;
+            }
+            printLabel(mipsFile, "exit_if_", ifLine);
+            break;
 
-    if (command->type == FOR) {
-        int forLine = abs((int)((intptr_t)command));
-        evalExpression(command->init, globalHash, localHash, program);
-        printJump(mipsFile, "for_teste_", forLine);
-        printLabel(mipsFile, "for_corpo_", forLine);
-        Command *t = command->then;
-        while (t) {
-            traverseASTCommand(t, globalHash, localHash, program, currentFunction);
-            t = t->next;
-        }
-        evalExpression(command->increment, globalHash, localHash, program);
-        printLabel(mipsFile, "for_teste_", forLine);
-        ResultExpression *forResult = NULL;
-        forResult = evalExpression(command->condition, globalHash, localHash, program);
-        if (forResult->typeVar == VOID && forResult->pointer == 0) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
-            printLineError(forResult->auxLine, forResult->auxColumn);
-            freeAST(program);
-            deleteMipsFileOnError(mipsFile, mipsPath);
-            deleteAuxFile();
-            exit(0);
-        }
-        printFor(mipsFile, forResult->registerType, forResult->registerNumber, forLine);
-    }
+        case WHILE:
+        case DO:
+            int whileLine = abs((int)((intptr_t)command));
+            if (command->type == WHILE)
+                printJump(mipsFile, "while_teste_", whileLine);
+            printLabel(mipsFile, "while_corpo_", whileLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            printLabel(mipsFile, "while_teste_", whileLine);
+            ResultExpression *whileResult = NULL;
+            whileResult = evalExpression(command->condition, globalHash, localHash, program);
+            if (whileResult->typeVar == VOID && whileResult->pointer == 0) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", whileResult->auxLine, whileResult->auxColumn);
+                printLineError(whileResult->auxLine, whileResult->auxColumn);
+                freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
+                deleteAuxFile();
+                exit(0);
+            }
+            printWhile(mipsFile, whileResult->registerType, whileResult->registerNumber, whileLine);
+            break;
 
-    if (command->type == PRINTF) {
-        if (command->auxPrint) {
-            Expression *next = command->auxPrint;
-            ResultExpression *toPrint = NULL;
+        case FOR:
+            int forLine = abs((int)((intptr_t)command));
+            evalExpression(command->init, globalHash, localHash, program);
+            printJump(mipsFile, "for_teste_", forLine);
+            printLabel(mipsFile, "for_corpo_", forLine);
+            t = command->then;
+            while (t) {
+                traverseASTCommand(t, globalHash, localHash, program, currentFunction);
+                t = t->next;
+            }
+            evalExpression(command->increment, globalHash, localHash, program);
+            printLabel(mipsFile, "for_teste_", forLine);
+            ResultExpression *forResult = NULL;
+            forResult = evalExpression(command->condition, globalHash, localHash, program);
+            if (forResult->typeVar == VOID && forResult->pointer == 0) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: void value not ignored as it ought to be", forResult->auxLine, forResult->auxColumn);
+                printLineError(forResult->auxLine, forResult->auxColumn);
+                freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
+                deleteAuxFile();
+                exit(0);
+            }
+            printFor(mipsFile, forResult->registerType, forResult->registerNumber, forLine);
+            break;
 
-            // printf("1.String original: %s\n", command->string);
-            char *restOfString = NULL;
+        case PRINTF:
+            if (command->auxPrint) {
+                Expression *next = command->auxPrint;
+                ResultExpression *toPrint = NULL;
 
-            char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
-            strcpy(stringWithoutFormat, command->string + 1);  // copy the 7 string without the "
-            // while (next) {
-            //     printf("expr inprint %p %d\n", next, next->type);
-            //     next = next->nextExpr;
-            // }
-            // exit(0);
-            // If we got to this block there is for sure at least one %d in this print
-            while (next) {
-                toPrint = evalExpression(next, globalHash, localHash, program);
-                // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
-                next = next->nextExpr;
-                if (toPrint) {
-                    if (toPrint->auxIdNode) {
-                        if (((HashNode *)toPrint->auxIdNode)->kind == VECTOR) {
-                            toPrint->registerNumber = printLoadFromArray(mipsFile, toPrint->registerNumber);
-                            toPrint->registerType = 0;
+                // printf("1.String original: %s\n", command->string);
+                char *restOfString = NULL;
+
+                char *stringWithoutFormat = calloc(strlen(command->string) + 1, sizeof(char));
+                strcpy(stringWithoutFormat, command->string + 1);  // copy the 7 string without the "
+                // while (next) {
+                //     printf("expr inprint %p %d\n", next, next->type);
+                //     next = next->nextExpr;
+                // }
+                // exit(0);
+                // If we got to this block there is for sure at least one %d in this print
+                while (next) {
+                    toPrint = evalExpression(next, globalHash, localHash, program);
+                    // printf("Return aux print: reg %d %d value %d var %s %d \n", toPrint->registerType, toPrint->registerNumber, toPrint->assign, ((HashNode*)toPrint->auxIdNode)->varId, ((HashNode*)toPrint->auxIdNode)->kind);
+                    next = next->nextExpr;
+                    if (toPrint) {
+                        if (toPrint->auxIdNode) {
+                            if (((HashNode *)toPrint->auxIdNode)->kind == VECTOR) {
+                                toPrint->registerNumber = printLoadFromArray(mipsFile, toPrint->registerNumber);
+                                toPrint->registerType = 0;
+                            }
                         }
                     }
-                }
 
-                int printing = 0;
-                char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
-                if (formatSpecifier) {
-                    printing = INT;
-                } else {
-                    formatSpecifier = strstr(stringWithoutFormat, "%s");
+                    int printing = 0;
+                    char *formatSpecifier = strstr(stringWithoutFormat, "%d");  // pointer to the first occurrence of %d
                     if (formatSpecifier) {
-                        printing = STRING;
+                        printing = INT;
                     } else {
-                        formatSpecifier = strstr(stringWithoutFormat, "%c");
+                        formatSpecifier = strstr(stringWithoutFormat, "%s");
                         if (formatSpecifier) {
-                            printing = CHAR;
+                            printing = STRING;
+                        } else {
+                            formatSpecifier = strstr(stringWithoutFormat, "%c");
+                            if (formatSpecifier) {
+                                printing = CHAR;
+                            }
                         }
                     }
+                    // printf("before %s\n", stringWithoutFormat);
+                    // printf("2.formatSpecifier %s\n", formatSpecifier);
+                    if (restOfString) free(restOfString);
+                    restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
+                    strcpy(restOfString, formatSpecifier + 2);
+                    restOfString[strlen(restOfString)] = '\0';  // remove the " and null terminate
+                    // printf("3.rest %s\n", restOfString);
+                    if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
+                    printString(mipsFile, stringWithoutFormat, abs((int)((intptr_t)toPrint)));
+                    if (printing == INT)
+                        printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == CHAR)
+                        printCharacter(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                    else if (printing == STRING)
+                        printStringVar(mipsFile, toPrint->registerType, toPrint->registerNumber);
+
+                    free(stringWithoutFormat);
+                    stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
+                    strcpy(stringWithoutFormat, restOfString);
                 }
-                // printf("before %s\n", stringWithoutFormat);
-                // printf("2.formatSpecifier %s\n", formatSpecifier);
+                if (strlen(restOfString) > 0) {
+                    restOfString[strlen(restOfString) - 1] = '\0';
+                    // printf("4.rest %s\n", restOfString);
+                    printString(mipsFile, restOfString, rand() % 67282);
+                }
                 if (restOfString) free(restOfString);
-                restOfString = calloc(strlen(formatSpecifier) + 1, sizeof(char));
-                strcpy(restOfString, formatSpecifier + 2);
-                restOfString[strlen(restOfString)] = '\0';  // remove the " and null terminate
-                // printf("3.rest %s\n", restOfString);
-                if (formatSpecifier != NULL) *formatSpecifier = '\0';  // Null-terminate the string at the format specifier
-                printString(mipsFile, stringWithoutFormat, abs((int)((intptr_t)toPrint)));
-                if (printing == INT)
-                    printInteger(mipsFile, toPrint->registerType, toPrint->registerNumber);
-                else if (printing == CHAR)
-                    printCharacter(mipsFile, toPrint->registerType, toPrint->registerNumber);
-                else if (printing == STRING)
-                    printStringVar(mipsFile, toPrint->registerType, toPrint->registerNumber);
+                if (stringWithoutFormat) free(stringWithoutFormat);
 
-                free(stringWithoutFormat);
-                stringWithoutFormat = calloc(strlen(restOfString) + 1, sizeof(char));
-                strcpy(stringWithoutFormat, restOfString);
+            } else {
+                // remove the " " from the string
+                // printf("2.String original %s\n", command->string);
+                char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
+                strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
+                fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
+                printString(mipsFile, fixedString, abs((int)((intptr_t)command->string)));
+                free(fixedString);
             }
-            if (strlen(restOfString) > 0) {
-                restOfString[strlen(restOfString) - 1] = '\0';
-                // printf("4.rest %s\n", restOfString);
-                printString(mipsFile, restOfString, rand() % 67282);
+            break;
+
+        case SCANF:
+            HashNode *node = getIdentifierNode(localHash, command->identifier);
+            if (!node) node = getIdentifierNode(globalHash, command->identifier);
+            if (!node) {
+                if (textBefore) printf("\n");
+                printf("error:semantic:%d:%d: '%s' undeclared", command->idLin, command->idCol, command->identifier);
+                printLineError(command->idLin, command->idCol);
+                freeAST(program);
+                deleteMipsFileOnError(mipsFile, mipsPath);
+                deleteAuxFile();
+                exit(0);
             }
-            if (restOfString) free(restOfString);
-            if (stringWithoutFormat) free(stringWithoutFormat);
+            int sReg = printScanInt(mipsFile, node->sRegister, node->varId, node->isGlobal);
+            node->sRegister = sReg;
+            break;
 
-        } else {
-            // remove the " " from the string
-            // printf("2.String original %s\n", command->string);
-            char *fixedString = calloc(strlen(command->string) - 1, sizeof(char));
-            strncpy(fixedString, command->string + 1, strlen(command->string) - 2);
-            fixedString[strlen(command->string) - 2] = '\0';  // Null-terminate the string
-            printString(mipsFile, fixedString, abs((int)((intptr_t)command->string)));
-            free(fixedString);
-        }
-    }
+        case RETURN:
+            // printf("\nreturn %p %d\n", command->condition, command->condition->type);
+            functionWithNoReturn = 1;
+            if (currentFunction->returnType == VOID && currentFunction->pointer == 0) {
+                if (command->condition) {
+                    HashNode *auxFunc = getIdentifierNode(globalHash, currentFunction->name);
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: return with a value, in function returning void", auxFunc->line, auxFunc->column);
+                    printLineError(auxFunc->line, auxFunc->column);
+                    freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(0);
+                }
+                if (strcmp(currentFunction->name, "main")) {  // doesnot print jr $ra for main
+                    loadFromStack(mipsFile);
+                    loadTRegisters(mipsFile, tRegsAlive);
+                    // free(tRegsAlive);
+                    printReturn(mipsFile);
+                }
+            } else {
+                if (!command->condition) {
+                    if (textBefore) printf("\n");
+                    printf("error:semantic:%d:%d: return with no value, in function returning non-void", command->auxToken->line, command->auxToken->column);
+                    printLineError(command->auxToken->line, command->auxToken->column);
+                    freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(0);
+                }
+            }
+            if (command->condition) {
+                ResultExpression *returnAux = evalExpression(command->condition, globalHash, localHash, program);
+                int auxReturnType = returnAux->typeVar;
+                if (returnAux->typeVar == NUM_INT || returnAux->typeVar == INT)
+                    auxReturnType = INT;
+                else if (returnAux->typeVar == CHARACTER || returnAux->typeVar == CHAR)
+                    auxReturnType = CHAR;
+                if (auxReturnType != currentFunction->returnType) {
+                    if (textBefore) printf("\n");
+                    char *type1 = getExactType(returnAux->typeVar, returnAux->pointer);
+                    char *type2 = getExactType(currentFunction->returnType, currentFunction->pointer);
+                    printf("error:semantic:%d:%d: incompatible types when returning type '%s' but '%s' was expected", command->auxToken->line, command->auxToken->column, type1, type2);
+                    free(type1);
+                    free(type2);
+                    printLineError(command->auxToken->line, command->auxToken->column);
+                    freeAST(program);
+                    deleteMipsFileOnError(mipsFile, mipsPath);
+                    deleteAuxFile();
+                    exit(0);
+                }
+                // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
+                if (returnAux->auxIdNode) {
+                    // printf("\n>>>>> varId %s %d\n", ((HashNode*)returnAux->auxIdNode)->varId, ((HashNode*)returnAux->auxIdNode)->sRegister);
+                    if (((HashNode *)returnAux->auxIdNode)->sRegister == -1) {
+                        int null = printConstant(mipsFile, 0);
+                        int s = printAssignment(mipsFile, 0, null);
+                        setSRegisterInHash((HashNode *)returnAux->auxIdNode, s);
+                        returnAux->registerType = 1;
+                        returnAux->registerNumber = s;
+                    }
+                }
+                printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
+                if (strcmp(currentFunction->name, "main")) {
+                    loadFromStack(mipsFile);
+                    loadTRegisters(mipsFile, tRegsAlive);
+                    // free(tRegsAlive);
+                    printReturn(mipsFile);
+                }  // doesnot print jr $ra for main
+            }
+            break;
 
-    if (command->type == SCANF) {
-        HashNode *node = getIdentifierNode(localHash, command->identifier);
-        if (!node) node = getIdentifierNode(globalHash, command->identifier);
-        if (!node) {
-            if (textBefore) printf("\n");
-            printf("error:semantic:%d:%d: '%s' undeclared", command->idLin, command->idCol, command->identifier);
-            printLineError(command->idLin, command->idCol);
-            freeAST(program);
+        case EXIT:
+            if (command->condition) {
+                ResultExpression *status = evalExpression(command->condition, globalHash, localHash, program);
+                fprintf(mipsFile, "\t# exit with status %d", status->assign);
+                printExit(mipsFile);
+            } else {
+                printExit(mipsFile);
+            }
+            break;
+
+        default:
+            printf("Command type not suported yet :-p %d\n", command->type);
             deleteMipsFileOnError(mipsFile, mipsPath);
             deleteAuxFile();
             exit(0);
-        }
-        int sReg = printScanInt(mipsFile, node->sRegister, node->varId, node->isGlobal);
-        node->sRegister = sReg;
-    }
-
-    if (command->type == RETURN) {
-        // printf("\nreturn %p %d\n", command->condition, command->condition->type);
-        functionWithNoReturn = 1;
-        if (currentFunction->returnType == VOID && currentFunction->pointer == 0) {
-            if (command->condition) {
-                HashNode *auxFunc = getIdentifierNode(globalHash, currentFunction->name);
-                if (textBefore) printf("\n");
-                printf("error:semantic:%d:%d: return with a value, in function returning void", auxFunc->line, auxFunc->column);
-                printLineError(auxFunc->line, auxFunc->column);
-                freeAST(program);
-                deleteMipsFileOnError(mipsFile, mipsPath);
-                deleteAuxFile();
-                exit(0);
-            }
-            if (strcmp(currentFunction->name, "main")) {  // doesnot print jr $ra for main
-                loadFromStack(mipsFile);
-                loadTRegisters(mipsFile, tRegsAlive);
-                // free(tRegsAlive);
-                printReturn(mipsFile);
-            }
-        } else {
-            if (!command->condition) {
-                if (textBefore) printf("\n");
-                printf("error:semantic:%d:%d: return with no value, in function returning non-void", command->auxToken->line, command->auxToken->column);
-                printLineError(command->auxToken->line, command->auxToken->column);
-                freeAST(program);
-                deleteMipsFileOnError(mipsFile, mipsPath);
-                deleteAuxFile();
-                exit(0);
-            }
-        }
-        if (command->condition) {
-            ResultExpression *returnAux = evalExpression(command->condition, globalHash, localHash, program);
-            int auxReturnType = returnAux->typeVar;
-            if (returnAux->typeVar == NUM_INT || returnAux->typeVar == INT)
-                auxReturnType = INT;
-            else if (returnAux->typeVar == CHARACTER || returnAux->typeVar == CHAR)
-                auxReturnType = CHAR;
-            if (auxReturnType != currentFunction->returnType) {
-                if (textBefore) printf("\n");
-                char *type1 = getExactType(returnAux->typeVar, returnAux->pointer);
-                char *type2 = getExactType(currentFunction->returnType, currentFunction->pointer);
-                printf("error:semantic:%d:%d: incompatible types when returning type '%s' but '%s' was expected", command->auxToken->line, command->auxToken->column, type1, type2);
-                free(type1);
-                free(type2);
-                printLineError(command->auxToken->line, command->auxToken->column);
-                freeAST(program);
-                deleteMipsFileOnError(mipsFile, mipsPath);
-                deleteAuxFile();
-                exit(0);
-            }
-            // printf("#returning of %s value %d %d %d ($ %d %d)\n", currentFunction->name, returnAux->typeVar, returnAux->pointer, returnAux->assign, returnAux->registerType, returnAux->registerNumber);
-            if (returnAux->auxIdNode) {
-                // printf("\n>>>>> varId %s %d\n", ((HashNode*)returnAux->auxIdNode)->varId, ((HashNode*)returnAux->auxIdNode)->sRegister);
-                if (((HashNode *)returnAux->auxIdNode)->sRegister == -1) {
-                    int null = printConstant(mipsFile, 0);
-                    int s = printAssignment(mipsFile, 0, null);
-                    setSRegisterInHash((HashNode *)returnAux->auxIdNode, s);
-                    returnAux->registerType = 1;
-                    returnAux->registerNumber = s;
-                }
-            }
-            printReturnToV0(mipsFile, returnAux->registerType, returnAux->registerNumber);
-            if (strcmp(currentFunction->name, "main")) {
-                loadFromStack(mipsFile);
-                loadTRegisters(mipsFile, tRegsAlive);
-                // free(tRegsAlive);
-                printReturn(mipsFile);
-            }  // doesnot print jr $ra for main
-        }
-    }
-
-    if (command->type == EXIT) {
-        if (command->condition) {
-            ResultExpression *status = evalExpression(command->condition, globalHash, localHash, program);
-            fprintf(mipsFile, "\t# exit with status %d", status->assign);
-            printExit(mipsFile);
-        }
     }
 }
 

@@ -11,9 +11,8 @@ FUNCTION: main
 =(c,"DDominar o mundo\n");
 PRINTF("FUNCIONAAAAA %s\n", c);
 =(c2, "E depois novamente ");
-(c)++;
 PRINTF("E depois novamente ");
-PRINTF("PORRA %s\n", c);
+PRINTF("PORRA %s\n", +(c,1));
 
 WHILE(!=(*(c),'\0'),PRINTF("%c ",*(c));(c)++);
 

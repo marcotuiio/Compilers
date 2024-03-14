@@ -913,10 +913,12 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             Dimension *dimenEsperada = auxIdNode->dimensions;
             ResultExpression *dimenResult = NULL;
 
+            int mipsIndex = printConstant(1);
             while (dimenRecebidas) {
                 qntdDimenRecebidas++;
 
                 dimenResult = evalExpression(dimenRecebidas->exp, globalHash, localHash, program);
+                mipsIndex = printArithmeticsOps(0, mipsIndex, dimenResult->registerType, dimenResult->registerNumber, "mul");
                 dimenEsperada = dimenEsperada->next;
                 dimenRecebidas = dimenRecebidas->next;
                 // printf("Array no reg $ s %d\n", ((HashNode*)left->auxIdNode)->sRegister);
@@ -924,7 +926,7 @@ ResultExpression *evalExpression(Expression *expr, void **globalHash, void **loc
             }
 
             // printf(" -----| posiccc %s %d %d (%d %d)\n", auxIdNode->varId, auxIdNode->sRegister, auxIdNode->isGlobal, dimenResult->registerType, dimenResult->registerNumber);
-            posic = printAccessIndexArray(1, auxIdNode->sRegister, auxIdNode->varId, dimenResult->registerType, dimenResult->registerNumber, auxIdNode->isGlobal);
+            posic = printAccessIndexArray(1, auxIdNode->sRegister, auxIdNode->varId, 0, mipsIndex, auxIdNode->isGlobal);
             result = createResultExpression(auxIdNode->typeVar, 0, 0);
             result->registerType = 0;
             result->registerNumber = posic;

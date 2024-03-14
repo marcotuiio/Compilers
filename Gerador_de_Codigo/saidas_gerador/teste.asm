@@ -15,9 +15,9 @@ main:
 	.text
 	la $s0, c
 	.data
-		string_78438432: .asciiz "FUNCIONAAAAA "
+		string_1066562784: .asciiz "FUNCIONAAAAA "
 	.text
-	la $a0, string_78438432
+	la $a0, string_1066562784
 	addi $v0, $zero, 4
 	syscall
 	move $a0, $s0
@@ -33,21 +33,21 @@ main:
 		c2: .asciiz "E depois novamente "
 	.text
 	la $s1, c2
-	add $t0, $zero, $s0
-	addi $s0, $s0, 1
 	.data
-		string_78418224: .asciiz "E depois novamente "
+		string_1066456064: .asciiz "E depois novamente "
 	.text
-	la $a0, string_78418224
+	la $a0, string_1066456064
 	addi $v0, $zero, 4
 	syscall
+	addi $t0, $zero, 1
+	add $t1, $s0, $t0
 	.data
-		string_78440880: .asciiz "PORRA "
+		string_1066560832: .asciiz "PORRA "
 	.text
-	la $a0, string_78440880
+	la $a0, string_1066560832
 	addi $v0, $zero, 4
 	syscall
-	move $a0, $s0
+	move $a0, $t1
 	addi $v0, $zero, 4
 	syscall
 	.data
@@ -56,16 +56,16 @@ main:
 	la $a0, string_52352
 	addi $v0, $zero, 4
 	syscall
-	j while_teste_78431280
-	while_corpo_78431280:
-	lb $t1, 0($s0)
+	j while_teste_1066443872
+	while_corpo_1066443872:
+	lb $t0, 0($s0)
 	.data
-		string_78441824: .asciiz ""
+		string_1066560128: .asciiz ""
 	.text
-	la $a0, string_78441824
+	la $a0, string_1066560128
 	addi $v0, $zero, 4
 	syscall
-	add $a0, $zero, $t1
+	add $a0, $zero, $t0
 	addi $v0, $zero, 11
 	syscall
 	.data
@@ -74,15 +74,15 @@ main:
 	la $a0, string_46469
 	addi $v0, $zero, 4
 	syscall
-	add $t1, $zero, $s0
+	add $t0, $zero, $s0
 	addi $s0, $s0, 1
-	while_teste_78431280:
-	lb $t2, 0($s0)
-	addi $t3, $zero, 0
-	sne $t4, $t2, $t3
-	bnez $t4, while_corpo_78431280
-	addi $t2, $zero, 1
-	add $v0, $zero, $t2
+	while_teste_1066443872:
+	lb $t1, 0($s0)
+	addi $t2, $zero, 0
+	sne $t3, $t1, $t2
+	bnez $t3, while_corpo_1066443872
+	addi $t1, $zero, 1
+	add $v0, $zero, $t1
 
 	addi $v0, $zero, 10
 	syscall
