@@ -32,7 +32,7 @@ quicksort:
 	addi $t0, $zero, 1
 	add $s2, $zero, $t0
 	sle $t0, $s0, $s1
-	beqz $t0, else_150894880
+	beqz $t0, else_503167264
 
 	lw $a0, 0($sp)
 	lw $a1, 4($sp)
@@ -50,9 +50,9 @@ quicksort:
 	addi $sp, $sp, 52
 
 	jr $ra
-	j exit_if_150894880
-	else_150894880:
-	exit_if_150894880:
+	j exit_if_503167264
+	else_503167264:
+	exit_if_503167264:
 	addi $t0, $zero, 1
 	sub $t1, $s1, $t0
 	add $s3, $zero, $t1
@@ -64,13 +64,13 @@ quicksort:
 	add $t2, $t2, $t0
 	lw $t0, 0($t2)
 	add $s5, $zero, $t0
-	j while_teste_150825568
-	while_corpo_150825568:
-	while_corpo_150846304:
+	j while_teste_503097952
+	while_corpo_503097952:
+	while_corpo_503118688:
 	addi $t0, $zero, 1
 	add $t1, $s3, $t0
 	add $s3, $zero, $t1
-	while_teste_150846304:
+	while_teste_503118688:
 	addi $t0, $zero, 1
 	mul $t1, $t0, $s3
 	la $t0, a
@@ -78,12 +78,12 @@ quicksort:
 	add $t2, $t2, $t0
 	lw $t0, 0($t2)
 	slt $t1, $t0, $s5
-	bnez $t1, while_corpo_150846304
-	while_corpo_150846400:
+	bnez $t1, while_corpo_503118688
+	while_corpo_503118784:
 	addi $t0, $zero, 1
 	sub $t1, $s4, $t0
 	add $s4, $zero, $t1
-	while_teste_150846400:
+	while_teste_503118784:
 	addi $t0, $zero, 1
 	mul $t1, $t0, $s4
 	la $t0, a
@@ -91,13 +91,13 @@ quicksort:
 	add $t2, $t2, $t0
 	lw $t0, 0($t2)
 	sgt $t1, $t0, $s5
-	bnez $t1, while_corpo_150846400
+	bnez $t1, while_corpo_503118784
 	sge $t0, $s3, $s4
-	beqz $t0, else_150846624
+	beqz $t0, else_503119008
 	addi $t0, $zero, 0
 	add $s2, $zero, $t0
-	j exit_if_150859328
-	else_150846624:
+	j exit_if_503131712
+	else_503119008:
 	addi $t0, $zero, 1
 	mul $t1, $t0, $s3
 	la $t0, a
@@ -123,9 +123,9 @@ quicksort:
 	sll $t2, $t1, 2
 	add $t2, $t2, $t0
 	sw $s6, 0($t2)
-	exit_if_150859328:
-	while_teste_150825568:
-	bnez $s2, while_corpo_150825568
+	exit_if_503131712:
+	while_teste_503097952:
+	bnez $s2, while_corpo_503097952
 	addi $t0, $zero, 1
 	mul $t1, $t0, $s3
 	la $t0, a
@@ -185,19 +185,19 @@ main:
 	addi $t0, $zero, 0
 	la $t1, max
 	sw $t0, 0($t1)
-	j while_teste_150686960
-	while_corpo_150686960:
+	j while_teste_502959344
+	while_corpo_502959344:
 	.data
-		string_150718912: .asciiz "Entre com o tamanho do vetor (valor entre 1 e 100): "
+		string_502991296: .asciiz "Entre com o tamanho do vetor (valor entre 1 e 100): "
 	.text
-	la $a0, string_150718912
+	la $a0, string_502991296
 	addi $v0, $zero, 4
 	syscall
 	addi $v0, $zero, 5
 	syscall
 	la $t0, max
 	sw $v0, 0($t0)
-	while_teste_150686960:
+	while_teste_502959344:
 	la $t0, max
 	lw $t1, 0($t0)
 	addi $t0, $zero, 0
@@ -207,21 +207,21 @@ main:
 	addi $t0, $zero, 100
 	sgt $t3, $t1, $t0
 	addi $t0, $zero, 1
-	beq $t0, $t2, t_logical_or_150719872
-	beq $t0, $t3, t_logical_or_150719872
+	beq $t0, $t2, t_logical_or_502992256
+	beq $t0, $t3, t_logical_or_502992256
 	addi $t0, $zero, 0
-	t_logical_or_150719872:
-	bnez $t0, while_corpo_150686960
+	t_logical_or_502992256:
+	bnez $t0, while_corpo_502959344
 	addi $t0, $zero, 0
 	add $s1, $zero, $t0
-	j for_teste_150687056
-	for_corpo_150687056:
+	j for_teste_502959440
+	for_corpo_502959440:
 	addi $t0, $zero, 1
 	add $t1, $s1, $t0
 	.data
-		string_150658128: .asciiz "Entre com o valor da posicao "
+		string_502930512: .asciiz "Entre com o valor da posicao "
 	.text
-	la $a0, string_150658128
+	la $a0, string_502930512
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t1
@@ -244,11 +244,11 @@ main:
 	sw $s2, 0($t2)
 	add $t0, $zero, $s1
 	addi $s1, $s1, 1
-	for_teste_150687056:
+	for_teste_502959440:
 	la $t1, max
 	lw $t2, 0($t1)
 	slt $t1, $s1, $t2
-	bnez $t1, for_corpo_150687056
+	bnez $t1, for_corpo_502959440
 	addi $t1, $zero, 0
 	add $a1, $zero, $t1 # function param m
 	la $t1, max
@@ -260,8 +260,8 @@ main:
 	add $t1, $zero, $v0
 	addi $t2, $zero, 0
 	add $s1, $zero, $t2
-	j for_teste_150687248
-	for_corpo_150687248:
+	j for_teste_502959632
+	for_corpo_502959632:
 	addi $t2, $zero, 1
 	mul $t3, $t2, $s1
 	la $t2, a
@@ -269,9 +269,9 @@ main:
 	add $t4, $t4, $t2
 	lw $t2, 0($t4)
 	.data
-		string_150652256: .asciiz ""
+		string_502924640: .asciiz ""
 	.text
-	la $a0, string_150652256
+	la $a0, string_502924640
 	addi $v0, $zero, 4
 	syscall
 	add $a0, $zero, $t2
@@ -285,15 +285,15 @@ main:
 	syscall
 	add $t2, $zero, $s1
 	addi $s1, $s1, 1
-	for_teste_150687248:
+	for_teste_502959632:
 	la $t3, max
 	lw $t4, 0($t3)
 	slt $t3, $s1, $t4
-	bnez $t3, for_corpo_150687248
+	bnez $t3, for_corpo_502959632
 	.data
-		string_150688560: .asciiz "\n"
+		string_502960944: .asciiz "\n"
 	.text
-	la $a0, string_150688560
+	la $a0, string_502960944
 	addi $v0, $zero, 4
 	syscall
 	addi $t3, $zero, 0
