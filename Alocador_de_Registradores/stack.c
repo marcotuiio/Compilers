@@ -47,7 +47,6 @@ void *peek(void *stack) {
 void printStack(void *stack) {
     if (!stack) return;
 
-    printf("\nPrinting stack:\n");
     Stack *s = stack;
     Node *aux = s->top;
     while (aux) {

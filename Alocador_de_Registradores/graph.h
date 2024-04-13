@@ -6,13 +6,14 @@
 
 typedef struct graph {
     void *vertexHeader;
-    int maxVertex;
+    int availableRegs;
     int qntdVertex;
 } Graph;
 
 typedef struct vertex {
     int node;
     int degree;
+    int color;
     void *edgeList;
     struct vertex *next;
 } Vertex;
@@ -24,10 +25,12 @@ typedef struct edge {
 } Edge;
 
 void *createGraph();
-int insertVertex(void *graph, int node);
+int insertVertex(void *graph, int node, int color);
 void insertEdge(void *graph, int origin, int destiny);
 void *getVertex(void *graph, int node);
-void *removeMinDegreeVertex(void *graph);
+void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills);
+void removeMaxDegreeVertex(void *graph, void *potencialSpills);
+void rebuildGraph(void *graph, void *stack, void *potencialSpills);
 void printGraph(void *graph);
 void freeGraph(void *graph);
 

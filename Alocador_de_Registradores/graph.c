@@ -1,14 +1,17 @@
 #include "graph.h"
 
+#include "stack.h"
+
 void *createGraph() {
     Graph *graph = calloc(1, sizeof(Graph));
     return graph;
 }
 
-int insertVertex(void *graph, int node) {
+int insertVertex(void *graph, int node, int color) {
     Graph *g = graph;
     Vertex *v = calloc(1, sizeof(Vertex));
     v->node = node;
+    v->color = color;
 
     if (!g->vertexHeader) {
         g->vertexHeader = v;
@@ -68,8 +71,47 @@ void *getVertex(void *graph, int node) {
     return NULL;
 }
 
-void *removeMinDegreeVertex(void *graph) {
+void *removeVertex(void *graph, int removingNode) {
     if (!graph) return NULL;
+
+    Graph *g = graph;
+    Vertex *toReturn = NULL;
+    Vertex *prevVertex = NULL;
+    for (Vertex *aux = g->vertexHeader; aux; aux = aux->next) {
+        // This is the node to be removed
+        if (aux->node == removingNode) {
+            toReturn = aux;
+            if (prevVertex) {
+                prevVertex->next = aux->next;
+            } else {
+                g->vertexHeader = aux->next;
+            }
+            g->qntdVertex--;
+            continue;
+        }
+
+        Edge *prevEdge = NULL;
+        for (Edge *e = aux->edgeList; e; e = e->next) {
+            if (e->destiny == removingNode) {
+                if (prevEdge) {
+                    prevEdge->next = e->next;
+                } else {
+                    aux->edgeList = e->next;
+                }
+                free(e);
+                aux->degree--;
+                break;
+            }
+            prevEdge = e;
+        }
+        prevVertex = aux;
+    }
+
+    return toReturn;
+}
+
+void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills) {
+    if (!graph) return;
 
     Graph *g = graph;
     Vertex *head = g->vertexHeader;
@@ -92,39 +134,102 @@ void *removeMinDegreeVertex(void *graph) {
         aux = aux->next;
     }
 
-    // Removing references to the minimum degree vertex, storing it and returning it to be stored in the stack
-    Vertex *toReturn = NULL;
-    Vertex *prevVertex = NULL;
-    for (aux = head; aux; aux = aux->next) {
-        // This is the node to be removed
-        if (aux->node == minNode) {
-            toReturn = aux;
-            if (prevVertex) {
-                prevVertex->next = aux->next;
-            } else {
-                g->vertexHeader = aux->next;
+    // Checking for potencial spill
+    if (minDegree >= g->availableRegs) {
+        removeMaxDegreeVertex(g, potencialSpills);
+
+    } else {
+        // Removing references to the minimum degree vertex, storing it and returning it to be stored in the stack
+        Vertex *toReturn = removeVertex(g, minNode);
+        push(stack, toReturn);
+    }
+}
+
+void removeMaxDegreeVertex(void *graph, void *potencialSpills) {
+    if (!graph) return;
+
+    Graph *g = graph;
+    Vertex *head = g->vertexHeader;
+    int maxNode = head->node;
+    int maxDegree = head->degree;
+    Vertex *aux = head->next;
+
+    // Getting the maximum degree vertex
+    while (aux) {
+        if (aux->degree == maxDegree) {
+            if (aux->node < maxNode) {
+                maxNode = aux->node;
+                maxDegree = aux->degree;
             }
-            g->qntdVertex--;
-            continue;
+
+        } else if (aux->degree > maxDegree) {
+            maxNode = aux->node;
+            maxDegree = aux->degree;
+        }
+        aux = aux->next;
+    }
+
+    // Removing references to the maximum degree vertex, storing it and returning it to be stored in the memory
+    Vertex *toReturn = removeVertex(g, maxNode);
+    push(potencialSpills, toReturn);
+}
+
+void rebuildGraph(void *graph, void *stack, void *potencialSpills) {
+    if (!graph) return;
+
+    Graph *g = graph;
+    Node *top = pop(stack);
+    int interferenceColor = -1;
+    g->vertexHeader = NULL;
+    
+    while (top) {
+        Vertex *v = top->data;
+        Edge *e = v->edgeList;
+        insertVertex(g, v->node, v->color);
+        v->edgeList = NULL;
+
+        int available[g->availableRegs];
+        for (int i = 0; i < g->availableRegs; i++) {
+            available[i] = 1;
+        }
+        // printf("\nRebuilding %d %p\n", v->node, v);
+        while (e) {
+            insertEdge(g, e->origin, e->destiny);
+
+            // Checking the available colors and the maximum color used
+            interferenceColor = ((Vertex *)getVertex(g, e->destiny))->color;
+            // printf("Interference color: (%d) %d\n", ((Vertex *)getVertex(g, e->destiny))->node, interferenceColor);
+            if (interferenceColor < g->availableRegs)
+                available[interferenceColor] = 0;
+
+            e = e->next;
         }
 
-        Edge *prevEdge = NULL;
-        for (Edge *e = aux->edgeList; e; e = e->next) {
-            if (e->destiny == minNode) {
-                if (prevEdge) {
-                    prevEdge->next = e->next;
-                } else {
-                    aux->edgeList = e->next;
-                }
-                free(e);
-                aux->degree--;
+        // Coloring the vertex
+        int toColorIn = -1;
+        for (int i = 0; i < g->availableRegs; i++) {
+            if (available[i]) {
+                toColorIn = i;
                 break;
             }
-            prevEdge = e;
         }
-        prevVertex = aux;
+        if (toColorIn == -1) {
+            // SPILL
+            printf("SPILL\n");
+            freeStack(stack);
+            freeStack(potencialSpills);
+            freeGraph(graph);
+            freeGraph(g);
+            exit(1);
+        }
+
+        ((Vertex *)getVertex(g, v->node))->color = toColorIn;
+        free(v);
+        free(top);
+        top = pop(stack);
     }
-    return toReturn;
+    printf("Rebuilt\n");
+    freeStack(stack);
 }
 
 void printGraph(void *graph) {
@@ -133,14 +238,15 @@ void printGraph(void *graph) {
     Graph *g = graph;
     Vertex *aux = g->vertexHeader;
     while (aux) {
-        printf("Node: %d\n", aux->node);
+        printf("\nNode: %d (color %d)(degree %d) --> ", aux->node, aux->color, aux->degree);
         Edge *auxEdge = aux->edgeList;
         while (auxEdge) {
-            printf("Edge: %d -> %d\n", auxEdge->origin, auxEdge->destiny);
+            printf("%d ", auxEdge->destiny);
             auxEdge = auxEdge->next;
         }
         aux = aux->next;
     }
+    printf("\n");
 }
 
 void freeGraph(void *graph) {
