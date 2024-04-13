@@ -7,12 +7,18 @@ PROGRAMA = regalloc
 LEXICO = lexico.l
 SINTATICO = sintatico.y
 
-OBJS =
+OBJS = stack.o graph.o
 
 $(PROGRAMA): $(OBJS) $(LEXICO) $(SINTATICO) 
 	$(FLEX) -o lex.yy.c $(LEXICO)
 	$(BISON) -o sintatico.tab.c -d $(SINTATICO) 
 	$(CC) -g *.c $(CFLAGS) -o $(PROGRAMA)
+
+stack.o: stack.c stack.h
+	$(CC) -c stack.c $(CFLAGS)
+
+graph.o: graph.c graph.h
+	$(CC) -c graph.c $(CFLAGS)
 
 clear:
 	rm -f sintatico.tab.c

@@ -8,29 +8,46 @@
 extern int yylex();
 void yyerror(void *s);
 
+Graph *graph = NULL;
+Stack *stack = NULL;
+int currentVertex = -1;
+
 %}
 
 %token MyEof
+%token MyEol
 %token GRAFO
 %token K
 %token ASSIGN
 %token COLON
 %token ARROW
-%token REG
+%token NUM_INT
 
 %start RegAlloc
 
 %%
 
-RegAlloc: GRAFO REG COLON RegAmount MyEof {
-    printf("RegAlloc ID %d\n", $2);
+RegAlloc: GraphId RegAmount RegInterferences MyEof {
+    printf("EndParse\n");
+    return 0;
 } ;
 
-RegAmount: K ASSIGN REG RegInterference { } ;
+GraphId: GRAFO NUM_INT COLON MyEol { printf("Graph ID %d\n", $2); } ;
 
-RegInterference: REG ARROW REG RepeatReg { } ;
+RegAmount: K ASSIGN NUM_INT MyEol { printf("AvailableRegs K %d\n", $3); } ;
 
-RepeatReg: REG RepeatReg { } ;
+RegInterferences: DeclareVertexAndEdges MyEol RegInterferences { } 
+    | DeclareVertexAndEdges { } ;
+
+DeclareVertexAndEdges: NUM_INT { 
+        if (!graph) {
+            graph = createGraph();
+        }
+        currentVertex = insertVertex(graph, $1); 
+    } 
+    ARROW RepeatReg { } ;
+
+RepeatReg: NUM_INT RepeatReg { insertEdge(graph, currentVertex, $1); } ;
     | { } ;
 
 %%
@@ -41,5 +58,20 @@ void yyerror(void *s) {
 
 int main() {
     yyparse();
+    stack = createStack();
+    printf("\n---- MAIN %p\n\n", graph);
+
+    for (int i = graph->qntdVertex; i > 0 ; i--) {
+        Vertex *min = removeMinDegreeVertex(graph);
+        if (min) {
+            printf("(%d) Min: %d\n", i, min->node);
+            push(stack, min);
+        }
+
+    }
+    printStack(stack);
+
+    freeStack(stack);
+    freeGraph(graph);
     return 0;
 }

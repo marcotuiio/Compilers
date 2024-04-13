@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "graph.h"
 
 void *createStack() {
     Stack *stack = calloc(1, sizeof(Stack));
@@ -46,10 +47,30 @@ void *peek(void *stack) {
 void printStack(void *stack) {
     if (!stack) return;
 
+    printf("\nPrinting stack:\n");
     Stack *s = stack;
     Node *aux = s->top;
     while (aux) {
-        printf("%p\n", aux->data);
+        printf("%d -> ", ((Vertex *)aux->data)->node);
+        Edge *edge = ((Vertex *)aux->data)->edgeList;
+        while (edge) {
+            printf("%d : ", edge->destiny);
+            edge = edge->next;
+        }
+        printf("\n");
         aux = aux->below;
     }
+}
+
+void freeStack(void *stack) {
+    if (!stack) return;
+
+    Stack *s = stack;
+    Node *aux = s->top;
+    while (aux) {
+        Node *tmp = aux;
+        aux = aux->below;
+        free(tmp);
+    }
+    free(s);
 }

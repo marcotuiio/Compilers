@@ -19,5 +19,6 @@ void push(void *stack, void *data);
 void *pop(void *stack);
 void *peek(void *stack);
 void printStack(void *stack);
+void freeStack(void *stack);
 
 #endif

@@ -24,8 +24,11 @@ typedef struct edge {
 } Edge;
 
 void *createGraph();
-void insertVertex(void *graph, int node);
+int insertVertex(void *graph, int node);
 void insertEdge(void *graph, int origin, int destiny);
+void *getVertex(void *graph, int node);
+void *removeMinDegreeVertex(void *graph);
 void printGraph(void *graph);
+void freeGraph(void *graph);
 
 #endif
