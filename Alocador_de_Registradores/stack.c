@@ -69,6 +69,7 @@ void freeStack(void *stack) {
     while (aux) {
         Node *tmp = aux;
         aux = aux->below;
+        if (tmp->data) free(tmp->data);
         free(tmp);
     }
     free(s);

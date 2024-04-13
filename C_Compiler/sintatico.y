@@ -10,6 +10,7 @@
 extern int yylex();
 extern int yyrestart();
 void yyerror(void *s);
+extern void yylex_destroy();
 
 extern int yychar;
 extern int textBefore;
@@ -968,5 +969,6 @@ int main(int argc, char *argv[]) {
     fclose(source);
     free(mipsPath);
     deleteAuxFile();
+    yylex_destroy();
     return 0;
 }

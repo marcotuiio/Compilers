@@ -7,6 +7,7 @@
 
 extern int yylex();
 void yyerror(void *s);
+extern void yylex_destroy();
 
 Graph *graph = NULL;
 Graph *auxGraph = NULL;
@@ -83,38 +84,31 @@ int main() {
     exit(0); */
 
     for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
-
-        printf("\nSimplifying graph %d vertex\n", graph->qntdVertex);
-        /* printGraph(graph); */
+        printGraph(graph);
         stack = createStack();
         potencialSpills = createStack();
 
         for (int i = graph->qntdVertex; i > 0 ; i--) {
             removeMinDegreeVertex(graph, stack, potencialSpills);
         }
-        /* printf("\n%d Printing Stack\n", lim);
+        printf("\n%d Printing Stack\n", lim);
         printStack(stack);
         printf("\n%d Printing Potencial Spills Stack\n", lim);
-        printStack(potencialSpills); */
+        printStack(potencialSpills);
 
-        printf("Rebuilding graph with k = %d\n\n", graph->availableRegs);
-        rebuildGraph(graph, stack, potencialSpills);
-        printGraph(graph);
+        printf("\nRebuilding graph with k = %d\n\n", graph->availableRegs);
+        if (rebuildGraph(graph, stack, potencialSpills) == -1) break;
+        /* printGraph(graph); */
 
         freeGraph(graph);
         graph = createGraph();
         cloneGraph(auxGraph, graph);
         graph->availableRegs = lim - 1;        
     }
-
-
-    /* printf("Printing Regular Stack\n");
-    printStack(stack);
-
-    printf("Printing Potencial Spills Stack\n");
-    printStack(potencialSpills); */
-
-    /* freeStack(stack); */
+    
+    freeGraph(auxGraph);
     freeGraph(graph);
+    yylex_destroy();
+
     return 0;
 }
