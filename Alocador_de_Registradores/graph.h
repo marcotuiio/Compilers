@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 typedef struct graph {
+    int id;
     void *vertexHeader;
     int availableRegs;
     int qntdVertex;
@@ -31,6 +32,7 @@ void *getVertex(void *graph, int node);
 void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills);
 void removeMaxDegreeVertex(void *graph, void *potencialSpills);
 void rebuildGraph(void *graph, void *stack, void *potencialSpills);
+void cloneGraph(void *g1, void *g2);
 void printGraph(void *graph);
 void freeGraph(void *graph);
 

@@ -120,6 +120,7 @@ void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills) {
     Vertex *aux = head->next;
 
     // Getting the minimum degree vertex
+    // printf("Getting min degree vertex %d\n", g->availableRegs);
     while (aux) {
         if (aux->degree == minDegree) {
             if (aux->node < minNode) {
@@ -172,13 +173,15 @@ void removeMaxDegreeVertex(void *graph, void *potencialSpills) {
     // Removing references to the maximum degree vertex, storing it and returning it to be stored in the memory
     Vertex *toReturn = removeVertex(g, maxNode);
     push(potencialSpills, toReturn);
+    printf("* Node <%d> marked as potencial spill\n", maxNode);
 }
 
 void rebuildGraph(void *graph, void *stack, void *potencialSpills) {
     if (!graph) return;
 
     Graph *g = graph;
-    Node *top = pop(stack);
+    Node *top = pop(potencialSpills);
+    if (!top) top = pop(stack);
     int interferenceColor = -1;
     g->vertexHeader = NULL;
     
@@ -197,6 +200,8 @@ void rebuildGraph(void *graph, void *stack, void *potencialSpills) {
             insertEdge(g, e->origin, e->destiny);
 
             // Checking the available colors and the maximum color used
+            Vertex *v = getVertex(g, e->destiny);
+            printf("getting edge %d->%d %p %d\n", e->origin, e->destiny, v, g->availableRegs);
             interferenceColor = ((Vertex *)getVertex(g, e->destiny))->color;
             // printf("Interference color: (%d) %d\n", ((Vertex *)getVertex(g, e->destiny))->node, interferenceColor);
             if (interferenceColor < g->availableRegs)
@@ -224,12 +229,31 @@ void rebuildGraph(void *graph, void *stack, void *potencialSpills) {
         }
 
         ((Vertex *)getVertex(g, v->node))->color = toColorIn;
+        printf("Coloring %d with %d\n", v->node, toColorIn);
         free(v);
         free(top);
-        top = pop(stack);
+        top = pop(potencialSpills);
+        if (!top) top = pop(stack);
     }
-    printf("Rebuilt\n");
     freeStack(stack);
+    freeStack(potencialSpills);
+}
+
+void cloneGraph(void *g1, void *g2) {
+    if (!g1 || !g2) return;
+
+    Graph *g = g1;
+    Graph *gClone = g2;
+    Vertex *aux = g->vertexHeader;
+    while (aux) {
+        insertVertex(gClone, aux->node, 0);
+        Edge *auxEdge = aux->edgeList;
+        while (auxEdge) {
+            insertEdge(gClone, auxEdge->origin, auxEdge->destiny);
+            auxEdge = auxEdge->next;
+        }
+        aux = aux->next;
+    }
 }
 
 void printGraph(void *graph) {
@@ -238,7 +262,7 @@ void printGraph(void *graph) {
     Graph *g = graph;
     Vertex *aux = g->vertexHeader;
     while (aux) {
-        printf("\nNode: %d (color %d)(degree %d) --> ", aux->node, aux->color, aux->degree);
+        printf("\nNode: %d (color %d)(degree %d) %p --> ", aux->node, aux->color, aux->degree, aux);
         Edge *auxEdge = aux->edgeList;
         while (auxEdge) {
             printf("%d ", auxEdge->destiny);

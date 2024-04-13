@@ -9,10 +9,12 @@ extern int yylex();
 void yyerror(void *s);
 
 Graph *graph = NULL;
+Graph *auxGraph = NULL;
 Stack *stack = NULL;
 Stack *potencialSpills = NULL;
 int currentVertex = -1;
 int availRegs = -1;
+int id = -1;
 
 %}
 
@@ -30,17 +32,20 @@ int availRegs = -1;
 %%
 
 RegAlloc: GraphId RegAmount RegInterferences MyEof {
-    printf("EndParse\n");
     if (graph) {
         graph->availableRegs = availRegs;
+        graph->id = id;
     }
     return 0;
 } ;
 
-GraphId: GRAFO NUM_INT COLON MyEol { printf("Graph ID %d\n", $2); } ;
+GraphId: GRAFO NUM_INT COLON MyEol { 
+    // printf("GraphId %d\n", $2); 
+    id = $2;
+} ;
 
 RegAmount: K ASSIGN NUM_INT MyEol { 
-    printf("AvailableRegs K %d\n", $3); 
+    // printf("AvailableRegs K %d\n", $3); 
     availRegs = $3;
 } ;
 
@@ -66,23 +71,40 @@ void yyerror(void *s) {
 
 int main() {
     yyparse();
-    potencialSpills = createStack();
+    auxGraph = createGraph();
 
-    printf("\n---- MAIN %p\n\n", graph);
+    /* printf("\n---- MAIN %p\n\n", graph); */
+    cloneGraph(graph, auxGraph);
+    auxGraph->availableRegs = graph->availableRegs;
 
-    for (int lim = graph->availableRegs; lim > 1; lim--) {
+    /* printGraph(graph);
+    printf("\nCLONE\n");
+    printGraph(auxGraph); 
+    exit(0); */
+
+    for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
+
+        printf("\nSimplifying graph %d vertex\n", graph->qntdVertex);
+        /* printGraph(graph); */
         stack = createStack();
+        potencialSpills = createStack();
 
         for (int i = graph->qntdVertex; i > 0 ; i--) {
             removeMinDegreeVertex(graph, stack, potencialSpills);
         }
-        printf("\n%d Printing Stack\n", lim);
+        /* printf("\n%d Printing Stack\n", lim);
         printStack(stack);
+        printf("\n%d Printing Potencial Spills Stack\n", lim);
+        printStack(potencialSpills); */
 
-        printf("\nRebuilding graph with k = %d - %d\n", graph->availableRegs, graph->qntdVertex);
+        printf("Rebuilding graph with k = %d\n\n", graph->availableRegs);
         rebuildGraph(graph, stack, potencialSpills);
         printGraph(graph);
-        graph->availableRegs--;
+
+        freeGraph(graph);
+        graph = createGraph();
+        cloneGraph(auxGraph, graph);
+        graph->availableRegs = lim - 1;        
     }
 
 
