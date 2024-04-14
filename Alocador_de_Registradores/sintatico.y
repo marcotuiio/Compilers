@@ -12,7 +12,6 @@ extern void yylex_destroy();
 Graph *graph = NULL;
 Graph *auxGraph = NULL;
 Stack *stack = NULL;
-Stack *potencialSpills = NULL;
 int currentVertex = -1;
 int availRegs = -1;
 int id = -1;
@@ -74,30 +73,21 @@ int main() {
     yyparse();
     auxGraph = createGraph();
 
-    /* printf("\n---- MAIN %p\n\n", graph); */
     cloneGraph(graph, auxGraph);
     auxGraph->availableRegs = graph->availableRegs;
 
-    /* printGraph(graph);
-    printf("\nCLONE\n");
-    printGraph(auxGraph); 
-    exit(0); */
-
     for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
-        printGraph(graph);
+        /* printGraph(graph); */
         stack = createStack();
-        potencialSpills = createStack();
 
         for (int i = graph->qntdVertex; i > 0 ; i--) {
-            removeMinDegreeVertex(graph, stack, potencialSpills);
+            removeMinDegreeVertex(graph, stack);
         }
-        printf("\n%d Printing Stack\n", lim);
-        printStack(stack);
-        printf("\n%d Printing Potencial Spills Stack\n", lim);
-        printStack(potencialSpills);
+        /* printf("\n%d Printing Stack\n", lim);
+        printStack(stack); */
 
         printf("\nRebuilding graph with k = %d\n\n", graph->availableRegs);
-        if (rebuildGraph(graph, stack, potencialSpills) == -1) break;
+        if (rebuildGraph(graph, stack) == -1) break;
         /* printGraph(graph); */
 
         freeGraph(graph);

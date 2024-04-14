@@ -110,7 +110,7 @@ void *removeVertex(void *graph, int removingNode) {
     return toReturn;
 }
 
-void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills) {
+void removeMinDegreeVertex(void *graph, void *stack) {
     if (!graph) return;
 
     Graph *g = graph;
@@ -137,12 +137,13 @@ void removeMinDegreeVertex(void *graph, void *stack, void *potencialSpills) {
 
     // Checking for potencial spill
     if (minDegree >= g->availableRegs) {
-        removeMaxDegreeVertex(g, potencialSpills);
+        removeMaxDegreeVertex(g, stack);
 
     } else {
         // Removing references to the minimum degree vertex, storing it and returning it to be stored in the stack
         Vertex *toReturn = removeVertex(g, minNode);
         push(stack, toReturn);
+        printf("Push: %d\n", minNode);
     }
 }
 
@@ -174,19 +175,24 @@ void removeMaxDegreeVertex(void *graph, void *potencialSpills) {
     Vertex *toReturn = removeVertex(g, maxNode);
     push(potencialSpills, toReturn);
     ((Node *)peek(potencialSpills))->isPotencialSpill = 1;
-    printf("* Node <%d> marked as potencial spill\n", maxNode);
+    printf("Push: %d*\n", maxNode);
 }
 
-int rebuildGraph(void *graph, void *stack, void *potencialSpills) {
+int rebuildGraph(void *graph, void *stack) {
     if (!graph) return -1;
 
     Graph *g = graph;
-    Node *top = pop(potencialSpills);
+    Node *top = pop(stack);
     if (!top) top = pop(stack);
     int interferenceColor = -1;
     g->vertexHeader = NULL;
     
     while (top) {
+        if (top->isPotencialSpill) {
+            free(top);
+            top = pop(stack);
+            continue;   
+        }
         Vertex *v = top->data;
         Edge *e = v->edgeList;
         insertVertex(g, v->node, v->color);
@@ -196,16 +202,13 @@ int rebuildGraph(void *graph, void *stack, void *potencialSpills) {
         for (int i = 0; i < g->availableRegs; i++) {
             available[i] = 1;
         }
-        // printf("\nRebuilding %d %p\n", v->node, v);
         while (e) {
-            insertEdge(g, e->origin, e->destiny);
 
             // Checking the available colors and the maximum color used
             Vertex *v = getVertex(g, e->destiny);
             if (v) {
-                // printf("getting edge %d->%d %p %d\n", e->origin, e->destiny, v, g->availableRegs);
+                insertEdge(g, e->origin, e->destiny);
                 interferenceColor = v->color;
-                // printf("Interference color: (%d) %d\n", ((Vertex *)getVertex(g, e->destiny))->node, interferenceColor);
                 if (interferenceColor < g->availableRegs)
                     available[interferenceColor] = 0;
             }
@@ -223,22 +226,20 @@ int rebuildGraph(void *graph, void *stack, void *potencialSpills) {
         }
         if (toColorIn == -1) {
             // SPILL
+            printf("Pop: %d -> NO COLOR AVAILABLE\n", v->node);
             printf("\nGraph %d -> K = %d: SPILL\n", g->id, g->availableRegs);
             freeStack(stack);
-            freeStack(potencialSpills);
             return -1;
         }
 
         ((Vertex *)getVertex(g, v->node))->color = toColorIn;
-        printf("Coloring %d with %d\n", v->node, toColorIn);
+        printf("Pop: %d -> %d\n", v->node, toColorIn);
         free(v);
         free(top);
-        top = pop(potencialSpills);
-        if (!top) top = pop(stack);
+        top = pop(stack);
     }
-    printf("\nGraph %d -> K = %d: Successful Allocation\n", g->id, g->availableRegs);
+    printf("\nGraph %d -> K = %d: Successful Allocation\n\n", g->id, g->availableRegs);
     freeStack(stack);
-    freeStack(potencialSpills);
     return 0;
 }
 
