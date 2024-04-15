@@ -188,11 +188,11 @@ int rebuildGraph(void *graph, void *stack) {
     g->vertexHeader = NULL;
     
     while (top) {
-        if (top->isPotencialSpill) {
-            free(top);
-            top = pop(stack);
-            continue;   
-        }
+        // if (top->isPotencialSpill) {
+        //     free(top);
+        //     top = pop(stack);
+        //     continue;   
+        // }
         Vertex *v = top->data;
         Edge *e = v->edgeList;
         insertVertex(g, v->node, v->color);
