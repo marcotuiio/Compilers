@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "graph.h"
 #include "stack.h"
+#include "math.h"
 
 extern int yylex();
 void yyerror(void *s);
@@ -71,6 +72,26 @@ void yyerror(void *s) {
     printf("Error: %s\n", (char*)s);
 }
 
+int calcSpaces(int total, int current) {
+    int cDigits = 0;
+    int tDigits = 0;
+    if (current == 0) {
+        cDigits = 1;
+    } else {
+        cDigits = floor(log10(abs(current))) + 1;
+    }   
+    if (total == 0) {
+        tDigits = 1;
+    } else {
+        tDigits = floor(log10(abs(total))) + 1;
+    }
+
+    if (cDigits == tDigits) 
+        return 0;
+    else 
+        return 1;
+}
+
 int main() {
     yyparse();
     auxGraph = createGraph();
@@ -79,7 +100,7 @@ int main() {
     cloneGraph(graph, auxGraph);
     auxGraph->availableRegs = graph->availableRegs;
 
-    printf("Graph %d -> Physical Registers %d\n", graph->id, graph->availableRegs);
+    printf("Graph %d -> Physical Registers: %d\n", graph->id, graph->availableRegs);
     printf("----------------------------------------\n");
 
     for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
@@ -107,9 +128,9 @@ int main() {
     printf("----------------------------------------");
     for (int i = auxGraph->availableRegs-1; i >= 0; i--) {
         if (results[i] == 2) {
-            printf("\nGraph %d -> K = %d: Successful Allocation", auxGraph->id, i+1);
+            printf("\nGraph %d -> K = %s%d: Successful Allocation", auxGraph->id, calcSpaces(auxGraph->availableRegs, i+1) ? " " : "", i+1);
         } else if (results[i] == 1) {
-            printf("\nGraph %d -> K =  %d: SPILL", auxGraph->id, i+1);
+            printf("\nGraph %d -> K = %s%d: SPILL", auxGraph->id, calcSpaces(auxGraph->availableRegs, i+1) ? " " : "", i+1);
         }
     }
     free(results);

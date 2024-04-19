@@ -1,4 +1,4 @@
-Graph 1 -> Physical Registers 21
+Graph 1 -> Physical Registers: 21
 ----------------------------------------
 ----------------------------------------
 K = 21
@@ -679,10 +679,10 @@ Graph 1 -> K = 13: Successful Allocation
 Graph 1 -> K = 12: Successful Allocation
 Graph 1 -> K = 11: Successful Allocation
 Graph 1 -> K = 10: Successful Allocation
-Graph 1 -> K = 9: Successful Allocation
-Graph 1 -> K = 8: Successful Allocation
-Graph 1 -> K = 7: Successful Allocation
-Graph 1 -> K = 6: Successful Allocation
+Graph 1 -> K =  9: Successful Allocation
+Graph 1 -> K =  8: Successful Allocation
+Graph 1 -> K =  7: Successful Allocation
+Graph 1 -> K =  6: Successful Allocation
 Graph 1 -> K =  5: SPILL
 Graph 1 -> K =  4: SPILL
 Graph 1 -> K =  3: SPILL

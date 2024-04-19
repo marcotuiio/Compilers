@@ -12,7 +12,7 @@ OBJS = stack.o graph.o
 $(PROGRAMA): $(OBJS) $(LEXICO) $(SINTATICO) 
 	$(FLEX) -o lex.yy.c $(LEXICO)
 	$(BISON) -o sintatico.tab.c -d $(SINTATICO) 
-	$(CC) -g *.c $(CFLAGS) -o $(PROGRAMA)
+	$(CC) -g *.c $(CFLAGS) -o $(PROGRAMA) -lm
 
 stack.o: stack.c stack.h
 	$(CC) -c stack.c $(CFLAGS)
