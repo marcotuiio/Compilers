@@ -174,43 +174,41 @@ void removeMaxDegreeVertex(void *graph, void *potencialSpills) {
     // Removing references to the maximum degree vertex, storing it and returning it to be stored in the memory
     Vertex *toReturn = removeVertex(g, maxNode);
     push(potencialSpills, toReturn);
-    ((Node *)peek(potencialSpills))->isPotencialSpill = 1;
-    printf("Push: %d*\n", maxNode);
+    printf("Push: %d *\n", maxNode);
 }
 
-int rebuildGraph(void *graph, void *stack) {
+int rebuildGraph(void *graph, void *stack, int *results) {
     if (!graph) return -1;
 
     Graph *g = graph;
     Node *top = pop(stack);
-    if (!top) top = pop(stack);
-    int interferenceColor = -1;
     g->vertexHeader = NULL;
-    
+
     while (top) {
-        // if (top->isPotencialSpill) {
-        //     free(top);
-        //     top = pop(stack);
-        //     continue;   
-        // }
         Vertex *v = top->data;
         Edge *e = v->edgeList;
         insertVertex(g, v->node, v->color);
-        v->edgeList = NULL;
 
         int available[g->availableRegs];
         for (int i = 0; i < g->availableRegs; i++) {
             available[i] = 1;
         }
+
+        // Checking the available colors and the maximum color used and reinstating the edges, defining available colors
         while (e) {
 
-            // Checking the available colors and the maximum color used
-            Vertex *v = getVertex(g, e->destiny);
-            if (v) {
-                insertEdge(g, e->origin, e->destiny);
-                interferenceColor = v->color;
-                if (interferenceColor < g->availableRegs)
-                    available[interferenceColor] = 0;
+            // printf(">>>>>>Edge %d -> %d\n", e->origin, e->destiny);
+            insertEdge(g, e->origin, e->destiny);
+            if (e->destiny < g->availableRegs) {
+                available[e->destiny] = 0;
+            } else {
+                Vertex *aux = getVertex(g, e->destiny);
+                if (aux) {
+                    // printf("---> Available color used by %d = %d\n", aux->node, aux->color);
+                    if (aux->color != -1) {
+                        available[aux->color] = 0;
+                    }
+                }
             }
 
             e = e->next;
@@ -227,8 +225,9 @@ int rebuildGraph(void *graph, void *stack) {
         if (toColorIn == -1) {
             // SPILL
             printf("Pop: %d -> NO COLOR AVAILABLE\n", v->node);
-            printf("\nGraph %d -> K = %d: SPILL\n", g->id, g->availableRegs);
-            freeStack(stack);
+            results[g->availableRegs - 1] = 1;
+            // printf("\nGraph %d -> K = %d: SPILL\n", g->id, g->availableRegs);
+            // freeStack(stack);
             return -1;
         }
 
@@ -238,7 +237,8 @@ int rebuildGraph(void *graph, void *stack) {
         free(top);
         top = pop(stack);
     }
-    printf("\nGraph %d -> K = %d: Successful Allocation\n\n", g->id, g->availableRegs);
+    // printf("\nGraph %d -> K = %d: Successful Allocation\n\n", g->id, g->availableRegs);
+    results[g->availableRegs - 1] = 2;
     freeStack(stack);
     return 0;
 }

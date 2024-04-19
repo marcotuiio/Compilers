@@ -31,7 +31,7 @@ void insertEdge(void *graph, int origin, int destiny);
 void *getVertex(void *graph, int node);
 void removeMinDegreeVertex(void *graph, void *stack);
 void removeMaxDegreeVertex(void *graph, void *potencialSpills);
-int rebuildGraph(void *graph, void *stack);
+int rebuildGraph(void *graph, void *stack, int *results);
 void cloneGraph(void *g1, void *g2);
 void printGraph(void *graph);
 void freeGraph(void *graph);

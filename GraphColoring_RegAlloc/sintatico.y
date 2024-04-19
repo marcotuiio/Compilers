@@ -16,6 +16,8 @@ int currentVertex = -1;
 int availRegs = -1;
 int id = -1;
 
+int *results = NULL;
+
 %}
 
 %token MyEof
@@ -72,22 +74,27 @@ void yyerror(void *s) {
 int main() {
     yyparse();
     auxGraph = createGraph();
+    results = calloc(graph->availableRegs-1, sizeof(int));
 
     cloneGraph(graph, auxGraph);
     auxGraph->availableRegs = graph->availableRegs;
+
+    printf("Graph %d -> Physical Registers %d\n", graph->id, graph->availableRegs);
+    printf("----------------------------------------\n");
 
     for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
         /* printGraph(graph); */
         stack = createStack();
 
+        printf("----------------------------------------\n");
+        printf("K = %d\n\n", lim);
         for (int i = graph->qntdVertex; i > 0 ; i--) {
             removeMinDegreeVertex(graph, stack);
         }
         /* printf("\n%d Printing Stack\n", lim);
         printStack(stack); */
 
-        printf("\nRebuilding graph with k = %d\n\n", graph->availableRegs);
-        if (rebuildGraph(graph, stack) == -1) break;
+        rebuildGraph(graph, stack, results);
         /* printGraph(graph); */
 
         freeGraph(graph);
@@ -95,7 +102,17 @@ int main() {
         cloneGraph(auxGraph, graph);
         graph->availableRegs = lim - 1;        
     }
-    
+
+    printf("----------------------------------------\n");
+    printf("----------------------------------------");
+    for (int i = auxGraph->availableRegs-1; i >= 0; i--) {
+        if (results[i] == 2) {
+            printf("\nGraph %d -> K = %d: Successful Allocation", auxGraph->id, i+1);
+        } else if (results[i] == 1) {
+            printf("\nGraph %d -> K =  %d: SPILL", auxGraph->id, i+1);
+        }
+    }
+    free(results);
     freeGraph(auxGraph);
     freeGraph(graph);
     yylex_destroy();

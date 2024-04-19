@@ -11,7 +11,6 @@ typedef struct stack {
 
 typedef struct node {
     void *data;
-    int isPotencialSpill;
     struct node *below;
 } Node;
 
