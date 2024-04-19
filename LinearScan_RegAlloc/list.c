@@ -9,6 +9,7 @@ List *createList() {
 
 void insertNode(List *list, int id, int start, int end) {
     Node *n = calloc(1, sizeof(Node));
+    list->size++;
     n->id = id;
     n->start = start;
     n->end = end;
@@ -21,6 +22,17 @@ void insertNode(List *list, int id, int start, int end) {
         list->tail->next = n;
         list->tail = n;
     }
+}
+
+Node *getNode(List *list, int id) {
+    Node *curr = list->head;
+    while (curr) {
+        if (curr->id == id) {
+            return curr;
+        }
+        curr = curr->next;
+    }
+    return NULL;
 }
 
 void deleteNode(List *list, int id) {

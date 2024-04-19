@@ -12,8 +12,6 @@ extern void yylex_destroy();
 void *list = NULL;
 int currentVertex = -1;
 
-int *results = NULL;
-
 %}
 
 %token MyEof
@@ -54,9 +52,66 @@ int main() {
 
     printList(list);
 
-    results = calloc(list->availableRegs, sizeof(int));
+    char *results = calloc(4096, sizeof(char));
+    // TODO CRIAR VETOR QUE CONTROLA E PRINTA ITERAÇÕES COM SPILL
 
-    
+    for (int k = list->availableRegs; i > 0; i--) {
+
+        int *available = calloc(list->availableRegs-1, sizeof(int));
+        for (int i = 0; i < k; i++) {
+            available[i] = 1;
+        }
+
+        Node *curr = list->head;
+        while (curr) {
+
+            int used = -1
+            // ALLOCATING
+            for (int j = 0; j < list->availableRegs; j++) {
+                if (available[j]) {
+                    used = j;
+                    available[j] = curr->id;
+                    break;
+                }
+            }
+
+            // SPILL
+            if (used == -1) {
+                Node *toSpill = NULL;
+                int greatestEnd = -1;
+                int smallestSpan = 999999;
+                int mostRecent = -1;
+
+                for (int i = 0; i < k; i++) {
+                    Node *onUse = getNode(list, available[i]);
+                    // Criterio 1. Spill no registrador com maior end
+                    if (onUse->end > greatestEnd) {
+                        toSpill = onUse;
+                        greatestEnd = onUse->end;
+                    } else {
+                        // Criterio 2. Spill no registrador com menor lifeSpan
+                        if (onUse->end == greatestEnd && onUse->lifeSpan < smallestSpan) {
+                            toSpill = onUse;
+                            smallestSpan = onUse->lifeSpan;
+                        } else {
+                            // Criterio 3. Spill no registrador com id mais recente
+                            if (onUse->end == greatestEnd && onUse->lifeSpan == n1->lifeSpan && onUse->id > mostRecent) {
+                                toSpill = onUse;
+                                mostRecent = onUse->id;
+                            }
+                        }
+                    }
+                    onUse = onUse->next;
+                }
+
+            }
+
+            curr = curr->next;
+        }
+        // TODO RESETAR LISTA PARA PROXIMA ITERAÇÃO E CONTROLAR QUANTIDADE DE REGS DISPONIVEIS AGORA
+        list->availableRegs = k - 1;
+        free(available);
+    }    
 
     /* for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
 
