@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "math.h"
+#include <string.h>
 #include "list.h"
 
 extern int yylex();
 void yyerror(void *s);
 extern void yylex_destroy();
 
-void *list = NULL;
+List *list = NULL;
 int currentVertex = -1;
 
 %}
@@ -50,89 +51,134 @@ void yyerror(void *s) {
 int main() {
     yyparse();
 
-    printList(list);
+    /* printList(list);
+    exit(0); */
 
-    char *results = calloc(4096, sizeof(char));
-    // TODO CRIAR VETOR QUE CONTROLA E PRINTA ITERAÇÕES COM SPILL
+    char *results = calloc(8192, sizeof(char));
 
-    for (int k = list->availableRegs; i > 0; i--) {
+    for (int k = list->availableRegs; k > 1; k--) {
 
-        int *available = calloc(list->availableRegs-1, sizeof(int));
-        for (int i = 0; i < k; i++) {
-            available[i] = 1;
+        int *available = calloc(list->availableRegs, sizeof(int));
+        for (int i = 0; i < list->availableRegs; i++) {
+            available[i] = 0;
         }
+
+        int *spills = calloc(list->size, sizeof(int));
+        int qntdSpills = 0;
 
         Node *curr = list->head;
         while (curr) {
 
-            int used = -1
+            int used = -1;
             // ALLOCATING
-            for (int j = 0; j < list->availableRegs; j++) {
-                if (available[j]) {
-                    used = j;
-                    available[j] = curr->id;
+            for (int i = 0; i < list->availableRegs; i++) {
+                if (!available[i]) {
+                    used = i;
+                    available[i] = curr->id;
+                    curr->assignedReg = i;
+                    /* printf("Easy alloc: vr%d -> %d\n", curr->id, i); */
                     break;
+                } else {
+                    if (getNode(list, available[i])->end <= curr->id) {
+                        used = i;
+                        available[i] = curr->id;
+                        curr->assignedReg = i;
+                        /* printf("Alloc: vr%d -> %d\n", curr->id, i); */
+                        break;
+                    }
                 }
-            }
+            }            
 
             // SPILL
             if (used == -1) {
-                Node *toSpill = NULL;
-                int greatestEnd = -1;
-                int smallestSpan = 999999;
-                int mostRecent = -1;
+                qntdSpills++;
+                Node *toSpill = curr;
+                int spilled = -1;
+                int greatestEnd = curr->end;
+                int smallestSpan = curr->lifeSpan;
+                int mostRecent = curr->id;
 
-                for (int i = 0; i < k; i++) {
+                for (int i = 0; i < list->availableRegs; i++) {
                     Node *onUse = getNode(list, available[i]);
                     // Criterio 1. Spill no registrador com maior end
                     if (onUse->end > greatestEnd) {
+                        spilled = i;
                         toSpill = onUse;
                         greatestEnd = onUse->end;
                     } else {
                         // Criterio 2. Spill no registrador com menor lifeSpan
                         if (onUse->end == greatestEnd && onUse->lifeSpan < smallestSpan) {
+                            spilled = i;
                             toSpill = onUse;
                             smallestSpan = onUse->lifeSpan;
                         } else {
                             // Criterio 3. Spill no registrador com id mais recente
-                            if (onUse->end == greatestEnd && onUse->lifeSpan == n1->lifeSpan && onUse->id > mostRecent) {
+                            if (onUse->end == greatestEnd && onUse->lifeSpan == toSpill->lifeSpan && onUse->id > mostRecent) {
+                                spilled = i;
                                 toSpill = onUse;
                                 mostRecent = onUse->id;
                             }
                         }
                     }
-                    onUse = onUse->next;
                 }
-
+                spills[toSpill->id-1] = 1;
+                toSpill->assignedReg = -1;
+                if (spilled != -1) {
+                    available[spilled] = curr->id;
+                    curr->assignedReg = spilled;
+                }
             }
 
             curr = curr->next;
         }
-        // TODO RESETAR LISTA PARA PROXIMA ITERAÇÃO E CONTROLAR QUANTIDADE DE REGS DISPONIVEIS AGORA
-        list->availableRegs = k - 1;
-        free(available);
-    }    
 
-    /* for (int lim = auxGraph->availableRegs; lim > 1; lim--) {
+        printf("K = %d\n\n", k);
+        for (int i = 0; i < list->size; i++) {
+            Node *curr = getNode(list, i+1);
+            if (curr->assignedReg == -1) {
+                printf("vr%d: SPILL\n", i+1);
+            } else {
+                printf("vr%d: %d\n", i+1, curr->assignedReg);
+            }
+        }
 
         printf("----------------------------------------\n");
-        printf("K = %d\n\n", lim);
-
-    } */
-
-    /* printf("----------------------------------------\n");
-    printf("----------------------------------------");
-    for (int i = auxGraph->availableRegs-1; i >= 0; i--) {
-        if (results[i] == 2) {
-            printf("\nGraph %d -> K = %s%d: Successful Allocation", auxGraph->id, calcSpaces(auxGraph->availableRegs, i+1) ? " " : "", i+1);
-        } else if (results[i] == 1) {
-            printf("\nGraph %d -> K = %s%d: SPILL", auxGraph->id, calcSpaces(auxGraph->availableRegs, i+1) ? " " : "", i+1);
+        
+        char *auxStr = calloc(1024, sizeof(char));
+        if (qntdSpills == 0) {
+            sprintf(auxStr, "K = %d: Successful Allocation", k);
+        } else {
+            sprintf(auxStr, "K = %d: Spill on iteration(s): ", k);
+            int rep = 0;
+            for (int s = 0; s < list->size; s++) {
+                if (spills[s] == 0) continue;
+                char *numStr = calloc(5, sizeof(char));
+                rep++;
+                sprintf(numStr, "%d", s);
+                if (rep == qntdSpills) {
+                    strcat(auxStr, numStr);
+                } else {
+                    strcat(auxStr, numStr);
+                    strcat(auxStr, ", ");
+                }
+                free(numStr);
+            }
         }
-    } */
+        strcat(results, auxStr);
+        strcat(results, ".\n");
+        free(auxStr);
+        list->availableRegs = k - 1;
+        free(spills);
+        free(available);
+    }
 
-    /* free(results); */
-    yylex_destroy();
+    printf("----------------------------------------\n");
+    printf("%s", results);
+    free(results);
+    
     freeList(list);
+    
+    yylex_destroy();
 
     return 0;
 }

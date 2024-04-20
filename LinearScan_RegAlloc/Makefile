@@ -3,7 +3,7 @@ BISON = bison
 CC = gcc
 CFLAGS = 
 
-PROGRAMA = regalloc
+PROGRAMA = linearscan
 LEXICO = lexico.l
 SINTATICO = sintatico.y
 

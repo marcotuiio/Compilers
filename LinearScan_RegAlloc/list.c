@@ -58,6 +58,8 @@ void deleteNode(List *list, int id) {
 
 void printList(List *list) {
     Node *curr = list->head;
+    printf("size %d | %d\n", list->size, list->availableRegs);
+
     while (curr) {
         printf("id: %d, start: %d, end: %d, lifeSpan: %d\n", curr->id, curr->start, curr->end, curr->lifeSpan);
         curr = curr->next;
