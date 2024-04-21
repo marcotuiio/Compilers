@@ -36,7 +36,6 @@ LifeSpans: REG_ID ARROW NUM_INT NUM_INT
     {
         if (!list) 
             list = createList();
-        
         insertNode(list, $1, $3, $4);
     }
     LifeSpans { } 
@@ -51,8 +50,8 @@ void yyerror(void *s) {
 int main() {
     yyparse();
 
-    /* printList(list);
-    exit(0); */
+    /* printList(list); */
+    /* exit(0); */
 
     char *results = calloc(8192, sizeof(char));
 
@@ -72,6 +71,12 @@ int main() {
             int used = -1;
             // ALLOCATING
             for (int i = 0; i < list->availableRegs; i++) {
+                /* Node *alloc = getNode(list, available[i]);
+                if (alloc) {
+                    printf("Trying to alloc vr%d on %d (vr%d %d, %d)\n", curr->id, i, alloc->id, alloc->start, alloc->end);
+                } else {
+                    printf("Trying to alloc vr%d on %d\n", curr->id, i);
+                } */
                 if (!available[i]) {
                     used = i;
                     available[i] = curr->id;
@@ -102,30 +107,36 @@ int main() {
                     Node *onUse = getNode(list, available[i]);
                     // Criterio 1. Spill no registrador com maior end
                     if (onUse->end > greatestEnd) {
+                        /* printf("spill on 1st %d\n", onUse->id); */
                         spilled = i;
                         toSpill = onUse;
                         greatestEnd = onUse->end;
                     } else {
                         // Criterio 2. Spill no registrador com menor lifeSpan
                         if (onUse->end == greatestEnd && onUse->lifeSpan < smallestSpan) {
+                            /* printf("spill on 2nd %d\n", onUse->id); */
                             spilled = i;
                             toSpill = onUse;
                             smallestSpan = onUse->lifeSpan;
                         } else {
                             // Criterio 3. Spill no registrador com id mais recente
                             if (onUse->end == greatestEnd && onUse->lifeSpan == toSpill->lifeSpan && onUse->id > mostRecent) {
+                                /* printf("spill on 3rd %d\n", onUse->id); */
                                 spilled = i;
                                 toSpill = onUse;
                                 mostRecent = onUse->id;
                             }
                         }
                     }
+                    /* printf("So far spilled: vr%d\n", toSpill->id); */
                 }
                 spills[toSpill->id-1] = 1;
                 toSpill->assignedReg = -1;
                 if (spilled != -1) {
                     available[spilled] = curr->id;
                     curr->assignedReg = spilled;
+                } else {
+                    /* printf("Spilled current %d %p %p\n", curr->id, toSpill, curr); */
                 }
             }
 

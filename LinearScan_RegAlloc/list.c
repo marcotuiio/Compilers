@@ -15,6 +15,7 @@ void insertNode(List *list, int id, int start, int end) {
     n->end = end;
     n->lifeSpan = end - start;
     n->next = NULL;
+    
     if (list->head == NULL) {
         list->head = n;
         list->tail = n;
