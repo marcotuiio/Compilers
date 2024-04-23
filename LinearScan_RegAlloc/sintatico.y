@@ -64,6 +64,7 @@ int main() {
 
         int *spills = calloc(list->size, sizeof(int));
         int qntdSpills = 0;
+        int spillIteration = 0;
 
         Node *curr = list->head;
         while (curr) {
@@ -96,6 +97,7 @@ int main() {
 
             // SPILL
             if (used == -1) {
+                spills[spillIteration] = 1;
                 qntdSpills++;
                 Node *toSpill = curr;
                 int spilled = -1;
@@ -130,7 +132,6 @@ int main() {
                     }
                     /* printf("So far spilled: vr%d\n", toSpill->id); */
                 }
-                spills[toSpill->id-1] = 1;
                 toSpill->assignedReg = -1;
                 if (spilled != -1) {
                     available[spilled] = curr->id;
@@ -141,6 +142,7 @@ int main() {
             }
 
             curr = curr->next;
+            spillIteration++;
         }
 
         printf("K = %d\n\n", k);
