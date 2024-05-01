@@ -3,6 +3,8 @@
 
 %{
 
+// NAO FUNCIONAAAA
+
 #include <stdlib.h>
 #include <string.h>
 #include <sintatico.tab.h>
