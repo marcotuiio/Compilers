@@ -3,10 +3,10 @@ import subprocess
 import datetime
 
 BED = '/home/marcotuiio/Compilers/C_Compiler/testes_semantico'
-BSD = '/home/marcotuiio/Compilers/C_Compiler/aux'
+BSD = '/home/marcotuiio/Compilers/C_Compiler/saidas_semantico'
 OFICIAL = '/home/marcotuiio/Compilers/C_Compiler/saidas_padrao'
 EXEC = 'mtcc'
-src = '/home/marcotuiio/Compilers/C_Compiler'
+src = '/home/marcotuiio/Compilers/C_Compiler/src'
 ini = datetime.datetime.now()
 
 os.chdir(src)
